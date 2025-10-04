@@ -362,6 +362,20 @@ a:hover{ color:#82DFFF; }
 .meta dt, .meta dd, .card__summary {
   color: #f2f2f2;
 }
+
+/* summary hover 시 색상 변경 */
+.details summary:hover {
+  color: #5CC9F5;   /* ✅ 테마 하늘색 */
+  border-color: #5CC9F5;
+}
+
+/* details 내부 리스트 항목 hover 시 */
+.details__list li {
+  transition: color .2s ease;
+}
+.details__list li:hover {
+  color: #ff9d00;   /* ✅ 주황색 강조 (제목처럼) */
+}
 </style>
 
 <!-- inline defs: 페이지에 1번만 -->
