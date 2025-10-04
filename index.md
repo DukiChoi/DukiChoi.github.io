@@ -119,7 +119,6 @@ title: DukiChoi
 .about-title {
   font-weight: 900;   /* bold 강조 */
 }
-</style>
   
 /* ====== Hero ====== */
 .hero{ margin: 1.5rem 0 .5rem; }
