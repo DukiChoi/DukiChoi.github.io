@@ -40,7 +40,7 @@ js_file: /assets/js/card-tilt.js
     <h1>Projects & Research</h1>
     <ul class="cards">
     {% for p in site.data.projects %}
-      <li class="card">
+      <li class="card card--holo">
         <header class="card__head">
           <h3 class="card__title">
             {% if p.link %}
@@ -228,7 +228,54 @@ js_file: /assets/js/card-tilt.js
 /* (옵션) 브라우저별 테셀레이션 아티팩트 완화 */
 .card { outline: 1px solid rgba(0,0,0,0); }
 
+/* ===========================
+   HOLO 레이어 (포켓몬 카드 느낌)
+   =========================== */
 
+/* 1) 무지개 홀로(무지개 유광) */
+.card--holo::before{
+  content:"";
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  mix-blend-mode:screen; opacity:.0;   /* 기본은 낮게 */
+  /* conic + diagonal sheen + glitter maskish */
+  background:
+    conic-gradient(from 0deg at 50% 50%,
+      #ff0040, #ff9d00, #ffe600, #3cff00, #00ffd5, #007bff, #9a00ff, #ff0040) ,
+    linear-gradient(120deg, rgba(255,255,255,.28), rgba(255,255,255,0) 55%);
+  background-size: 180% 180%, 140% 140%;
+  filter: saturate(1.35) brightness(1.05);
+  transform: translate3d(var(--tx,0), var(--ty,0), 0)
+             rotate(var(--shine-angle,0deg)) scale(1.04);
+  transition: opacity .18s ease, transform .18s ease, filter .18s ease;
+  animation: holo-shift 8s linear infinite;
+}
+
+/* 2) 스펙큘러 하이라이트(광원 반사점) */
+.card--holo::after{
+  content:"";
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  mix-blend-mode:screen; opacity:0;
+  background:
+    radial-gradient(circle at var(--mx,50%) var(--my,50%),
+      rgba(255,255,255,.40), rgba(255,255,255,0) 55%);
+  transform: translate3d(var(--tx,0), var(--ty,0), 0) scale(1.02);
+  transition: opacity .15s ease, transform .15s ease;
+}
+
+/* hover 시 더 눈에 띄게 */
+.card--holo:hover::before{ opacity:.55; filter:saturate(1.5) brightness(1.08); }
+.card--holo:hover::after { opacity:1; }
+
+/* 은은한 지속 이동(무지개 결 이동) */
+@keyframes holo-shift{
+  0%   { background-position: 0% 0%,   0% 0%; }
+  100% { background-position: 200% 200%, 120% 120%; }
+}
+
+/* 모션 줄이기 선호 시 애니메이션 정지 */
+@media (prefers-reduced-motion: reduce){
+  .card--holo::before{ animation:none; }
+}
 
 
 
