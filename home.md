@@ -402,15 +402,16 @@ a:hover{ color:#82DFFF; }
 
 /* ============ SHINE LAYERS (모든 카드) ============ */
 
+/* ==== STRONG HOLO: SHINE ==== */
 .card .card__shine{
   --scanlines-space: 1px;
-  --scanlines-light: #666;
+  --scanlines-light: #777;
   --scanlines-dark: #000;
-  --bars: 3%;
-  --bar-color: hsla(0,0%,70%,1);
-  --bar-bg: hsla(0,0%,0%,1);
+  --bars: 2.5%;
+  --bar-color: hsla(0,0%,85%,1);
+  --bar-bg: hsla(0,0%,0%,0.2);
 
-  /* clip-path 필요 없으면 주석 */
+  /* clip-path 필요하면 inset(0 round 16px) 등으로 대체 */
   /* clip-path: inset(0 round 16px); */
 
   background-image:
@@ -420,19 +421,27 @@ a:hover{ color:#82DFFF; }
       var(--violet), var(--blue), var(--green), var(--yellow), var(--red)
     ),
     repeating-linear-gradient(90deg,
-      var(--scanlines-dark) calc(var(--scanlines-space)*0), var(--scanlines-dark) calc(var(--scanlines-space)*2),
-      var(--scanlines-light) calc(var(--scanlines-space)*2), var(--scanlines-light) calc(var(--scanlines-space)*4)
+      var(--scanlines-dark) 0 calc(var(--scanlines-space)*2),
+      var(--scanlines-light) calc(var(--scanlines-space)*2) calc(var(--scanlines-space)*4)
     );
 
   background-position:
-    calc(((50% - var(--background-x,50%)) * 2.6) + 50%)
-    calc(((50% - var(--background-y,50%)) * 3.5) + 50%),
+    calc(((50% - var(--background-x,50%)) * 3.6) + 50%)
+    calc(((50% - var(--background-y,50%)) * 4.8) + 50%),
     center center;
 
-  background-size: 400% 400%, cover;
-  background-blend-mode: overlay;
-  filter: brightness(1.1) contrast(1.1) saturate(1.2);
+  /* 스펙트럼을 더 과하게 */
+  background-size: 600% 600%, cover;
+
+  /* 회색 끼 제거: screen이 overlay보다 훨씬 투명/선명 */
+  background-blend-mode: screen;
+
+  /* 채도/대비 상향 */
+  filter: brightness(1.15) contrast(1.25) saturate(1.6);
+
+  /* 더 강렬한 컬러 홀로그램 */
   mix-blend-mode: color-dodge;
+  opacity: .22; /* 강도 스위치: 0.16~0.30 사이로 조절 */
 }
 
 .card .card__shine:before{
@@ -441,54 +450,57 @@ a:hover{ color:#82DFFF; }
 
   background-image:
     repeating-linear-gradient(90deg,
-      var(--bar-bg) calc(var(--bars)*2),
-      var(--bar-color) calc(var(--bars)*3),
-      var(--bar-bg) calc(var(--bars)*3.5),
-      var(--bar-color) calc(var(--bars)*4),
-      var(--bar-bg) calc(var(--bars)*5),
-      var(--bar-bg) calc(var(--bars)*14)
+      var(--bar-bg) calc(var(--bars)*1.8),
+      var(--bar-color) calc(var(--bars)*2.8),
+      transparent calc(var(--bars)*3.2),
+      var(--bar-color) calc(var(--bars)*3.8),
+      transparent calc(var(--bars)*5),
+      transparent calc(var(--bars)*12)
     ),
     repeating-linear-gradient(90deg,
-      var(--bar-bg) calc(var(--bars)*2),
-      var(--bar-color) calc(var(--bars)*3),
-      var(--bar-bg) calc(var(--bars)*3.5),
-      var(--bar-color) calc(var(--bars)*4),
-      var(--bar-bg) calc(var(--bars)*5),
-      var(--bar-bg) calc(var(--bars)*10)
+      transparent calc(var(--bars)*1.8),
+      var(--bar-color) calc(var(--bars)*2.6),
+      transparent calc(var(--bars)*3.2),
+      var(--bar-color) calc(var(--bars)*3.8),
+      transparent calc(var(--bars)*5),
+      transparent calc(var(--bars)*9)
     );
 
   background-position:
-    calc((((50% - var(--background-x,50%)) * 1.65) + 50%) + ( (var(--background-y,50%) - 50% ) * 0.5))
-    var(--background-x,50%),
-    calc((((50% - var(--background-x,50%)) * -0.9) + 50%) - ( (var(--background-y,50%) - 50% ) * 0.75))
-    var(--background-y,50%);
+    calc((((50% - var(--background-x,50%)) * 2.2) + 50%) + ((var(--background-y,50%) - 50%) * .6)) var(--background-x,50%),
+    calc((((50% - var(--background-x,50%)) * -1.2) + 50%) - ((var(--background-y,50%) - 50%) * .9)) var(--background-y,50%);
 
-  background-size: 200% 200%, 200% 200%;
+  background-size: 250% 250%, 250% 250%;
   background-blend-mode: screen;
-  filter: brightness(1.15) contrast(1.1);
-  mix-blend-mode: hard-light;
+  filter: brightness(1.2) contrast(1.15) saturate(1.4);
+  mix-blend-mode: screen;   /* hard-light → screen 으로 투명감 업 */
+  opacity:.22;              /* 0.16~0.28 범위에서 취향 조정 */
 }
 
 .card .card__shine:after{
   content:"";
   position:absolute; inset:0; border-radius:inherit; pointer-events:none;
 
+  /* 검은 비네팅을 거의 제거 → 잿빛/불투명 느낌 감소 */
   background-image: radial-gradient(
     farthest-corner circle at var(--pointer-x,50%) var(--pointer-y,50%),
-    hsla(0,0%,90%,.8) 0%,
-    hsla(0,0%,78%,.1) 25%,
-    hsl(0,0%,0%) 90%
+    rgba(255,255,255,.85) 0%,
+    rgba(255,255,255,.15) 28%,
+    rgba(255,255,255,0) 65%
   );
   background-position:center center;
   background-size:cover;
 
-  mix-blend-mode: luminosity;
-  filter: brightness(.6) contrast(4);
+  /* luminosity → color-dodge 로 컬러 살리고 투명하게 */
+  mix-blend-mode: color-dodge;
+  filter: brightness(1) contrast(1.1) saturate(1.2);
+  opacity:.28; /* 0.18~0.35 */
 }
 
 @media (max-width: 900px){
-  .card .card__shine{ --scanlines-space:.5px; }
+  .card .card__shine{ --scanlines-space:.5px; opacity:.18; }
 }
+
 
 /* ============ GLARE LAYERS (모든 카드) ============ */
 
