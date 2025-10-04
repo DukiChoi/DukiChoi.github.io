@@ -270,13 +270,19 @@ js_file: /assets/js/card-tilt.js
   pointer-events:none;
   z-index: 2;
   mix-blend-mode: screen;
+
+  /* 🔵 완전한 순백 → 살짝 청백으로 조정 + 강도 하향 */
   background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
-              rgba(255,255,255,.40), rgba(255,255,255,0) 55%);
-  opacity: 0;                                       /* 기본은 숨김 */
+              rgba(190,220,255,.32), rgba(255,255,255,0) 55%);
+  opacity: 0;
   transform: translate3d(var(--tx,0), var(--ty,0), 0) scale(1.02);
   transition: opacity .15s ease, transform .15s ease;
 }
-.card:hover::after{ opacity: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .card:hover::after{ opacity: .9; }   /* 데스크톱에서만 */
+}
+.card.is-hover::after{ opacity: .9; }  /* 터치/JS 경로 */
+
 
 /* (옵션) 브라우저별 테셀레이션 아티팩트 완화 */
 .card { outline: 1px solid rgba(0,0,0,0); }
