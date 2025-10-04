@@ -347,13 +347,14 @@ a:hover{ color:#82DFFF; }
   transition: color .15s ease, text-shadow .12s ease;
 }
 
-/* 빛(하이라이트) 중심으로 가까울수록 섀도우를 더 진하게 */
-.card[data-ink] .ink-reactive {
-  /* --ink: 0(멀리) ~ 1(가까이) 값을 JS가 세팅 */
+/* 하이라이트 근접도( --ink: 0~1 )에 따라 살짝 반짝임 */
+.card[data-ink] .card__title,
+.card[data-ink] .card__summary {
+  /* 중앙에 가까울수록 은은한 광택/윤곽 강화 */
   text-shadow:
-    0 1px 1px rgba(0,0,0, calc(.30 + .30 * var(--ink, 0))),
-    0 0 2px rgba(0,0,0, calc(.15 + .25 * var(--ink, 0))),
-    0 0 4px rgba(0,0,0, calc(.00 + .20 * var(--ink, 0)));
+    0 1px 1px rgba(0,0,0, calc(.28 + .20*var(--ink,0))),
+    0 0 4px rgba(255,255,255, calc(.05*var(--ink,0))),
+    0 0 10px rgba(92,201,245,  calc(.12*var(--ink,0))); /* 테마 하늘색 살짝 */
 }
 
 /* details 영역 기본 색 고정(항상 또렷) */
