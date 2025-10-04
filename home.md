@@ -347,31 +347,26 @@ a:hover{ color:#82DFFF; }
    =========================== */
 
 /* 메탈릭 블루 계열 포일 */
+/* 파란 메탈 포일(컬러 존재감↑) */
 .card .foil-layer {
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  pointer-events:none;
-  z-index:2;
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:2;
 
-  /* 은은한 블루-실버 그라디언트 */
   background:
-    linear-gradient(135deg,
-      rgba(180,200,255,0.18) 0%,
-      rgba(220,240,255,0.10) 40%,
-      rgba(150,170,220,0.22) 100%);
-
-  background-size: 180% 180%;
+    radial-gradient(120% 120% at 20% 10%, rgba(80,150,255,0.32), rgba(0,0,0,0) 55%),
+    linear-gradient(135deg, rgba(160,190,255,0.24), rgba(200,220,255,0.12) 40%, rgba(120,160,230,0.30));
+  background-size: 160% 160%, 180% 180%;
   background-position: center;
 
-  mix-blend-mode: screen; 
-  filter: brightness(1.1) contrast(1.1) saturate(1.2);
+  /* 🔵 파란 틴트를 ‘빛으로 더하는’ 합성 */
+  mix-blend-mode: color-dodge;           /* (대안) plus-lighter */
+  filter: brightness(1.18) contrast(1.12) saturate(1.45);
 
-  opacity: .18;
+  opacity: .30;                           /* 존재감 상향 */
   transform: scale(1.02);
-  transition: opacity .2s ease, transform .2s ease;
+  transition: opacity .2s ease, transform .2s ease, filter .2s ease;
 }
-.card.is-hover .foil-layer { opacity:.28; }
+.card.is-hover .foil-layer { opacity:.38; filter: brightness(1.22) contrast(1.12) saturate(1.55); }
+
 
 /* (선택) 아주 옅은 무지개 결을 바닥에 한 겹 – 과하면 빼세요 */
 .card .holo-layer{
