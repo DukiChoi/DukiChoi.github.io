@@ -6,8 +6,14 @@
     - 손가락 움직임으로 마우스 이동·클릭 기능 구현
     - 특정 손동작(OK 사인)으로 키보드/마우스 모드 전환 기능
     - React와 Node.js 기반 키오스크 웹페이지 제작 및 데모
-  participants: 최병근, 최원서, 함재형
-  stack: OpenCV, React, Node.js
+  participants:
+    - name: "DukiChoi"
+      link: "https://github.com/DukiChoi"
+    - name: "WonseoC"
+      link: "https://github.com/Wonseo-C"
+    - name: "HJH"
+      link: "https://github.com/J-Shine"
+  stack: OpenCV, Mediapipe, React, Node.js
   link: https://github.com/DukiChoi/graduation
 
 - name: IMU 센서를 활용한 측위 알고리즘 개발
