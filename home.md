@@ -106,6 +106,8 @@ js_file: /assets/js/card-tilt.js
             </a>
           {% endif %}
         </footer>
+        <div class="card__shine" aria-hidden="true"></div>
+        <div class="card__glare" aria-hidden="true"></div>
       </li>
     {% endfor %}
     </ul>
@@ -126,6 +128,11 @@ js_file: /assets/js/card-tilt.js
   --muted:#9C9C9C;      /* 보조 텍스트 */
   --line:#2C2C2C;       /* 테두리 */
   --accent:#5CC9F5;     /* 포인트 블루 */
+  --violet:#b069ff; 
+  --blue:#5cc9f5; 
+  --green:#47f58a; 
+  --yellow:#ffe66b; 
+  --red:#ff6b6b;
 }
 
 /* ====== Style ====== */
@@ -198,6 +205,17 @@ js_file: /assets/js/card-tilt.js
   transform: translateZ(0);
   transition: box-shadow .2s ease, background .2s ease;
 }
+
+.card__shine,
+.card__glare{
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:1;
+}
+.card__glare{ z-index:2; }
+  
 /* 카드 안의 실제 콘텐츠는 맨 위 + 블렌드 무효화 */
 .card > * {
   position: relative;
@@ -335,6 +353,7 @@ a:hover{ color:#82DFFF; }
 }
 .card:hover .gloss-layer{ opacity:.20; }
 
+  
 /* ----------------------------------------- 글씨 ---------------------------------------- */
 
 /* 빛 근처에서 더 어둡게 보이도록 섀도우 가중(—ink 0~1) */
@@ -379,6 +398,118 @@ a:hover{ color:#82DFFF; }
 }
 .details__list li:hover {
   color: #ff9d00;   /* ✅ 주황색 강조 (제목처럼) */
+}
+
+/* ============ SHINE LAYERS (모든 카드) ============ */
+
+.card .card__shine{
+  --scanlines-space: 1px;
+  --scanlines-light: #666;
+  --scanlines-dark: #000;
+  --bars: 3%;
+  --bar-color: hsla(0,0%,70%,1);
+  --bar-bg: hsla(0,0%,0%,1);
+
+  /* clip-path 필요 없으면 주석 */
+  /* clip-path: inset(0 round 16px); */
+
+  background-image:
+    repeating-linear-gradient(110deg,
+      var(--violet), var(--blue), var(--green), var(--yellow), var(--red),
+      var(--violet), var(--blue), var(--green), var(--yellow), var(--red),
+      var(--violet), var(--blue), var(--green), var(--yellow), var(--red)
+    ),
+    repeating-linear-gradient(90deg,
+      var(--scanlines-dark) calc(var(--scanlines-space)*0), var(--scanlines-dark) calc(var(--scanlines-space)*2),
+      var(--scanlines-light) calc(var(--scanlines-space)*2), var(--scanlines-light) calc(var(--scanlines-space)*4)
+    );
+
+  background-position:
+    calc(((50% - var(--background-x,50%)) * 2.6) + 50%)
+    calc(((50% - var(--background-y,50%)) * 3.5) + 50%),
+    center center;
+
+  background-size: 400% 400%, cover;
+  background-blend-mode: overlay;
+  filter: brightness(1.1) contrast(1.1) saturate(1.2);
+  mix-blend-mode: color-dodge;
+}
+
+.card .card__shine:before{
+  content:"";
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+
+  background-image:
+    repeating-linear-gradient(90deg,
+      var(--bar-bg) calc(var(--bars)*2),
+      var(--bar-color) calc(var(--bars)*3),
+      var(--bar-bg) calc(var(--bars)*3.5),
+      var(--bar-color) calc(var(--bars)*4),
+      var(--bar-bg) calc(var(--bars)*5),
+      var(--bar-bg) calc(var(--bars)*14)
+    ),
+    repeating-linear-gradient(90deg,
+      var(--bar-bg) calc(var(--bars)*2),
+      var(--bar-color) calc(var(--bars)*3),
+      var(--bar-bg) calc(var(--bars)*3.5),
+      var(--bar-color) calc(var(--bars)*4),
+      var(--bar-bg) calc(var(--bars)*5),
+      var(--bar-bg) calc(var(--bars)*10)
+    );
+
+  background-position:
+    calc((((50% - var(--background-x,50%)) * 1.65) + 50%) + ( (var(--background-y,50%) - 50% ) * 0.5))
+    var(--background-x,50%),
+    calc((((50% - var(--background-x,50%)) * -0.9) + 50%) - ( (var(--background-y,50%) - 50% ) * 0.75))
+    var(--background-y,50%);
+
+  background-size: 200% 200%, 200% 200%;
+  background-blend-mode: screen;
+  filter: brightness(1.15) contrast(1.1);
+  mix-blend-mode: hard-light;
+}
+
+.card .card__shine:after{
+  content:"";
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x,50%) var(--pointer-y,50%),
+    hsla(0,0%,90%,.8) 0%,
+    hsla(0,0%,78%,.1) 25%,
+    hsl(0,0%,0%) 90%
+  );
+  background-position:center center;
+  background-size:cover;
+
+  mix-blend-mode: luminosity;
+  filter: brightness(.6) contrast(4);
+}
+
+@media (max-width: 900px){
+  .card .card__shine{ --scanlines-space:.5px; }
+}
+
+/* ============ GLARE LAYERS (모든 카드) ============ */
+
+.card .card__glare{
+  opacity: .8; /* 필요 시 조정 → var(--card-opacity) 제거 */
+  filter: brightness(.8) contrast(1.5);
+  mix-blend-mode: overlay;
+}
+
+.card .card__glare:after{
+  content:"";
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x,50%) var(--pointer-y,50%),
+    hsl(180,100%,95%) 5%,
+    hsla(0,0%,39%,.25) 55%,
+    hsla(0,0%,0%,.36) 110%
+  );
+  mix-blend-mode: overlay;
+  filter: brightness(.6) contrast(3);
 }
 </style>
 
