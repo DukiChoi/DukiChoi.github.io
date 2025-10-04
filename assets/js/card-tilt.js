@@ -126,11 +126,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     card.addEventListener('pointerup', endPointer);
     card.addEventListener('pointercancel', endPointer);
-    // ★ ADD: 포인터가 카드 밖으로 나가면(모바일에서도 종종 발생) 안전 리셋
-    card.addEventListener('pointerleave', resetVars);
-
-    // ★ ADD: 스크롤/탭 전환 등 상호작용 중단 상황에서도 안전 리셋
-    window.addEventListener('scroll', resetVars, { passive: true });
+    // pointerleave로 리셋하던 부분없애고
+    card.addEventListener('pointerleave', () => {
+      // 터치 드래그가 진행 중이면 무시 (손가락이 살짝 밖으로 나가도 유지)
+      if (isTouch && activePointerId !== null) return;
+      resetVars();
+    });
+    window.addEventListener('scroll', () => {
+      // 터치 드래그 중엔 스크롤 리셋 금지 (pointercancel 유발 방지)
+      if (isTouch && activePointerId !== null) return;
+      resetVars();
+    }, { passive: true });
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) resetVars();
     });
