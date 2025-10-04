@@ -286,36 +286,33 @@ a:hover{ color:#82DFFF; }
 /* ===========================
    HOLO 레이어 (포켓몬 카드 느낌)
    =========================== */
-/* 비닐 반사 레이어: SVG 스페큘러 하이라이트 */
+
+/* 비닐 반사 레이어 (핵심) */
 .card .foil-layer{
-  position:absolute; inset:-6%;  /* 모서리 tilt 시 여유 */
-  border-radius:inherit; z-index:2; pointer-events:none;
-  background:#fff;                 /* 스페큘러 입력용 */
-  filter: url(#foilSpec);
-  mix-blend-mode: screen;          /* 어두운 카드 위 반사효과 */
-  opacity:.18;                     /* 기본은 은은하게 */
+  position:absolute; inset:-6%; border-radius:inherit; z-index:2; pointer-events:none;
+  background:#fff;                 /* Specular 입력 */
+  filter: url(#foilIri);
+  mix-blend-mode: screen;          /* 어두운 카드 위에서 반사처럼 보이게 */
+  opacity:.16;                     /* 기본 은은함 */
   transition: opacity .12s ease, transform .12s ease;
 }
+.card:hover .foil-layer{ opacity:.22; }
 
-/* hover 시 아주 살짝 강화 (취향껏) */
-.card:hover .foil-layer{ opacity:.24; }
-
-/* (선택) 아주 옅은 무지개 결을 바닥에 한 겹 – 과하면 빼세요 */
+/* (선택) 아주 옅은 간섭 무늬: 과하면 제거해도 됨 */
 .card .holo-layer{
-  position:absolute; inset:0; z-index:1; pointer-events:none; border-radius:inherit;
+  position:absolute; inset:0; border-radius:inherit; z-index:1; pointer-events:none;
   mix-blend-mode: screen;
   background:
     repeating-conic-gradient(from 0deg at 50% 50%,
-      rgba(255,0,80,.035) 0 12deg,
-      rgba(255,157,0,.035) 12deg 24deg,
-      rgba(255,230,0,.035) 24deg 36deg,
-      rgba(60,255,0,.035) 36deg 48deg,
-      rgba(0,255,213,.035) 48deg 60deg,
-      rgba(0,123,255,.035) 60deg 72deg,
-      rgba(154,0,255,.035) 72deg 84deg),
-    linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%);
-  filter: saturate(1.05) brightness(1.02);
-  opacity:.14;
+      rgba(255, 0, 80, .03) 0 12deg,
+      rgba(255,157, 0, .03) 12deg 24deg,
+      rgba(255,230, 0, .03) 24deg 36deg,
+      rgba( 60,255, 0, .03) 36deg 48deg,
+      rgba(  0,255,213,.03) 48deg 60deg,
+      rgba(  0,123,255,.03) 60deg 72deg,
+      rgba(154,  0,255,.03) 72deg 84deg),
+    linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,0) 40%);
+  opacity:.10;                     /* 정말 살짝만 */
   transform: rotate(8deg) scale(1.03);
 }
 
@@ -335,23 +332,29 @@ a:hover{ color:#82DFFF; }
 
 <!-- inline defs: 페이지에 1번만 -->
 <svg width="0" height="0" style="position:absolute">
+  <!-- 매끈한 비닐 반사: 저주파 + 저옥타브, 날카로운 스펙큘러 -->
   <filter id="foilSpec" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-    <!-- 거친 표면(노이즈) -->
-    <feTurbulence type="fractalNoise" baseFrequency="0.9 0.6" numOctaves="2" seed="7" stitchTiles="stitch" result="noise"/>
-    <!-- 노멀 비슷하게 변환(거친 법선 느낌) -->
-    <feGaussianBlur in="noise" stdDeviation="0.7" result="bump"/>
-    <!-- 스페큘러 하이라이트(점광원) -->
-    <feSpecularLighting in="bump" surfaceScale="6" specularConstant="0.9" specularExponent="18" lighting-color="#ffffff" result="spec">
-      <fePointLight id="foilLight" x="0" y="0" z="120"/>
+    <!-- 표면 굴곡: 큰 물결(저주파), 옥타브 1 → 알갱이(gainy) 제거 -->
+    <feTurbulence
+      type="turbulence"
+      baseFrequency="0.015 0.12"
+      numOctaves="1"
+      seed="3"
+      result="warp" />
+    <!-- 너무 날카로운 부분을 살짝 부드럽게 -->
+    <feGaussianBlur in="warp" stdDeviation="0.6" result="bump" />
+    <!-- 비닐 스펙큘러 하이라이트 (점광원) -->
+    <feSpecularLighting
+      in="bump"
+      surfaceScale="3"
+      specularConstant="0.75"
+      specularExponent="24"
+      lighting-color="#ffffff"
+      result="spec">
+      <fePointLight id="foilLight" x="0" y="0" z="160"/>
     </feSpecularLighting>
-    <!-- 반사 결과를 약간 날카롭게 -->
-    <feComposite in="spec" in2="bump" operator="arithmetic" k1="0" k2="1.1" k3="0" k4="0" result="spec2"/>
-    <!-- 살짝 색감입히기(은은한 무지개) -->
-    <feColorMatrix in="spec2" type="matrix"
-      values="
-        1 0 0 0 0
-        0 1 0 0 0
-        0 0 1 0 0
-        0 0 0 1 0" result="final"/>
+    <!-- 결과 합성 (필요시 다른 소스와 합칠 때 변경 가능) -->
+    <feComposite in="spec" in2="SourceAlpha" operator="over" result="final"/>
   </filter>
 </svg>
+
