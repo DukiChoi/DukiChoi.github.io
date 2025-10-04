@@ -2,18 +2,28 @@
 document.addEventListener('DOMContentLoaded', () => {
   const MAX_ROT = 10;   // 최대 기울기(deg)
   const SCALE   = 1.1;  // 확대 배율
+  const IDLE_MS = 140;  // ★ ADD: 입력(터치/포인터) 정지 시 자동 원복 대기 시간(ms)
 
   document.querySelectorAll('.card').forEach(card => {
     let rect = card.getBoundingClientRect();
     let rafId = null;
     let lastX = 0, lastY = 0;
     let activePointerId = null; // ← 터치/펜 추적용
+    let idleTimer = null;       // ★ ADD: 유휴 타이머
 
     // 성능: 레이아웃 측정은 진입/리사이즈 시에만
     const recalc = () => { rect = card.getBoundingClientRect(); };
     window.addEventListener('resize', recalc);
-
+    const clearIdle = () => {              // ★ ADD
+      if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+    };
+    const scheduleIdleReset = () => {      // ★ ADD
+      clearIdle();
+      idleTimer = setTimeout(() => { resetVars(); }, IDLE_MS);
+    };
+    
     const resetVars = () => {
+      clearIdle(); // ★ ADD: 리셋 시 유휴 타이머도 함께 정리
       card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
       card.style.zIndex = 1;
       card.style.setProperty('--tx', '0px');
@@ -22,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.style.setProperty('--my', '50%');
       card.style.setProperty('--shine-angle', '0deg');
       card.classList.remove('is-hover'); // ← 터치 대체 hover 해제
+      activePointerId = null;            // ★ ADD: 포인터 상태도 정리
     };
 
     const update = () => {
@@ -87,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // (옵션) 탭 순간 반짝임 강화
       card.style.setProperty('--gloss-boost', '1');
       setTimeout(() => card.style.setProperty('--gloss-boost', '0'), 160);
+      scheduleIdleReset(); // ★ ADD: 터치 시작 후 입력 멈추면 자동 리셋
     });
 
     const endPointer = (e) => {
@@ -97,5 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     card.addEventListener('pointerup', endPointer);
     card.addEventListener('pointercancel', endPointer);
+    // ★ ADD: 포인터가 카드 밖으로 나가면(모바일에서도 종종 발생) 안전 리셋
+    card.addEventListener('pointerleave', resetVars);
+
+    // ★ ADD: 스크롤/탭 전환 등 상호작용 중단 상황에서도 안전 리셋
+    window.addEventListener('scroll', resetVars, { passive: true });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) resetVars();
+    });
+    window.addEventListener('blur', resetVars)
   });
 });
