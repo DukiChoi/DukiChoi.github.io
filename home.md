@@ -364,8 +364,8 @@ a:hover{ color:#82DFFF; }
 }
 
 /* summary hover 시 색상 변경 */
-.details summary:hover {
-  color: #5CC9F5;   /* ✅ 테마 하늘색 */
+.details > summary:hover {
+  color: #5CC9F5;
   border-color: #5CC9F5;
 }
 
