@@ -284,7 +284,7 @@ js_file: /assets/js/card-tilt.js
 
 
 /* (옵션) 브라우저별 테셀레이션 아티팩트 완화 */
-.card { outline: 1px solid rgba(0,0,0,0); }
+.card { outline: 1px solid rgba(0,0,0,0);  touch-action: none;}
 
 
 
