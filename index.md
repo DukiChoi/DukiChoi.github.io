@@ -8,7 +8,7 @@ title: DukiChoi
 
 <section class="hero">
   <div class="hero__text">
-    <h1>DukiChoi</h1>
+    <h1>About DukiChoi</h1>
     <p class="intro">안녕하세요. 개발자 <strong>DukiChoi</strong>입니다. 임베디드 시스템, IoT, 바이오 신호처리 기반 연구(Embedded · XR/VR · IMU/BLE · ML)와 다양한 임베디드 프로젝트를 수행해 왔습니다.</p>
   </div>
   <!-- <div class="hero__research badge"> -->
