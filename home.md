@@ -195,12 +195,17 @@ js_file: /assets/js/card-tilt.js
 }
 /* 어두운 카드 위에 아주 옅은 실버 금속 결 */
 .card{
-  touch-action: pan-y; /* 세로 스크롤은 유지, 가로 제스처는 카드가 받음 */
+  touch-action: pan-y;
   position: relative;
   overflow: hidden;
   border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px;
-  background: var(--card); /* 어두운 배경 유지: screen 블렌드가 살아남 */
-  /* 금속 결: 얇은 띠+노이즈로 살짝만 */
+
+  /* 🔵 베이스에 아주 옅은 블루 기운 추가 */
+  background:
+    linear-gradient(180deg, rgba(40,60,90,0.10), rgba(0,0,0,0) 60%),
+    var(--card);
+
+  /* 금속 결 라인(아주 얕게) */
   background-image:
     linear-gradient(180deg,
       rgba(255,255,255,0.06) 0%,
@@ -211,15 +216,17 @@ js_file: /assets/js/card-tilt.js
       rgba(255,255,255,0.03) 0 2px,
       rgba(0,0,0,0.03) 2px 4px);
   background-blend-mode: soft-light, normal;
+
   box-shadow: 0 1px 0 rgba(0,0,0,.15);
   display:flex; flex-direction:column; gap:.75rem;
 
-  isolation: isolate;             /* ✅ 블렌딩 누수 방지 (중요) */
+  isolation: isolate;
   backface-visibility: hidden;
   will-change: transform;
   transform: translateZ(0);
   transition: box-shadow .2s ease, background .2s ease;
 }
+
 
 /* 기존 :hover 의존 코드를 .is-hover 로도 동작하게 */
 .card.is-hover { background: var(--card-raise); box-shadow: 0 14px 28px rgba(0,0,0,.38); z-index:10; }
