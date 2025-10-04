@@ -2,7 +2,7 @@
 layout: default
 permalink: /
 permalink_name: /home
-title: DukiChoi
+title: Home
 
 ---
 
