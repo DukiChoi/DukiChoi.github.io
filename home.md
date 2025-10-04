@@ -187,10 +187,10 @@ js_file: /assets/js/card-tilt.js
 }
   
 /* 모바일에선 조금 줄이기 (선택) */
-@media (max-width: 640px){
-  .cards{
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 28px;
+/* 더 강하게 고정하고 싶으면 px 단위 */
+@media (max-width: 640px) {
+  .card__title {
+    font-size: 22px;  /* ← 모바일에서도 항상 22px 고정 */
   }
 }
 /* 어두운 카드 위에 아주 옅은 실버 금속 결 */
