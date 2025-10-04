@@ -14,7 +14,7 @@ detail_image: assets/강아지 부르르르.gif
 ## Projects & Research
 
 <ul class="cards">
-{% for p in site.projects %}
+{% for p in site.data.projects %}
   <li class="card">
     <h3>
       {% if p.link %}
