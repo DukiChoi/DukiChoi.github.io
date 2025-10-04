@@ -2,7 +2,7 @@
 layout: my_cv
 permalink: /cv
 permalink_name: /CV
-title: cv
+title: Curriculum Vitae
 ---
 
 <iframe 
