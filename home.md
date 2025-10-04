@@ -339,7 +339,7 @@ a:hover{ color:#82DFFF; }
    HOLO 레이어 (포켓몬 카드 느낌)
    =========================== */
 
-/* 비닐 + 무지개 반사 레이어 */
+/* 메탈릭 블루 계열 포일 */
 .card .foil-layer {
   position:absolute;
   inset:0;
@@ -347,31 +347,24 @@ a:hover{ color:#82DFFF; }
   pointer-events:none;
   z-index:2;
 
-  /* 대각선으로 무지개 흐르게 */
+  /* 은은한 블루-실버 그라디언트 */
   background:
-    linear-gradient(120deg,
-      rgba(255,0,64,0.25) 0%,
-      rgba(255,160,0,0.25) 15%,
-      rgba(255,235,0,0.25) 30%,
-      rgba(0,255,128,0.25) 50%,
-      rgba(0,200,255,0.25) 70%,
-      rgba(160,0,255,0.25) 85%,
-      rgba(255,0,64,0.25) 100%);
+    linear-gradient(135deg,
+      rgba(180,200,255,0.18) 0%,
+      rgba(220,240,255,0.10) 40%,
+      rgba(150,170,220,0.22) 100%);
 
-  background-size: 200% 200%;
+  background-size: 180% 180%;
   background-position: center;
 
-  /* blend 전략 수정 */
-  mix-blend-mode: color-dodge;  /* screen → color-dodge (회색 제거) */
-  filter: brightness(1.1) contrast(1.2) saturate(1.4);
+  mix-blend-mode: screen; 
+  filter: brightness(1.1) contrast(1.1) saturate(1.2);
 
-  opacity: .15;
-  transform: rotate(0deg) scale(1.02);
+  opacity: .18;
+  transform: scale(1.02);
   transition: opacity .2s ease, transform .2s ease;
 }
-.card:hover .foil-layer {
-  opacity:.28;
-}
+.card.is-hover .foil-layer { opacity:.28; }
 
 /* (선택) 아주 옅은 무지개 결을 바닥에 한 겹 – 과하면 빼세요 */
 .card .holo-layer{
@@ -456,41 +449,40 @@ a:hover{ color:#82DFFF; }
 
 /* 아주 은은한 무지개 오로라 (포켓몬 카드 느낌, 과하지 않게) */
 /* 은빛+무지개 결 (아주 옅게) */
-.card .card__shine{
-  position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:1;
-  mix-blend-mode: overlay; /* screen 대신 overlay → 따뜻한 색 살림 */
-
-  /* 파스텔 오로라 */
+/* 은빛 광택 (metal shine) */
+.card .card__shine {
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  z-index:1;
+  mix-blend-mode: overlay;
   background: conic-gradient(
     from var(--shine-angle, 0deg) at var(--mx,50%) var(--my,50%),
-    rgba(255,230,200,0.12) 0%,    /* warm champagne (더 진하게) */
-    rgba(255,210,240,0.12) 20%,   /* pink */
-    rgba(200,240,255,0.10) 40%,   /* sky */
-    rgba(200,255,220,0.10) 60%,   /* mint */
-    rgba(230,210,255,0.12) 80%,   /* lavender */
-    rgba(255,230,200,0.12) 100%   /* 돌아올 때 champagne */
+    rgba(200,220,255,0.15) 0%,
+    rgba(240,245,255,0.08) 40%,
+    rgba(180,200,230,0.18) 80%,
+    rgba(200,220,255,0.15) 100%
   );
-
-  opacity:.12;
-  filter: blur(10px) saturate(0.9) brightness(1.05);
+  opacity:.15;
+  filter: blur(10px) brightness(1.1);
   transition: opacity .18s ease, filter .18s ease;
 }
-.card:hover .card__shine{ opacity:.11; filter: blur(10px) saturate(0.8) brightness(1.08); }
+.card.is-hover .card__shine {
+  opacity:.22; 
+  filter: blur(10px) brightness(1.2);
+}
 
-
-/* 반짝 하이라이트(스팟)는 이미 있다면 살짝만 */
-.card .card__glare{
-  position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:2;
+/* 반짝 스팟 하이라이트 */
+.card .card__glare {
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  z-index:2;
   mix-blend-mode: screen;
   background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
-              rgba(255,255,255,.22) 0%,
-              rgba(255,255,255,.10) 22%,
-              rgba(255,255,255,0) 48%);
+              rgba(255,255,255,.28) 0%,
+              rgba(200,220,255,.15) 20%,
+              rgba(255,255,255,0) 50%);
   opacity:.18;
   transition: opacity .15s ease, transform .12s ease;
 }
-.card:hover .card__glare{ opacity:.26; }
-
+.card.is-hover .card__glare { opacity:.30; }
 
 </style>
 
