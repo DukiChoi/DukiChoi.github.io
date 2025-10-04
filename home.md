@@ -167,13 +167,15 @@ title: Home
 
 .section-sep{ margin:1.25rem 0 1rem; border:0; border-top:1px solid var(--line); }
 
-/* ====== Cards grid ====== */
+/* ====== Cards grid (카드 모션 관리) ====== */
 .cards{
   list-style:none; padding:0; margin:0;
   display:grid; gap:18px;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
+
 .card{
+  position: relative;  /* 반짝임 레이어 올리려면 필요 */
   border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px;
   background:var(--card); box-shadow: 0 1px 0 rgba(0,0,0,.15);
   display:flex; flex-direction:column; gap:.75rem;
@@ -182,15 +184,39 @@ title: Home
   transition: transform .25s cubic-bezier(0.4, 0, 0.2, 1),
               box-shadow .25s ease,
               background .25s ease;
+  transform-style: preserve-3d; 
+  perspective: 1000px; /* 3D 효과 */
 }
-.card:hover{
-  /* 살짝 확대 + 위로 떠오름 */
-  transform: scale(1.04) translateY(-6px);
 
-  /* hover 시 더 강한 그림자 */
+.card:hover{
+  /* hover 상태 기본값 (마우스 이벤트로 override됨) */
+  transform: scale(1.05);
   background:var(--card-raise);
   box-shadow: 0 16px 32px rgba(0,0,0,.45);
 }
+
+/* 반짝임 레이어 */
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius:16px;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0.35) 0%,
+    rgba(255,255,255,0.1) 40%,
+    rgba(255,255,255,0) 80%
+  );
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0; /* 기본은 숨김 */
+  transition: opacity .3s ease, transform .3s ease;
+}
+.card:hover::after {
+  opacity: 1;
+}
+
 
 
 /* ====== Card header ====== */
