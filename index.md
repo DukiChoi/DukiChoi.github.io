@@ -106,10 +106,14 @@ title: DukiChoi
 .btn {
   display:inline-flex; align-items:center; gap:.5rem;
   padding:.5rem .8rem; border:1px solid #e3e3e3; border-radius:.6rem;
-  text-decoration:none; font-size:.95rem;
+  text-decoration:none; font-size:.95rem; transition:all .2s ease;
 }
+.btn:hover { background:#f5f5f5; }
 .btn--primary { border-color:#222; background:#111; color:#fff; }
+.btn--primary:hover { background:#222; color:#fff; }
 .btn--ghost { border-color:#ddd; color:inherit; }
+.btn--github { border-color:#333; background:#333; color:#fff; }
+.btn--github:hover { background:#000; }
 .btn i { font-size:1rem; }
 .section-sep { margin: 1.25rem 0 1rem; border:0; border-top:1px solid #eee; }
 
@@ -123,6 +127,11 @@ title: DukiChoi
   border:1px solid #eee; border-radius:14px; padding:14px;
   background:#fff; box-shadow: 0 1px 0 rgba(0,0,0,.02);
   display:flex; flex-direction:column; gap:.6rem;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
 }
 .card__head{ display:flex; gap:.5rem; align-items:flex-start; justify-content:space-between; }
 .card__title{ font-size:1.05rem; margin:0; }
@@ -148,9 +157,12 @@ title: DukiChoi
   border:1px dashed #e0e0e0; background:#fcfcfc; font-weight:600;
 }
 .details[open] summary{ background:#f7f7f7; }
+.details summary i { transition: transform .2s ease; }
+.details[open] summary i { transform: rotate(90deg); }
 .details__list{ margin:.4rem 0 0 .8rem; }
 .details__list li{ margin:.2rem 0; }
 
 /* ====== Card foot ====== */
 .card__foot{ margin-top:.2rem; display:flex; gap:.5rem; flex-wrap:wrap; }
 </style>
+
