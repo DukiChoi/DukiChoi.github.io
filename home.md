@@ -183,15 +183,18 @@ js_file: /assets/js/card-tilt.js
 .cards{
   list-style:none; padding:0; margin:0;
   display:grid; gap:40px;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(2, minmax(400px, 1fr));
   justify-content: center; /* 전체 그리드 자체를 가운데로 */
   overflow: visible;                /* 확대 시 잘림 방지 */
 }
+  
 /* 모바일에선 조금 줄이기 (선택) */
 @media (max-width: 640px){
-  .cards{ gap: 28px; }
+  .cards{
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+  }
 }
-
 .card{
   position: relative;
   overflow: hidden;
