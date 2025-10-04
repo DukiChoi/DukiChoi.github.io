@@ -1,7 +1,7 @@
 // assets/js/card-tilt.js
 document.addEventListener('DOMContentLoaded', () => {
   const MAX_ROT = 10;   // 최대 기울기(deg)
-  const SCALE   = 1.2;  // 확대 배율
+  const SCALE   = 1.1;  // 확대 배율
 
   document.querySelectorAll('.card').forEach(card => {
     let rect = card.getBoundingClientRect();
