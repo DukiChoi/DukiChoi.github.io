@@ -356,29 +356,28 @@ a:hover{ color:#82DFFF; }
 
 <!-- inline defs: 페이지에 1번만 -->
 <svg width="0" height="0" style="position:absolute">
-  <!-- 매끈한 비닐 반사: 저주파 + 저옥타브, 날카로운 스펙큘러 -->
-  <filter id="foilSpec" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-    <!-- 표면 굴곡: 큰 물결(저주파), 옥타브 1 → 알갱이(gainy) 제거 -->
-    <feTurbulence
-      type="turbulence"
-      baseFrequency="0.015 0.12"
-      numOctaves="1"
-      seed="3"
-      result="warp" />
-    <!-- 너무 날카로운 부분을 살짝 부드럽게 -->
-    <feGaussianBlur in="warp" stdDeviation="0.6" result="bump" />
-    <!-- 비닐 스펙큘러 하이라이트 (점광원) -->
-    <feSpecularLighting
-      in="bump"
-      surfaceScale="3"
-      specularConstant="0.75"
-      specularExponent="24"
-      lighting-color="#ffffff"
-      result="spec">
+  <!-- 좌표계를 픽셀 기준으로 고정 -->
+  <filter id="foilSpec"
+          x="0" y="0" width="100%" height="100%"
+          filterUnits="userSpaceOnUse"       <!-- ✅ 픽셀 좌표 -->
+          primitiveUnits="userSpaceOnUse"    <!-- ✅ 픽셀 좌표 -->
+          color-interpolation-filters="sRGB">
+    <!-- 매끈한 비닐: 저주파/저옥타브 -->
+    <feTurbulence type="turbulence"
+                  baseFrequency="0.015 0.12"
+                  numOctaves="1"
+                  seed="3"
+                  result="warp"/>
+    <feGaussianBlur in="warp" stdDeviation="0.6" result="bump"/>
+    <feSpecularLighting in="bump"
+                        surfaceScale="3"
+                        specularConstant="0.75"
+                        specularExponent="24"
+                        lighting-color="#ffffff"
+                        result="spec">
+      <!-- 이 x/y를 JS에서 카드 내부 픽셀로 업데이트 -->
       <fePointLight id="foilLight" x="0" y="0" z="160"/>
     </feSpecularLighting>
-    <!-- 결과 합성 (필요시 다른 소스와 합칠 때 변경 가능) -->
     <feComposite in="spec" in2="SourceAlpha" operator="over" result="final"/>
   </filter>
 </svg>
-
