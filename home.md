@@ -113,9 +113,11 @@ js_file: /assets/js/card-tilt.js
   </div>
 </section>
 
+
+
+
 <style>
-
-
+  
 /* ====== Color System (다크 + 블루 포인트) ====== */
 :root{
   --bg:#121212;         /* 페이지 전체 배경 */
@@ -168,56 +170,40 @@ js_file: /assets/js/card-tilt.js
 .section-sep{ margin:1.25rem 0 1rem; border:0; border-top:1px solid var(--line); }
 
 /* ====== Cards grid (카드 모션 관리) ====== */
-.cards{
-  list-style:none; padding:0; margin:0;
-  display:grid; gap:18px;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-}
+/* 격자 잘림 방지 */
+.cards { overflow: visible; }
 
+/* 합성 최적화 */
 .card{
-  position: relative;  /* 반짝임 레이어 올리려면 필요 */
-  border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px;
-  background:var(--card); box-shadow: 0 1px 0 rgba(0,0,0,.15);
-  display:flex; flex-direction:column; gap:.75rem;
-
-  /* 애니메이션 강화 */
-  transition: transform .25s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow .25s ease,
-              background .25s ease;
-  transform-style: preserve-3d; 
-  perspective: 1000px; /* 3D 효과 */
+  position: relative;
+  will-change: transform;
+  transform: translateZ(0); /* GPU 레이어 */
 }
 
-.card:hover {
-  /* transform: scale(1.5); */
-  background:var(--card-raise);
-  box-shadow: 0 16px 32px rgba(0,0,0,.45);
-
-  position: relative;   /* z-index 먹히게 */
-  z-index: 10;          /* hover된 카드가 위로 올라옴 */
+/* hover 시 그림자만: transform은 JS가 조절 */
+.card:hover{
+  background: var(--card-raise);
+  box-shadow: 0 14px 28px rgba(0,0,0,.38);
+  z-index: 10;
 }
 
-/* 반짝임 레이어 */
-.card::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  border-radius:16px;
-  background: linear-gradient(
-    120deg,
-    rgba(255,255,255,0.35) 0%,
-    rgba(255,255,255,0.1) 40%,
-    rgba(255,255,255,0) 80%
-  );
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: 0; /* 기본은 숨김 */
-  transition: opacity .3s ease, transform .3s ease;
+/* 반짝임 레이어: 이동은 transform으로 (페인트 X) */
+.card::after{
+  content:"";
+  position:absolute; inset:-20%; /* 여유 영역(움직일 때 가장자리 안보이게) */
+  border-radius:22px;
+  pointer-events:none;
+  mix-blend-mode:screen;
+  /* 고정된 그라데언트 텍스처 */
+  background: radial-gradient(circle at 30% 30%,
+    rgba(255,255,255,0.28) 0%,
+    rgba(255,255,255,0.08) 35%,
+    rgba(255,255,255,0) 70%);
+  opacity:0; transition: opacity .15s ease, transform .15s ease;
+  transform: translate3d(var(--tx,0), var(--ty,0), 0) rotate(20deg) scale(1.05);
 }
-.card:hover::after {
-  opacity: 1;
-}
+.card:hover::after{ opacity:1; }
+
 
 
 
