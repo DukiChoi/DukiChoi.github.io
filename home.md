@@ -178,52 +178,55 @@ js_file: /assets/js/card-tilt.js
   list-style:none; padding:0; margin:0;
   display:grid; gap:18px;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  overflow: visible;                 /* 확대 시 잘림 방지 */
+  overflow: visible;                /* 확대 시 잘림 방지 */
 }
 
 .card{
-  position: relative;                /* 반짝임 레이어 기준점 */
+  position: relative;
+  overflow: hidden;                 /* ✅ 카드 밖으로 새는 효과 차단 (핵심) */
   border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px;
   background:var(--card); box-shadow: 0 1px 0 rgba(0,0,0,.15);
   display:flex; flex-direction:column; gap:.75rem;
 
-  /* 합성 단계에서 처리되도록 최적화 */
+  backface-visibility: hidden;      /* ✅ 회전시 검은 면/틸팅 아티팩트 완화 */
   will-change: transform;
-  transform: translateZ(0);          /* GPU 레이어 승격 */
+  transform: translateZ(0);
 
-  /* 애니메이션: transform만 주로 변경됨 */
   transition:
     box-shadow .2s ease,
-    background .2s ease;             /* transform은 JS에서 제어 (충돌 방지) */
+    background .2s ease;            /* transform은 JS에서 제어 */
 }
 
-.card:hover {
-  /* transform 은 JS가 기울기/확대를 실시간 제어하므로 쓰지 않음 */
-  background:var(--card-raise);
-  box-shadow: 0 14px 28px rgba(0,0,0,.38);  /* 너무 큰 그림자 → 비용↓ */
-  z-index: 10;                      /* 겹침 문제 방지 */
+.card:hover{
+  background: var(--card-raise);
+  box-shadow: 0 14px 28px rgba(0,0,0,.38);
+  z-index: 10;
 }
 
-/* 반짝임 레이어 (repaint 줄이기: transform으로만 이동) */
-.card::after {
-  content: "";
-  position: absolute;
-  inset: -16%;                       /* 이동 여유; 가장자리 안 보이게 */
-  border-radius: 22px;
-  pointer-events: none;
+/* 반짝임 레이어 (카드 내부로 클립) */
+.card::after{
+  content:"";
+  position:absolute;
+  inset: 0;                         /* ✅ 음수 inset 제거 — 바깥 블렌딩 방지 */
+  border-radius: inherit;           /* ✅ 카드와 동일 곡률 */
+  pointer-events:none;
   mix-blend-mode: screen;
-  /* 고정 텍스처: background를 매번 바꾸지 말고 transform만 이동 */
+
+  /* 고정 텍스처: transform만 변경 (repaint ↓) */
   background: radial-gradient(
     circle at 30% 30%,
-    rgba(255,255,255,0.28) 0%,
-    rgba(255,255,255,0.10) 35%,
+    rgba(255,255,255,0.24) 0%,
+    rgba(255,255,255,0.10) 36%,
     rgba(255,255,255,0)   70%
   );
-  opacity: 0;
+  opacity:0;
   transition: opacity .15s ease, transform .15s ease;
-  transform: translate3d(var(--tx,0), var(--ty,0), 0) rotate(18deg) scale(1.06);
+  transform: translate3d(var(--tx,0), var(--ty,0), 0) scale(1.02);
 }
-.card:hover::after { opacity: 1; }
+.card:hover::after{ opacity:1; }
+
+/* (옵션) 브라우저별 테셀레이션 아티팩트 완화 */
+.card { outline: 1px solid rgba(0,0,0,0); }
 
 
 
