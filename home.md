@@ -169,7 +169,10 @@ js_file: /assets/js/card-tilt.js
 
 .section-sep{ margin:1.25rem 0 1rem; border:0; border-top:1px solid var(--line); }
 
-  
+
+
+
+/* ========================================================================================================*/
 /* ====== Cards grid (카드 모션 관리) ====== */
 .cards{
   list-style:none; padding:0; margin:0;
@@ -184,19 +187,20 @@ js_file: /assets/js/card-tilt.js
 
 .card{
   position: relative;
-  overflow: hidden;                 /* ✅ 카드 밖으로 새는 효과 차단 (핵심) */
+  overflow: hidden;
   border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px;
-  background:var(--card); box-shadow: 0 1px 0 rgba(0,0,0,.15);
+  background: var(--card); /* 어두운 배경 유지: screen 블렌드가 살아남 */
+  box-shadow: 0 1px 0 rgba(0,0,0,.15);
   display:flex; flex-direction:column; gap:.75rem;
 
-  backface-visibility: hidden;      /* ✅ 회전시 검은 면/틸팅 아티팩트 완화 */
+  isolation: isolate;             /* ✅ 블렌딩 누수 방지 (중요) */
+  backface-visibility: hidden;
   will-change: transform;
   transform: translateZ(0);
-
-  transition:
-    box-shadow .2s ease,
-    background .2s ease;            /* transform은 JS에서 제어 */
+  transition: box-shadow .2s ease, background .2s ease;
 }
+/* 카드 안의 실제 콘텐츠는 맨 위 */
+.card > * { position: relative; z-index: 3; }
 
 .card:hover{
   background: var(--card-raise);
@@ -204,75 +208,54 @@ js_file: /assets/js/card-tilt.js
   z-index: 10;
 }
 
-/* 반짝임 레이어 (카드 내부로 클립) */
+/* ::after = 마우스 따라다니는 스펙큘러 하이라이트 (상위 레이어) */
 .card::after{
   content:"";
-  position:absolute;
-  inset: 0;                         /* ✅ 음수 inset 제거 — 바깥 블렌딩 방지 */
-  border-radius: inherit;           /* ✅ 카드와 동일 곡률 */
+  position:absolute; inset:0; border-radius: inherit;
   pointer-events:none;
+  z-index: 2;
   mix-blend-mode: screen;
-
-  /* 고정 텍스처: transform만 변경 (repaint ↓) */
-  background: radial-gradient(
-    circle at 30% 30%,
-    rgba(255,255,255,0.24) 0%,
-    rgba(255,255,255,0.10) 36%,
-    rgba(255,255,255,0)   70%
-  );
-  opacity:0;
-  transition: opacity .15s ease, transform .15s ease;
+  background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
+              rgba(255,255,255,.40), rgba(255,255,255,0) 55%);
+  opacity: 0;                                       /* 기본은 숨김 */
   transform: translate3d(var(--tx,0), var(--ty,0), 0) scale(1.02);
+  transition: opacity .15s ease, transform .15s ease;
 }
-.card:hover::after{ opacity:1; }
+.card:hover::after{ opacity: 1; }
 
 /* (옵션) 브라우저별 테셀레이션 아티팩트 완화 */
 .card { outline: 1px solid rgba(0,0,0,0); }
+
 
 /* ===========================
    HOLO 레이어 (포켓몬 카드 느낌)
    =========================== */
 
-/* === HOLO: 기본 무지개 결 === */
-.card.card--holo::before {
+/* ::before = 무지개 홀로(항상 보임, 콘텐츠 아래) */
+.card.card--holo::before{
   content:"";
-  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  mix-blend-mode:screen;
+  position:absolute; inset:0; border-radius:inherit;
+  pointer-events:none;
+  z-index:1;
+  mix-blend-mode: screen;
+  /* 무지개 + 사선 쉬엔 */
   background:
     conic-gradient(from 0deg at 50% 50%,
       #ff0040, #ff9d00, #ffe600, #3cff00,
       #00ffd5, #007bff, #9a00ff, #ff0040),
     linear-gradient(135deg, rgba(255,255,255,.25), rgba(255,255,255,0) 60%);
   background-size: 200% 200%, 150% 150%;
-  filter: saturate(1.3) brightness(1.05);
-  opacity: .38; /* 기본에도 은은하게 보임 */
-  transform: rotate(5deg) scale(1.04);  /* ✅ 기본 사선 각도 */
+  filter: saturate(1.35) brightness(1.06);
+  opacity: .42;                         /* ← 기본에도 확실히 보이게 */
+  transform: rotate(5deg) scale(1.04);  /* 기본 사선 느낌 */
   transition: opacity .18s ease, filter .18s ease;
-  animation: holo-shift 12s linear infinite; /* 무늬가 천천히 흐름 */
+  animation: holo-shift 12s linear infinite; /* 은은하게 흐름 */
 }
 
-/* === HOLO: 스펙큘러 하이라이트 === */
-.card.card--holo::after {
-  content:"";
-  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  mix-blend-mode:screen;
-  background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
-              rgba(255,255,255,.4), rgba(255,255,255,0) 55%);
-  opacity: .18; /* 기본 은은 */
-  transform: scale(1.02);
-  transition: opacity .15s ease, transform .15s ease;
-}
+/* hover 시 무지개 강화 */
+.card.card--holo:hover::before{ opacity:.68; filter:saturate(1.55) brightness(1.10); }
 
-/* === Hover 시 강화 === */
-.card.card--holo:hover::before {
-  opacity:.65; filter:saturate(1.55) brightness(1.12);
-}
-.card.card--holo:hover::after {
-  opacity:.35;
-}
-
-/* === 무지개 결 흐름 애니메이션 === */
-@keyframes holo-shift {
+@keyframes holo-shift{
   0%   { background-position: 0% 0%,     0% 0%; }
   100% { background-position: 200% 200%, 120% 120%; }
 }
