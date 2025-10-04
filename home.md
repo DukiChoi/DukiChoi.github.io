@@ -195,6 +195,7 @@ js_file: /assets/js/card-tilt.js
 }
 /* 어두운 카드 위에 아주 옅은 실버 금속 결 */
 .card{
+  touch-action: pan-y; /* 세로 스크롤은 유지, 가로 제스처는 카드가 받음 */
   position: relative;
   overflow: hidden;
   border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px;
@@ -220,6 +221,11 @@ js_file: /assets/js/card-tilt.js
   transition: box-shadow .2s ease, background .2s ease;
 }
 
+/* 기존 :hover 의존 코드를 .is-hover 로도 동작하게 */
+.card.is-hover { background: var(--card-raise); box-shadow: 0 14px 28px rgba(0,0,0,.38); z-index:10; }
+.card.is-hover::after { opacity: 1; }                  /* 하이라이트 */
+.card.is-hover .gloss-layer { opacity: .20; }          /* 글로스 */
+.card.is-hover .foil-layer { opacity: .22; }           /* 포일(있다면) */
 
 .card__shine,
 .card__glare{
