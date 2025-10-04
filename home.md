@@ -3,7 +3,7 @@ layout: home
 permalink: /
 permalink_name: /Home
 title: Home
-js_file: assets/js/card-tilt.js
+js_file: /assets/js/card-tilt.js
 ---
 <script type="text/javascript" src="{{ page.js_file | relative_url }}"></script>
 <section class="hero">
