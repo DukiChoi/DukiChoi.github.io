@@ -468,22 +468,16 @@ a:hover{ color:#82DFFF; }
 
 /* 반짝 하이라이트(스팟)는 이미 있다면 살짝만 */
 .card .card__glare{
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  pointer-events:none;
-  z-index:2;
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:2;
   mix-blend-mode: screen;
-  background: radial-gradient(
-    circle at var(--mx,50%) var(--my,50%),
-    rgba(255,255,255,.10) 0%,
-    rgba(255,255,255,.04) 22%,
-    rgba(255,255,255,0)   42%
-  );
-  opacity: .10;              /* 0.08~0.14 */
-  transition: opacity .18s ease, transform .18s ease;
+  background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
+              rgba(255,255,255,.22) 0%,
+              rgba(255,255,255,.10) 22%,
+              rgba(255,255,255,0) 48%);
+  opacity:.18;
+  transition: opacity .15s ease, transform .12s ease;
 }
-.card:hover .card__glare{ opacity: .14; }
+.card:hover .card__glare{ opacity:.26; }
 
 
 </style>
