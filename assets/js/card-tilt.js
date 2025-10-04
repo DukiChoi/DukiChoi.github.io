@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const MAX_ROT = 10;   // 최대 기울기(deg)
   const SCALE   = 1.1;  // 확대 배율
   const IDLE_MS = 140;  // ★ ADD: 입력(터치/포인터) 정지 시 자동 원복 대기 시간(ms)
-
+  const isTouch = matchMedia('(pointer: coarse)').matches; // 터치 기반인지 확인
   document.querySelectorAll('.card').forEach(card => {
     let rect = card.getBoundingClientRect();
     let rafId = null;
@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const update = () => {
+      // 3D 틸트 + 확대
+      const scaleVal = isTouch ? 1 : SCALE;   // 터치면 1, 아니면 1.1
       const cx = rect.width / 2;
       const cy = rect.height / 2;
       const x  = lastX - rect.left;
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 3D 틸트 + 확대(합성 단계)
       card.style.transform =
-        `perspective(1000px) rotateX(${-rotX}deg) rotateY(${rotY}deg) scale(${SCALE})`;
+        `perspective(1000px) rotateX(${-rotX}deg) rotateY(${rotY}deg) scale(${scaleVal})`;
 
       // 반짝임 레이어 이동(페인트 최소화: transform만 변경)
       card.style.setProperty('--tx', `${(x - cx) * 0.06}px`);
