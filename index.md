@@ -115,6 +115,12 @@ title: DukiChoi
   --accent:#5CC9F5;     /* 포인트 블루 */
 }
 
+/* ====== Style ====== */
+.about-title {
+  font-weight: 900;   /* bold 강조 */
+}
+</style>
+  
 /* ====== Hero ====== */
 .hero{ margin: 1.5rem 0 .5rem; }
 .hero__text h1{
