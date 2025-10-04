@@ -7,7 +7,13 @@
     {% if page.layout != 'home' %}{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %} - {{ site.title }}{% else %}
     {{ site.title }}{% endif %}
   </title>
+  <!-- 기본 스타일 -->
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+
+  <!-- ✅ Font Awesome 추가 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- 페이지 전용 JS -->
   <script type="text/javascript" src="{{ page.js_file | relative_url }}"></script>
 
   {% seo %}
