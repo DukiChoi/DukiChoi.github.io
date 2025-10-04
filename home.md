@@ -1,7 +1,7 @@
 ---
 layout: default
 permalink: /
-permalink_name: /home
+permalink_name: /Home
 title: Home
 
 ---
