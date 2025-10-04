@@ -175,13 +175,13 @@ js_file: /assets/js/card-tilt.js
 /* ====== Cards grid (카드 모션 관리) ====== */
 .cards{
   list-style:none; padding:0; margin:0;
-  display:grid; gap:28px;
+  display:grid; gap:40px;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   overflow: visible;                /* 확대 시 잘림 방지 */
 }
 /* 모바일에선 조금 줄이기 (선택) */
 @media (max-width: 640px){
-  .cards{ gap: 20px; }
+  .cards{ gap: 28px; }
 }
 
 .card{
