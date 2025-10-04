@@ -29,7 +29,7 @@
     - 작업자 위치 수신 및 중장비 운전자 알림 기능 구현
     - 진동·시청각 알림 기능을 포함한 Android(Java) 앱 개발
   role: 안드로이드 SW 개발 (참여비율 50%)
-  stack: Java(Android), BLE, UWB
+  stack: Java(Android), BLE
   link: https://github.com/DukiChoi/bleAndroidApp
 
 - name: UWB 기반 실내 차량 측위 시스템 개발
@@ -39,7 +39,7 @@
     - UWB 태그/앵커 데이터 TCP 소켓 수신
     - 2D 맵에 차량 위치 실시간 표시(Android Java)
   role: 안드로이드 SW 개발 (참여비율 50%)
-  stack: Java(Android), TCP, UWB
+  stack: Java(Android), TCP
   link: https://github.com/DukiChoi/location_display_app
 
 - name: 블루투스 기반 실시간 다중 노드 파이프라인 위치 추정 시스템 개발
