@@ -297,7 +297,7 @@ a:hover{ color:#82DFFF; }
 .card .foil-layer{
   position:absolute; inset:-6%; border-radius:inherit; z-index:2; pointer-events:none;
   background:#fff;                 /* Specular 입력 */
-  filter: url(#foilIri);
+  filter: url(#foilSpec);
   mix-blend-mode: screen;          /* 어두운 카드 위에서 반사처럼 보이게 */
   opacity:.16;                     /* 기본 은은함 */
   transition: opacity .12s ease, transform .12s ease;
