@@ -328,7 +328,7 @@ a:hover{ color:#82DFFF; }
   position:absolute; inset:0; border-radius:inherit; z-index:2; pointer-events:none;
   mix-blend-mode: screen;
   background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
-              rgba(255,255,255,.18), rgba(255,255,255,0) 55%);
+              rgba(255,255,255,.12), rgba(255,255,255,0) 35%);
   opacity:.12;                          /* 기본도 아주 살짝 보이게 */
   transform: translate3d(var(--tx,0), var(--ty,0), 0) scale(1.02);
   transition: opacity .12s ease, transform .12s ease;
