@@ -103,28 +103,32 @@ title: DukiChoi
 
 
 <style>
-/* ====== Base (다크 그레이 톤) ====== */
+/* ====== Color System (다크 + 블루 포인트) ====== */
 :root{
-  --bg:#161616;         /* 페이지 배경 */
-  --card:#202020;       /* 카드 배경 */
-  --card-raise:#262626; /* hover 시 */
-  --text:#E8E8E8;       /* 기본 텍스트 */
-  --muted:#B9B9B9;      /* 보조 텍스트 */
-  --line:#2A2A2A;       /* 구분선/테두리 */
-  --accent:#9AE66E;     /* 포인트(선명한 연두) */
+  --bg:#121212;         /* 페이지 전체 배경 */
+  --card:#1E1E1E;       /* 카드 배경 */
+  --card-raise:#2A2A2A; /* 카드 hover 배경 */
+  --text:#EAEAEA;       /* 기본 텍스트 */
+  --muted:#9C9C9C;      /* 보조 텍스트 */
+  --line:#2C2C2C;       /* 테두리 */
+  --accent:#5CC9F5;     /* 포인트 블루 */
 }
-/* body{ background:var(--bg); color:var(--text); } */
 
 /* ====== Hero ====== */
-.hero{ margin: 1.25rem 0 .25rem; }
-.hero__text h1{ font-size:2.15rem; margin:0 0 .25rem; line-height:1.15; }
+.hero{ margin: 1.5rem 0 .5rem; }
+.hero__text h1{
+  font-size:2.3rem; font-weight:800; margin:0 0 .5rem;
+  background: linear-gradient(90deg, #5CC9F5, #82DFFF);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
 .subtitle{ margin:.15rem 0 .35rem; color:var(--muted); }
-.intro{ margin:.35rem 0 .8rem; color:var(--text); }
-.cta{ display:flex; gap:.5rem; flex-wrap:wrap; }
+.intro{ margin:.4rem 0 .9rem; color:var(--text); font-size:1rem; line-height:1.6; }
+.cta{ display:flex; gap:.6rem; flex-wrap:wrap; }
 
+/* ====== Buttons ====== */
 .btn{
   display:inline-flex; align-items:center; gap:.5rem;
-  padding:.5rem .85rem; border:1px solid var(--line); border-radius:.6rem;
+  padding:.55rem .9rem; border:1px solid var(--line); border-radius:.6rem;
   text-decoration:none; font-size:.95rem; transition:all .2s ease;
   color:var(--text); background:transparent;
 }
@@ -132,54 +136,60 @@ title: DukiChoi
 .btn--primary{ border-color:#2f2f2f; background:#0f0f0f; }
 .btn--primary:hover{ background:#121212; }
 .btn--ghost{ border-color:var(--line); }
-.btn--github{ border-color:#2b2b2b; background:#2b2b2b; }
-.btn--github:hover{ background:#1a1a1a; }
+.btn--github{
+  border-color:#333; background:#2b2b2b; color:#fff;
+}
+.btn--github:hover{
+  background:var(--accent); border-color:var(--accent); color:#111;
+}
 .btn i{ font-size:1rem; }
 
-.section-sep{ margin:1rem 0 .8rem; border:0; border-top:1px solid var(--line); }
+.section-sep{ margin:1.25rem 0 1rem; border:0; border-top:1px solid var(--line); }
 
 /* ====== Cards grid ====== */
 .cards{
   list-style:none; padding:0; margin:0;
-  display:grid; gap:16px;
+  display:grid; gap:18px;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 .card{
-  border:1px solid var(--line); border-radius:16px; padding:16px 16px 14px;
-  background:var(--card); box-shadow: 0 1px 0 rgba(0,0,0,.12);
-  display:flex; flex-direction:column; gap:.7rem;
+  border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px;
+  background:var(--card); box-shadow: 0 1px 0 rgba(0,0,0,.15);
+  display:flex; flex-direction:column; gap:.75rem;
   transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
 }
 .card:hover{
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   background:var(--card-raise);
-  box-shadow: 0 10px 24px rgba(0,0,0,.25);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
 }
 
 /* ====== Card header ====== */
 .card__head{ display:flex; flex-direction:column; gap:.45rem; }
-.card__title{ font-size:1.2rem; line-height:1.25; margin:0; letter-spacing:.1px; }
-.card__title a{ color:var(--text); text-decoration:none; }
+.card__title{
+  font-size:1.3rem; font-weight:700; margin:0; line-height:1.3;
+}
+.card__title a{ color:#fff; text-decoration:none; }
 .card__title a:hover{ text-decoration:underline; text-underline-offset:3px; }
 
 .badge{
   align-self:flex-start;
-  font-size:.82rem; padding:.28rem .6rem; border-radius:.6rem;
-  border:1px solid var(--line); background:#1A1A1A; color:var(--muted);
+  font-size:.85rem; padding:.3rem .65rem; border-radius:.6rem;
+  border:1px solid var(--accent); background:#1A1A1A; color:var(--accent);
   display:inline-flex; align-items:center; gap:.35rem;
 }
 .badge i{ font-size:.9rem; }
 
 /* ====== Text blocks ====== */
-.card__summary{ margin:.1rem 0 .15rem; color:var(--muted); font-size:.95rem; line-height:1.55; }
+.card__summary{ margin:.15rem 0 .2rem; color:var(--muted); font-size:.95rem; line-height:1.6; }
 .meta{ margin:.2rem 0 0; }
 .meta__row{ display:flex; gap:.6rem; margin:.18rem 0; }
-.meta__row dt{ width:84px; color:var(--muted); font-weight:600; font-size:.9rem; }
-.meta__row dd{ margin:0; color:var(--text); font-size:.95rem; }
+.meta__row dt{ width:88px; color:var(--muted); font-weight:600; font-size:.85rem; }
+.meta__row dd{ margin:0; color:var(--text); font-size:.9rem; }
 
 /* ====== Details (collapsible) ====== */
 .details summary{
-  cursor:pointer; user-select:none; padding:.35rem .5rem; border-radius:.5rem;
+  cursor:pointer; user-select:none; padding:.4rem .55rem; border-radius:.5rem;
   display:inline-flex; align-items:center; gap:.45rem;
   border:1px dashed var(--line); background:#1a1a1a; font-weight:600; color:var(--text);
 }
@@ -194,5 +204,6 @@ title: DukiChoi
 
 /* ====== Links tint ====== */
 a{ color:var(--accent); }
-a:hover{ opacity:.9; }
+a:hover{ color:#82DFFF; }
 </style>
+
