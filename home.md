@@ -332,6 +332,7 @@ a:hover{ color:#82DFFF; }
 }
 .card:hover .gloss-layer{ opacity:.20; }
 
+/* ----------------------------------------- 글씨 ---------------------------------------- */
 .card__title a {
   color: #fff;                 /* 기본 흰색 */
   text-decoration: none;       /* 밑줄 제거 */
@@ -342,6 +343,32 @@ a:hover{ color:#82DFFF; }
   color: #ff9d00;              /* hover 시 주황색 */
   text-decoration: underline;  /* 선택: 밑줄 추가 */
   text-underline-offset: 3px;  /* 밑줄 약간 띄우기 */
+}
+
+/* 빛 근처에서 더 어둡게 보이도록 섀도우 가중(—ink 0~1) */
+.ink-reactive {
+  color: #f5f5f5;
+  /* 기본 가독성 섀도우 */
+  text-shadow:
+    0 1px 1px rgba(0,0,0,.30),
+    0 0 1px rgba(0,0,0,.20);
+  transition: color .15s ease, text-shadow .12s ease;
+}
+
+/* 빛(하이라이트) 중심으로 가까울수록 섀도우를 더 진하게 */
+.card[data-ink] .ink-reactive {
+  /* --ink: 0(멀리) ~ 1(가까이) 값을 JS가 세팅 */
+  text-shadow:
+    0 1px 1px rgba(0,0,0, calc(.30 + .30 * var(--ink, 0))),
+    0 0 2px rgba(0,0,0, calc(.15 + .25 * var(--ink, 0))),
+    0 0 4px rgba(0,0,0, calc(.00 + .20 * var(--ink, 0)));
+}
+
+/* details 영역 기본 색 고정(항상 또렷) */
+.details summary,
+.details__list li,
+.meta dt, .meta dd, .card__summary {
+  color: #f2f2f2;
 }
 </style>
 
