@@ -114,6 +114,8 @@ title: Home
 </section>
 
 <style>
+
+
 /* ====== Color System (다크 + 블루 포인트) ====== */
 :root{
   --bg:#121212;         /* 페이지 전체 배경 */
@@ -175,13 +177,21 @@ title: Home
   border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px;
   background:var(--card); box-shadow: 0 1px 0 rgba(0,0,0,.15);
   display:flex; flex-direction:column; gap:.75rem;
-  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+
+  /* 애니메이션 강화 */
+  transition: transform .25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow .25s ease,
+              background .25s ease;
 }
 .card:hover{
-  transform: translateY(-4px);
+  /* 살짝 확대 + 위로 떠오름 */
+  transform: scale(1.04) translateY(-6px);
+
+  /* hover 시 더 강한 그림자 */
   background:var(--card-raise);
-  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  box-shadow: 0 16px 32px rgba(0,0,0,.45);
 }
+
 
 /* ====== Card header ====== */
 .card__head{ display:flex; flex-direction:column; gap:.45rem; }
