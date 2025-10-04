@@ -504,24 +504,28 @@ a:hover{ color:#82DFFF; }
 
 /* ============ GLARE LAYERS (모든 카드) ============ */
 
+/* ==== STRONG HOLO: GLARE (더 투명/깨끗) ==== */
 .card .card__glare{
-  opacity: .8; /* 필요 시 조정 → var(--card-opacity) 제거 */
-  filter: brightness(.8) contrast(1.5);
-  mix-blend-mode: overlay;
+  opacity:.42;                /* 0.3~0.55: 전체 광택 양 */
+  filter: brightness(1) contrast(1.1);
+  mix-blend-mode: screen;     /* overlay → screen: 회색 끼 제거 */
 }
 
 .card .card__glare:after{
   content:"";
   position:absolute; inset:0; border-radius:inherit; pointer-events:none;
 
+  /* 중심은 밝게, 바깥은 투명하게 → 뿌연 막 제거 */
   background-image: radial-gradient(
-    farthest-corner circle at var(--pointer-x,50%) var(--pointer-y,50%),
-    hsl(180,100%,95%) 5%,
-    hsla(0,0%,39%,.25) 55%,
-    hsla(0,0%,0%,.36) 110%
+    circle at var(--pointer-x,50%) var(--pointer-y,50%),
+    rgba(255,255,255,.55) 0%,
+    rgba(255,255,255,.18) 24%,
+    rgba(255,255,255,0) 60%
   );
-  mix-blend-mode: overlay;
-  filter: brightness(.6) contrast(3);
+
+  mix-blend-mode: screen;     /* overlay → screen */
+  filter: brightness(1.05) contrast(1.1);
+  opacity:.9;                 /* 0.6~1.0: 스팟 강도 */
 }
 </style>
 
