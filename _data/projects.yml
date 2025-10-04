@@ -65,7 +65,7 @@
   link: https://github.com/DukiChoi/VR_Project
 
 - name: 유연 전자소자 기반 전신 전기자극 슈트 연구
-  period: 2025.03.01 ~ 진행중
+  period: 2025.03.01 ~ 2025.06.30
   summary: 웨어러블 전신 자극 슈트 + VR 실험 검증
   details:
     - Unity VR에서 물리형 상호작용 시나리오 구현
