@@ -298,7 +298,14 @@ js_file: /assets/js/card-tilt.js
   color: #fff;            /* 기본 흰색 */
   text-shadow: 0 1px 2px rgba(0,0,0,0.6); /* 대비 강화 */
 }
-
+/* 모바일에서도 크게 고정 */
+@media (max-width: 640px) {
+  .card__title {
+    font-size: 1.4rem;  /* 📌 rem이 아니라 px 단위로 고정해도 됨 */
+    line-height: 1.3;
+  }
+}
+  
 .card__title:hover {
   color: var(--accent);        /* 사이트 테마 하늘색 */
 }
