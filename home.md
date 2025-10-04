@@ -318,30 +318,33 @@ a:hover{ color:#82DFFF; }
   position:absolute;
   inset:0;
   border-radius:inherit;
-  z-index:2;
   pointer-events:none;
+  z-index:2;
 
+  /* 대각선으로 무지개 흐르게 */
   background:
-    /* 무지개빛: 노랑/주황 강조 */
-    conic-gradient(from 0deg at 50% 50%,
-      #ff0040, #ff6b00, #ffea00, #3cff00,
-      #00ffd5, #007bff, #9a00ff, #ff0040),
-    /* 살짝 은은한 diagonal light */
-    linear-gradient(135deg, rgba(255,255,255,.08), rgba(0,0,0,0) 70%);
+    linear-gradient(120deg,
+      rgba(255,0,64,0.25) 0%,
+      rgba(255,160,0,0.25) 15%,
+      rgba(255,235,0,0.25) 30%,
+      rgba(0,255,128,0.25) 50%,
+      rgba(0,200,255,0.25) 70%,
+      rgba(160,0,255,0.25) 85%,
+      rgba(255,0,64,0.25) 100%);
 
-  background-size: 180% 180%, cover;
-  background-blend-mode: screen;
+  background-size: 200% 200%;
+  background-position: center;
 
-  /* 비닐 필터로 울퉁불퉁한 반짝임 */
-  filter: url(#foilSpec);
+  /* blend 전략 수정 */
+  mix-blend-mode: color-dodge;  /* screen → color-dodge (회색 제거) */
+  filter: brightness(1.1) contrast(1.2) saturate(1.4);
 
-  mix-blend-mode: screen;
-  opacity:.15;  /* 기본 은은함 */
-  transform: rotate(6deg) scale(1.02);
-  transition: opacity .15s ease, transform .15s ease;
+  opacity: .15;
+  transform: rotate(0deg) scale(1.02);
+  transition: opacity .2s ease, transform .2s ease;
 }
 .card:hover .foil-layer {
-  opacity:.25;
+  opacity:.28;
 }
 
 /* (선택) 아주 옅은 무지개 결을 바닥에 한 겹 – 과하면 빼세요 */
