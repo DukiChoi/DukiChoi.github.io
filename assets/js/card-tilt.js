@@ -7,28 +7,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let rect = card.getBoundingClientRect();
     let rafId = null;
     let lastX = 0, lastY = 0;
+    let activePointerId = null; // ← 터치/펜 추적용
 
     // 성능: 레이아웃 측정은 진입/리사이즈 시에만
     const recalc = () => { rect = card.getBoundingClientRect(); };
     window.addEventListener('resize', recalc);
 
-    card.addEventListener('mouseenter', () => {
-      recalc();
-      card.style.zIndex = 20; // 겹침 방지
-    });
-
-    card.addEventListener('mouseleave', () => {
-      lastX = lastY = 0;
+    const resetVars = () => {
       card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
       card.style.zIndex = 1;
-
-      // 홀로/반짝임 변수 초기화
       card.style.setProperty('--tx', '0px');
       card.style.setProperty('--ty', '0px');
       card.style.setProperty('--mx', '50%');
       card.style.setProperty('--my', '50%');
       card.style.setProperty('--shine-angle', '0deg');
-    });
+      card.classList.remove('is-hover'); // ← 터치 대체 hover 해제
+    };
 
     const update = () => {
       const cx = rect.width / 2;
@@ -58,11 +52,50 @@ document.addEventListener('DOMContentLoaded', () => {
       rafId = null;
     };
 
-    // mousemove 대신 pointermove (터치/펜 포함)
+    // ===== 마우스 =====
+    card.addEventListener('mouseenter', () => {
+      recalc();
+      card.style.zIndex = 20; // 겹침 방지
+      card.classList.add('is-hover'); // 데스크톱도 동일 클래스 사용
+    });
+
+    card.addEventListener('mouseleave', () => {
+      lastX = lastY = 0;
+      resetVars();
+    });
+
+    // 공통 포인터 이동(마우스/터치/펜)
     card.addEventListener('pointermove', (e) => {
+      // 터치 중인데 다른 포인터면 무시
+      if (activePointerId !== null && e.pointerId !== activePointerId) return;
       lastX = e.clientX;
       lastY = e.clientY;
       if (rafId == null) rafId = requestAnimationFrame(update);
     }, { passive: true });
+
+    // ===== 터치/펜 활성화 =====
+    card.addEventListener('pointerdown', (e) => {
+      activePointerId = e.pointerId;
+      card.setPointerCapture(e.pointerId); // 이동 중에도 좌표 안정 수집
+      recalc();
+      card.style.zIndex = 20;
+      card.classList.add('is-hover');      // :hover 대체
+      lastX = e.clientX;
+      lastY = e.clientY;
+      if (rafId == null) rafId = requestAnimationFrame(update);
+
+      // (옵션) 탭 순간 반짝임 강화
+      card.style.setProperty('--gloss-boost', '1');
+      setTimeout(() => card.style.setProperty('--gloss-boost', '0'), 160);
+    });
+
+    const endPointer = (e) => {
+      if (e.pointerId !== activePointerId) return;
+      card.releasePointerCapture(e.pointerId);
+      activePointerId = null;
+      resetVars();
+    };
+    card.addEventListener('pointerup', endPointer);
+    card.addEventListener('pointercancel', endPointer);
   });
 });
