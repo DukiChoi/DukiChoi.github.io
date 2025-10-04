@@ -46,11 +46,11 @@ js_file: /assets/js/card-tilt.js
         <span class="gloss-layer" aria-hidden="true"></span>
         <header class="card__head">
           <h3 class="card__title">
-            {% if p.link %}
+            <!-- {% if p.link %}
               <a href="{{ p.link }}" target="_blank" rel="noopener">{{ p.name }}</a>
-            {% else %}
+            {% else %} -->
               {{ p.name }}
-            {% endif %}
+            <!-- {% endif %} -->
           </h3>
           {% if p.period %}
             <span class="badge badge--ghost"><i class="fa-regular fa-calendar"></i> {{ p.period }}</span>
