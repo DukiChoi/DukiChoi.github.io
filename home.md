@@ -176,7 +176,7 @@ js_file: /assets/js/card-tilt.js
 .cards{
   list-style:none; padding:0; margin:0;
   display:grid; gap:40px;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(2, minmax(400px, 1fr));
   overflow: visible;                /* 확대 시 잘림 방지 */
 }
 /* 모바일에선 조금 줄이기 (선택) */
