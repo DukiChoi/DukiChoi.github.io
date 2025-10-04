@@ -1,7 +1,7 @@
 ---
 layout: page
 permalink: /preview
-permalink_name: /preview
+permalink_name: /Preview
 title: This is the page title
 ---
 
