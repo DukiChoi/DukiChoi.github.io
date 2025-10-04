@@ -217,7 +217,17 @@ title: Home
 
 /* ====== Card foot ====== */
 .card__foot{ margin-top:.1rem; display:flex; gap:.5rem; flex-wrap:wrap; }
-
+  
+/* ====== Github Icons ====== */
+.gh-link {
+  margin-right: .4rem;
+  color: var(--accent);
+  font-size:1.1rem;
+}
+.gh-link:hover {
+  opacity:.8;
+}
+  
 /* ====== Links tint ====== */
 a{ color:var(--accent); }
 a:hover{ color:#82DFFF; }
