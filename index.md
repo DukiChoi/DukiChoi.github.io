@@ -97,73 +97,98 @@ title: DukiChoi
 </ul>
 
 
+
 <style>
-/* ====== Hero ====== */
-.hero { margin: 1.5rem 0 0.5rem; }
-.hero__text h1 { font-size: 2rem; margin: 0; line-height: 1.2; }
-.subtitle { margin: .25rem 0 .5rem; opacity:.8 }
-.intro { margin: .5rem 0 1rem; }
-.cta { display:flex; gap:.5rem; flex-wrap:wrap; }
-.btn {
-  display:inline-flex; align-items:center; gap:.5rem;
-  padding:.5rem .8rem; border:1px solid #e3e3e3; border-radius:.6rem;
-  text-decoration:none; font-size:.95rem; transition:all .2s ease;
+/* ====== Base (다크 그레이 톤) ====== */
+:root{
+  --bg:#161616;         /* 페이지 배경 */
+  --card:#202020;       /* 카드 배경 */
+  --card-raise:#262626; /* hover 시 */
+  --text:#E8E8E8;       /* 기본 텍스트 */
+  --muted:#B9B9B9;      /* 보조 텍스트 */
+  --line:#2A2A2A;       /* 구분선/테두리 */
+  --accent:#9AE66E;     /* 포인트(선명한 연두) */
 }
-.btn:hover { background:#f5f5f5; }
-.btn--primary { border-color:#222; background:#111; color:#fff; }
-.btn--primary:hover { background:#222; color:#fff; }
-.btn--ghost { border-color:#ddd; color:inherit; }
-.btn--github { border-color:#333; background:#333; color:#fff; }
-.btn--github:hover { background:#000; }
-.btn i { font-size:1rem; }
-.section-sep { margin: 1.25rem 0 1rem; border:0; border-top:1px solid #eee; }
+body{ background:var(--bg); color:var(--text); }
+
+/* ====== Hero ====== */
+.hero{ margin: 1.25rem 0 .25rem; }
+.hero__text h1{ font-size:2.15rem; margin:0 0 .25rem; line-height:1.15; }
+.subtitle{ margin:.15rem 0 .35rem; color:var(--muted); }
+.intro{ margin:.35rem 0 .8rem; color:var(--text); }
+.cta{ display:flex; gap:.5rem; flex-wrap:wrap; }
+
+.btn{
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:.5rem .85rem; border:1px solid var(--line); border-radius:.6rem;
+  text-decoration:none; font-size:.95rem; transition:all .2s ease;
+  color:var(--text); background:transparent;
+}
+.btn:hover{ background:#1d1d1d; }
+.btn--primary{ border-color:#2f2f2f; background:#0f0f0f; }
+.btn--primary:hover{ background:#121212; }
+.btn--ghost{ border-color:var(--line); }
+.btn--github{ border-color:#2b2b2b; background:#2b2b2b; }
+.btn--github:hover{ background:#1a1a1a; }
+.btn i{ font-size:1rem; }
+
+.section-sep{ margin:1rem 0 .8rem; border:0; border-top:1px solid var(--line); }
 
 /* ====== Cards grid ====== */
 .cards{
   list-style:none; padding:0; margin:0;
-  display:grid; gap:14px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display:grid; gap:16px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 .card{
-  border:1px solid #eee; border-radius:14px; padding:14px;
-  background:#fff; box-shadow: 0 1px 0 rgba(0,0,0,.02);
-  display:flex; flex-direction:column; gap:.6rem;
-  transition:transform .15s ease, box-shadow .15s ease;
+  border:1px solid var(--line); border-radius:16px; padding:16px 16px 14px;
+  background:var(--card); box-shadow: 0 1px 0 rgba(0,0,0,.12);
+  display:flex; flex-direction:column; gap:.7rem;
+  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
 }
 .card:hover{
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  transform: translateY(-3px);
+  background:var(--card-raise);
+  box-shadow: 0 10px 24px rgba(0,0,0,.25);
 }
-.card__head{ display:flex; gap:.5rem; align-items:flex-start; justify-content:space-between; }
-.card__title{ font-size:1.05rem; margin:0; }
-.card__title a{ text-decoration:none; }
-.card__title a:hover{ text-decoration:underline; }
-.badge{
-  font-size:.8rem; padding:.2rem .5rem; border-radius:.5rem; white-space:nowrap;
-  border:1px solid transparent;
-}
-.badge--ghost{ border-color:#e6e6e6; background:#fafafa; color:#444; }
-.card__summary{ margin:.2rem 0 .2rem; color:#444; }
 
-/* ====== Meta rows ====== */
-.meta{ margin:0; }
-.meta__row{ display:flex; gap:.6rem; margin:.2rem 0; }
-.meta__row dt{ width:88px; color:#666; font-weight:600; }
-.meta__row dd{ margin:0; color:#333; }
+/* ====== Card header ====== */
+.card__head{ display:flex; flex-direction:column; gap:.45rem; }
+.card__title{ font-size:1.2rem; line-height:1.25; margin:0; letter-spacing:.1px; }
+.card__title a{ color:var(--text); text-decoration:none; }
+.card__title a:hover{ text-decoration:underline; text-underline-offset:3px; }
+
+.badge{
+  align-self:flex-start;
+  font-size:.82rem; padding:.28rem .6rem; border-radius:.6rem;
+  border:1px solid var(--line); background:#1A1A1A; color:var(--muted);
+  display:inline-flex; align-items:center; gap:.35rem;
+}
+.badge i{ font-size:.9rem; }
+
+/* ====== Text blocks ====== */
+.card__summary{ margin:.1rem 0 .15rem; color:var(--muted); font-size:.95rem; line-height:1.55; }
+.meta{ margin:.2rem 0 0; }
+.meta__row{ display:flex; gap:.6rem; margin:.18rem 0; }
+.meta__row dt{ width:84px; color:var(--muted); font-weight:600; font-size:.9rem; }
+.meta__row dd{ margin:0; color:var(--text); font-size:.95rem; }
 
 /* ====== Details (collapsible) ====== */
 .details summary{
-  cursor:pointer; user-select:none; padding:.3rem .4rem; border-radius:.4rem;
-  display:inline-flex; align-items:center; gap:.4rem;
-  border:1px dashed #e0e0e0; background:#fcfcfc; font-weight:600;
+  cursor:pointer; user-select:none; padding:.35rem .5rem; border-radius:.5rem;
+  display:inline-flex; align-items:center; gap:.45rem;
+  border:1px dashed var(--line); background:#1a1a1a; font-weight:600; color:var(--text);
 }
-.details[open] summary{ background:#f7f7f7; }
-.details summary i { transition: transform .2s ease; }
-.details[open] summary i { transform: rotate(90deg); }
-.details__list{ margin:.4rem 0 0 .8rem; }
-.details__list li{ margin:.2rem 0; }
+.details[open] summary{ background:#202020; }
+.details summary i{ transition: transform .2s ease; }
+.details[open] summary i{ transform: rotate(90deg); }
+.details__list{ margin:.45rem 0 0 .9rem; color:var(--text); }
+.details__list li{ margin:.22rem 0; font-size:.95rem; line-height:1.55; }
 
 /* ====== Card foot ====== */
-.card__foot{ margin-top:.2rem; display:flex; gap:.5rem; flex-wrap:wrap; }
-</style>
+.card__foot{ margin-top:.1rem; display:flex; gap:.5rem; flex-wrap:wrap; }
 
+/* ====== Links tint ====== */
+a{ color:var(--accent); }
+a:hover{ opacity:.9; }
+</style>
