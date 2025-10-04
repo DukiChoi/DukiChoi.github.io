@@ -62,22 +62,17 @@ title: Home
           {% if p.participants %}
             <div class="meta__row">
               <dt><i class="fa-solid fa-users"></i> 참여자</dt>
-              <dd>{% if p.participants %}
-                <div class="meta__row">
-                  <dt><i class="fa-solid fa-users"></i> 참여자</dt>
-                  <dd>
-                    {% for person in p.participants %}
-                      {% if person.link %}
-                        <a href="{{ person.link }}" target="_blank" rel="noopener" class="gh-link">
-                          <i class="fab fa-github"></i>
-                        </a>
-                      {% else %}
-                        <span>{{ person.name }}</span>
-                      {% endif %}
-                    {% endfor %}
-                  </dd>
-                </div>
-              {% endif %}</dd>
+              <dd>
+                {% for person in p.participants %}
+                  {% if person.link %}
+                    <a href="{{ person.link }}" target="_blank" rel="noopener" class="gh-link" title="{{ person.name }}">
+                      <i class="fab fa-github"></i>
+                    </a>
+                  {% else %}
+                    <span>{{ person.name }}</span>
+                  {% endif %}
+                {% endfor %}
+              </dd>
             </div>
           {% endif %}
           {% if p.role %}
