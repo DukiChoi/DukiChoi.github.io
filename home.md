@@ -189,7 +189,7 @@ js_file: assets/js/card-tilt.js
 }
 
 .card:hover {
-  transform: scale(1.5);
+  /* transform: scale(1.5); */
   background:var(--card-raise);
   box-shadow: 0 16px 32px rgba(0,0,0,.45);
 
