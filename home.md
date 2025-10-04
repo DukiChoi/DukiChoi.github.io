@@ -314,15 +314,35 @@ a:hover{ color:#82DFFF; }
    =========================== */
 
 /* 비닐 반사 레이어 (핵심) */
-.card .foil-layer{
-  position:absolute; inset:-6%; border-radius:inherit; z-index:2; pointer-events:none;
-  background:#fff;                 /* Specular 입력 */
-  filter: url(#foilSpec);
-  mix-blend-mode: screen;          /* 어두운 카드 위에서 반사처럼 보이게 */
-  opacity:.16;                     /* 기본 은은함 */
-  transition: opacity .12s ease, transform .12s ease;
+/* 비닐 + 무지개 반사 레이어 */
+.card .foil-layer {
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  z-index:2;
+  pointer-events:none;
+
+  /* SVG 필터: 표면 반사(빛의 요철) */
+  background:
+    conic-gradient(from 0deg at 50% 50%,
+      #ff0040, #ff9d00, #ffe600, #3cff00,
+      #00ffd5, #007bff, #9a00ff, #ff0040),
+    #fff; /* 흰색 스펙큘러 베이스 */
+
+  background-size: 200% 200%, cover;
+  background-blend-mode: screen;   /* 흰색 + 무지개 같이 */
+  
+  filter: url(#foilSpec);          /* SVG 필터로 반사효과 */
+  mix-blend-mode: screen;          /* 카드 배경 위에서 빛처럼 보이도록 */
+
+  opacity:.18;                     /* 기본 은은함 */
+  transform: rotate(6deg) scale(1.02);
+  transition: opacity .15s ease, transform .15s ease;
 }
-.card:hover .foil-layer{ opacity:.22; }
+
+.card:hover .foil-layer {
+  opacity:.26; /* hover 시 좀 더 진하게 */
+}
 
 /* (선택) 아주 옅은 무지개 결을 바닥에 한 겹 – 과하면 빼세요 */
 .card .holo-layer{
