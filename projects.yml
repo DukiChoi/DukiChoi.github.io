@@ -1,0 +1,87 @@
+- name: 한양대학교 전기공학과 졸업 프로젝트
+  period: 2021.09.01 ~ 2021.12.31
+  summary: 비접촉 제스처 기반 키보드·마우스 및 키오스크 개발
+  details:
+    - 카메라로 손 모양을 인식하여 키보드/마우스 입력 장치 제작
+    - 손가락 움직임으로 마우스 이동·클릭 기능 구현
+    - 특정 손동작(OK 사인)으로 키보드/마우스 모드 전환 기능
+    - React와 Node.js 기반 키오스크 웹페이지 제작 및 데모
+  participants: 최병근, 최원서, 함재형
+  stack: OpenCV, React, Node.js
+  link: https://github.com/DukiChoi/graduation
+
+- name: IMU 센서를 활용한 측위 알고리즘 개발
+  period: 2022.01.01 ~ 2022.06.30
+  summary: WT9310 IMU 센서를 활용한 위치 추정 알고리즘 개발
+  details:
+    - 9축 IMU 데이터 필터링 및 칼만 필터 적용
+    - C++ 기반 STM32CubeMX 코드 및 TinyEKF 적용
+    - Python 3D 그래프 시각화
+  role: 임베디드 SW 개발 (참여비율 30%)
+  stack: STM32(C++), TinyEKF, Python
+  link: https://github.com/DukiChoi/MotionTrackingWithIMU
+
+- name: UWB 기반 중장비 협착 방지 시스템 개발
+  period: 2022.07.01 ~ 2023.02.28
+  summary: BLE/UWB 기반 실시간 작업자 안전 보조 시스템
+  details:
+    - UWB 앵커/태그와 안드로이드 앱 간 BLE 통신
+    - 작업자 위치 수신 및 중장비 운전자 알림 기능 구현
+    - 진동·시청각 알림 기능을 포함한 Android(Java) 앱 개발
+  role: 안드로이드 SW 개발 (참여비율 50%)
+  stack: Java(Android), BLE, UWB
+  link: https://github.com/DukiChoi/bleAndroidApp
+
+- name: UWB 기반 실내 차량 측위 시스템 개발
+  period: 2023.01.01 ~ 2023.03.31
+  summary: UWB 기반 TCP 통신 차량 위치 실시간 시각화
+  details:
+    - UWB 태그/앵커 데이터 TCP 소켓 수신
+    - 2D 맵에 차량 위치 실시간 표시(Android Java)
+  role: 안드로이드 SW 개발 (참여비율 50%)
+  stack: Java(Android), TCP, UWB
+  link: https://github.com/DukiChoi/location_display_app
+
+- name: 블루투스 기반 실시간 다중 노드 파이프라인 위치 추정 시스템 개발
+  period: 2023.06.01 ~ 2023.09.30
+  summary: nRF52·IMU 센서 기반 금속 파이프 탐지 시스템
+  details:
+    - nRF52 및 2개 IMU 센서(Magnetometer) 기반 금속 탐지
+    - 굴착 중 파이프 탐지 및 경고 시스템
+    - IEEE ICCE-Asia 2024 논문 발표 (2저자)
+  role: 임베디드 및 안드로이드 SW 개발 (참여비율 30%)
+  stack: nRF52, BLE, IMU, Android
+  link: https://github.com/DukiChoi/BLEAppForNRF52
+
+- name: 석사 졸업 연구 - VR과 CNN/RNN을 활용한 떨림 질환 분석
+  period: 2023.11.01 ~ 2024.12.31
+  summary: VR·딥러닝 기반 손 떨림 정량 분석 연구
+  details:
+    - nRF52+IMU 기반 컨트롤러로 떨림 데이터 수집
+    - Unity(C#) 기반 VR 실험 프로토콜 개발
+    - MATLAB 기반 CNN·RNN 모델 학습 및 평가
+  role: 시스템 개발 및 분석 (참여비율 100%)
+  stack: nRF52, Unity(C#), MATLAB, CNN, RNN
+  link: https://github.com/DukiChoi/VR_Project
+
+- name: 유연 전자소자 기반 전신 전기자극 슈트 연구
+  period: 2025.03.01 ~ 진행중
+  summary: 웨어러블 전신 자극 슈트 + VR 실험 검증
+  details:
+    - Unity VR에서 물리형 상호작용 시나리오 구현
+    - 시나리오별 전기 자극 주파수·전압 제어
+    - 9명 대상 실험으로 손 떨림 완화 효과 검증
+  role: 연구원 (바이오 신호처리 및 신경공학 연구실)
+  stack: Unity(C#), nRF52, Matlab
+  link: https://github.com/DukiChoi/ShotExperienceSimulator
+
+- name: 아동 인지능력 진단을 위한 스마트 큐브 개발
+  period: 2025.06.01 ~ 진행중
+  summary: IMU·압력센서·LED 기반 스마트 큐브 및 데이터 수집
+  details:
+    - HW 회로 설계 및 펌웨어 구현
+    - BLE 연동 및 Android 앱 개발
+    - 아동 블럭 놀이 데이터를 기반으로 인지 능력 분석 예정
+  role: 연구원 (바이오 신호처리 및 신경공학 연구실)
+  stack: nRF52, IMU, Pressure Sensor, Android
+  link: https://github.com/DukiChoi/BLESmartCube
