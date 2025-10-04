@@ -318,26 +318,31 @@ a:hover{ color:#82DFFF; }
   position:absolute;
   inset:0;
   border-radius:inherit;
-  pointer-events:none;
   z-index:2;
+  pointer-events:none;
 
-  /* 무지개 패턴만 */
-  background: conic-gradient(from 0deg at 50% 50%,
-      #ff0040, #ff9d00, #ffe600, #3cff00,
-      #00ffd5, #007bff, #9a00ff, #ff0040);
-  background-size: 200% 200%;
+  background:
+    /* 무지개빛: 노랑/주황 강조 */
+    conic-gradient(from 0deg at 50% 50%,
+      #ff0040, #ff6b00, #ffea00, #3cff00,
+      #00ffd5, #007bff, #9a00ff, #ff0040),
+    /* 살짝 은은한 diagonal light */
+    linear-gradient(135deg, rgba(255,255,255,.08), rgba(0,0,0,0) 70%);
 
-  mix-blend-mode: screen;   /* 카드 위에서 빛처럼만 보이게 */
-  filter: url(#foilSpec);   /* 비닐 필터 (선택) */
+  background-size: 180% 180%, cover;
+  background-blend-mode: screen;
 
-  opacity:.12;              /* 너무 세면 0.08~0.10으로 */
-  transform: rotate(8deg) scale(1.02);
+  /* 비닐 필터로 울퉁불퉁한 반짝임 */
+  filter: url(#foilSpec);
+
+  mix-blend-mode: screen;
+  opacity:.15;  /* 기본 은은함 */
+  transform: rotate(6deg) scale(1.02);
   transition: opacity .15s ease, transform .15s ease;
 }
 .card:hover .foil-layer {
-  opacity:.20;
+  opacity:.25;
 }
-
 
 /* (선택) 아주 옅은 무지개 결을 바닥에 한 겹 – 과하면 빼세요 */
 .card .holo-layer{
