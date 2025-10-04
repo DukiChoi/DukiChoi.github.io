@@ -441,35 +441,30 @@ a:hover{ color:#82DFFF; }
 
 /* ============ SHINE LAYERS (모든 카드) ============ */
 
-  /* 아주 은은한 무지개 오로라 (포켓몬 카드 느낌, 과하지 않게) */
-.card .card__shine {
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  pointer-events:none;
-  z-index:1;
-
+/* 아주 은은한 무지개 오로라 (포켓몬 카드 느낌, 과하지 않게) */
+/* 은빛+무지개 결 (아주 옅게) */
+.card .card__shine{
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:1;
   mix-blend-mode: screen;
 
+  /* 파스텔 오로라 */
   background: conic-gradient(
-    from var(--shine-angle, 0deg)
-    at var(--mx, 50%) var(--my, 50%),
-    rgba(255, 200, 200, 0.05) 0%,   /* 옅은 핑크 */
-    rgba(255, 240, 180, 0.05) 20%,  /* 베이지/골드 느낌 */
-    rgba(200, 255, 220, 0.05) 40%,  /* 민트 */
-    rgba(200, 230, 255, 0.05) 60%,  /* 하늘색 */
-    rgba(230, 200, 255, 0.05) 80%,  /* 보라 */
-    rgba(255, 200, 200, 0.05) 100%
+    from var(--shine-angle, 0deg) at var(--mx,50%) var(--my,50%),
+    rgba(255,245,230,.06) 0%,   /* warm white */
+    rgba(212,236,255,.06) 18%,  /* sky */
+    rgba(214,255,240,.06) 36%,  /* mint */
+    rgba(240,224,255,.06) 54%,  /* lavender */
+    rgba(255,238,212,.06) 72%,  /* champagne */
+    rgba(255,245,230,.06) 100%
   );
 
-  filter: blur(12px) saturate(0.8) brightness(1.05); /* 채도↓ 부드럽게 */
-  opacity: .08;
-  transition: opacity .2s ease;
+  /* 부드럽게, 채도↓ */
+  filter: blur(10px) saturate(0.7) brightness(1.05);
+  opacity:.07;                 /* 기본 은은 */
+  transition: opacity .18s ease, filter .18s ease;
 }
+.card:hover .card__shine{ opacity:.11; filter: blur(10px) saturate(0.8) brightness(1.08); }
 
-.card:hover .card__shine {
-  opacity: .12; /* hover 때 살짝만 강화 */
-}
 
 /* 반짝 하이라이트(스팟)는 이미 있다면 살짝만 */
 .card .card__glare{
