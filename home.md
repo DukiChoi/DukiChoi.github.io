@@ -129,6 +129,9 @@ title: Home
 .about-title {
   font-weight: 900;   /* bold 강조 */
 }
+.cards li::before {
+  content: none !important;
+}
   
 /* ====== Hero ====== */
 .hero{ margin: 1.5rem 0 .5rem; }
