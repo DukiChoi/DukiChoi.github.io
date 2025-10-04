@@ -243,12 +243,19 @@ js_file: /assets/js/card-tilt.js
   z-index: 3;
   mix-blend-mode: normal;
 }
-.card:hover{
+/* .card:hover{
   background: var(--card-raise);
   box-shadow: 0 14px 28px rgba(0,0,0,.38);
   z-index: 10;
+} */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    background: var(--card-raise);
+    box-shadow: 0 14px 28px rgba(0,0,0,.38);
+    z-index: 10;
+  }
+  .card:hover::after { opacity: 1; }
 }
-
 /* ::after = 마우스 따라다니는 스펙큘러 하이라이트 (상위 레이어) */
 .card::after{
   content:"";
