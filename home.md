@@ -233,87 +233,46 @@ js_file: /assets/js/card-tilt.js
    HOLO 레이어 (포켓몬 카드 느낌)
    =========================== */
 
-/* 1) 무지개 홀로(무지개 유광) */
-.card--holo::before{
+/* === HOLO: 기본 무지개 결 === */
+.card.card--holo::before {
   content:"";
   position:absolute; inset:0; border-radius:inherit; pointer-events:none;
   mix-blend-mode:screen;
-- opacity:.0;                      /* 기본은 낮게 */
-+ opacity:.35;                     /* ✅ 기본에도 무지개 결 보이게 */
   background:
     conic-gradient(from 0deg at 50% 50%,
-      #ff0040, #ff9d00, #ffe600, #3cff00, #00ffd5, #007bff, #9a00ff, #ff0040) ,
-    linear-gradient(120deg, rgba(255,255,255,.28), rgba(255,255,255,0) 55%);
-  background-size: 180% 180%, 140% 140%;
-- filter: saturate(1.35) brightness(1.05);
-+ filter: saturate(1.35) brightness(1.06);
-  transform: translate3d(var(--tx,0), var(--ty,0), 0)
-             rotate(var(--shine-angle,0deg)) scale(1.04);
-  transition: opacity .18s ease, transform .18s ease, filter .18s ease;
-- animation: holo-shift 8s linear infinite;
-+ animation: holo-shift 10s linear infinite;  /* 살짝 더 은은하게 */
+      #ff0040, #ff9d00, #ffe600, #3cff00,
+      #00ffd5, #007bff, #9a00ff, #ff0040),
+    linear-gradient(135deg, rgba(255,255,255,.25), rgba(255,255,255,0) 60%);
+  background-size: 200% 200%, 150% 150%;
+  filter: saturate(1.3) brightness(1.05);
+  opacity: .38; /* 기본에도 은은하게 보임 */
+  transform: rotate(5deg) scale(1.04);  /* ✅ 기본 사선 각도 */
+  transition: opacity .18s ease, filter .18s ease;
+  animation: holo-shift 12s linear infinite; /* 무늬가 천천히 흐름 */
 }
 
-/* 2) 스펙큘러 하이라이트(광원 반사점) */
-.card--holo::after{
+/* === HOLO: 스펙큘러 하이라이트 === */
+.card.card--holo::after {
   content:"";
   position:absolute; inset:0; border-radius:inherit; pointer-events:none;
   mix-blend-mode:screen;
-- opacity:0;
-+ opacity:.15;                     /* ✅ 기본에도 살짝 하이라이트/글리터 느낌 */
-  background:
-    radial-gradient(circle at var(--mx,50%) var(--my,50%),
-      rgba(255,255,255,.40), rgba(255,255,255,0) 55%);
-  transform: translate3d(var(--tx,0), var(--ty,0), 0) scale(1.02);
-  transition: opacity .15s ease, transform .15s ease;
-}
-
-/* hover 시 더 눈에 띄게 */
-.card--holo:hover::before{
-- opacity:.55; filter:saturate(1.5) brightness(1.08);
-+ opacity:.65; filter:saturate(1.55) brightness(1.10);
-}
-.card--holo:hover::after {
-- opacity:1;
-+ opacity:.35;
-}
-
-/* === HOLO: 기본 무지개 결 (항상 보임) === */
-.card.card--holo::before{
-  content:"";
-  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  mix-blend-mode: screen;
-  background:
-    conic-gradient(from 0deg at 50% 50%,
-      #ff0040, #ff9d00, #ffe600, #3cff00, #00ffd5, #007bff, #9a00ff, #ff0040),
-    linear-gradient(120deg, rgba(255,255,255,.28), rgba(255,255,255,0) 55%);
-  background-size: 180% 180%, 140% 140%;
-  filter: saturate(1.35) brightness(1.06);
-  opacity: .38; /* ← 기본에도 보이게 (0.35~0.5 사이 취향대로) */
-  transform: translate3d(var(--tx,0), var(--ty,0), 0)
-             rotate(var(--shine-angle,0deg)) scale(1.04);
-  transition: opacity .18s ease, transform .18s ease, filter .18s ease;
-  animation: holo-shift 10s linear infinite;
-}
-
-/* 하이라이트(광원 점) – 기본은 은은하게 */
-.card.card--holo::after{
-  content:"";
-  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  mix-blend-mode: screen;
   background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
-              rgba(255,255,255,.40), rgba(255,255,255,0) 55%);
-  opacity: .18;  /* 기본 은은 */
-  transform: translate3d(var(--tx,0), var(--ty,0), 0) scale(1.02);
+              rgba(255,255,255,.4), rgba(255,255,255,0) 55%);
+  opacity: .18; /* 기본 은은 */
+  transform: scale(1.02);
   transition: opacity .15s ease, transform .15s ease;
 }
 
-/* hover 시 강화 */
-.card.card--holo:hover::before{ opacity:.65; filter:saturate(1.55) brightness(1.10); }
-.card.card--holo:hover::after { opacity:.35; }
+/* === Hover 시 강화 === */
+.card.card--holo:hover::before {
+  opacity:.65; filter:saturate(1.55) brightness(1.12);
+}
+.card.card--holo:hover::after {
+  opacity:.35;
+}
 
-/* 무지개 결 살짝 흐르게 */
-@keyframes holo-shift{
+/* === 무지개 결 흐름 애니메이션 === */
+@keyframes holo-shift {
   0%   { background-position: 0% 0%,     0% 0%; }
   100% { background-position: 200% 200%, 120% 120%; }
 }
