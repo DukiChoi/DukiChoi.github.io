@@ -193,11 +193,23 @@ js_file: /assets/js/card-tilt.js
     gap: 28px;
   }
 }
+/* 어두운 카드 위에 아주 옅은 실버 금속 결 */
 .card{
   position: relative;
   overflow: hidden;
   border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px;
   background: var(--card); /* 어두운 배경 유지: screen 블렌드가 살아남 */
+  /* 금속 결: 얇은 띠+노이즈로 살짝만 */
+  background-image:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.06) 0%,
+      rgba(255,255,255,0.00) 30%,
+      rgba(255,255,255,0.05) 55%,
+      rgba(255,255,255,0.00) 100%),
+    repeating-linear-gradient(90deg,
+      rgba(255,255,255,0.03) 0 2px,
+      rgba(0,0,0,0.03) 2px 4px);
+  background-blend-mode: soft-light, normal;
   box-shadow: 0 1px 0 rgba(0,0,0,.15);
   display:flex; flex-direction:column; gap:.75rem;
 
@@ -207,6 +219,7 @@ js_file: /assets/js/card-tilt.js
   transform: translateZ(0);
   transition: box-shadow .2s ease, background .2s ease;
 }
+
 
 .card__shine,
 .card__glare{
