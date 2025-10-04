@@ -41,6 +41,7 @@ js_file: /assets/js/card-tilt.js
     <ul class="cards">
     {% for p in site.data.projects %}
       <li class="card card--holo">
+        <span class="foil-layer"></span>
         <header class="card__head">
           <h3 class="card__title">
             {{ p.name }}
