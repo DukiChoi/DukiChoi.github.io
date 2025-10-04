@@ -234,7 +234,7 @@ js_file: /assets/js/card-tilt.js
 .card__head{ display:flex; flex-direction:column; gap:.45rem; }
 
 .card__title {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 800;       /* 더 두껍게 */
   color: #fff;            /* 기본 흰색 */
   text-shadow: 0 1px 2px rgba(0,0,0,0.6); /* 대비 강화 */
