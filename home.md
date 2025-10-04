@@ -131,6 +131,7 @@ js_file: /assets/js/card-tilt.js
   --green:#47f58a; 
   --yellow:#ffe66b; 
   --red:#ff6b6b;
+  --orange:#ff9d00;
 }
 
 /* ====== Style ====== */
@@ -306,7 +307,7 @@ js_file: /assets/js/card-tilt.js
 }
   
 .card__title:hover {
-  color: var(--accent);        /* 사이트 테마 하늘색 */
+  color: var(--orange);        /* 사이트 테마 하늘색 */
 }
 
 
@@ -449,7 +450,7 @@ a:hover{ color:#82DFFF; }
 }
 .card__summary:hover {
   /* color: var(--accent);        /* 사이트 테마 하늘색 */
-  color: #ff9d00;   /* ✅ 주황색 강조 (제목처럼) */
+  color: var(--orange);   /* ✅ 주황색 강조 (제목처럼) */
 }
 
 /* details 내부 리스트 항목 hover 시 */
@@ -457,7 +458,7 @@ a:hover{ color:#82DFFF; }
   transition: color .2s ease;
 }
 .details__list li:hover {
-  color: #ff9d00;   /* ✅ 주황색 강조 (제목처럼) */
+  color: var(--orange);   /* ✅ 주황색 강조 (제목처럼) */
 }
 
 /* ============ SHINE LAYERS (모든 카드) ============ */
