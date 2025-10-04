@@ -302,7 +302,7 @@ js_file: /assets/js/card-tilt.js
 /* 더 강하게 고정하고 싶으면 px 단위 */
 @media (max-width: 640px) {
   .card__title {
-    font-size: 22px;  /* ← 모바일에서도 항상 22px 고정 */
+    font-size: 32px;  /* ← 모바일에서도 항상 32px 고정 */
   }
 }
   
