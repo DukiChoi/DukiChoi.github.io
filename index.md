@@ -54,16 +54,16 @@ title: DukiChoi
     {% endif %}
 
     <dl class="meta">
-      {% if p.role %}
-        <div class="meta__row">
-          <dt><i class="fa-solid fa-user-gear"></i> 역할</dt>
-          <dd>{{ p.role }}</dd>
-        </div>
-      {% endif %}
       {% if p.participants %}
         <div class="meta__row">
           <dt><i class="fa-solid fa-users"></i> 참여자</dt>
           <dd>{{ p.participants }}</dd>
+        </div>
+      {% endif %}
+      {% if p.role %}
+        <div class="meta__row">
+          <dt><i class="fa-solid fa-user-gear"></i> 역할</dt>
+          <dd>{{ p.role }}</dd>
         </div>
       {% endif %}
       {% if p.stack %}
@@ -87,7 +87,7 @@ title: DukiChoi
 
     <footer class="card__foot">
       {% if p.link %}
-        <a class="btn btn--ghost" href="{{ p.link }}" target="_blank" rel="noopener">
+        <a class="btn btn--github" href="{{ p.link }}" target="_blank" rel="noopener">
           <i class="fab fa-github"></i> GitHub
         </a>
       {% endif %}
@@ -95,6 +95,7 @@ title: DukiChoi
   </li>
 {% endfor %}
 </ul>
+
 
 <style>
 /* ====== Hero ====== */
