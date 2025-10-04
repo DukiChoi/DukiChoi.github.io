@@ -55,8 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
       card.style.setProperty('--tx', `${(x - cx) * 0.06}px`);
       card.style.setProperty('--ty', `${(y - cy) * 0.06}px`);
       // 하이라이트 중심
-      card.style.setProperty('--mx', `${x}px`);
-      card.style.setProperty('--my', `${y}px`);
+      card.style.setProperty('--mx', `${(x / rect.width) * 100}%`);
+      card.style.setProperty('--my', `${(y / rect.height) * 100}%`);
 
       // 🌈 무지개 결 각도(포켓몬 holo 느낌용)
       const angle = Math.atan2(y - cy, x - cx) * 180 / Math.PI;
@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       lastX = e.clientX;
       lastY = e.clientY;
       if (rafId == null) rafId = requestAnimationFrame(update);
+      if (isTouch) { scheduleIdleReset();}
     }, { passive: true });
     
     // 포인터 시작
@@ -118,8 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     const endPointer = (e) => {
-      // ✨ 터치일 때만 포인터 종료 처리(PC 클릭 방해 금지)
-      if (!isTouch) return;
       if (e.pointerId !== activePointerId) return;
       try { card.releasePointerCapture(e.pointerId); } catch(_) {}
       activePointerId = null;
