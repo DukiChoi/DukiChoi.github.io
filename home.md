@@ -246,8 +246,8 @@ js_file: /assets/js/card-tilt.js
 }
 .card__title a:hover{
   color:#ff9d00;              /* hover 시 주황색 */
-  text-decoration:underline;
-  text-underline-offset:3px;
+  /* text-decoration:underline; */
+  /* text-underline-offset:3px; */
 }
 
 
