@@ -503,55 +503,41 @@ a:hover{ color:#82DFFF; }
   opacity:.22;              /* 0.16~0.28 범위에서 취향 조정 */
 }
 
-.card .card__shine:after{
-  content:"";
-  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+.card .card__shine {
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:2;
 
-  /* 검은 비네팅을 거의 제거 → 잿빛/불투명 느낌 감소 */
-  background-image: radial-gradient(
-    farthest-corner circle at var(--pointer-x,50%) var(--pointer-y,50%),
-    rgba(255,255,255,.85) 0%,
-    rgba(255,255,255,.15) 28%,
-    rgba(255,255,255,0) 65%
-  );
-  background-position:center center;
-  background-size:cover;
-
-  /* luminosity → color-dodge 로 컬러 살리고 투명하게 */
-  mix-blend-mode: color-dodge;
-  filter: brightness(1) contrast(1.1) saturate(1.2);
-  opacity:.28; /* 0.18~0.35 */
-}
-
-@media (max-width: 900px){
-  .card .card__shine{ --scanlines-space:.5px; opacity:.18; }
-}
-
-
-/* ============ GLARE LAYERS (모든 카드) ============ */
-
-/* ==== STRONG HOLO: GLARE (더 투명/깨끗) ==== */
-.card .card__glare{
-  opacity:.42;                /* 0.3~0.55: 전체 광택 양 */
-  filter: brightness(1) contrast(1.1);
-  mix-blend-mode: screen;     /* overlay → screen: 회색 끼 제거 */
-}
-
-.card .card__glare:after{
-  content:"";
-  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-
-  /* 중심은 밝게, 바깥은 투명하게 → 뿌연 막 제거 */
-  background-image: radial-gradient(
-    circle at var(--pointer-x,50%) var(--pointer-y,50%),
-    rgba(255,255,255,.55) 0%,
-    rgba(255,255,255,.18) 24%,
-    rgba(255,255,255,0) 60%
+  background: conic-gradient(
+    from 0deg at var(--pointer-x,50%) var(--pointer-y,50%),
+    #ff0040, #ff8000, #ffee00, #00ff80, #00cfff, #8000ff, #ff0040
   );
 
-  mix-blend-mode: screen;     /* overlay → screen */
-  filter: brightness(1.05) contrast(1.1);
-  opacity:.9;                 /* 0.6~1.0: 스팟 강도 */
+  background-size: 200% 200%;
+  background-position: center;
+
+  mix-blend-mode: color-dodge;  /* screen 대신 color-dodge로 회색 제거 */
+  filter: brightness(1.1) contrast(1.3) saturate(1.6);
+  opacity:.18;
+  transition: opacity .2s ease;
+}
+.card:hover .card__shine {
+  opacity:.28;
+}
+
+.card .card__glare {
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:3;
+
+  background: radial-gradient(circle at var(--pointer-x,50%) var(--pointer-y,50%),
+              rgba(255,255,255,0.6), rgba(255,255,255,0) 60%);
+  mix-blend-mode: screen;
+  opacity:.25;
 }
 </style>
 
