@@ -35,72 +35,73 @@ title: DukiChoi
 
 <hr class="section-sep"/>
 
-# Projects & Research
-
-<ul class="cards">
-{% for p in site.data.projects %}
-  <li class="card">
-    <header class="card__head">
-      <h3 class="card__title">
-        {% if p.link %}
-          <a href="{{ p.link }}" target="_blank" rel="noopener">{{ p.name }}</a>
-        {% else %}
-          {{ p.name }}
+<section class="hero">
+  <div class="hero__text">
+    <h1>Projects & Research</h1>
+    <ul class="cards">
+    {% for p in site.data.projects %}
+      <li class="card">
+        <header class="card__head">
+          <h3 class="card__title">
+            {% if p.link %}
+              <a href="{{ p.link }}" target="_blank" rel="noopener">{{ p.name }}</a>
+            {% else %}
+              {{ p.name }}
+            {% endif %}
+          </h3>
+          {% if p.period %}
+            <span class="badge badge--ghost"><i class="fa-regular fa-calendar"></i> {{ p.period }}</span>
+          {% endif %}
+        </header>
+    
+        {% if p.summary %}
+          <p class="card__summary">{{ p.summary }}</p>
         {% endif %}
-      </h3>
-      {% if p.period %}
-        <span class="badge badge--ghost"><i class="fa-regular fa-calendar"></i> {{ p.period }}</span>
-      {% endif %}
-    </header>
-
-    {% if p.summary %}
-      <p class="card__summary">{{ p.summary }}</p>
-    {% endif %}
-
-    <dl class="meta">
-      {% if p.participants %}
-        <div class="meta__row">
-          <dt><i class="fa-solid fa-users"></i> 참여자</dt>
-          <dd>{{ p.participants }}</dd>
-        </div>
-      {% endif %}
-      {% if p.role %}
-        <div class="meta__row">
-          <dt><i class="fa-solid fa-user-gear"></i> 역할</dt>
-          <dd>{{ p.role }}</dd>
-        </div>
-      {% endif %}
-      {% if p.stack %}
-        <div class="meta__row">
-          <dt><i class="fa-solid fa-microchip"></i> Stack</dt>
-          <dd>{{ p.stack }}</dd>
-        </div>
-      {% endif %}
-    </dl>
-
-    {% if p.details %}
-      <details class="details">
-        <summary><i class="fa-solid fa-list-check"></i> 상세 보기</summary>
-        <ul class="details__list">
-          {% for d in p.details %}
-            <li>{{ d }}</li>
-          {% endfor %}
-        </ul>
-      </details>
-    {% endif %}
-
-    <footer class="card__foot">
-      {% if p.link %}
-        <a class="btn btn--github" href="{{ p.link }}" target="_blank" rel="noopener">
-          <i class="fab fa-github"></i> GitHub
-        </a>
-      {% endif %}
-    </footer>
-  </li>
-{% endfor %}
-</ul>
-
-
+    
+        <dl class="meta">
+          {% if p.participants %}
+            <div class="meta__row">
+              <dt><i class="fa-solid fa-users"></i> 참여자</dt>
+              <dd>{{ p.participants }}</dd>
+            </div>
+          {% endif %}
+          {% if p.role %}
+            <div class="meta__row">
+              <dt><i class="fa-solid fa-user-gear"></i> 역할</dt>
+              <dd>{{ p.role }}</dd>
+            </div>
+          {% endif %}
+          {% if p.stack %}
+            <div class="meta__row">
+              <dt><i class="fa-solid fa-microchip"></i> Stack</dt>
+              <dd>{{ p.stack }}</dd>
+            </div>
+          {% endif %}
+        </dl>
+    
+        {% if p.details %}
+          <details class="details">
+            <summary><i class="fa-solid fa-list-check"></i> 상세 보기</summary>
+            <ul class="details__list">
+              {% for d in p.details %}
+                <li>{{ d }}</li>
+              {% endfor %}
+            </ul>
+          </details>
+        {% endif %}
+    
+        <footer class="card__foot">
+          {% if p.link %}
+            <a class="btn btn--github" href="{{ p.link }}" target="_blank" rel="noopener">
+              <i class="fab fa-github"></i> GitHub
+            </a>
+          {% endif %}
+        </footer>
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+</section>
 
 <style>
 /* ====== Color System (다크 + 블루 포인트) ====== */
