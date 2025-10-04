@@ -364,9 +364,12 @@ a:hover{ color:#82DFFF; }
 }
 
 /* summary hover 시 색상 변경 */
-.details > summary:hover {
-  color: #5CC9F5;
-  border-color: #5CC9F5;
+.card__summary {
+  color: #f2f2f2;
+  transition: color .2s ease;
+}
+.card__summary:hover {
+  color: var(--accent);        /* 사이트 테마 하늘색 */
 }
 
 /* details 내부 리스트 항목 hover 시 */
