@@ -100,7 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // (옵션) 탭 순간 반짝임 강화
       card.style.setProperty('--gloss-boost', '1');
       setTimeout(() => card.style.setProperty('--gloss-boost', '0'), 160);
-      scheduleIdleReset(); // ★ ADD: 터치 시작 후 입력 멈추면 자동 리셋
+      if (isTouch) {
+        scheduleIdleReset();
+      }
     });
 
     const endPointer = (e) => {
