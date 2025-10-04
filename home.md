@@ -268,7 +268,6 @@ js_file: /assets/js/card-tilt.js
   content:"";
   position:absolute; inset:0; border-radius: inherit;
   pointer-events:none;
-  z-index: 2;
   mix-blend-mode: screen;
 
   /* 🔵 완전한 순백 → 살짝 청백으로 조정 + 강도 하향 */
@@ -465,6 +464,12 @@ a:hover{ color:#82DFFF; }
 /* 아주 은은한 무지개 오로라 (포켓몬 카드 느낌, 과하지 않게) */
 /* 은빛+무지개 결 (아주 옅게) */
 /* 은빛 광택 (metal shine) */
+/* 레이어 순서 고정 */
+.card .foil-layer { z-index: 1; }
+.card .card__shine{ z-index: 2; }
+.card .card__glare{ z-index: 3; }
+.card::after      { z-index: 4; }
+  
 .card .card__shine {
   position:absolute; inset:0; border-radius:inherit; pointer-events:none;
   z-index:1;
@@ -498,7 +503,12 @@ a:hover{ color:#82DFFF; }
   transition: opacity .15s ease, transform .12s ease;
 }
 .card.is-hover .card__glare { opacity:.30; }
-
+/* ✨ 성능 최적화용 will-change */
+.card .card__glare,
+.card::after {
+  will-change: opacity, transform;  /* 모바일에서 블렌딩 안정화 */
+}
+  
 </style>
 
 <!-- inline defs: 페이지에 1번만 -->
