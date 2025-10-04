@@ -340,6 +340,7 @@ a:hover{ color:#82DFFF; }
       rgba(  0,123,255,.03) 60deg 72deg,
       rgba(154,  0,255,.03) 72deg 84deg),
     linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,0) 40%);
+  filter: saturate(1.05) brightness(1.02);
   opacity:.10;                     /* 정말 살짝만 */
   transform: rotate(8deg) scale(1.03);
 }
