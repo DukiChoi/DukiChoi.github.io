@@ -78,36 +78,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 공통 포인터 이동(마우스/터치/펜)
+    // 공통 포인터 이동
     card.addEventListener('pointermove', (e) => {
-      // 터치 중인데 다른 포인터면 무시
+      // ✨ 인터랙티브 요소 드래그 중이면 틸트 건너뜀
+      if (e.target.closest('summary, a, button, input, textarea, select, label, details, [data-no-tilt]')) {
+        return;
+      }
       if (activePointerId !== null && e.pointerId !== activePointerId) return;
       lastX = e.clientX;
       lastY = e.clientY;
       if (rafId == null) rafId = requestAnimationFrame(update);
     }, { passive: true });
-
-    // ===== 터치/펜 활성화 =====
+    
+    // 포인터 시작
     card.addEventListener('pointerdown', (e) => {
-      activePointerId = e.pointerId;
-      card.setPointerCapture(e.pointerId); // 이동 중에도 좌표 안정 수집
+      // ✨ 클릭 시작이 인터랙티브면 기본 동작만 수행(틸트/캡처 X)
+      if (e.target.closest('summary, a, button, input, textarea, select, label, details, [data-no-tilt]')) {
+        activePointerId = null;
+        return;
+      }
+    
       recalc();
       card.style.zIndex = 20;
-      card.classList.add('is-hover');      // :hover 대체
+      card.classList.add('is-hover');
       lastX = e.clientX;
       lastY = e.clientY;
       if (rafId == null) rafId = requestAnimationFrame(update);
-
-      // (옵션) 탭 순간 반짝임 강화
+    
+      // (옵션) 탭 순간 반짝임
       card.style.setProperty('--gloss-boost', '1');
       setTimeout(() => card.style.setProperty('--gloss-boost', '0'), 160);
+    
+      // ✨ 터치일 때만 캡처/추적/idle 리셋
       if (isTouch) {
+        activePointerId = e.pointerId;
+        try { card.setPointerCapture(e.pointerId); } catch(_) {}
         scheduleIdleReset();
       }
     });
-
+    
     const endPointer = (e) => {
+      // ✨ 터치일 때만 포인터 종료 처리(PC 클릭 방해 금지)
+      if (!isTouch) return;
       if (e.pointerId !== activePointerId) return;
-      card.releasePointerCapture(e.pointerId);
+      try { card.releasePointerCapture(e.pointerId); } catch(_) {}
       activePointerId = null;
       resetVars();
     };
