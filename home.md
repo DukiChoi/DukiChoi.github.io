@@ -9,6 +9,7 @@ js_file: /assets/js/card-tilt.js
 <section class="hero">
   <div class="hero__text">
     <h1>About DukiChoi</h1>
+    
     <p class="intro">안녕하세요. 개발자 <strong>DukiChoi</strong>입니다. 임베디드 시스템, IoT, 바이오 신호처리 기반 연구(Embedded · XR/VR · IMU/BLE · ML)와 다양한 임베디드 프로젝트를 수행해 왔습니다.</p>
   </div>
   <!-- <div class="hero__research badge"> -->
@@ -141,12 +142,14 @@ js_file: /assets/js/card-tilt.js
 .cards li::before {
   content: none !important;
 }
+
   
 /* ====== Hero ====== */
 .hero{ margin: 1.5rem 0 .5rem; }
 .hero__text h1{
   font-size:2.3rem; font-weight:800; margin:0 0 .5rem;
   background: linear-gradient(90deg, #5CC9F5, #82DFFF);
+  margin-bottom: 20px; /* h1 아래쪽 간격 */
   -webkit-background-clip:text; -webkit-text-fill-color:transparent;
 }
 .subtitle{ margin:.15rem 0 .35rem; color:var(--muted); }
