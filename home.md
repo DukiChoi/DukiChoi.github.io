@@ -3,7 +3,7 @@ layout: default
 permalink: /
 permalink_name: /Home
 title: Home
-
+js_file: assets/js/card-tilt.js
 ---
 
 <section class="hero">
