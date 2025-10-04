@@ -202,9 +202,12 @@ js_file: /assets/js/card-tilt.js
   transform: translateZ(0);
   transition: box-shadow .2s ease, background .2s ease;
 }
-/* 카드 안의 실제 콘텐츠는 맨 위 */
-.card > * { position: relative; z-index: 3; }
-
+/* 카드 안의 실제 콘텐츠는 맨 위 + 블렌드 무효화 */
+.card > * {
+  position: relative;
+  z-index: 3;
+  mix-blend-mode: normal;
+}
 .card:hover{
   background: var(--card-raise);
   box-shadow: 0 14px 28px rgba(0,0,0,.38);
@@ -236,8 +239,17 @@ js_file: /assets/js/card-tilt.js
 .card__title{
   font-size:1.3rem; font-weight:700; margin:0; line-height:1.3;
 }
-.card__title a{ color:#fff; text-decoration:none; }
-.card__title a:hover{ text-decoration:underline; text-underline-offset:3px; }
+.card__title a{
+  color:#fff;                 /* 기본 흰색 */
+  text-decoration:none;       /* 밑줄 제거 */
+  transition: color .2s ease; /* hover 시 색 전환 부드럽게 */
+}
+.card__title a:hover{
+  color:#ff9d00;              /* hover 시 주황색 */
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
 
 .badge{
   align-self:flex-start;
@@ -317,6 +329,7 @@ a:hover{ color:#82DFFF; }
 }
 
 /* 하이라이트(광원 반사점) */
+  
 .card .gloss-layer{
   position:absolute; inset:0; border-radius:inherit; z-index:2; pointer-events:none;
   mix-blend-mode: screen;
