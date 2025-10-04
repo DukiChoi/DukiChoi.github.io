@@ -9,16 +9,25 @@ title: DukiChoi
   <div class="hero__text">
     <h1>Byungkeun Choi</h1>
     <p class="subtitle">Embedded · XR/VR · IMU/BLE · ML</p>
-    <p class="intro">안녕하세요. 개발자 <strong>DukiChoi</strong>입니다. 임베디드·센서·VR/ML 기반 프로젝트를 연구/개발하고 있습니다.</p>
-    <div class="cta">
-      <a class="btn btn--primary" href="https://github.com/DukiChoi" target="_blank" rel="noopener">
-        <i class="fab fa-github"></i> GitHub
-      </a>
-      <a class="btn" href="{{ '/publications/' | relative_url }}">Publications</a>
-      <a class="btn" href="{{ '/cv/' | relative_url }}">CV</a>
-    </div>
+    <p class="intro">안녕하세요. 개발자 <strong>DukiChoi</strong>입니다. 임베디드 시스템, IoT, 바이오 신호처리 기반 연구와 프로젝트를 수행해 왔습니다.</p>
   </div>
 </section>
+
+<hr class="section-sep"/>
+
+## 전공
+- 연구분야: 임베디드 시스템 및 IoT 기반 바이오 신호처리
+
+## 컴퓨터 활용능력
+- **C++, C#, Arduino, Java**  
+  · 활용수준: 중급  
+  · 사용기간: 3년
+- **Python, Matlab**  
+  · 활용수준: 중급  
+  · 사용기간: 5년
+- **공학용 KiCAD**  
+  · 활용수준: 중급  
+  · 사용기간: 2년
 
 <hr class="section-sep"/>
 
