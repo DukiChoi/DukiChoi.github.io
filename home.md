@@ -313,36 +313,31 @@ a:hover{ color:#82DFFF; }
    HOLO 레이어 (포켓몬 카드 느낌)
    =========================== */
 
-/* 비닐 반사 레이어 (핵심) */
 /* 비닐 + 무지개 반사 레이어 */
 .card .foil-layer {
   position:absolute;
   inset:0;
   border-radius:inherit;
-  z-index:2;
   pointer-events:none;
+  z-index:2;
 
-  /* SVG 필터: 표면 반사(빛의 요철) */
-  background:
-    conic-gradient(from 0deg at 50% 50%,
+  /* 무지개 패턴만 */
+  background: conic-gradient(from 0deg at 50% 50%,
       #ff0040, #ff9d00, #ffe600, #3cff00,
-      #00ffd5, #007bff, #9a00ff, #ff0040),
-    #fff; /* 흰색 스펙큘러 베이스 */
+      #00ffd5, #007bff, #9a00ff, #ff0040);
+  background-size: 200% 200%;
 
-  background-size: 200% 200%, cover;
-  background-blend-mode: screen;   /* 흰색 + 무지개 같이 */
-  
-  filter: url(#foilSpec);          /* SVG 필터로 반사효과 */
-  mix-blend-mode: screen;          /* 카드 배경 위에서 빛처럼 보이도록 */
+  mix-blend-mode: screen;   /* 카드 위에서 빛처럼만 보이게 */
+  filter: url(#foilSpec);   /* 비닐 필터 (선택) */
 
-  opacity:.18;                     /* 기본 은은함 */
-  transform: rotate(6deg) scale(1.02);
+  opacity:.12;              /* 너무 세면 0.08~0.10으로 */
+  transform: rotate(8deg) scale(1.02);
   transition: opacity .15s ease, transform .15s ease;
 }
-
 .card:hover .foil-layer {
-  opacity:.26; /* hover 시 좀 더 진하게 */
+  opacity:.20;
 }
+
 
 /* (선택) 아주 옅은 무지개 결을 바닥에 한 겹 – 과하면 빼세요 */
 .card .holo-layer{
