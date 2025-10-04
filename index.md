@@ -8,15 +8,18 @@ title: DukiChoi
 <section class="hero">
   <div class="hero__text">
     <h1>Byungkeun Choi</h1>
-    <p class="subtitle">Embedded · XR/VR · IMU/BLE · ML</p>
-    <p class="intro">안녕하세요. 개발자 <strong>DukiChoi</strong>입니다. 임베디드 시스템, IoT, 바이오 신호처리 기반 연구와 프로젝트를 수행해 왔습니다.</p>
+    <p class="intro">안녕하세요. 개발자 <strong>DukiChoi</strong>입니다. 임베디드 시스템, IoT, 바이오 신호처리 기반 연구(Embedded · XR/VR · IMU/BLE · ML)와 다양한 임베디드 프로젝트를 수행해 왔습니다.</p>
+  </div>
+  <div class="hero__research badge">
+    <i class="fa-solid fa-microscope"></i>
+    
   </div>
 </section>
 
 <hr class="section-sep"/>
 
-## 전공
-- 연구분야: 임베디드 시스템 및 IoT 기반 바이오 신호처리
+## 연구분야
+- 임베디드 시스템 및 IoT 기반 바이오 신호처리
 
 ## 컴퓨터 활용능력
 - **C++, C#, Arduino, Java**  
