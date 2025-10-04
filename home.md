@@ -236,25 +236,30 @@ js_file: /assets/js/card-tilt.js
 .card--holo::before{
   content:"";
   position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  mix-blend-mode:screen; opacity:.0;   /* 기본은 낮게 */
-  /* conic + diagonal sheen + glitter maskish */
+  mix-blend-mode:screen;
+- opacity:.0;                      /* 기본은 낮게 */
++ opacity:.35;                     /* ✅ 기본에도 무지개 결 보이게 */
   background:
     conic-gradient(from 0deg at 50% 50%,
       #ff0040, #ff9d00, #ffe600, #3cff00, #00ffd5, #007bff, #9a00ff, #ff0040) ,
     linear-gradient(120deg, rgba(255,255,255,.28), rgba(255,255,255,0) 55%);
   background-size: 180% 180%, 140% 140%;
-  filter: saturate(1.35) brightness(1.05);
+- filter: saturate(1.35) brightness(1.05);
++ filter: saturate(1.35) brightness(1.06);
   transform: translate3d(var(--tx,0), var(--ty,0), 0)
              rotate(var(--shine-angle,0deg)) scale(1.04);
   transition: opacity .18s ease, transform .18s ease, filter .18s ease;
-  animation: holo-shift 8s linear infinite;
+- animation: holo-shift 8s linear infinite;
++ animation: holo-shift 10s linear infinite;  /* 살짝 더 은은하게 */
 }
 
 /* 2) 스펙큘러 하이라이트(광원 반사점) */
 .card--holo::after{
   content:"";
   position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  mix-blend-mode:screen; opacity:0;
+  mix-blend-mode:screen;
+- opacity:0;
++ opacity:.15;                     /* ✅ 기본에도 살짝 하이라이트/글리터 느낌 */
   background:
     radial-gradient(circle at var(--mx,50%) var(--my,50%),
       rgba(255,255,255,.40), rgba(255,255,255,0) 55%);
@@ -263,18 +268,13 @@ js_file: /assets/js/card-tilt.js
 }
 
 /* hover 시 더 눈에 띄게 */
-.card--holo:hover::before{ opacity:.55; filter:saturate(1.5) brightness(1.08); }
-.card--holo:hover::after { opacity:1; }
-
-/* 은은한 지속 이동(무지개 결 이동) */
-@keyframes holo-shift{
-  0%   { background-position: 0% 0%,   0% 0%; }
-  100% { background-position: 200% 200%, 120% 120%; }
+.card--holo:hover::before{
+- opacity:.55; filter:saturate(1.5) brightness(1.08);
++ opacity:.65; filter:saturate(1.55) brightness(1.10);
 }
-
-/* 모션 줄이기 선호 시 애니메이션 정지 */
-@media (prefers-reduced-motion: reduce){
-  .card--holo::before{ animation:none; }
+.card--holo:hover::after {
+- opacity:1;
++ opacity:.35;
 }
 
 
