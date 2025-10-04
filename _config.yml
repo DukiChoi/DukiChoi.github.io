@@ -20,6 +20,6 @@ header_pages:
   - preview.md
   - Hello.md
   - cv.md
-
+  - resume.md
 # set the size of the text to 'large' or 'small', default is small
 font-size: small
