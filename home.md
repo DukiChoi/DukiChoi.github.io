@@ -448,7 +448,8 @@ a:hover{ color:#82DFFF; }
   transition: color .2s ease;
 }
 .card__summary:hover {
-  color: var(--accent);        /* 사이트 테마 하늘색 */
+  /* color: var(--accent);        /* 사이트 테마 하늘색 */ */
+  color: #ff9d00;   /* ✅ 주황색 강조 (제목처럼) */
 }
 
 /* details 내부 리스트 항목 hover 시 */
