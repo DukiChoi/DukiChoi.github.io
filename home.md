@@ -169,16 +169,17 @@ js_file: /assets/js/card-tilt.js
 
 .section-sep{ margin:1.25rem 0 1rem; border:0; border-top:1px solid var(--line); }
 
-
-
-
   
 /* ====== Cards grid (카드 모션 관리) ====== */
 .cards{
   list-style:none; padding:0; margin:0;
-  display:grid; gap:18px;
+  display:grid; gap:28px;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   overflow: visible;                /* 확대 시 잘림 방지 */
+}
+/* 모바일에선 조금 줄이기 (선택) */
+@media (max-width: 640px){
+  .cards{ gap: 20px; }
 }
 
 .card{
@@ -277,6 +278,45 @@ js_file: /assets/js/card-tilt.js
 + opacity:.35;
 }
 
+/* === HOLO: 기본 무지개 결 (항상 보임) === */
+.card.card--holo::before{
+  content:"";
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  mix-blend-mode: screen;
+  background:
+    conic-gradient(from 0deg at 50% 50%,
+      #ff0040, #ff9d00, #ffe600, #3cff00, #00ffd5, #007bff, #9a00ff, #ff0040),
+    linear-gradient(120deg, rgba(255,255,255,.28), rgba(255,255,255,0) 55%);
+  background-size: 180% 180%, 140% 140%;
+  filter: saturate(1.35) brightness(1.06);
+  opacity: .38; /* ← 기본에도 보이게 (0.35~0.5 사이 취향대로) */
+  transform: translate3d(var(--tx,0), var(--ty,0), 0)
+             rotate(var(--shine-angle,0deg)) scale(1.04);
+  transition: opacity .18s ease, transform .18s ease, filter .18s ease;
+  animation: holo-shift 10s linear infinite;
+}
+
+/* 하이라이트(광원 점) – 기본은 은은하게 */
+.card.card--holo::after{
+  content:"";
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  mix-blend-mode: screen;
+  background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
+              rgba(255,255,255,.40), rgba(255,255,255,0) 55%);
+  opacity: .18;  /* 기본 은은 */
+  transform: translate3d(var(--tx,0), var(--ty,0), 0) scale(1.02);
+  transition: opacity .15s ease, transform .15s ease;
+}
+
+/* hover 시 강화 */
+.card.card--holo:hover::before{ opacity:.65; filter:saturate(1.55) brightness(1.10); }
+.card.card--holo:hover::after { opacity:.35; }
+
+/* 무지개 결 살짝 흐르게 */
+@keyframes holo-shift{
+  0%   { background-position: 0% 0%,     0% 0%; }
+  100% { background-position: 200% 200%, 120% 120%; }
+}
 
 
 /* ====== Card header ====== */
