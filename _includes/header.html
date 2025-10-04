@@ -4,28 +4,14 @@
   <div class="menu">
     <ul>
       <li class="page_title">{{ page.title }}</li>
-
-      {# 홈 링크 마지막의 "/"도 필요하면 추가 #}
-      <li><a href="{{ '/' | relative_url }}">/</a></li>
-
       {%- for path in page_paths -%}
-        {%- assign p = site.pages | where: "path", path | first -%}
-        {%- if p.title -%}
-          {%- comment -%}
-            표시용 라벨 결정:
-            - p.permalink_name 가 있으면 공백→하이픈만 적용(대문자 유지)
-            - 없으면 slugify 로 일반적인 슬러그 생성(소문자)
-          {%- endcomment -%}
-          {%- assign _base = p.permalink_name | default: p.title -%}
-          {%- if p.permalink_name -%}
-            {%- assign label = _base | replace: ' ', '-' -%}
-          {%- else -%}
-            {%- assign label = _base | slugify: 'pretty' -%}
-          {%- endif -%}
-
-          <li>
-            <a href="{{ p.url | relative_url }}">/{{ label }}</a>
-          </li>
+        {%- assign my_page = site.pages | where: "path", path | first -%}
+        {%- if my_page.title -%}
+        <li>
+          <a href="{{ my_page.url | relative_url }}">
+            {{ my_page.title }}
+          </a>
+        </li>
         {%- endif -%}
       {%- endfor -%}
     </ul>
