@@ -232,18 +232,13 @@ js_file: /assets/js/card-tilt.js
 
 /* ====== Card header ====== */
 .card__head{ display:flex; flex-direction:column; gap:.45rem; }
-.card__title{
-  font-size:1.3rem; font-weight:700; margin:0; line-height:1.3;
+.card__title {
+  color: #fff;
+  transition: color .2s ease;
 }
-.card__title a{
-  color:#fff;                 /* 기본 흰색 */
-  text-decoration:none;       /* 밑줄 제거 */
-  transition: color .2s ease; /* hover 시 색 전환 부드럽게 */
-}
-.card__title a:hover{
-  color:#ff9d00;              /* hover 시 주황색 */
-  /* text-decoration:underline; */
-  /* text-underline-offset:3px; */
+
+.card__title:hover {
+  color: var(--accent);        /* 사이트 테마 하늘색 */
 }
 
 
