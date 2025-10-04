@@ -227,39 +227,6 @@ js_file: /assets/js/card-tilt.js
 .card { outline: 1px solid rgba(0,0,0,0); }
 
 
-/* ===========================
-   HOLO 레이어 (포켓몬 카드 느낌)
-   =========================== */
-
-/* ::before = 무지개 홀로(항상 보임, 콘텐츠 아래) */
-.card.card--holo::before{
-  content:"";
-  position:absolute; inset:0; border-radius:inherit;
-  pointer-events:none;
-  z-index:1;
-  mix-blend-mode: screen;
-  /* 무지개 + 사선 쉬엔 */
-  background:
-    conic-gradient(from 0deg at 50% 50%,
-      #ff0040, #ff9d00, #ffe600, #3cff00,
-      #00ffd5, #007bff, #9a00ff, #ff0040),
-    linear-gradient(135deg, rgba(255,255,255,.25), rgba(255,255,255,0) 60%);
-  background-size: 200% 200%, 150% 150%;
-  filter: saturate(1.35) brightness(1.06);
-  opacity: .42;                         /* ← 기본에도 확실히 보이게 */
-  transform: rotate(5deg) scale(1.04);  /* 기본 사선 느낌 */
-  transition: opacity .18s ease, filter .18s ease;
-  animation: holo-shift 12s linear infinite; /* 은은하게 흐름 */
-}
-
-/* hover 시 무지개 강화 */
-.card.card--holo:hover::before{ opacity:.68; filter:saturate(1.55) brightness(1.10); }
-
-@keyframes holo-shift{
-  0%   { background-position: 0% 0%,     0% 0%; }
-  100% { background-position: 200% 200%, 120% 120%; }
-}
-
 
 /* ====== Card header ====== */
 .card__head{ display:flex; flex-direction:column; gap:.45rem; }
@@ -312,5 +279,46 @@ js_file: /assets/js/card-tilt.js
 /* ====== Links tint ====== */
 a{ color:var(--accent); }
 a:hover{ color:#82DFFF; }
+
+/* ===========================
+   HOLO 레이어 (포켓몬 카드 느낌)
+   =========================== */
+
+.card{ position:relative; overflow:hidden; isolation:isolate; }
+.card > *{ position:relative; z-index:3; }
+
+/* 무지개 */
+.card .holo-layer{
+  position:absolute; inset:0; border-radius:inherit; z-index:1; pointer-events:none;
+  mix-blend-mode:screen;
+  background:
+    conic-gradient(from 0deg at 50% 50%,
+      #ff0040,#ff9d00,#ffe600,#3cff00,#00ffd5,#007bff,#9a00ff,#ff0040),
+    linear-gradient(135deg, rgba(255,255,255,.25), rgba(255,255,255,0) 60%);
+  background-size:200% 200%, 150% 150%;
+  filter:saturate(1.35) brightness(1.06);
+  opacity:.42;
+  transform:rotate(5deg) scale(1.04);
+  animation:holo-shift 12s linear infinite;
+}
+
+/* 하이라이트 */
+.card .gloss-layer{
+  position:absolute; inset:0; border-radius:inherit; z-index:2; pointer-events:none;
+  mix-blend-mode:screen;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),
+             rgba(255,255,255,.45), rgba(255,255,255,0) 55%);
+  opacity:.2;
+  transform:translateZ(0) scale(1.02);
+  transition:opacity .15s ease, transform .15s ease;
+}
+.card:hover .gloss-layer{ opacity:.36; }
+
+@keyframes holo-shift{
+  0%{ background-position:0% 0%, 0% 0%; }
+  100%{ background-position:200% 200%, 120% 120%; }
+}
+
+  
 </style>
 
