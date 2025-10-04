@@ -188,11 +188,13 @@ js_file: assets/js/card-tilt.js
   perspective: 1000px; /* 3D 효과 */
 }
 
-.card:hover{
-  /* hover 상태 기본값 (마우스 이벤트로 override됨) */
-  transform: scale(1.8);
+.card:hover {
+  transform: scale(1.5);
   background:var(--card-raise);
   box-shadow: 0 16px 32px rgba(0,0,0,.45);
+
+  position: relative;   /* z-index 먹히게 */
+  z-index: 10;          /* hover된 카드가 위로 올라옴 */
 }
 
 /* 반짝임 레이어 */
