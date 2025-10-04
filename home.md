@@ -429,41 +429,33 @@ a:hover{ color:#82DFFF; }
 /* ============ SHINE LAYERS (모든 카드) ============ */
 
   /* 아주 은은한 무지개 오로라 (포켓몬 카드 느낌, 과하지 않게) */
-.card .card__shine{
+.card .card__shine {
   position:absolute;
   inset:0;
   border-radius:inherit;
   pointer-events:none;
   z-index:1;
 
-  /* 어두운 카드 위에 얹어서 "빛"처럼 보이게 */
   mix-blend-mode: screen;
 
-  /* 마우스 방향을 따라 회전+이동 (JS가 --mx/--my/--shine-angle 제공) */
-  background:
-    conic-gradient(
-      from var(--shine-angle, 0deg)
-      at var(--mx, 50%) var(--my, 50%),
-      rgba(255, 0, 120, .06) 0%,
-      rgba(255,180,  0, .06) 22%,
-      rgba( 80,255,  0, .06) 45%,
-      rgba(  0,220,255, .06) 68%,
-      rgba(140,  0,255, .06) 90%,
-      rgba(255, 0,120, .06) 100%
-    );
+  background: conic-gradient(
+    from var(--shine-angle, 0deg)
+    at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 200, 200, 0.05) 0%,   /* 옅은 핑크 */
+    rgba(255, 240, 180, 0.05) 20%,  /* 베이지/골드 느낌 */
+    rgba(200, 255, 220, 0.05) 40%,  /* 민트 */
+    rgba(200, 230, 255, 0.05) 60%,  /* 하늘색 */
+    rgba(230, 200, 255, 0.05) 80%,  /* 보라 */
+    rgba(255, 200, 200, 0.05) 100%
+  );
 
-  /* 너무 선명하지 않게 살짝 흐림 */
-  filter: blur(10px) saturate(1.1);
-
-  /* 기본은 매우 약하게 */
+  filter: blur(12px) saturate(0.8) brightness(1.05); /* 채도↓ 부드럽게 */
   opacity: .08;
-  transition: opacity .18s ease, filter .18s ease, transform .18s ease;
+  transition: opacity .2s ease;
 }
 
-/* hover 시에도 '은은함 유지' (살짝만 강화) */
-.card:hover .card__shine{
-  opacity: .12;              /* 0.10~0.16 사이로 취향 조정 */
-  filter: blur(10px) saturate(1.2);
+.card:hover .card__shine {
+  opacity: .12; /* hover 때 살짝만 강화 */
 }
 
 /* 반짝 하이라이트(스팟)는 이미 있다면 살짝만 */
