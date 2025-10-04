@@ -327,7 +327,18 @@ a:hover{ color:#82DFFF; }
   transition: opacity .12s ease, transform .12s ease;
 }
 .card:hover .gloss-layer{ opacity:.20; }
-  
+
+.card__title a {
+  color: #fff;                 /* 기본 흰색 */
+  text-decoration: none;       /* 밑줄 제거 */
+  transition: color .2s ease;  /* 색상 전환 부드럽게 */
+}
+
+.card__title a:hover {
+  color: #ff9d00;              /* hover 시 주황색 */
+  text-decoration: underline;  /* 선택: 밑줄 추가 */
+  text-underline-offset: 3px;  /* 밑줄 약간 띄우기 */
+}
 </style>
 
 <!-- inline defs: 페이지에 1번만 -->
