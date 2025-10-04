@@ -76,7 +76,7 @@
   link: https://github.com/DukiChoi/ShotExperienceSimulator
 
 - name: 아동 인지능력 진단을 위한 스마트 큐브 개발
-  period: 2025.06.01 ~ 진행중
+  period: 2025.03.01 ~ 진행중
   summary: IMU·압력센서·LED 기반 스마트 큐브 및 데이터 수집
   details:
     - HW 회로 설계 및 펌웨어 구현
