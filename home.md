@@ -286,41 +286,45 @@ a:hover{ color:#82DFFF; }
    HOLO 레이어 (포켓몬 카드 느낌)
    =========================== */
 
-.card{ position:relative; overflow:hidden; isolation:isolate; }
-.card > *{ position:relative; z-index:3; }
-
-/* 무지개 */
+/* 무지개 (항상 아주 은은) */
 .card .holo-layer{
   position:absolute; inset:0; border-radius:inherit; z-index:1; pointer-events:none;
-  mix-blend-mode:screen;
+  mix-blend-mode: screen;
+  /* 약한 무지개 띠 + 사선 쉬엔 (동적 각도는 --sheen-angle) */
   background:
-    conic-gradient(from 0deg at 50% 50%,
-      #ff0040,#ff9d00,#ffe600,#3cff00,#00ffd5,#007bff,#9a00ff,#ff0040),
-    linear-gradient(135deg, rgba(255,255,255,.25), rgba(255,255,255,0) 60%);
-  background-size:200% 200%, 150% 150%;
-  filter:saturate(1.35) brightness(1.06);
-  opacity:.42;
-  transform:rotate(5deg) scale(1.04);
-  animation:holo-shift 12s linear infinite;
+    repeating-conic-gradient(from 0deg at 50% 50%,
+      rgba(255,  0, 80, .05)  0deg 12deg,
+      rgba(255,157,  0, .05) 12deg 24deg,
+      rgba(255,230,  0, .05) 24deg 36deg,
+      rgba( 60,255,  0, .05) 36deg 48deg,
+      rgba(  0,255,213, .05) 48deg 60deg,
+      rgba(  0,123,255, .05) 60deg 72deg,
+      rgba(154,  0,255, .05) 72deg 84deg),
+    linear-gradient(var(--sheen-angle,135deg),
+      rgba(255,255,255,.10), rgba(255,255,255,0) 40%);
+  background-size: 200% 200%, 140% 140%;
+  filter: saturate(1.05) brightness(1.02);
+  opacity: var(--holo, .20);          /* 기본 세기(아주 은은) */
+  transform: rotate(8deg) scale(1.03); /* 기본 사선 느낌 */
+  transition: opacity .12s ease, filter .12s ease;
+  /* ❌ 흘러가는 애니메이션 제거 */
 }
 
-/* 하이라이트 */
+.card:hover .holo-layer{
+  opacity: var(--holo-hover, .26);     /* hover 시 살짝만 강화 */
+}
+
+/* 하이라이트(광원 반사점) */
 .card .gloss-layer{
   position:absolute; inset:0; border-radius:inherit; z-index:2; pointer-events:none;
-  mix-blend-mode:screen;
-  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),
-             rgba(255,255,255,.45), rgba(255,255,255,0) 55%);
-  opacity:.2;
-  transform:translateZ(0) scale(1.02);
-  transition:opacity .15s ease, transform .15s ease;
+  mix-blend-mode: screen;
+  background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
+              rgba(255,255,255,.18), rgba(255,255,255,0) 55%);
+  opacity:.12;                          /* 기본도 아주 살짝 보이게 */
+  transform: translate3d(var(--tx,0), var(--ty,0), 0) scale(1.02);
+  transition: opacity .12s ease, transform .12s ease;
 }
-.card:hover .gloss-layer{ opacity:.36; }
-
-@keyframes holo-shift{
-  0%{ background-position:0% 0%, 0% 0%; }
-  100%{ background-position:200% 200%, 120% 120%; }
-}
-
+.card:hover .gloss-layer{ opacity:.20; }
   
 </style>
 
