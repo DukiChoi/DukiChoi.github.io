@@ -326,22 +326,22 @@ a:hover{ color:#82DFFF; }
 }
 .card:hover .foil-layer{ opacity:.22; }
 
-/* (선택) 아주 옅은 간섭 무늬: 과하면 제거해도 됨 */
+/* (선택) 아주 옅은 무지개 결을 바닥에 한 겹 – 과하면 빼세요 */
 .card .holo-layer{
-  position:absolute; inset:0; border-radius:inherit; z-index:1; pointer-events:none;
+  position:absolute; inset:0; z-index:1; pointer-events:none; border-radius:inherit;
   mix-blend-mode: screen;
   background:
     repeating-conic-gradient(from 0deg at 50% 50%,
-      rgba(255, 0, 80, .03) 0 12deg,
-      rgba(255,157, 0, .03) 12deg 24deg,
-      rgba(255,230, 0, .03) 24deg 36deg,
-      rgba( 60,255, 0, .03) 36deg 48deg,
-      rgba(  0,255,213,.03) 48deg 60deg,
-      rgba(  0,123,255,.03) 60deg 72deg,
-      rgba(154,  0,255,.03) 72deg 84deg),
-    linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,0) 40%);
+      rgba(255,0,80,.035) 0 12deg,
+      rgba(255,157,0,.035) 12deg 24deg,
+      rgba(255,230,0,.035) 24deg 36deg,
+      rgba(60,255,0,.035) 36deg 48deg,
+      rgba(0,255,213,.035) 48deg 60deg,
+      rgba(0,123,255,.035) 60deg 72deg,
+      rgba(154,0,255,.035) 72deg 84deg),
+    linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%);
   filter: saturate(1.05) brightness(1.02);
-  opacity:.10;                     /* 정말 살짝만 */
+  opacity:.14;
   transform: rotate(8deg) scale(1.03);
 }
 
