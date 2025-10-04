@@ -190,7 +190,7 @@ js_file: assets/js/card-tilt.js
 
 .card:hover{
   /* hover 상태 기본값 (마우스 이벤트로 override됨) */
-  transform: scale(1.05);
+  transform: scale(1.8);
   background:var(--card-raise);
   box-shadow: 0 16px 32px rgba(0,0,0,.45);
 }
