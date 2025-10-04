@@ -3,6 +3,7 @@ layout: default
 permalink: /
 permalink_name: /home
 title: DukiChoi
+
 ---
 
 <section class="hero">
@@ -112,7 +113,7 @@ title: DukiChoi
   --line:#2A2A2A;       /* 구분선/테두리 */
   --accent:#9AE66E;     /* 포인트(선명한 연두) */
 }
-body{ background:var(--bg); color:var(--text); }
+/* body{ background:var(--bg); color:var(--text); } */
 
 /* ====== Hero ====== */
 .hero{ margin: 1.25rem 0 .25rem; }
