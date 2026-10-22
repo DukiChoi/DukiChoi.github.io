@@ -37,8 +37,8 @@ published: true
 <article><h3>클릭 한 번, 펼쳐지는 차트</h3><p>가격을 누르면 캔들 차트가 펼쳐집니다. 이동평균부터 RSI, MACD까지 10가지 보조지표를 조합하세요.</p></article>
 <article><h3>내가 보는 종목을 한곳에</h3><p>코인과 한국·미국 주식을 검색하고 즐겨찾기에 담으세요. 코인은 5개 거래소의 차트를 지원합니다.</p></article>
 <article><h3>최소화해도 시세는 한 줄로</h3><p>설정에서 작업 표시줄 시세를 켜면 − 버튼으로 최소화한 뒤에도 종목·가격·등락률을 확인할 수 있습니다. Windows의 작업 표시줄 레이블 표시 설정이 필요합니다.</p></article>
-<article><h3>현물과 선물을 함께</h3><p>거래소 API를 연결하면 차트의 시장 선택과 관계없이 현물과 USDT 선물 보유분을 함께 조회합니다. Spot·Long·Short로 구분하고, Upbit는 현물만 지원합니다.</p></article>
-<article><h3>포지션 정보도 간결하게</h3><p>진입가와 TP·SL을 차트에서 확인하세요. 포지션 라벨과 관련 툴팁은 소수점 한 자리로 표시하고, 지원하는 거래소에서는 기존 TP·SL도 수정할 수 있습니다.</p></article>
+<article><h3>현물과 선물을 함께</h3><p>연결한 모든 거래소 계정의 현물·USDT 선물 포지션을 종목별로 함께 표시합니다. Spot·Long·Short로 구분하고, Upbit는 현물만 지원합니다.</p></article>
+<article><h3>포지션 정보도 간결하게</h3><p>포지션마다 한두 줄로 아래에 쌓아 표시합니다. PnL 금액은 소수점 한 자리까지 표시하고, 지원하는 거래소에서는 기존 TP·SL도 수정할 수 있습니다.</p></article>
 </div>
 <div aria-labelledby="api-title" class="api-support">
 <h3 id="api-title">계정 API 지원 거래소</h3>
@@ -90,7 +90,7 @@ published: true
 <div class="section-heading"><h2 id="install-title">세 단계면 준비 끝.</h2></div>
 <ol class="install-steps"><li><h3>설치 파일 다운로드</h3><p>Windows는 EXE 또는 7z, Mac은 Universal DMG를 내려받으세요.</p></li><li><h3>앱 설치</h3><p>Windows는 EXE의 한국어 안내에 따라 설치하거나 7z 압축을 풀어 실행하세요. Mac은 DMG를 열고 Market Peek를 Applications 폴더로 드래그하세요.</p></li><li><h3>관심 종목 선택</h3><p>종목명을 눌러 검색하세요. 가격을 클릭하면 차트를 펼칠 수 있습니다.</p></li></ol>
 <div class="faq"><details><summary>Python을 따로 설치해야 하나요?</summary><p>필요 없습니다. Windows와 macOS 설치 파일에 실행에 필요한 환경이 포함되어 있습니다.</p></details>
-<details><summary>거래소 계정은 어떻게 연결하나요?</summary><p>계정의 잔고·포지션을 조회하려면 앱 설정에서 거래소 API 키를 연결하세요.</p></details>
+<details><summary>거래소 계정은 어떻게 연결하나요?</summary><p>앱 설정에서 거래소마다 API 키를 연결하세요. 저장을 선택하면 각 거래소의 키·Secret·필요한 Passphrase를 이 PC에 암호화해 따로 보관합니다.</p></details>
 <details><summary>최소화와 X·숨기기는 어떻게 다른가요?</summary><p>작업 표시줄 시세를 켠 상태에서 − 버튼을 누르면 작업 표시줄로 최소화됩니다. X와 숨기기·Alt+H는 트레이로 숨깁니다. 트레이 아이콘이나 Alt+H로 다시 열 수 있으며, 완전히 종료하려면 트레이 메뉴 또는 설정의 앱 종료를 사용하세요. 작업 표시줄 시세를 끄면 − 버튼도 트레이로 숨깁니다. 트레이를 사용할 수 없는 환경에서는 최소화됩니다.</p></details>
 <details><summary>작업 표시줄에 가격이 안 보여요.</summary><p>앱의 설정 → 화면·창 → 작업 표시줄에 시세 표시를 켜세요. Windows 설정 → 개인 설정 → 작업 표시줄에서 단추 합치기 및 레이블 숨기기를 안 함으로 설정해야 제목이 보입니다. Windows 버전에 따라 설정 이름이 다를 수 있습니다. 시세는 한 줄로 표시되며 공간이 부족하면 잘립니다.</p></details>
 <details><summary>TP·SL의 소수점 표시는 어떻게 되나요?</summary><p>포지션 라벨과 관련 툴팁은 소수점 한 자리로 표시합니다. 0이 아닌 값이 0.1보다 작으면 &lt;0.1로 표시합니다. 화면 표시만 간결하게 줄이며, 실제 주문 가격과 수량의 정밀도는 유지합니다.</p></details>
