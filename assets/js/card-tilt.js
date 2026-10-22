@@ -4,11 +4,12 @@
   const finePointer = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
   const singleColumn = window.matchMedia('(max-width: 700px)');
   const clamp = value => Math.max(0, Math.min(1, value));
-  const cards = Array.from(document.querySelectorAll('.card--holo'));
+  const homeCards = Array.from(document.querySelectorAll('.card--holo'));
+  const cards = Array.from(document.querySelectorAll('.card--holo, [data-holo-tilt]'));
   const foilStyles = ['amazing-rare', 'holo', 'cosmos', 'radiant'];
   const updateRows = () => {
     const columns = singleColumn.matches ? 1 : 2;
-    cards.forEach((card, index) => {
+    homeCards.forEach((card, index) => {
       card.dataset.foil = foilStyles[Math.floor(index / columns) % foilStyles.length];
     });
   };
@@ -17,17 +18,20 @@
 
   const controllers = cards.map(card => {
     // Measure the stationary slot, so tilting the card never moves its hit area.
-    const slot = card.closest('.card-slot');
+    const slot = card.closest('.card-slot, [data-tilt-slot]');
+    const rotationX = Math.min(MAX_ROTATION, Math.max(1, Number(card.dataset.tiltX) || MAX_ROTATION));
+    const rotationY = Math.min(MAX_ROTATION, Math.max(1, Number(card.dataset.tiltY) || MAX_ROTATION));
     let bounds;
     let active = false;
+    let heldPointer = null;
     let frame = 0;
     let previousTime = 0;
     const current = { x: 0.5, y: 0.5, lift: 0 };
     const target = { ...current };
 
     const render = () => {
-      card.style.setProperty('--rotate-x', `${((0.5 - current.y) * 2 * MAX_ROTATION).toFixed(3)}deg`);
-      card.style.setProperty('--rotate-y', `${((current.x - 0.5) * 2 * MAX_ROTATION).toFixed(3)}deg`);
+      card.style.setProperty('--rotate-x', `${((0.5 - current.y) * 2 * rotationX).toFixed(3)}deg`);
+      card.style.setProperty('--rotate-y', `${((current.x - 0.5) * 2 * rotationY).toFixed(3)}deg`);
       card.style.setProperty('--lift', `${(-current.lift * 4).toFixed(3)}px`);
       card.style.setProperty('--mx', `${(current.x * 100).toFixed(2)}%`);
       card.style.setProperty('--my', `${(current.y * 100).toFixed(2)}%`);
@@ -62,6 +66,7 @@
 
     const reset = (immediate = false) => {
       active = false;
+      heldPointer = null;
       card.classList.remove('is-hover');
       slot.classList.remove('is-active');
       Object.assign(target, { x: 0.5, y: 0.5, lift: 0 });
@@ -78,7 +83,10 @@
     };
 
     const track = event => {
-      if (event.pointerType !== 'mouse' || reducedMotion.matches || !finePointer.matches) return;
+      if (reducedMotion.matches) return;
+      if (event.pointerType === 'mouse') {
+        if (!finePointer.matches) return;
+      } else if (event.pointerId !== heldPointer) return;
       if (!active) {
         bounds = slot.getBoundingClientRect();
         active = true;
@@ -92,18 +100,35 @@
     };
 
     slot.addEventListener('pointerenter', track);
+    slot.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'mouse' || !event.isPrimary) return;
+      heldPointer = event.pointerId;
+      track(event);
+    }, { passive: true });
     slot.addEventListener('pointermove', track, { passive: true });
     slot.addEventListener('pointerleave', () => reset());
     slot.addEventListener('pointercancel', () => reset());
 
     return {
       reset,
+      release: pointerId => { if (pointerId === heldPointer) reset(); },
       measure: () => { if (active) bounds = slot.getBoundingClientRect(); },
       slot
     };
   });
 
   const resetAll = () => controllers.forEach(controller => controller.reset(true));
+  // Native pan-y/pinch-zoom can cancel a touch gesture; never prevent scrolling
+  // or capture the pointer away from a card's links and details controls.
+  window.addEventListener('pointerup', event => {
+    controllers.forEach(controller => controller.release(event.pointerId));
+  }, { passive: true });
+  window.addEventListener('pointercancel', event => {
+    controllers.forEach(controller => controller.release(event.pointerId));
+  }, { passive: true });
+  window.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'touch' && !event.isPrimary) resetAll();
+  }, { passive: true });
   const resizeObserver = new ResizeObserver(entries => {
     for (const entry of entries) {
       controllers.find(controller => controller.slot === entry.target)?.measure();

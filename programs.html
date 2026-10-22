@@ -6,6 +6,7 @@ section: programs
 permalink: /programs/
 permalink_name: /프로그램
 css_file: /assets/css/programs.css
+js_file: /assets/js/card-tilt.js
 description: DukiChoi가 만든 프로그램과 사용 방법을 소개합니다.
 ---
 <main class="page-shell page-shell--reading programs-hub">
@@ -17,15 +18,15 @@ description: DukiChoi가 만든 프로그램과 사용 방법을 소개합니다
   {% assign programs = site.programs | where_exp: "entry", "entry.published != false" | sort: "order" %}
   <section class="program-links" aria-label="공개된 프로그램">
     {% for program in programs %}
-    <a class="program-link{% if program.featured %} program-link--featured{% endif %}" href="{{ program.url | relative_url }}">
-      {% if program.icon %}<img class="program-icon" src="{{ program.icon | relative_url }}" alt="" width="48" height="48" loading="lazy">{% else %}<span class="program-initial" aria-hidden="true">{{ program.title | slice: 0 | escape }}</span>{% endif %}
-      <span class="program-link__text">
-        <strong>{{ program.title | escape }}</strong>
-        {% if program.description %}<span>{{ program.description | escape }}</span>{% endif %}
-        {% if program.platform %}<span class="program-platform">{{ program.platform | escape }}</span>{% endif %}
-      </span>
-      <span class="program-link__arrow" aria-hidden="true">→</span>
-    </a>
+    {% assign banner_style = nil %}
+    {% if program.banner_style and program.banner_style != "auto" %}
+      {% assign banner_style = site.data.program_styles | where: "id", program.banner_style | first %}
+    {% endif %}
+    {% unless banner_style %}
+      {% assign style_index = forloop.index0 | modulo: site.data.program_styles.size %}
+      {% assign banner_style = site.data.program_styles[style_index] %}
+    {% endunless %}
+    {% include program-banner.html program=program style=banner_style %}
     {% else %}
     <div class="program-empty">
       <h2>아직 공개된 프로그램이 없습니다.</h2>

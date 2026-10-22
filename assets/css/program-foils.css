@@ -1,0 +1,227 @@
+/* Text-friendly foil finishes inspired visually by https://poke-holo.simey.me/.
+   Gradients and local SVG masks are original; artwork is not needed. */
+.program-link {
+  --p-start: #104d45; --p-mid: #062b2c; --p-end: #10403b; --p-edge: #89dfbe;
+  --s1: #33edb3; --s2: #66d5e9; --s3: #84a5ff; --s4: #d4ed9a; --s5: #36cca6;
+  --p-ink: #f5f9ff; --p-muted: #d5e4ec;
+  --mx: 50%; --my: 50%; --foil-x: 50%; --foil-y: 50%; --light: 0;
+  --spectrum: repeating-linear-gradient(116deg, var(--s1) 0%, var(--s2) 19%, var(--s3) 38%, var(--s4) 57%, var(--s5) 76%, var(--s1) 95%);
+  --light-window: radial-gradient(ellipse farthest-corner at var(--mx) var(--my), #000 8%, rgba(0, 0, 0, .8) 34%, rgba(0, 0, 0, .25) 72%, transparent 100%);
+  --sweep-x: calc(50% + (var(--foil-x) - 50%) * 4);
+  --sweep-y: calc(50% + (var(--foil-y) - 50%) * 3);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  color: var(--p-ink);
+  text-decoration: none;
+  touch-action: pan-y pinch-zoom;
+  background:
+    linear-gradient(120deg, rgba(0, 0, 0, .04), rgba(0, 0, 0, .18) 52%, transparent) padding-box,
+    linear-gradient(135deg, var(--p-start), var(--p-mid) 55%, var(--p-end)) padding-box,
+    linear-gradient(125deg, var(--p-edge), #263341 28%, #c1cfd5 50%, var(--p-edge) 67%, #4b596e 90%) border-box;
+  box-shadow: 0 12px 24px -18px rgba(13, 24, 39, .5), inset 0 1px 0 rgba(255, 255, 255, .15);
+  transform: perspective(1200px) translateY(var(--lift, 0px)) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg));
+  transition: box-shadow .3s ease;
+}
+.program-link:hover { color: var(--p-ink); }
+.program-link--featured { border-width: 2px; }
+.program-link.is-hover { will-change: transform; box-shadow: 0 22px 35px -22px rgba(8, 23, 41, .65), inset 0 1px 0 rgba(255, 255, 255, .3); }
+.program-link::before {
+  content: ""; position: absolute; inset: 0; z-index: 3; padding: 1px; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(260px 140px at var(--mx) var(--my), #f0fbff, var(--p-edge) 32%, transparent 80%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: calc(.24 + var(--light) * .76);
+}
+.program-link::after { content: ""; position: absolute; inset: 6px; z-index: 3; border: 1px solid rgba(213, 235, 242, .2); border-radius: 8px; pointer-events: none; }
+.program-link > :not(.program-foil) { position: relative; z-index: 4; }
+.program-foil { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; }
+.program-foil--wash {
+  z-index: 0;
+  background: var(--spectrum);
+  background-size: 250% 280%;
+  background-position: var(--foil-x) var(--foil-y);
+  -webkit-mask-image: var(--light-window); mask-image: var(--light-window);
+  opacity: calc(.08 + var(--light) * .22);
+}
+.program-foil--texture {
+  z-index: 1;
+  background: var(--spectrum);
+  background-size: 180% 220%;
+  background-position: var(--sweep-x) var(--sweep-y);
+  -webkit-mask-image: var(--texture, url('../textures/foil-grain.svg')), var(--light-window);
+  mask-image: var(--texture, url('../textures/foil-grain.svg')), var(--light-window);
+  -webkit-mask-size: var(--texture-size, 256px 256px), 100% 100%;
+  mask-size: var(--texture-size, 256px 256px), 100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat; mask-repeat: repeat, no-repeat;
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+  opacity: calc(.23 + var(--light) * .74);
+}
+.program-foil--glare {
+  z-index: 2;
+  background: radial-gradient(ellipse at var(--mx) var(--my), rgba(226, 249, 255, .4), rgba(167, 221, 239, .1) 34%, transparent 72%);
+  opacity: calc(var(--light) * .36);
+}
+.program-foil--glare::after { content: ""; position: absolute; inset: 0; }
+
+/* Ten palettes keep their saturated metal base in both site themes. */
+.program-link[data-palette="sapphire"] {
+  --p-start: #173e86; --p-mid: #101d4b; --p-end: #163970; --p-edge: #8db8ff;
+  --s1: #28a1ff; --s2: #43ead8; --s3: #795aff; --s4: #e873eb; --s5: #36cddd;
+}
+.program-link[data-palette="amethyst"] {
+  --p-start: #4d2775; --p-mid: #241236; --p-end: #48235d; --p-edge: #caaaef;
+  --s1: #a269ff; --s2: #f970cc; --s3: #50d6ed; --s4: #929cff; --s5: #c75fe9;
+}
+.program-link[data-palette="ruby"] {
+  --p-start: #792c46; --p-mid: #3d1426; --p-end: #602440; --p-edge: #efa8b0;
+  --s1: #ff536d; --s2: #ffb38a; --s3: #ea75b6; --s4: #a17fff; --s5: #ff687c;
+}
+.program-link[data-palette="bronze"] {
+  --p-start: #64432c; --p-mid: #342319; --p-end: #624832; --p-edge: #ddb48b;
+  --s1: #d99e55; --s2: #f9d59c; --s3: #bf8b5b; --s4: #acd9ba; --s5: #e5af6d;
+}
+.program-link[data-palette="arctic"] {
+  --p-start: #14526a; --p-mid: #0e2e48; --p-end: #194e65; --p-edge: #9cdeec;
+  --s1: #55d6ed; --s2: #9bfff1; --s3: #92b1ff; --s4: #d4c4ff; --s5: #6ce5ed;
+}
+.program-link[data-palette="rose"] {
+  --p-start: #7a355c; --p-mid: #431a39; --p-end: #6c304e; --p-edge: #eeb5ce;
+  --s1: #fa80bd; --s2: #ffbda1; --s3: #d78eee; --s4: #abafff; --s5: #ff9ac5;
+}
+.program-link[data-palette="aurora"] {
+  --p-start: #31377d; --p-mid: #172340; --p-end: #27485f; --p-edge: #a9c5e9;
+  --s1: #ee6ec7; --s2: #f2be66; --s3: #41e5b6; --s4: #45b9f5; --s5: #ab7af3;
+}
+.program-link[data-palette="gold"] {
+  --p-start: #684b18; --p-mid: #33250f; --p-end: #5a421b; --p-edge: #edd48c;
+  --s1: #c98b32; --s2: #ffe4a1; --s3: #dcb65c; --s4: #fff2bc; --s5: #b78031;
+}
+.program-link[data-palette="graphite"] {
+  --p-start: #414b5a; --p-mid: #171f2c; --p-end: #374658; --p-edge: #c5d0e4;
+  --s1: #91a5be; --s2: #ecf8ff; --s3: #acb9d3; --s4: #dce5f1; --s5: #8fabc3;
+}
+
+/* Cosmos: reflective rings and flecks remain anchored in the metal. */
+.program-link[data-foil="cosmos"] { --texture: url('../textures/foil-cosmos.svg'); --texture-size: 300px 400px; }
+.program-link[data-foil="cosmos"] .program-foil--glare::after {
+  background: radial-gradient(ellipse at var(--mx) var(--my), #fff, transparent 68%);
+  -webkit-mask-image: url('../textures/foil-cosmos.svg'); mask-image: url('../textures/foil-cosmos.svg');
+  -webkit-mask-size: 300px 400px; mask-size: 300px 400px;
+}
+
+/* Holofoil Rare: two narrow pillars move against the spectral colors. */
+.program-link[data-foil="holo"] .program-foil--texture {
+  --pillars: repeating-linear-gradient(90deg, transparent 0 7%, rgba(0, 0, 0, .25) 8%, #000 9.5%, rgba(0, 0, 0, .2) 11%, transparent 13% 27%, #000 29%, transparent 32% 48%);
+  -webkit-mask-image: var(--pillars), linear-gradient(transparent, #000 12% 88%, transparent);
+  mask-image: var(--pillars), linear-gradient(transparent, #000 12% 88%, transparent);
+  -webkit-mask-size: 180% 100%, 100% 100%; mask-size: 180% 100%, 100% 100%;
+  -webkit-mask-position: calc(100% - var(--sweep-x)) center, center;
+  mask-position: calc(100% - var(--sweep-x)) center, center;
+  opacity: calc(.18 + var(--light) * .67);
+}
+.program-link[data-foil="holo"] .program-foil--glare {
+  background: repeating-linear-gradient(90deg, transparent 0 8%, rgba(236, 249, 255, .45) 9.5%, transparent 11% 28%, rgba(222, 244, 255, .28) 29%, transparent 31% 48%);
+  background-size: 180% 100%; background-position: calc(100% - var(--sweep-x)) center;
+}
+
+/* Amazing Rare: fine glitter and larger foil flakes diffract separately. */
+.program-link[data-foil="amazing"] .program-foil--texture { background-size: 150% 190%; }
+.program-link[data-foil="amazing"] .program-foil--glare::after {
+  background: var(--spectrum); background-size: 190% 220%;
+  background-position: calc(100% - var(--sweep-x)) calc(100% - var(--sweep-y));
+  -webkit-mask-image: url('../textures/foil-flakes.svg'); mask-image: url('../textures/foil-flakes.svg');
+}
+
+/* Radiant: crossing light catches the faces of an embossed diamond grid. */
+.program-link[data-foil="radiant"] { --texture: url('../textures/foil-etched.svg'); --texture-size: 72px 72px; }
+.program-link[data-foil="radiant"] .program-foil--glare {
+  background:
+    repeating-linear-gradient(45deg, transparent 0 14%, rgba(255, 222, 221, .6) 20%, transparent 27% 48%),
+    repeating-linear-gradient(135deg, transparent 0 18%, rgba(242, 219, 255, .5) 24%, transparent 32% 57%);
+  background-size: 220% 220%; background-position: var(--sweep-x) var(--sweep-y), calc(100% - var(--sweep-x)) var(--sweep-y);
+  -webkit-mask-image: var(--texture); mask-image: var(--texture);
+  -webkit-mask-size: var(--texture-size); mask-size: var(--texture-size);
+}
+
+/* Reverse foil: ornament and edges shine around a quieter printed center. */
+.program-link[data-foil="reverse"] { --texture: url('../textures/foil-reverse.svg'); --texture-size: 72px 72px; }
+.program-link[data-foil="reverse"] .program-foil--texture {
+  -webkit-mask-image: var(--texture), linear-gradient(90deg, #000, rgba(0, 0, 0, .4) 25% 75%, #000);
+  mask-image: var(--texture), linear-gradient(90deg, #000, rgba(0, 0, 0, .4) 25% 75%, #000);
+}
+.program-link[data-foil="reverse"] .program-foil--wash {
+  background: repeating-linear-gradient(115deg, transparent 0 12%, var(--s2) 18%, transparent 25% 44%);
+  background-size: 250% 200%; background-position: var(--sweep-x) var(--sweep-y);
+  -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  padding: 16px; -webkit-mask-clip: content-box, border-box; mask-clip: content-box, border-box;
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+
+/* VStar: broad, pearlescent diagonals over larger crystal-like facets. */
+.program-link[data-foil="vstar"] { --texture: url('../textures/foil-prism.svg'); --texture-size: 160px 160px; }
+.program-link[data-foil="vstar"] .program-foil--texture { background-size: 320% 300%; opacity: calc(.12 + var(--light) * .56); }
+.program-link[data-foil="vstar"] .program-foil--glare {
+  background: linear-gradient(120deg, transparent 30%, #ccefff 45%, transparent 60%);
+  background-size: 240% 220%; background-position: var(--sweep-x) var(--sweep-y);
+}
+
+/* Full Art: fine curved engraving and light moving in opposing directions. */
+.program-link[data-foil="full-art"] { --texture: url('../textures/foil-contours.svg'); --texture-size: 96px 96px; }
+.program-link[data-foil="full-art"] .program-foil--texture {
+  background: repeating-linear-gradient(128deg, var(--s1), var(--s2) 18%, #8969c4 34%, var(--s4) 50%, var(--s1) 68%);
+  background-size: 240% 260%; background-position: var(--sweep-x) var(--sweep-y);
+}
+.program-link[data-foil="full-art"] .program-foil--glare {
+  background: repeating-linear-gradient(128deg, transparent 0 25%, rgba(255, 217, 229, .8) 33%, transparent 42% 70%);
+  background-size: 260% 250%; background-position: calc(100% - var(--sweep-x)) calc(100% - var(--sweep-y));
+}
+
+/* Rainbow Rare: a wide, shifting spectrum with a pearlescent grain. */
+.program-link[data-foil="rainbow"] .program-foil--wash {
+  background-size: 160% 180%; background-position: var(--sweep-x) var(--sweep-y);
+  opacity: calc(.21 + var(--light) * .25);
+}
+.program-link[data-foil="rainbow"] .program-foil--texture {
+  background-size: 180% 180%; background-position: calc(100% - var(--sweep-x)) var(--sweep-y);
+}
+.program-link[data-foil="rainbow"] .program-foil--glare::after {
+  background: var(--spectrum); background-size: 160% 200%; background-position: var(--sweep-x) var(--sweep-y);
+  -webkit-mask-image: url('../textures/foil-contours.svg'); mask-image: url('../textures/foil-contours.svg');
+  opacity: .5;
+}
+
+/* Secret Rare: warm gold flakes over a second, finer metal grain. */
+.program-link[data-foil="secret"] .program-foil--wash {
+  -webkit-mask-image: url('../textures/foil-flakes.svg'), var(--light-window);
+  mask-image: url('../textures/foil-flakes.svg'), var(--light-window);
+  -webkit-mask-size: 180px 180px, 100% 100%; mask-size: 180px 180px, 100% 100%;
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+  opacity: calc(.36 + var(--light) * .6);
+}
+.program-link[data-foil="secret"] .program-foil--texture {
+  background-position: calc(100% - var(--sweep-x)) calc(100% - var(--sweep-y));
+  -webkit-mask-position: 59px 37px, center; mask-position: 59px 37px, center;
+}
+.program-link[data-foil="secret"] .program-foil--glare { background: radial-gradient(ellipse at var(--mx) var(--my), rgba(255, 231, 163, .65), transparent 70%); }
+
+/* Shiny Vault: silver stars and a polished reflection on graphite metal. */
+.program-link[data-foil="shiny"] { --texture: url('../textures/foil-stars.svg'); --texture-size: 192px 192px; }
+.program-link[data-foil="shiny"] .program-foil--wash {
+  background: repeating-conic-gradient(from 40deg at var(--mx) var(--my), #8098b0 0deg, #eefaff 45deg, #7c91ab 95deg, #d9e4ef 180deg);
+  opacity: calc(.08 + var(--light) * .16);
+}
+.program-link[data-foil="shiny"] .program-foil--glare::after {
+  background: radial-gradient(ellipse at var(--mx) var(--my), #fff, transparent 80%);
+  -webkit-mask-image: var(--texture); mask-image: var(--texture);
+  -webkit-mask-size: var(--texture-size); mask-size: var(--texture-size);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .program-link { transform: none; transition: none; }
+}

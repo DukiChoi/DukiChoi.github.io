@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+  <defs><pattern id="contour" width="96" height="12" patternUnits="userSpaceOnUse">
+    <path d="M-24 6Q0-9 24 6T72 6T120 6M-24 18Q0 3 24 18T72 18T120 18M-24-6Q0-21 24-6T72-6T120-6" fill="none" stroke="#fff" stroke-width="1.1" opacity=".8"/>
+    <path d="M-24 10Q0-5 24 10T72 10T120 10" fill="none" stroke="#fff" stroke-width=".6" opacity=".3"/>
+  </pattern></defs>
+  <path fill="url(#contour)" d="M0 0h96v96H0z"/>
+</svg>

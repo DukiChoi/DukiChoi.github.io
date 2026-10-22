@@ -11,13 +11,15 @@
 - **사용 경력:** 언어·도구별 시작 연도를 `_data/skills.yml`로 분리했습니다. 현재 연도에 맞춰 사용 기간을 자동 계산하고 시작 연도와 기준 연도를 함께 표시합니다.
 - **이론 자료:** 전가산기·2비트 가산기·링 발진기·메모리 강의와 시뮬레이션을 추가했습니다. 전체 자료 → 디지털 회로 → 글 순서의 트리를 접고 펼칠 수 있으며, 다른 글을 열어도 메뉴와 브라우저 탭 이름은 이론 자료로 유지됩니다. 본문 표현과 자동 재생 버튼 문구도 정리했습니다.
 - **프로그램 목록:** `/programs/` 목록과 개별 소개 페이지 구조를 추가하고 홈 배너에 테두리를 적용했습니다. 예시 프로그램 대신 실제 Market Peek 소개 페이지를 등록했습니다.
+- **프로그램 배너:** 홈의 Program 배너를 움직임 없는 은색 금속 질감으로 바꿨습니다. 프로그램별 배너에는 서로 다른 색과 반사 무늬를 가진 홀로그램 10종을 마련하고 마우스·터치 기울기를 적용했습니다. Market Peek에는 Emerald Cosmos를 지정했습니다. `/admin/program-styles/`에서 전부 미리 보고 CMS 또는 `banner_style`로 선택할 수 있습니다.
+- **모바일 카드 반응:** 마우스 입력만 받던 조건을 수정했습니다. 홈 카드와 프로그램별 배너를 손가락으로 누르고 좌우로 움직이면 기울기와 반사광이 따라옵니다. 손을 떼면 원위치로 돌아오며, 세로 스크롤·확대 제스처·링크 터치는 그대로 사용할 수 있습니다. 기기의 동작 줄이기 설정도 따릅니다.
 - **Market Peek 소개:** `BTC_ticker_tray`의 배포 화면을 바탕으로 `/programs/market-peek/`를 만들었습니다. 공통 상단 메뉴 없이 프로그램만 소개하며, 실제 화면 이미지·주요 기능·설치 안내·FAQ를 포함합니다. Python 서버 없이 동작합니다.
 - **버전별 다운로드:** 공개 배포 전용 저장소 [Market-Peek-releases](https://github.com/DukiChoi/Market-Peek-releases)에 [v1.0.0](https://github.com/DukiChoi/Market-Peek-releases/releases/tag/v1.0.0)을 게시했습니다. EXE·7z·SHA256SUMS.txt를 첨부하고 소개 페이지에 현재 버전과 전체 버전 목록을 연결했습니다. 프로그램 소스 저장소는 비공개로 유지했습니다.
 - **본인용 글쓰기:** `/admin/` 진입 화면과 Pages CMS 설정을 추가했습니다. GitHub 인증을 통해 이론 자료·프로그램 소개·이미지를 관리하도록 구성했으며, 최초 GitHub App 연결은 계정 소유자가 진행해야 합니다. 공개 저장소에서는 게시를 끈 글도 파일 자체는 공개된다는 점을 안내했습니다.
 - **페이지 정리:** Readme·Preview·Hello 페이지를 비활성화하고 CV·Resume은 저장소의 PDF를 표시하도록 바꿨습니다. 일반 페이지의 문장도 자연스럽게 다듬었습니다.
 - **미리보기와 검증:** Jekyll 실행용 Gemfile과 VS Code 미리보기 안내를 추가했습니다. Jekyll 빌드, 모바일 화면, 테마 전환, 카드 반응, 자료 트리, CMS 저장 형식을 확인했습니다. 공개 다운로드의 익명 접근과 파일 해시 일치, GitHub Pages 배포도 확인했습니다.
 
-기능 변경 커밋: [`94e4d90`](https://github.com/DukiChoi/DukiChoi.github.io/commit/94e4d903b849d92e8a9392b897e0354b7908c4ad)
+초기 기능 변경 커밋: [`94e4d90`](https://github.com/DukiChoi/DukiChoi.github.io/commit/94e4d903b849d92e8a9392b897e0354b7908c4ad)
 
 ## 원본 테마 소개
 
@@ -90,10 +92,11 @@ Ubuntu/WSL에서 명령 이름이 `bundle3.2`인 경우 위 명령의 `bundle`�
 VS Code에서 `Ctrl+Shift+P` → `Simple Browser: Show`를 실행하고 `http://localhost:4000`을 입력합니다.
 `md`, `_data/*.yml`, CSS, JavaScript 변경은 자동으로 다시 빌드됩니다. `_config.yml` 변경 시에는 서버를 재시작합니다.
 
-Home 카드의 스타일은 `assets/css/home.css`, 마우스 반응은 `assets/js/card-tilt.js`, 프로젝트 내용은 `_data/projects.yml`에서 수정합니다.
+Home 카드의 스타일은 `assets/css/home.css`, 마우스·터치 반응은 `assets/js/card-tilt.js`, 프로젝트 내용은 `_data/projects.yml`에서 수정합니다.
 카드 줄마다 Amazing Rare → Holofoil Rare → Cosmos → Radiant 효과가 순서대로 반복됩니다. 첫 줄은 항상 Amazing Rare이며, 한 열로 바뀌는 모바일에서도 줄 단위로 순환합니다.
 Holofoil Rare는 세로 반사광이 움직이는 효과이며, 각 효과의 빛에는 선명한 청록·보라·분홍 계열을 사용합니다. 라이트 모드 홈은 회색 배경과 짙은 사파이어 블루 카드, 밝은 글씨로 구분합니다. 다크 모드는 기존의 어두운 남색 바탕을 유지합니다.
 반사 질감은 [Pokémon Cards CSS Holographic Effect](https://poke-holo.simey.me/)를 시각적으로 참고해 만든 CSS와 로컬 SVG(`assets/textures/`)로 표현합니다.
+모바일에서는 카드를 누른 채 좌우로 움직이면 반응합니다. 위아래로 밀면 페이지가 스크롤되며, 손을 떼면 카드가 원위치로 돌아옵니다. 운영체제에서 동작 줄이기를 켜면 기울기 효과를 끕니다.
 
 사용 언어와 도구는 `_data/skills.yml`의 `name`, `level`, `start_year`에서 관리합니다.
 사용 기간은 현재 연도에서 시작 연도를 빼서 계산하고 기준 연도를 함께 표시합니다. 2026년 기준 시작 연도는 각각 2021년, 2019년, 2024년으로, 사용 기간은 5년, 7년, 2년입니다.
@@ -121,9 +124,32 @@ GitHub 저장소의 쓰기 권한을 가진 계정만 편집할 수 있습니다
 예를 들어 `_programs/my-tool.md`는 `/programs/my-tool/`로 출력되고 목록에도 자동으로 추가됩니다.
 
 `order`는 목록 순서, `platform`은 실행 환경, `links`는 다운로드·실행·소스 코드 버튼입니다.
-`featured: true`를 넣으면 해당 항목의 배경을 강조합니다. `icon`, `cover`, `cover_alt`로 아이콘과 실행 화면을 추가할 수 있습니다.
+`featured: true`를 넣으면 해당 항목의 테두리를 강조합니다. `icon`, `cover`, `cover_alt`로 아이콘과 실행 화면을 추가할 수 있습니다.
 사용하지 않는 항목은 생략하세요. `_templates/`의 예시는 사이트에 공개되지 않습니다.
 Home 배너는 `home.md`, 목록 화면은 `programs.html`, 개별 소개 화면은 `_layouts/program.html`에서 수정합니다.
+
+#### 프로그램 배너 스타일 고르기
+
+[스타일 10종 미리보기](https://dukichoi.github.io/admin/program-styles/)에서 마우스나 터치로 반사 효과를 비교할 수 있습니다. 홈의 Program 배너는 은색 금속 질감으로 고정하고, 프로그램별 배너에만 기울기와 움직이는 반사광을 적용합니다.
+
+CMS의 **배너 스타일**에서 고르거나, `_programs/` 파일의 YAML 머리말에 `banner_style: emerald-cosmos`처럼 적습니다. `auto`로 두거나 생략하면 목록 순서에 따라 10종을 순환합니다. 특정 스타일을 지정하면 목록 순서를 바꿔도 유지됩니다.
+
+| `banner_style` | 색상 | 반사 효과 |
+| --- | --- | --- |
+| `emerald-cosmos` | 에메랄드 | 원형 은박과 작은 별 |
+| `sapphire-holo` | 사파이어 블루 | 세로 반사광 |
+| `amethyst-amazing` | 보라 | 청록·분홍 미세 입자 |
+| `ruby-radiant` | 루비 | 교차하는 다이아몬드 면 |
+| `bronze-reverse` | 구리 | 가장자리와 반복 무늬 |
+| `arctic-vstar` | 차가운 청록 | 얼음 결정과 넓은 사선 빛 |
+| `rose-full-art` | 로즈 | 물결 음각 |
+| `aurora-rainbow` | 남색·오로라 | 무지갯빛 펄 |
+| `gold-secret` | 골드 | 두 겹의 금박 입자 |
+| `graphite-shiny` | 흑연·은색 | 은색 별과 금속 반사 |
+
+스타일 목록은 `_data/program_styles.yml`, 배너 구조는 `_includes/program-banner.html`, 질감과 색은 `assets/css/program-foils.css`에서 관리합니다. CMS 선택 항목을 추가하거나 바꿀 때는 `.pages.yml`의 `banner_style`도 맞춰 수정합니다.
+
+#### Market Peek 소개와 배포
 
 Market Peek는 `/programs/market-peek/`에 별도 소개 화면을 두었습니다. `BTC_ticker_tray/distribution`의 화면과 이미지를 옮겼으며, 사이트 공통 메뉴 없이 원래 프로그램의 디자인을 사용합니다.
 본문은 `_programs/market-peek.html`, 레이아웃은 `_layouts/product.html`, 스타일은 `assets/css/market-peek.css`에 있습니다. 이 HTML 페이지는 일반 글용 CMS 편집 목록에서 제외합니다.

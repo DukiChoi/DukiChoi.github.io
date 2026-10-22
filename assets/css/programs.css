@@ -1,14 +1,17 @@
-.program-links { display: flex; flex-direction: column; gap: 14px; }
-.program-link { display: flex; align-items: center; gap: 18px; padding: 22px 24px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); text-decoration: none; background: var(--page-bg); }
-.program-link:hover { border-color: var(--link); color: var(--ink); background: var(--surface); }
-.program-link--featured { background: var(--banner-bg); border-color: var(--line-strong); }
+@import url('program-foils.css');
+
+.program-links { display: flex; flex-direction: column; gap: 24px; }
+.program-slot { position: relative; min-width: 0; }
+.program-slot.is-active { z-index: 2; }
+.program-link { display: flex; align-items: center; gap: 22px; min-height: 172px; padding: 30px; }
 .program-icon, .program-initial { flex-shrink: 0; width: 48px; height: 48px; border-radius: 8px; object-fit: contain; }
-.program-initial { display: grid; place-items: center; background: var(--surface); color: var(--link); font-size: 24px; font-weight: 600; }
+.program-link > :is(.program-icon, .program-initial) { width: 60px; height: 60px; padding: 8px; border: 1px solid rgba(225, 245, 255, .27); border-radius: 12px; background: rgba(4, 14, 25, .38); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15); }
+.program-initial { display: grid; place-items: center; color: var(--p-ink); font-size: 25px; font-weight: 600; }
 .program-link__text { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 5px; overflow-wrap: anywhere; word-break: keep-all; }
-.program-link__text strong { font-size: 18px; line-height: 1.5; }
-.program-link__text > span { color: var(--muted); font-size: 14px; line-height: 1.6; }
-.program-link__text .program-platform { margin-top: 3px; color: var(--faint); font-size: 12px; }
-.program-link__arrow { font-size: 22px; color: var(--muted); }
+.program-link__text strong { color: var(--p-ink); font-size: 23px; font-weight: 650; line-height: 1.45; text-shadow: 0 1px 3px rgba(3, 13, 25, .5); }
+.program-link__text > span { color: var(--p-muted); font-size: 14px; line-height: 1.65; text-shadow: 0 1px 2px rgba(3, 13, 25, .5); }
+.program-link__text .program-platform { align-self: flex-start; margin-top: 8px; padding: 2px 9px; border: 1px solid rgba(223, 242, 255, .24); border-radius: 5px; background: rgba(3, 16, 28, .35); color: var(--p-ink); font-size: 12px; }
+.program-link__arrow { display: grid; place-items: center; flex-shrink: 0; width: 36px; height: 36px; border: 1px solid rgba(223, 242, 255, .35); border-radius: 50%; background: rgba(3, 16, 28, .2); font-size: 23px; color: var(--p-ink); }
 .program-empty { padding: 44px 20px 60px; text-align: center; }
 .program-empty h2 { margin: 0 0 12px; font-size: 19px; font-weight: 500; }
 .program-empty p { max-width: 360px; margin: 0 auto; color: var(--muted); font-size: 15px; }
@@ -19,9 +22,16 @@
 .program-actions a:hover { border-color: var(--link); }
 .program-actions .program-action--primary { color: var(--page-bg); background: var(--ink); border-color: var(--ink); }
 .program-cover { display: block; width: 100%; height: auto; margin: 0 0 40px; border: 1px solid var(--line); border-radius: 7px; }
+.program-style-samples { display: grid; gap: 30px; }
+.program-style-code { margin: 12px 0 0; text-align: center; font-size: 14px; overflow-wrap: anywhere; }
+.program-style-code code { background: none; }
+.program-style-note { margin: 40px 0 0; padding-top: 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
 @media (max-width: 520px) {
-  .program-link { gap: 14px; padding: 18px 16px; }
-  .program-link__text strong { font-size: 17px; }
+  .program-link { display: grid; grid-template-columns: 48px minmax(0, 1fr) 32px; gap: 16px; padding: 24px; }
+  .program-link > :is(.program-icon, .program-initial) { grid-row: 1; grid-column: 1; width: 48px; height: 48px; padding: 6px; }
+  .program-link__text { grid-column: 1 / -1; grid-row: 2; }
+  .program-link__text strong { font-size: 22px; }
+  .program-link__arrow { grid-row: 1; grid-column: 3; width: 32px; height: 32px; }
   .program-empty { padding: 30px 0 50px; }
   .program-empty h2 { font-size: 18px; }
 }

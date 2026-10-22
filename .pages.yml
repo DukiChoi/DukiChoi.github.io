@@ -102,6 +102,35 @@ content:
         label: 목록에서 강조
         type: boolean
         default: false
+      - name: banner_style
+        label: 배너 스타일
+        type: select
+        default: auto
+        description: /admin/program-styles/에서 색과 반사 효과를 미리 볼 수 있습니다.
+        options:
+          values:
+            - name: auto
+              label: 자동 — 목록 순서대로
+            - name: emerald-cosmos
+              label: Emerald Cosmos — 에메랄드 · 원형 은박
+            - name: sapphire-holo
+              label: Sapphire Holo — 사파이어 · 세로 반사광
+            - name: amethyst-amazing
+              label: Amethyst Amazing — 보라 · 미세 입자
+            - name: ruby-radiant
+              label: Ruby Radiant — 루비 · 다이아몬드
+            - name: bronze-reverse
+              label: Bronze Reverse — 구리 · 반복 무늬
+            - name: arctic-vstar
+              label: Arctic VStar — 청록 · 얼음 결정
+            - name: rose-full-art
+              label: Rose Full Art — 로즈 · 물결 음각
+            - name: aurora-rainbow
+              label: Aurora Rainbow — 오로라 · 무지갯빛 펄
+            - name: gold-secret
+              label: Gold Secret — 골드 · 금박 입자
+            - name: graphite-shiny
+              label: Graphite Shiny — 흑연 · 은색 별
       - name: icon
         label: 아이콘
         type: image

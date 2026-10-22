@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
+  <g fill="none" stroke="#fff">
+    <path d="M36 3 69 36 36 69 3 36Z" stroke-opacity=".3"/>
+    <path d="M36 11 61 36 36 61 11 36Z" stroke-opacity=".12"/>
+    <path d="M36 26 46 36 36 46 26 36Z" fill="#fff" fill-opacity=".34" stroke-opacity=".7"/>
+    <path d="M0 0 12 0 0 12M72 0 60 0 72 12M0 72 0 60 12 72M72 72 60 72 72 60" stroke-opacity=".65"/>
+  </g>
+  <g fill="#fff" opacity=".5"><circle cx="36" cy="14" r="1"/><circle cx="14" cy="36" r="1"/><circle cx="58" cy="36" r="1"/><circle cx="36" cy="58" r="1"/></g>
+</svg>

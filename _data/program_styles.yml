@@ -1,0 +1,51 @@
+# Colors and foil finishes for program banners. The order is the automatic cycle.
+- id: emerald-cosmos
+  title: Emerald Cosmos
+  description: 에메랄드 바탕에 작은 별과 원형 은박이 반짝입니다.
+  palette: emerald
+  foil: cosmos
+- id: sapphire-holo
+  title: Sapphire Holo
+  description: 사파이어 블루 위로 선명한 세로 반사광이 흐릅니다.
+  palette: sapphire
+  foil: holo
+- id: amethyst-amazing
+  title: Amethyst Amazing
+  description: 보라색 금속에 청록·분홍색의 미세한 입자가 빛납니다.
+  palette: amethyst
+  foil: amazing
+- id: ruby-radiant
+  title: Ruby Radiant
+  description: 루비색 바탕의 다이아몬드 면마다 빛이 교차합니다.
+  palette: ruby
+  foil: radiant
+- id: bronze-reverse
+  title: Bronze Reverse
+  description: 구릿빛 가장자리와 반복 무늬에 반사광이 맺힙니다.
+  palette: bronze
+  foil: reverse
+- id: arctic-vstar
+  title: Arctic VStar
+  description: 차가운 청록색 금속 위로 얼음 같은 사선 면이 빛납니다.
+  palette: arctic
+  foil: vstar
+- id: rose-full-art
+  title: Rose Full Art
+  description: 로즈색 바탕의 물결 음각을 따라 빛이 엇갈립니다.
+  palette: rose
+  foil: full-art
+- id: aurora-rainbow
+  title: Aurora Rainbow
+  description: 짙은 남색 위에 무지갯빛 반사와 고운 펄이 겹칩니다.
+  palette: aurora
+  foil: rainbow
+- id: gold-secret
+  title: Gold Secret
+  description: 금색 금속의 서로 다른 입자층이 깊이 있게 반짝입니다.
+  palette: gold
+  foil: secret
+- id: graphite-shiny
+  title: Graphite Shiny
+  description: 흑연색 바탕에 은색 별과 밝은 금속 반사가 나타납니다.
+  palette: graphite
+  foil: shiny
