@@ -8,7 +8,7 @@ The public publisher ID is `ca-pub-7488501527988619`.
 - Auto ads choose their own placements. No manual ad unit IDs or `adsbygoogle.push()` calls are needed.
 - `ads.txt` generates the Google authorized-seller entry from the same publisher ID.
 - The old empty banner is disabled with `show_placeholder: false`, so it does not leave a blank advertising box above the content.
-- The shared and product layouts protect the reading area with `google-side-rail-overlap="false"`. At viewport widths of 1600px or more, `assets/css/site-ad.css` keeps that area within 1160px, leaving space on both sides for desktop side rail ads.
+- The shared and product layouts protect the reading area with `google-side-rail-overlap="false"`. At viewport widths of 1280px or more, `assets/css/site-ad.css` reserves at least 180px on each side and caps the reading area at 1160px, leaving space for desktop side rail ads. The gutters do not force Google to fill either placement.
 
 ## AdSense settings
 

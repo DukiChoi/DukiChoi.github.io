@@ -1,6 +1,6 @@
 /* Auto ads use the outer gutters; keep side rails clear of the reading area. */
-.site-content{box-sizing:border-box;flex:1;min-width:0;width:100%;margin:0 auto}
-@media(min-width:1600px){.site-content{max-width:1160px}}
+.site-content{box-sizing:border-box;flex:1;min-width:0;width:100%;max-width:1160px;margin:0 auto}
+@media(min-width:1280px){.site-content{width:calc(100% - 360px)}}
 /* Optional preview placeholder, disabled while Auto ads are active. */
 .site-ad{box-sizing:border-box;flex:none;width:100%;padding:18px 16px 0;margin:0 auto}
 .site-ad__slot{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:728px;max-width:100%;height:90px;margin:0 auto;border:1px dashed var(--line,#ccd2d9);border-radius:6px;background:var(--surface,var(--panel,#eef0f3));overflow:hidden}
