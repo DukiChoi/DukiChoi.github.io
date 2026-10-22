@@ -32,3 +32,12 @@
 .product-footer { gap: 20px; }
 @media (max-width: 400px) { .product-footer { flex-direction: column; align-items: flex-start; } .button { padding: 14px 16px; gap: 8px; } .button > span { margin-left: 10px; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .button { transition: none; } .button:hover { transform: none; } }
+.hero-downloads{display:flex;flex-wrap:wrap;gap:12px}
+.hero-downloads .button{padding:16px;gap:8px}
+.hero-downloads .button>span{margin-left:2px}
+.download-section{grid-template-columns:minmax(0,1fr);gap:28px}
+.download-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.download-panel .platform-label{margin:12px 0 0;font-size:13px;line-height:1.6}
+.beta-label{display:inline-block;margin:0 0 18px;padding:6px 10px;border:1px solid #536847;border-radius:5px;color:var(--accent);font-size:13px;font-weight:650}
+.download-copy .beta-label{margin:0}
+@media(max-width:760px){.download-options{grid-template-columns:minmax(0,1fr)}}

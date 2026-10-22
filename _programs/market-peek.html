@@ -2,8 +2,8 @@
 layout: product
 title: Market Peek
 tagline: 시세를 가까이, 작업은 그대로.
-description: 코인과 한국·미국 주식 시세를 바탕화면과 작업 표시줄에서 확인하는 Windows 앱입니다.
-platform: Windows 64비트
+description: 코인과 한국·미국 주식 시세를 바탕화면에서 확인하는 Windows·macOS 앱입니다.
+platform: Windows 64비트 · macOS
 permalink: /programs/market-peek/
 icon: /assets/programs/market-peek/icon.png
 cover: /assets/programs/market-peek/btc-chart.png
@@ -18,9 +18,13 @@ published: true
 <main id="main">
 <section aria-labelledby="hero-title" class="hero wrap">
 <div class="hero-copy"><p class="product-brand"><img alt="" height="30" src="{{ '/assets/programs/market-peek/icon.png' | relative_url }}" width="30"/>Market Peek<span aria-hidden="true">.</span></p>
+<p class="beta-label">베타버전</p>
 <h1 id="hero-title">시세를 가까이.<br/>작업은 <span>그대로.</span></h1>
 <p class="intro">차트를 보러 창을 옮길 필요 없이.<br/>코인부터 한국·미국 주식까지,<br/>바탕화면 한편에서 가볍게 확인하세요.</p>
-<a class="button" href="#download"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M2 3l7-1v7H2zm9-1l7-1v8h-7zM2 11h7v7l-7-1zm9 0h7v8l-7-1z"></path></svg>Windows용 다운로드<span aria-hidden="true">↓</span></a>
+<div class="hero-downloads">
+<a class="button" href="#download-windows"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M2 3l7-1v7H2zm9-1l7-1v8h-7zM2 11h7v7l-7-1zm9 0h7v8l-7-1z"></path></svg>Windows용 다운로드<span aria-hidden="true">↓</span></a>
+<a class="button" href="#download-mac"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M3 2h14a1 1 0 0 1 1 1v11H2V3a1 1 0 0 1 1-1zm1 2v8h12V4zM1 15h18v2H1z"></path></svg>macOS용 다운로드<span aria-hidden="true">↓</span></a>
+</div>
 </div>
 <div class="showcase real-screens">
 <img alt="Market Peek의 Binance BTC/USDT 1시간 캔들 차트" class="app-screenshot" fetchpriority="high" height="1080" src="{{ '/assets/programs/market-peek/btc-chart.png' | relative_url }}" width="1360"/>
@@ -49,10 +53,12 @@ published: true
 </div>
 </section>
 <section aria-labelledby="download-title" class="download-section wrap" id="download">
-<div class="download-copy"><h2 id="download-title">이제, 바탕화면에서<br/>만나보세요.</h2></div>
+<div class="download-copy"><h2 id="download-title">이제, 바탕화면에서<br/>만나보세요.</h2><p class="beta-label">베타버전</p></div>
 
-<div class="download-panel">
+<div class="download-options">
+<div class="download-panel" id="download-windows">
 <div class="release-heading"><strong>Windows 64비트</strong><span>v{{ release.version | escape }}</span></div>
+<p class="platform-label">Windows · x64</p>
   {% if release.published %}
   <a class="button download-button" href="{{ release.installer.url | escape }}" id="download-link">EXE 설치 파일 다운로드 <span aria-hidden="true">↓</span></a>
 <p class="download-file">{{ release.installer.size | divided_by: 1000000.0 | round: 1 }} MB · 한국어 설치 안내</p>
@@ -67,18 +73,31 @@ published: true
 <p class="download-file">Windows용 EXE 설치 파일과 7z 압축 파일을 제공할 예정입니다.</p>
   {% endif %}
 </div>
+<div class="download-panel" id="download-mac">
+<div class="release-heading"><strong>macOS</strong><span>v{{ release.version | escape }}</span></div>
+<p class="platform-label">Universal · Apple Silicon / Intel</p>
+  {% if release.mac.published and release.mac.url %}
+  <a class="button download-button" href="{{ release.mac.url | escape }}" id="mac-download-link">macOS용 다운로드 <span aria-hidden="true">↓</span></a>
+<p class="download-file">{{ release.mac.size | divided_by: 1000000.0 | round: 1 }} MB · DMG 설치 파일</p>
+  {% else %}
+  <a class="button download-button" id="mac-download-link" aria-disabled="true" tabindex="-1">macOS 설치 파일 준비 중 <span aria-hidden="true">↓</span></a>
+<p class="download-file" role="status">macOS 설치 파일의 공개 다운로드를 준비하고 있습니다.</p>
+  {% endif %}
+</div>
+</div>
 
 </section>
 <section aria-labelledby="install-title" class="install wrap" id="install">
 <div class="section-heading"><h2 id="install-title">세 단계면 준비 끝.</h2></div>
-<ol class="install-steps"><li><h3>설치 파일 다운로드</h3><p>EXE 설치 파일을 내려받으세요. 7z 파일은 원하는 폴더에 압축을 모두 풀어 사용합니다.</p></li><li><h3>한국어 안내로 설치</h3><p>EXE는 한국어 안내에 따라 설치하세요. 7z로 받았다면 압축을 푼 폴더에서 Market Peek.exe를 실행하세요.</p></li><li><h3>관심 종목 선택</h3><p>종목명을 눌러 검색하세요. 가격을 클릭하면 차트를 펼칠 수 있습니다.</p></li></ol>
-<div class="faq"><details><summary>Python을 따로 설치해야 하나요?</summary><p>필요 없습니다. Windows용 설치 파일과 7z 파일에는 실행에 필요한 환경이 포함되어 있습니다.</p></details>
+<ol class="install-steps"><li><h3>설치 파일 다운로드</h3><p>Windows는 EXE 또는 7z, Mac은 Universal DMG를 내려받으세요.</p></li><li><h3>앱 설치</h3><p>Windows는 EXE의 한국어 안내에 따라 설치하거나 7z 압축을 풀어 실행하세요. Mac은 DMG를 열고 Market Peek를 Applications 폴더로 드래그하세요.</p></li><li><h3>관심 종목 선택</h3><p>종목명을 눌러 검색하세요. 가격을 클릭하면 차트를 펼칠 수 있습니다.</p></li></ol>
+<div class="faq"><details><summary>Python을 따로 설치해야 하나요?</summary><p>필요 없습니다. Windows와 macOS 설치 파일에 실행에 필요한 환경이 포함되어 있습니다.</p></details>
 <details><summary>거래소 계정은 어떻게 연결하나요?</summary><p>계정의 잔고·포지션을 조회하려면 앱 설정에서 거래소 API 키를 연결하세요.</p></details>
 <details><summary>최소화와 X·숨기기는 어떻게 다른가요?</summary><p>작업 표시줄 시세를 켠 상태에서 − 버튼을 누르면 작업 표시줄로 최소화됩니다. X와 숨기기·Alt+H는 트레이로 숨깁니다. 트레이 아이콘이나 Alt+H로 다시 열 수 있으며, 완전히 종료하려면 트레이 메뉴 또는 설정의 앱 종료를 사용하세요. 작업 표시줄 시세를 끄면 − 버튼도 트레이로 숨깁니다. 트레이를 사용할 수 없는 환경에서는 최소화됩니다.</p></details>
 <details><summary>작업 표시줄에 가격이 안 보여요.</summary><p>앱의 설정 → 화면·창 → 작업 표시줄에 시세 표시를 켜세요. Windows 설정 → 개인 설정 → 작업 표시줄에서 단추 합치기 및 레이블 숨기기를 안 함으로 설정해야 제목이 보입니다. Windows 버전에 따라 설정 이름이 다를 수 있습니다. 시세는 한 줄로 표시되며 공간이 부족하면 잘립니다.</p></details>
 <details><summary>TP·SL의 소수점 표시는 어떻게 되나요?</summary><p>포지션 라벨과 관련 툴팁은 소수점 한 자리로 표시합니다. 0이 아닌 값이 0.1보다 작으면 &lt;0.1로 표시합니다. 화면 표시만 간결하게 줄이며, 실제 주문 가격과 수량의 정밀도는 유지합니다.</p></details>
 <details><summary>설치 시 Windows 보안 안내가 표시돼요.</summary><p>현재 설치 파일은 코드 서명되지 않은 개인 개발용 빌드입니다. Windows에서 게시자를 확인할 수 없다는 안내가 나타날 수 있습니다. 배포 출처와 파일을 확인한 뒤 설치 여부를 결정하세요.</p></details>
-<details><summary>Mac이나 휴대폰에서도 사용할 수 있나요?</summary><p>현재 이 페이지에서 내려받는 설치 파일은 Windows용입니다. Mac용 빌드 설정도 추가되어 소스가 있다면 Mac에서 DMG를 직접 만들 수 있습니다. Mac용 설치 파일은 아직 이 페이지에서 제공하지 않습니다. 휴대폰에서는 이 다운로드 페이지를 볼 수 있습니다.</p></details>
+<details><summary>Mac이나 휴대폰에서도 사용할 수 있나요?</summary><p>macOS용 Universal DMG는 Apple Silicon과 Intel Mac을 모두 지원합니다. Windows 전용인 작업 표시줄 시세와 자동 시작 설정은 Mac에서 제공하지 않습니다. 휴대폰에서는 이 다운로드 페이지를 볼 수 있습니다.</p></details>
+<details><summary>Mac에서 개발자를 확인할 수 없다고 표시돼요.</summary><p>현재 macOS 빌드는 Apple Developer ID 서명과 공증을 받지 않았습니다. 배포 출처와 파일을 확인한 경우, 앱 실행을 한 번 시도한 뒤 시스템 설정 → 개인정보 보호 및 보안에서 차단된 앱의 열기 옵션을 확인하세요.</p></details>
 </div>
 </section>
 </main>
