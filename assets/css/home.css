@@ -11,7 +11,7 @@
   --banner-ink: #223043;
   --banner-muted: #445165;
   --silver-start: #bcc7d5;
-  --silver-mid: #eef1f5;
+  --silver-mid: #dce3ec;
   --silver-shadow: #a8b4c5;
   --silver-end: #d0d8e3;
   position: relative;
@@ -52,9 +52,9 @@
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(ellipse 95px 65px at var(--mx) var(--my), #fff 0%, rgba(255, 255, 255, .85) 15%, transparent 75%),
+    radial-gradient(ellipse 150px 100px at var(--mx) var(--my), rgba(222, 235, 250, .36) 0%, rgba(206, 222, 244, .16) 35%, transparent 80%),
     repeating-linear-gradient(115deg, #ff4597 0%, #ffbb43 12%, #eaff65 24%, #44f0b2 36%, #42d8ff 48%, #8d78ff 60%, #f16bea 72%, #ff4597 84%),
-    linear-gradient(115deg, transparent 25%, #fff 48%, transparent 70%);
+    linear-gradient(115deg, transparent 25%, rgba(211, 226, 246, .35) 48%, transparent 70%);
   background-size: 100% 100%, 240% 240%, 180% 180%;
   background-position: center, var(--foil-x) var(--foil-y), var(--mx) var(--my);
   -webkit-mask-image: radial-gradient(ellipse 340px 170px at var(--mx) var(--my), #000 12%, rgba(0, 0, 0, .88) 38%, transparent 100%);
@@ -64,7 +64,7 @@
 }
 [data-theme="dark"] .home-program-banner {
   --silver-start: #8e9db0;
-  --silver-mid: #d5dce5;
+  --silver-mid: #c4cedb;
   --silver-shadow: #8d9caf;
   --silver-end: #b7c2d0;
 }
