@@ -18,7 +18,7 @@ layout: default
   {%- endif -%}
 {%- endfor -%}
 
-<main class="theory-shell">
+<main class="theory-shell{% if page.overview %} theory-shell--overview{% endif %}">
   <div class="theory-grid">
     <div class="theory-reading">
       <article class="theory-article" id="theory-article">

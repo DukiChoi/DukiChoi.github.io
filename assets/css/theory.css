@@ -8,11 +8,13 @@
 .theory-masthead { margin: 0 0 40px; padding: 8px 0 40px; border-bottom: 1px solid var(--theory-line); text-align: center; }
 .theory-masthead .theory-category { color: var(--theory-muted); font-size: 14px; }
 .theory-masthead h1 { margin: 14px 0 0; font-size: 32px; font-weight: 650; line-height: 1.4; letter-spacing: -.035em; }
+.theory-shell--overview .theory-masthead h1 { font-size: clamp(32px, 7.5vw, 48px); }
 
-.theory-shell .theory-index { list-style: none; padding: 0; margin: 36px 0 0; }
-.theory-index > li { margin: 0; border-top: 1px solid var(--theory-line); }
-.theory-index > li:last-child { border-bottom: 1px solid var(--theory-line); }
-.theory-index__link { display: block; padding: 28px 0; }
+.theory-shell .theory-index { display: grid; gap: 16px; list-style: none; padding: 0; margin: 36px 0 0; }
+.theory-index > li { min-width: 0; margin: 0; background: var(--surface-raised); border: 1px solid var(--line-strong); border-left: 4px solid var(--theory-accent); border-radius: 10px; }
+.theory-index > li:nth-child(even) { background: var(--banner-bg); }
+.theory-index__link { display: block; padding: 24px; border-radius: 6px 9px 9px 6px; }
+.theory-shell .theory-index__link:hover { background: var(--surface); }
 .theory-index__link h2 { margin: 0 0 8px; font-size: 22px; font-weight: 600; line-height: 1.5; }
 .theory-index__link p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
 .theory-index__link:hover h2 { color: var(--theory-accent); }
@@ -20,7 +22,7 @@
 .theory-sidebar { position: sticky; top: 40px; min-width: 0; padding-left: 24px; border-left: 1px solid var(--theory-line); font-size: 14px; line-height: 1.6; }
 .theory-count { margin-left: auto; padding-left: 4px; color: var(--faint); font-size: 12px; font-weight: 400; }
 .theory-list { max-height: calc(100vh - 140px); padding: 4px; margin-left: -4px; overflow-y: auto; }
-.theory-list__overview { display: block; padding: 4px 0 12px; color: var(--muted) !important; font-size: 12px; }
+.theory-list__overview { display: block; padding: 4px 0 12px; color: var(--muted) !important; font-size: 24px; }
 .theory-tree summary { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 8px 0; cursor: pointer; list-style: none; color: var(--ink); font-weight: 500; }
 .theory-tree summary::-webkit-details-marker { display: none; }
 .theory-tree summary::before { content: ""; flex: 0 0 6px; width: 6px; height: 6px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s ease; }
@@ -60,6 +62,7 @@
 @media (prefers-reduced-motion: reduce) { .theory-tree summary::before { transition: none; } }
 @media (max-width: 520px) {
   .theory-shell { font-size: 16px; }
+  .theory-index__link { padding: 20px 18px; }
   .theory-masthead h1 { font-size: 26px; }
   .theory-content h2 { font-size: 22px; }
   .theory-content h3, .theory-index__link h2 { font-size: 19px; }

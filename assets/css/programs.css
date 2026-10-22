@@ -35,3 +35,7 @@
   .program-empty { padding: 30px 0 50px; }
   .program-empty h2 { font-size: 18px; }
 }
+/* 프로그램 제목 */
+.programs-hub .page-heading h1 {
+  font-size: clamp(32px, 7.5vw, 48px);
+}

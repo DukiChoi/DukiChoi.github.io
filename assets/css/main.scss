@@ -107,6 +107,7 @@ hr { margin: 36px 0; border: 0; border-top: 1px solid var(--line); }
 .page-shell--home { max-width: 904px; }
 .page-heading { margin: 0 0 40px; padding: 8px 0 40px; border-bottom: 1px solid var(--line); text-align: center; }
 .page-heading h1 { margin: 14px 0 0; }
+.page-shell--document .page-heading h1 { font-size: clamp(32px, 7.5vw, 48px); }
 .page-eyebrow { margin: 0; color: var(--muted); font-size: 14px; }
 .page-heading .page-description { max-width: 620px; margin: 16px auto 0; color: var(--muted); font-size: 16px; }
 .site-footer { width: calc(100% - 64px); max-width: 1056px; margin: 0 auto; padding: 20px 0 32px; border-top: 1px solid var(--line); color: var(--faint); font-size: 13px; }
