@@ -1,0 +1,10 @@
+{% if site.data.advertising.adsense.enabled and site.data.advertising.adsense.publisher_id != blank and site.data.advertising.adsense.side_slot != blank %}
+<aside class="site-side-ad site-side-ad--{{ include.side | escape }}" aria-label="{% if include.side == 'left' %}왼쪽{% else %}오른쪽{% endif %} 광고">
+  <span class="site-side-ad__label">광고</span>
+  <div class="site-side-ad__placement">
+    <ins class="adsbygoogle site-side-ad__unit"
+         data-ad-client="{{ site.data.advertising.adsense.publisher_id | escape }}"
+         data-ad-slot="{{ site.data.advertising.adsense.side_slot | escape }}"></ins>
+  </div>
+</aside>
+{% endif %}

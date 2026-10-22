@@ -1,0 +1,14 @@
+{%- assign adsense = site.data.advertising.adsense -%}
+{%- assign has_side_ads = false -%}
+{%- if adsense.enabled and adsense.publisher_id != blank and adsense.side_slot != blank -%}
+  {%- assign has_side_ads = true -%}
+{%- endif -%}
+<div class="site-layout"{% if has_side_ads %} google-side-rail-overlap="false"{% endif %}>
+  <div class="site-layout__columns{% if has_side_ads %} site-layout__columns--ads{% endif %}">
+    {% include side-ad.html side="left" %}
+    <div class="site-content" google-side-rail-overlap="false">
+      {{ content }}
+    </div>
+    {% include side-ad.html side="right" %}
+  </div>
+</div>

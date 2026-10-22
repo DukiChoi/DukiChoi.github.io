@@ -2,5 +2,12 @@
 {% if adsense.enabled and adsense.publisher_id != blank %}
 <meta name="google-adsense-account" content="{{ adsense.publisher_id | escape }}">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense.publisher_id | escape }}" crossorigin="anonymous"></script>
+{% if adsense.side_slot != blank %}
+<style>
+  .site-side-ad__unit { display: none; width: 160px; height: 600px; }
+  @media (min-width: 1280px) { .site-side-ad__unit { display: block; } }
+</style>
+<script defer src="{{ '/assets/js/adsense.js' | relative_url }}"></script>
+{% endif %}
 {% endif %}
 <link rel="stylesheet" href="{{ '/assets/css/site-ad.css' | relative_url }}">

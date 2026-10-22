@@ -1,6 +1,6 @@
-# Public publisher ID for Google AdSense Auto ads.
+# Public identifiers for Google AdSense Auto ads and the two side placements.
 adsense:
   enabled: true
   publisher_id: "ca-pub-7488501527988619"
-# Auto ads create their own placements, including desktop side rails.
+  side_slot: "4679016493"
 show_placeholder: false
