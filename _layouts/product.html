@@ -13,8 +13,10 @@
   <link rel="canonical" href="{{ page.url | absolute_url }}">
   {% if page.icon %}<link rel="icon" href="{{ page.icon | relative_url }}">{% endif %}
   <link rel="stylesheet" href="{{ page.css_file | relative_url }}">
+  {% include advertising-head.html %}
 </head>
 <body>
+  {% include site-ad.html %}
   {{ content }}
 </body>
 </html>
