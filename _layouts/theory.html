@@ -23,7 +23,7 @@ layout: default
     <div class="theory-reading">
       <article class="theory-article" id="theory-article">
         <header class="theory-masthead">
-          <a class="theory-category" href="{{ '/theory/' | relative_url }}">{{ page.topic | default: "이론 자료" | escape }}</a>
+          <a class="theory-category" href="{{ '/theory/' | relative_url }}">{{ page.topic | default: "Tech Study" | escape }}</a>
           <h1>{{ page.title | escape }}</h1>
         </header>
 
@@ -61,9 +61,9 @@ layout: default
       {% endunless %}
     </div>
 
-    <aside class="theory-sidebar" aria-label="이론 자료 탐색">
-      <a class="theory-list__overview{% if page.overview %} is-current{% endif %}" href="{{ '/theory/' | relative_url }}"{% if page.overview %} aria-current="page"{% endif %}>이론 자료</a>
-      <nav class="theory-list theory-tree" aria-label="이론 자료 글 목록">
+    <aside class="theory-sidebar" aria-label="Tech Study 탐색">
+      <a class="theory-list__overview{% if page.overview %} is-current{% endif %}" href="{{ '/theory/' | relative_url }}"{% if page.overview %} aria-current="page"{% endif %}>Tech Study</a>
+      <nav class="theory-list theory-tree" aria-label="Tech Study 글 목록">
         <details class="theory-navigation" data-tree-key="all" open>
           <summary>전체 자료 <span class="theory-count">{{ theory_articles.size }}</span></summary>
           <ul class="theory-tree__children">

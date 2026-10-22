@@ -29,8 +29,8 @@ defaults:
     values:
       layout: program
       section: programs
-      nav_title: 프로그램
-      permalink_name: /프로그램
+      nav_title: 개발자의 삶
+      permalink_name: /개발자의 삶
       css_file: /assets/css/programs.css
       order: 1000
   - scope:
@@ -39,9 +39,9 @@ defaults:
     values:
       layout: theory
       section: theory
-      nav_title: 이론 자료
-      tab_title: 이론 자료
-      permalink_name: /이론 자료
+      nav_title: Tech Study
+      tab_title: Tech Study
+      permalink_name: /Tech Study
       css_file: /assets/css/theory.css
       js_file: /assets/js/theory.js
       order: 1000
@@ -50,9 +50,9 @@ defaults:
     values:
       layout: theory
       section: theory
-      nav_title: 이론 자료
-      tab_title: 이론 자료
-      permalink_name: /이론 자료
+      nav_title: Tech Study
+      tab_title: Tech Study
+      permalink_name: /Tech Study
       css_file: /assets/css/theory.css
       js_file: /assets/js/theory.js
       lab_css: /assets/theories/style.css

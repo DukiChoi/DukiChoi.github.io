@@ -1,4 +1,6 @@
-{% if site.data.advertising.coinzilla_verification %}
-<meta name="coinzilla" content="{{ site.data.advertising.coinzilla_verification | escape }}">
+{% assign adsense = site.data.advertising.adsense %}
+{% if adsense.enabled and adsense.publisher_id != blank %}
+<meta name="google-adsense-account" content="{{ adsense.publisher_id | escape }}">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense.publisher_id | escape }}" crossorigin="anonymous"></script>
 {% endif %}
 <link rel="stylesheet" href="{{ '/assets/css/site-ad.css' | relative_url }}">

@@ -1,13 +1,19 @@
 # Website advertising
 
-The website registered with Coinzilla is https://dukichoi.github.io/.
-Market Peek downloads are at https://dukichoi.github.io/programs/market-peek/.
+Google AdSense Auto ads are configured for https://dukichoi.github.io/.
+The public publisher ID is `ca-pub-7488501527988619`.
 
-- `_data/advertising.yml` stores the public ownership verification value and the placeholder toggle.
-- `_includes/advertising-head.html` places the verification meta tag in the shared and product page heads.
-- `_includes/site-ad.html` is shared by all public page layouts, including Home and the Market Peek download page.
-- `assets/css/site-ad.css` reserves 728 × 90 pixels on desktop and 320 × 50 on smaller screens. It does not overlay page content.
-- The current placement is an empty labeled placeholder. It makes no ad requests and generates no paid impressions.
-- After publisher approval, replace the placeholder with the provider-issued code and follow its approved size, placement and refresh rules. Do not simply resize a live creative with CSS.
-- To hide the empty placement, set `show_placeholder: false`. The ownership meta tag remains available.
-- Website approval does not authorize displaying the website's ad unit inside the Electron application.
+- `_data/advertising.yml` stores the publisher ID and the `adsense.enabled` switch.
+- `_includes/advertising-head.html` loads the account verification meta tag and the asynchronous AdSense script once per page. Both the shared layout and the Market Peek product layout include it.
+- Auto ads choose their own placements. No manual ad unit IDs or `adsbygoogle.push()` calls are needed.
+- `ads.txt` generates the Google authorized-seller entry from the same publisher ID.
+- The old empty banner is disabled with `show_placeholder: false`, so it does not leave a blank advertising box above the content.
+- The shared and product layouts protect the reading area with `google-side-rail-overlap="false"`. At viewport widths of 1600px or more, `assets/css/site-ad.css` keeps that area within 1160px, leaving space on both sides for desktop side rail ads.
+
+## AdSense settings
+
+In AdSense, open **Ads → Edit site** and enable **Auto ads**. Auto optimize can remain enabled; it controls experiments on ad formats and settings.
+
+For ads on both sides, enable **Overlay formats → Side rail ads**, then choose **Advanced settings → Side rail ad position → Left and right** and apply the settings to the site. These options are managed in AdSense, not by a website flag. Side rail ads are available on desktop, and Auto ads decide when to show an eligible placement.
+
+References: [Auto ads settings](https://support.google.com/adsense/answer/9305577), [side rail ads](https://support.google.com/adsense/answer/16531757), [Auto optimize](https://support.google.com/adsense/answer/9141298), [ads.txt guide](https://support.google.com/adsense/answer/12171612).

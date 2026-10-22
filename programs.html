@@ -1,10 +1,10 @@
 ---
 layout: default
-title: 프로그램
-nav_title: 프로그램
+title: 프로그램 목록
+nav_title: 개발자의 삶
 section: programs
 permalink: /programs/
-permalink_name: /프로그램
+permalink_name: /개발자의 삶
 css_file: /assets/css/programs.css
 js_files:
   - /assets/js/program-banners.js
@@ -14,7 +14,7 @@ description: DukiChoi가 만든 프로그램과 사용 방법을 소개합니다
 <main class="page-shell page-shell--reading programs-hub">
   <header class="page-heading">
     <p class="page-eyebrow">DukiChoi</p>
-    <h1>프로그램</h1>
+    <h1>프로그램 목록</h1>
     <p class="page-description">직접 만든 프로그램과 사용 방법을 소개하는 공간입니다.</p>
   </header>
   {% assign programs = site.programs | where_exp: "entry", "entry.published != false" | sort: "order" %}

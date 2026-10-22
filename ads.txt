@@ -1,0 +1,6 @@
+---
+layout: null
+permalink: /ads.txt
+---
+{% assign publisher_id = site.data.advertising.adsense.publisher_id | default: "" | strip %}{% if publisher_id != "" %}google.com, {{ publisher_id | remove_first: "ca-" }}, DIRECT, f08c47fec0942fa0
+{% endif %}

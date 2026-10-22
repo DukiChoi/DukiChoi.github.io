@@ -18,7 +18,7 @@ css_file: /assets/css/home.css
 
 <a class="home-program-banner" data-holo-shine href="{{ '/programs/' | relative_url }}">
   <span class="home-program-banner__text">
-    <strong>프로그램</strong>
+    <strong>개발자의 삶</strong>
     <span class="home-program-banner__description">직접 만든 프로그램과 사용 방법을 소개하는 공간입니다.</span>
   </span>
   <span class="home-program-banner__action">모아보기 <span aria-hidden="true">→</span></span>
