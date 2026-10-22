@@ -1,0 +1,90 @@
+---
+layout: default
+---
+{%- assign theory_pages = site.pages | where: "section", "theory" | where_exp: "entry", "entry.overview != true" -%}
+{%- assign theory_articles = site.theory | concat: theory_pages | where_exp: "entry", "entry.published != false" | sort: "order" -%}
+{%- assign previous_article = nil -%}
+{%- assign next_article = nil -%}
+{%- for entry in theory_articles -%}
+  {%- if entry.url == page.url -%}
+    {%- unless forloop.first -%}
+      {%- assign previous_index = forloop.index0 | minus: 1 -%}
+      {%- assign previous_article = theory_articles[previous_index] -%}
+    {%- endunless -%}
+    {%- unless forloop.last -%}
+      {%- assign next_index = forloop.index0 | plus: 1 -%}
+      {%- assign next_article = theory_articles[next_index] -%}
+    {%- endunless -%}
+  {%- endif -%}
+{%- endfor -%}
+
+<main class="theory-shell">
+  <div class="theory-grid">
+    <div class="theory-reading">
+      <article class="theory-article" id="theory-article">
+        <header class="theory-masthead">
+          <a class="theory-category" href="{{ '/theory/' | relative_url }}">{{ page.topic | default: "이론 자료" | escape }}</a>
+          <h1>{{ page.title | escape }}</h1>
+        </header>
+
+        <div class="theory-content">{{ content }}</div>
+
+        {% if page.overview %}
+        <ol class="theory-index">
+          {% for entry in theory_articles %}
+          <li>
+            <a class="theory-index__link" href="{{ entry.url | relative_url }}">
+              <h2>{{ entry.title | escape }}</h2>
+              {% if entry.description %}<p>{{ entry.description | escape }}</p>{% endif %}
+            </a>
+          </li>
+          {% else %}
+          <li>아직 등록된 자료가 없습니다.</li>
+          {% endfor %}
+        </ol>
+        {% endif %}
+      </article>
+
+      {% unless page.overview %}
+      <nav class="theory-pagination" aria-label="이전 글과 다음 글">
+        {% if previous_article %}
+        <a class="theory-pagination__previous" href="{{ previous_article.url | relative_url }}">
+          <span>이전 글</span><strong>{{ previous_article.title | escape }}</strong>
+        </a>
+        {% endif %}
+        {% if next_article %}
+        <a class="theory-pagination__next" href="{{ next_article.url | relative_url }}">
+          <span>다음 글</span><strong>{{ next_article.title | escape }}</strong>
+        </a>
+        {% endif %}
+      </nav>
+      {% endunless %}
+    </div>
+
+    <aside class="theory-sidebar" aria-label="이론 자료 탐색">
+      <a class="theory-list__overview{% if page.overview %} is-current{% endif %}" href="{{ '/theory/' | relative_url }}"{% if page.overview %} aria-current="page"{% endif %}>이론 자료</a>
+      <nav class="theory-list theory-tree" aria-label="이론 자료 글 목록">
+        <details class="theory-navigation" data-tree-key="all" open>
+          <summary>전체 자료 <span class="theory-count">{{ theory_articles.size }}</span></summary>
+          <ul class="theory-tree__children">
+          {% assign theory_groups = theory_articles | group_by: "topic" %}
+          {% for group in theory_groups %}
+            <li>
+              <details class="theory-tree__group" data-tree-key="topic:{{ group.name | escape }}" open>
+                <summary>{{ group.name | default: "이론 노트" | escape }} <span class="theory-count">{{ group.items.size }}</span></summary>
+                <ol class="theory-tree__children">
+                {% for entry in group.items %}
+                  <li>
+                    <a class="theory-list__entry{% if entry.url == page.url %} is-current{% endif %}" href="{{ entry.url | relative_url }}"{% if entry.url == page.url %} aria-current="page"{% endif %}>{{ entry.title | escape }}</a>
+                  </li>
+                {% endfor %}
+                </ol>
+              </details>
+            </li>
+          {% endfor %}
+          </ul>
+        </details>
+      </nav>
+    </aside>
+  </div>
+</main>

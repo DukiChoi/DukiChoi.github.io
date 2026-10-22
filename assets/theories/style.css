@@ -1,0 +1,117 @@
+/* Components for the supplied circuit lessons. Scoped so they cannot restyle the site. */
+.circuit-lesson {
+  --panel: var(--surface-raised);
+  --ink-2: var(--muted);
+  --ink-3: var(--faint);
+  --rule: var(--line);
+  --rule-2: var(--line-strong);
+  --hi: #e8a317;
+  --sans: var(--font-sans);
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-2);
+  --text-muted: var(--ink-3);
+  --border: var(--rule);
+  --border-strong: var(--rule-2);
+  --surface-1: var(--surface);
+  --bg2: var(--surface);
+  --t: var(--ink-2);
+  --b: var(--rule-2);
+  --radius: 4px;
+  --gate-a-bg: #e8f2ef;
+  --gate-a-line: #568476;
+  --gate-a-ink: #31574b;
+  --gate-b-bg: #eeedf6;
+  --gate-b-line: #8176a7;
+  --gate-b-ink: #544b77;
+  --valid-bg: #b9dfd0;
+  --valid-line: #79a993;
+  --valid-ink: #31574b;
+  --bg-warning: #fcf3df;
+  --text-warning: #79560e;
+  --border-warning: #c69536;
+  --bg-accent: #eaf0f6;
+  --text-accent: #345b80;
+  --border-accent: #7290ac;
+}
+.circuit-lesson .stage { margin: 32px 0 10px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+.circuit-lesson .lede { font-size: inherit; }
+.circuit-lesson .hint { margin: 8px 0 32px; font-size: 13px; line-height: 1.7; color: var(--ink-3); }
+.circuit-lesson .circuit-viewport { max-width: 100%; overflow-x: auto; }
+.circuit-lesson .circuit-viewport svg { display: block; width: 100%; min-width: 580px; }
+.circuit-lesson :is(.circuit-viewport, .tw):focus-visible { outline: 2px solid var(--border-accent); outline-offset: 3px; }
+.circuit-lesson .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.circuit-lesson .bt { font: inherit; font-size: 14px; font-weight: 500; line-height: 1.5; padding: 9px 14px; min-height: 40px; min-width: 64px; border-radius: var(--radius); border: 1px solid var(--rule-2); background: var(--panel); color: var(--ink); cursor: pointer; touch-action: manipulation; }
+.circuit-lesson .bt:hover { border-color: var(--ink-3); }
+.circuit-lesson .bt:focus-visible { outline: 2px solid var(--border-accent); outline-offset: 3px; }
+.circuit-lesson .bt.on { background: var(--bg-warning); color: var(--text-warning); border-color: var(--border-warning); }
+.circuit-lesson .bt.mode.on { background: var(--bg-accent); color: var(--text-accent); border-color: var(--border-accent); }
+.circuit-lesson svg text.t { font: 400 14px var(--sans); fill: var(--ink); }
+.circuit-lesson svg text.ts { font: 400 12px var(--sans); fill: var(--ink-2); }
+.circuit-lesson svg text.th { font: 500 14px var(--sans); fill: var(--ink); }
+.circuit-lesson .c-teal > rect { fill: var(--gate-a-bg); stroke: var(--gate-a-line); }
+.circuit-lesson .c-teal > text.th { fill: var(--gate-a-ink); }
+.circuit-lesson .c-teal > text.ts { fill: var(--gate-a-line); }
+.circuit-lesson .c-purple > rect { fill: var(--gate-b-bg); stroke: var(--gate-b-line); }
+.circuit-lesson .c-purple > text.th { fill: var(--gate-b-ink); }
+.circuit-lesson .c-purple > text.ts { fill: var(--gate-b-line); }
+
+/* The full-adder's intermediate calculations and live truth table. */
+.circuit-lesson .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 10px; margin-top: 20px; }
+.circuit-lesson .st { border: 1px solid var(--border); border-radius: 4px; padding: 12px; background: var(--panel); }
+.circuit-lesson .st .h { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+.circuit-lesson .st .eq { font-family: var(--font-mono); font-size: 15px; color: var(--text-primary); }
+.circuit-lesson .st .sub { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+.circuit-lesson .tw { overflow-x: auto; margin-top: 20px; }
+.circuit-lesson table { display: table; width: 100%; border-collapse: collapse; margin: 0; font-size: 13px; font-family: var(--font-mono); background: var(--panel); white-space: nowrap; }
+.circuit-lesson td, .circuit-lesson th { border: 1px solid var(--border); padding: 6px 8px; text-align: center; color: var(--text-secondary); font-weight: 400; }
+.circuit-lesson th { color: var(--text-primary); font-weight: 500; font-family: var(--font-sans); }
+.circuit-lesson tr.cur td { background: var(--bg-warning); color: var(--text-warning); }
+
+/* Memory cells, NAND pages, and latency indicators. */
+.circuit-lesson .memory-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 16px; }
+.circuit-lesson .memory-controls__writes, .circuit-lesson .memory-controls__speed { display: flex; gap: 8px; }
+.circuit-lesson .memory-controls__speed { margin-left: auto; }
+.circuit-lesson .pan { border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; margin-top: 16px; background: var(--panel); }
+.circuit-lesson .ph { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.circuit-lesson .ph b { font-weight: 500; font-size: 16px; color: var(--text-primary); }
+.circuit-lesson .tm { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); }
+.circuit-lesson .dg { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 3px; margin-top: 10px; }
+.circuit-lesson .dc { aspect-ratio: 1; border-radius: 2px; background: var(--surface-1); border: 1px solid var(--border); }
+.circuit-lesson .dc.rf { border-color: #378add; }
+.circuit-lesson .dc.hit { outline: 2px solid #d85a30; outline-offset: 1px; }
+.circuit-lesson #nd { overflow-x: auto; padding-bottom: 4px; }
+.circuit-lesson .blk { display: grid; grid-template-columns: 76px repeat(6, minmax(0, 1fr)); gap: 4px; align-items: center; min-width: 280px; margin-top: 6px; padding: 3px; border-radius: 3px; }
+.circuit-lesson .blk.er { background: rgba(226, 75, 74, .18); }
+.circuit-lesson .pg { height: 30px; border-radius: 3px; border: 1px dashed var(--border-strong); font-family: var(--font-mono); font-size: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; color: var(--text-muted); }
+.circuit-lesson .pg.v { background: var(--valid-bg); border: 1px solid var(--valid-line); color: var(--valid-ink); }
+.circuit-lesson .pg.x { background: var(--surface-1); border: 1px solid var(--border); color: var(--text-muted); text-decoration: line-through; }
+.circuit-lesson .pg .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #e8a317; }
+.circuit-lesson .pg span { position: relative; z-index: 1; }
+.circuit-lesson .lb { font-size: 12px; color: var(--text-secondary); }
+.circuit-lesson .sts { font-size: 14px; color: var(--text-secondary); margin: 10px 0 0; min-height: 22px; }
+.circuit-lesson .lat { display: grid; grid-template-columns: 140px minmax(20px, 1fr) 72px; gap: 10px; align-items: center; font-size: 14px; margin-top: 6px; color: var(--text-secondary); }
+.circuit-lesson .lat .tr { height: 10px; background: var(--surface-1); border-radius: 2px; overflow: hidden; }
+.circuit-lesson .lat .fl { height: 100%; border-radius: 2px; }
+@media (max-width: 520px) {
+  .circuit-lesson .stage { padding: 12px; }
+  .circuit-lesson .lat { grid-template-columns: 125px minmax(12px, 1fr) 60px; gap: 6px; font-size: 12px; }
+  .circuit-lesson .pan { padding: 10px; }
+}
+
+[data-theme="dark"] .circuit-lesson {
+  --bg-warning: #352c1d;
+  --text-warning: #ebc77a;
+  --border-warning: #806431;
+  --bg-accent: #21344a;
+  --text-accent: #accce9;
+  --border-accent: #567695;
+  --gate-a-bg: #193c35;
+  --gate-a-line: #77ae9b;
+  --gate-a-ink: #b9dece;
+  --gate-b-bg: #302b42;
+  --gate-b-line: #a69bc7;
+  --gate-b-ink: #d3caef;
+  --valid-bg: #23483d;
+  --valid-line: #609a82;
+  --valid-ink: #c1e6d7;
+}

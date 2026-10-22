@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ page.description | escape }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ page.title | escape }}">
+  <meta property="og:description" content="{{ page.description | escape }}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  {% if page.cover %}<meta property="og:image" content="{{ page.cover | absolute_url }}">{% endif %}
+  <title>{{ page.title | escape }} — {{ page.tagline | escape }}</title>
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  {% if page.icon %}<link rel="icon" href="{{ page.icon | relative_url }}">{% endif %}
+  <link rel="stylesheet" href="{{ page.css_file | relative_url }}">
+</head>
+<body>
+  {{ content }}
+</body>
+</html>

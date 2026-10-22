@@ -1,0 +1,139 @@
+# Pages CMS uses GitHub authentication; no credentials belong in this file.
+media:
+  input: assets/uploads
+  output: /assets/uploads
+  extensions: [jpg, jpeg, png, webp, gif, avif]
+  rename: safe
+
+content:
+  - name: theory
+    label: 이론 자료 글
+    type: collection
+    path: _theory
+    format: yaml-frontmatter
+    filename:
+      template: "{primary}.md"
+      field: create
+    subfolders: false
+    exclude: [.gitkeep]
+    view:
+      primary: title
+      fields: [title, topic, published, order]
+      sort: [order, title]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: title
+        label: 제목
+        type: string
+        required: true
+      - name: description
+        label: 짧은 소개
+        type: text
+      - name: topic
+        label: 분류
+        type: string
+        required: true
+        default: 디지털 회로
+        description: 같은 분류의 글은 이론 자료 목록에서 함께 묶입니다.
+      - name: order
+        label: 목록 순서
+        type: number
+        required: true
+        default: 1000
+        options:
+          min: 0
+      - name: published
+        label: 사이트에 게시
+        type: boolean
+        default: true
+        description: 끄면 사이트에서 숨깁니다. 공개 GitHub 저장소의 파일까지 비공개로 바뀌지는 않습니다.
+      - name: body
+        label: 본문
+        type: rich-text
+        required: true
+        options:
+          format: markdown
+
+  - name: programs
+    label: 프로그램 소개
+    type: collection
+    path: _programs
+    format: yaml-frontmatter
+    filename:
+      template: "{primary}.md"
+      field: create
+    subfolders: false
+    exclude: [.gitkeep, market-peek.html]
+    view:
+      primary: title
+      fields: [title, platform, published, order]
+      sort: [order, title]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: title
+        label: 프로그램 이름
+        type: string
+        required: true
+      - name: description
+        label: 짧은 소개
+        type: text
+        required: true
+      - name: platform
+        label: 실행 환경
+        type: string
+        description: 예) Windows, macOS, 웹
+      - name: order
+        label: 목록 순서
+        type: number
+        required: true
+        default: 1000
+        options:
+          min: 0
+      - name: published
+        label: 사이트에 게시
+        type: boolean
+        default: true
+        description: 끄면 사이트에서 숨깁니다. 공개 GitHub 저장소의 파일까지 비공개로 바뀌지는 않습니다.
+      - name: featured
+        label: 목록에서 강조
+        type: boolean
+        default: false
+      - name: icon
+        label: 아이콘
+        type: image
+      - name: cover
+        label: 대표 이미지
+        type: image
+      - name: cover_alt
+        label: 대표 이미지 설명
+        type: string
+      - name: links
+        label: 사용 링크
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: 버튼 이름
+            type: string
+            required: true
+          - name: url
+            label: 주소
+            type: string
+            required: true
+            pattern:
+              regex: '^(https://[^\s]+|/(?!/)[^\s]*)$'
+              message: https://로 시작하는 주소나 /assets/ 같은 사이트 내부 경로를 입력하세요.
+      - name: body
+        label: 본문
+        type: rich-text
+        required: true
+        options:
+          format: markdown
+
+settings:
+  content:
+    merge: true

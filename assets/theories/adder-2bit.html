@@ -1,0 +1,78 @@
+---
+title: 2비트 리플 캐리 가산기
+description: 전가산기 두 개를 연결해 2비트 숫자를 더하고, 올림수가 다음 자리로 전달되는 과정을 살펴봅니다.
+permalink: /theory/adder-2bit/
+order: 2
+---
+<div class="circuit-lesson">
+<p class="lede">전가산기 하나는 한 자리의 덧셈을 계산합니다. 전가산기 두 개를 연결하고 낮은 자리에서 생긴 올림수를 높은 자리로 넘기면, 두 개의 2비트 숫자를 더할 수 있습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">전가산기 두 개를 캐리로 연결한 2비트 가산기</h2>
+    <div class="circuit-viewport" tabindex="0" role="region" aria-label="회로도 — 좁은 화면에서는 좌우로 스크롤"><svg width="100%" viewBox="0 0 680 290" role="img">
+      <title>2비트 리플 캐리 가산기</title>
+      <desc>FA0이 하위 비트 A0, B0, Cin을 더하고 캐리 C1을 FA1로 넘기며, FA1이 A1, B1, C1을 더해 S1과 Cout을 출력합니다.</desc>
+      <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <text class="th" x="195" y="44" text-anchor="middle">A1=<tspan id="vA1">0</tspan></text>
+      <text class="th" x="255" y="44" text-anchor="middle">B1=<tspan id="vB1">0</tspan></text>
+      <text class="th" x="445" y="44" text-anchor="middle">A0=<tspan id="vA0">0</tspan></text>
+      <text class="th" x="505" y="44" text-anchor="middle">B0=<tspan id="vB0">0</tspan></text>
+      <line id="wA1" x1="195" y1="58" x2="195" y2="106" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wB1" x1="255" y1="58" x2="255" y2="106" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wA0" x1="445" y1="58" x2="445" y2="106" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wB0" x1="505" y1="58" x2="505" y2="106" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <g class="c-purple"><rect x="150" y="110" width="150" height="80" rx="8" stroke-width="0.5"/>
+        <text class="th" x="225" y="140" text-anchor="middle" dominant-baseline="central">FA1</text>
+        <text class="ts" x="225" y="162" text-anchor="middle" dominant-baseline="central">2의 자리</text></g>
+      <g class="c-teal"><rect x="400" y="110" width="150" height="80" rx="8" stroke-width="0.5"/>
+        <text class="th" x="475" y="140" text-anchor="middle" dominant-baseline="central">FA0</text>
+        <text class="ts" x="475" y="162" text-anchor="middle" dominant-baseline="central">1의 자리</text></g>
+      <text class="ts" x="605" y="138" text-anchor="middle">Cin=<tspan id="vCin">0</tspan></text>
+      <line id="wCin" x1="640" y1="150" x2="554" y2="150" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="ts" x="350" y="138" text-anchor="middle">C1=<tspan id="vC1">0</tspan></text>
+      <line id="wC1" x1="400" y1="150" x2="304" y2="150" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="ts" x="90" y="138" text-anchor="middle">Cout=<tspan id="vCo">0</tspan></text>
+      <line id="wCo" x1="150" y1="150" x2="44" y2="150" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wS1" x1="225" y1="190" x2="225" y2="234" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wS0" x1="475" y1="190" x2="475" y2="234" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="th" x="225" y="256" text-anchor="middle">S1=<tspan id="vS1">0</tspan></text>
+      <text class="th" x="475" y="256" text-anchor="middle">S0=<tspan id="vS0">0</tspan></text>
+    </svg></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px">
+      <button class="bt" data-k="A1" aria-pressed="false">A1</button><button class="bt" data-k="A0" aria-pressed="false">A0</button>
+      <button class="bt" data-k="B1" aria-pressed="false">B1</button><button class="bt" data-k="B0" aria-pressed="false">B0</button>
+      <button class="bt" data-k="Cin" aria-pressed="false">Cin</button>
+    </div>
+    <p id="res" style="text-align:center;font-family:var(--font-mono);font-size:15px;color:var(--text-primary);margin:14px auto 0"></p>
+  </div>
+  <p class="hint">버튼으로 입력 비트를 바꾸면 값이 1인 배선이 주황색으로 표시됩니다. 회로 아래에서 덧셈 결과를 이진수와 십진수로 함께 확인할 수 있습니다.</p>
+
+  <h2>A와 B는 더할 숫자, Cin은 입력 올림수입니다</h2>
+  <p>A와 B는 각각 2비트로 나타낸 숫자입니다. A1은 2의 자리, A0는 1의 자리이므로 A1=1, A0=0이면 A는 <code>10₂</code>, 즉 십진수 2입니다. A0와 B0는 1의 자리를 계산하는 FA0에, A1과 B1은 2의 자리를 계산하는 FA1에 입력됩니다.</p>
+  <p>Cin은 회로 바깥에서 들어오는 올림수입니다. 이 회로만으로 두 숫자를 더할 때는 보통 0으로 둡니다. 여러 가산기를 연결할 때는 앞 회로의 올림수를 받는 데 사용하고, 2의 보수로 뺄셈을 구현할 때는 필요한 +1을 입력하는 데 사용합니다.</p>
+  <pre><code>A=11(3), B=01(1), Cin=0
+1의 자리: 1 + 1 + 0 = 10₂ → S0=0, C1=1
+2의 자리: 1 + 0 + 1 = 10₂ → S1=0, Cout=1
+결과: Cout S1 S0 = 100₂ = 4</code></pre>
+
+  <h2>전가산기를 연결하면 더 큰 숫자도 계산할 수 있습니다</h2>
+  <p>각 전가산기는 해당 자리의 A, B와 입력 올림수를 더합니다. 계산 중에 생긴 올림수는 다음 자리의 전가산기로 전달됩니다. 이 방식으로 전가산기 n개를 연결하면 두 n비트 숫자를 더할 수 있습니다. 예를 들어 3비트 가산기는 입력 올림수까지 포함해 최대 7 + 7 + 1 = 15를 계산하며, 이 결과는 4비트로 표시합니다.</p>
+  <p>이 회로에서는 높은 자리의 전가산기가 낮은 자리의 올림수를 기다려야 합니다. 따라서 연결하는 비트 수가 늘어날수록 계산 시간도 길어집니다. 이 지연을 줄이려면 올림수를 미리 계산하는 캐리 룩어헤드(CLA) 같은 회로를 사용할 수 있습니다.</p>
+</div>
+<script>
+(() => {
+const s={A1:0,A0:0,B1:0,B0:0,Cin:0};
+const col=v=>v?'#E8A317':'#888780';
+function set(id,v){document.getElementById('v'+id).textContent=v;document.getElementById('w'+id).setAttribute('stroke',col(v));}
+function upd(){
+const S0=s.A0^s.B0^s.Cin, C1=(s.A0&s.B0)|(s.Cin&(s.A0^s.B0));
+const S1=s.A1^s.B1^C1, Co=(s.A1&s.B1)|(C1&(s.A1^s.B1));
+['A1','A0','B1','B0','Cin'].forEach(k=>set(k,s[k]));
+set('C1',C1);set('S1',S1);set('S0',S0);set('Co',Co);
+const a=s.A1*2+s.A0,b=s.B1*2+s.B0,r=Co*4+S1*2+S0;
+document.getElementById('res').textContent=`${s.A1}${s.A0} + ${s.B1}${s.B0} + ${s.Cin} = ${Co}${S1}${S0}   (${a} + ${b} + ${s.Cin} = ${r})`;
+}
+document.querySelectorAll('.bt').forEach(b=>b.onclick=()=>{const k=b.dataset.k;s[k]^=1;b.classList.toggle('on',!!s[k]);b.setAttribute('aria-pressed',!!s[k]);upd();});
+upd();
+})();
+</script>

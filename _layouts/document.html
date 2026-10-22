@@ -1,0 +1,16 @@
+---
+layout: default
+---
+<main class="page-shell">
+  <header class="page-heading">
+    <p class="page-eyebrow">DukiChoi</p>
+    <h1>{{ page.title | escape }}</h1>
+    {% if page.description %}<p class="page-description">{{ page.description | escape }}</p>{% endif %}
+    <div class="document-actions">
+      <a href="{{ page.pdf_file | relative_url }}" target="_blank" rel="noopener">PDF 열기</a>
+      <a href="{{ page.pdf_file | relative_url }}" download>다운로드</a>
+    </div>
+  </header>
+  <iframe class="pdf-viewer" src="{{ page.pdf_file | relative_url }}#view=FitH" title="{{ page.title | escape }} PDF"></iframe>
+  {% if content != '' %}<div class="prose">{{ content }}</div>{% endif %}
+</main>

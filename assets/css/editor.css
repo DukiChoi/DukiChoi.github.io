@@ -1,0 +1,12 @@
+.editor-entry { padding: 28px; border: 1px solid var(--line-strong); border-left: 3px solid var(--link); border-radius: 7px; background: var(--surface); }
+.editor-entry h2 { margin: 0 0 12px; font-size: 22px; }
+.editor-entry > p { margin-bottom: 20px; }
+.editor-open { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; padding: 11px 18px; border: 1px solid var(--link); border-radius: 5px; background: var(--banner-bg); color: var(--banner-ink); font-size: 15px; font-weight: 600; text-decoration: none; }
+.editor-open:hover { border-color: var(--link-hover); color: var(--link-hover); }
+.editor-home .editor-note { margin: 20px 0 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
+.editor-help { margin: 28px 0; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.editor-help summary { cursor: pointer; font-size: 15px; font-weight: 500; }
+.editor-help ol { padding-left: 22px; font-size: 14px; }
+.editor-help li { margin: 12px 0; }
+.editor-help p { margin: 16px 0 0; color: var(--muted); font-size: 14px; }
+@media (max-width: 520px) { .editor-entry { padding: 22px; } .editor-open { width: 100%; gap: 12px; } }

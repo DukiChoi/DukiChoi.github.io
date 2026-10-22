@@ -1,145 +1,122 @@
-// assets/js/card-tilt.js
-document.addEventListener('DOMContentLoaded', () => {
-  const MAX_ROT = 10;   // 최대 기울기(deg)
-  const SCALE   = 1.1;  // 확대 배율
-  const IDLE_MS = 140;  // ★ ADD: 입력(터치/포인터) 정지 시 자동 원복 대기 시간(ms)
-  const isTouch = matchMedia('(pointer: coarse)').matches; // 터치 기반인지 확인
-  document.querySelectorAll('.card').forEach(card => {
-    let rect = card.getBoundingClientRect();
-    let rafId = null;
-    let lastX = 0, lastY = 0;
-    let activePointerId = null; // ← 터치/펜 추적용
-    let idleTimer = null;       // ★ ADD: 유휴 타이머
-
-    // 성능: 레이아웃 측정은 진입/리사이즈 시에만
-    const recalc = () => { rect = card.getBoundingClientRect(); };
-    window.addEventListener('resize', recalc);
-    const clearIdle = () => {              // ★ ADD
-      if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
-    };
-    const scheduleIdleReset = () => {      // ★ ADD
-      clearIdle();
-      idleTimer = setTimeout(() => { resetVars(); }, IDLE_MS);
-    };
-    
-    const resetVars = () => {
-      clearIdle(); // ★ ADD: 리셋 시 유휴 타이머도 함께 정리
-      card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
-      card.style.zIndex = 1;
-      card.style.setProperty('--tx', '0px');
-      card.style.setProperty('--ty', '0px');
-      card.style.setProperty('--mx', '50%');
-      card.style.setProperty('--my', '50%');
-      card.style.setProperty('--shine-angle', '0deg');
-      card.classList.remove('is-hover'); // ← 터치 대체 hover 해제
-      activePointerId = null;            // ★ ADD: 포인터 상태도 정리
-    };
-
-    const update = () => {
-      // 3D 틸트 + 확대
-      const scaleVal = isTouch ? 1 : SCALE;   // 터치면 1, 아니면 1.1
-      const cx = rect.width / 2;
-      const cy = rect.height / 2;
-      const x  = lastX - rect.left;
-      const y  = lastY - rect.top;
-
-      // 3D 회전량
-      const rotX = ((y - cy) / cy) * MAX_ROT;
-      const rotY = ((x - cx) / cx) * MAX_ROT;
-
-      // 3D 틸트 + 확대(합성 단계)
-      card.style.transform =
-        `perspective(1000px) rotateX(${-rotX}deg) rotateY(${rotY}deg) scale(${scaleVal})`;
-
-      // 반짝임 레이어 이동(페인트 최소화: transform만 변경)
-      card.style.setProperty('--tx', `${(x - cx) * 0.06}px`);
-      card.style.setProperty('--ty', `${(y - cy) * 0.06}px`);
-      // 하이라이트 중심
-      card.style.setProperty('--mx', `${(x / rect.width) * 100}%`);
-      card.style.setProperty('--my', `${(y / rect.height) * 100}%`);
-
-      // 🌈 무지개 결 각도(포켓몬 holo 느낌용)
-      const angle = Math.atan2(y - cy, x - cx) * 180 / Math.PI;
-      card.style.setProperty('--shine-angle', `${angle}deg`);
-
-      rafId = null;
-    };
-
-    // ===== 마우스 =====
-    card.addEventListener('mouseenter', () => {
-      recalc();
-      card.style.zIndex = 20; // 겹침 방지
-      card.classList.add('is-hover'); // 데스크톱도 동일 클래스 사용
+(() => {
+  const MAX_ROTATION = 20;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const finePointer = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
+  const singleColumn = window.matchMedia('(max-width: 700px)');
+  const clamp = value => Math.max(0, Math.min(1, value));
+  const cards = Array.from(document.querySelectorAll('.card--holo'));
+  const foilStyles = ['amazing-rare', 'holo', 'cosmos', 'radiant'];
+  const updateRows = () => {
+    const columns = singleColumn.matches ? 1 : 2;
+    cards.forEach((card, index) => {
+      card.dataset.foil = foilStyles[Math.floor(index / columns) % foilStyles.length];
     });
+  };
+  updateRows();
+  singleColumn.addEventListener('change', updateRows);
 
-    card.addEventListener('mouseleave', () => {
-      lastX = lastY = 0;
-      resetVars();
-    });
+  const controllers = cards.map(card => {
+    // Measure the stationary slot, so tilting the card never moves its hit area.
+    const slot = card.closest('.card-slot');
+    let bounds;
+    let active = false;
+    let frame = 0;
+    let previousTime = 0;
+    const current = { x: 0.5, y: 0.5, lift: 0 };
+    const target = { ...current };
 
-    // 공통 포인터 이동(마우스/터치/펜)
-    // 공통 포인터 이동
-    card.addEventListener('pointermove', (e) => {
-      // ✨ 인터랙티브 요소 드래그 중이면 틸트 건너뜀
-      if (e.target.closest('summary, a, button, input, textarea, select, label, details, [data-no-tilt]')) {
-        return;
+    const render = () => {
+      card.style.setProperty('--rotate-x', `${((0.5 - current.y) * 2 * MAX_ROTATION).toFixed(3)}deg`);
+      card.style.setProperty('--rotate-y', `${((current.x - 0.5) * 2 * MAX_ROTATION).toFixed(3)}deg`);
+      card.style.setProperty('--lift', `${(-current.lift * 4).toFixed(3)}px`);
+      card.style.setProperty('--mx', `${(current.x * 100).toFixed(2)}%`);
+      card.style.setProperty('--my', `${(current.y * 100).toFixed(2)}%`);
+      // Incidence changes the intensity; the grain stays fixed on the surface.
+      const incidence = Math.min(1, Math.hypot(current.x - 0.5, current.y - 0.5) * Math.SQRT2);
+      card.style.setProperty('--light', (current.lift * (0.6 + incidence * 0.4)).toFixed(4));
+      // The foil shifts against the light, like diffraction on a printed card.
+      card.style.setProperty('--foil-x', `${(65 - current.x * 30).toFixed(2)}%`);
+      card.style.setProperty('--foil-y', `${(65 - current.y * 30).toFixed(2)}%`);
+    };
+
+    const animate = time => {
+      const elapsed = previousTime ? Math.min(time - previousTime, 32) : 16;
+      previousTime = time;
+      const easing = 1 - Math.exp(-elapsed / 75);
+      let moving = false;
+
+      for (const key of ['x', 'y', 'lift']) {
+        current[key] += (target[key] - current[key]) * easing;
+        if (Math.abs(target[key] - current[key]) > 0.001) moving = true;
+        else current[key] = target[key];
       }
-      if (activePointerId !== null && e.pointerId !== activePointerId) return;
-      lastX = e.clientX;
-      lastY = e.clientY;
-      if (rafId == null) rafId = requestAnimationFrame(update);
-      if (isTouch) { scheduleIdleReset();}
-    }, { passive: true });
-    
-    // 포인터 시작
-    card.addEventListener('pointerdown', (e) => {
-      // ✨ 클릭 시작이 인터랙티브면 기본 동작만 수행(틸트/캡처 X)
-      if (e.target.closest('summary, a, button, input, textarea, select, label, details, [data-no-tilt]')) {
-        activePointerId = null;
-        return;
-      }
-    
-      recalc();
-      card.style.zIndex = 20;
-      card.classList.add('is-hover');
-      lastX = e.clientX;
-      lastY = e.clientY;
-      if (rafId == null) rafId = requestAnimationFrame(update);
-    
-      // (옵션) 탭 순간 반짝임
-      card.style.setProperty('--gloss-boost', '1');
-      setTimeout(() => card.style.setProperty('--gloss-boost', '0'), 160);
-    
-      // ✨ 터치일 때만 캡처/추적/idle 리셋
-      if (isTouch) {
-        activePointerId = e.pointerId;
-        try { card.setPointerCapture(e.pointerId); } catch(_) {}
-        scheduleIdleReset();
-      }
-    });
-    
-    const endPointer = (e) => {
-      if (e.pointerId !== activePointerId) return;
-      try { card.releasePointerCapture(e.pointerId); } catch(_) {}
-      activePointerId = null;
-      resetVars();
+
+      render();
+      frame = moving ? requestAnimationFrame(animate) : 0;
+      if (!moving) previousTime = 0;
     };
-    card.addEventListener('pointerup', endPointer);
-    card.addEventListener('pointercancel', endPointer);
-    // pointerleave로 리셋하던 부분없애고
-    card.addEventListener('pointerleave', () => {
-      // 터치 드래그가 진행 중이면 무시 (손가락이 살짝 밖으로 나가도 유지)
-      if (isTouch && activePointerId !== null) return;
-      resetVars();
-    });
-    window.addEventListener('scroll', () => {
-      // 터치 드래그 중엔 스크롤 리셋 금지 (pointercancel 유발 방지)
-      if (isTouch && activePointerId !== null) return;
-      resetVars();
-    }, { passive: true });
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) resetVars();
-    });
-    window.addEventListener('blur', resetVars)
+
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(animate);
+    };
+
+    const reset = (immediate = false) => {
+      active = false;
+      card.classList.remove('is-hover');
+      slot.classList.remove('is-active');
+      Object.assign(target, { x: 0.5, y: 0.5, lift: 0 });
+
+      if (immediate) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        previousTime = 0;
+        Object.assign(current, target);
+        render();
+      } else {
+        schedule();
+      }
+    };
+
+    const track = event => {
+      if (event.pointerType !== 'mouse' || reducedMotion.matches || !finePointer.matches) return;
+      if (!active) {
+        bounds = slot.getBoundingClientRect();
+        active = true;
+        target.lift = 1;
+        card.classList.add('is-hover');
+        slot.classList.add('is-active');
+      }
+      target.x = clamp((event.clientX - bounds.left) / bounds.width);
+      target.y = clamp((event.clientY - bounds.top) / bounds.height);
+      schedule();
+    };
+
+    slot.addEventListener('pointerenter', track);
+    slot.addEventListener('pointermove', track, { passive: true });
+    slot.addEventListener('pointerleave', () => reset());
+    slot.addEventListener('pointercancel', () => reset());
+
+    return {
+      reset,
+      measure: () => { if (active) bounds = slot.getBoundingClientRect(); },
+      slot
+    };
   });
-});
+
+  const resetAll = () => controllers.forEach(controller => controller.reset(true));
+  const resizeObserver = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      controllers.find(controller => controller.slot === entry.target)?.measure();
+    }
+  });
+  controllers.forEach(controller => resizeObserver.observe(controller.slot));
+
+  window.addEventListener('scroll', resetAll, { passive: true });
+  window.addEventListener('blur', resetAll);
+  window.addEventListener('resize', resetAll);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) resetAll();
+  });
+  reducedMotion.addEventListener('change', resetAll);
+  finePointer.addEventListener('change', resetAll);
+})();

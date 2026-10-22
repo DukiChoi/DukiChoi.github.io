@@ -1,0 +1,13 @@
+# Publish the release before enabling the public download buttons.
+version: "1.0.0"
+published: true
+release_url: https://github.com/DukiChoi/Market-Peek-releases/releases/tag/v1.0.0
+releases_url: https://github.com/DukiChoi/Market-Peek-releases/releases
+installer:
+  url: https://github.com/DukiChoi/Market-Peek-releases/releases/download/v1.0.0/Market.Peek.Setup.1.0.0.exe
+  filename: Market.Peek.Setup.1.0.0.exe
+  size: 111804442
+archive:
+  url: https://github.com/DukiChoi/Market-Peek-releases/releases/download/v1.0.0/market-peek-1.0.0-x64.7z
+  filename: market-peek-1.0.0-x64.7z
+  size: 100103098

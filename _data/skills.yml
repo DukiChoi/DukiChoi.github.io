@@ -1,0 +1,11 @@
+# 사용 기간은 현재 연도에서 start_year를 빼서 계산합니다.
+# 2026년 기준: 5년, 7년, 2년.
+- name: C++, C#, Arduino, Java
+  level: 중급
+  start_year: 2021
+- name: Python, MATLAB
+  level: 중급
+  start_year: 2019
+- name: KiCad
+  level: 중급
+  start_year: 2024

@@ -1,0 +1,23 @@
+---
+layout: default
+---
+<main class="page-shell page-shell--reading program-detail">
+  <a class="program-back" href="{{ '/programs/' | relative_url }}">← 모든 프로그램</a>
+  <header class="page-heading">
+    {% if page.icon %}<img class="program-icon" src="{{ page.icon | relative_url }}" width="64" height="64" alt="">{% endif %}
+    {% if page.platform %}<p class="page-eyebrow">{{ page.platform | escape }}</p>{% endif %}
+    <h1>{{ page.title | escape }}</h1>
+    {% if page.description %}<p class="page-description">{{ page.description | escape }}</p>{% endif %}
+    {% if page.links.size > 0 %}
+    <div class="program-actions">
+      {% for link in page.links %}
+      {% assign link_url = link.url %}{% assign first_char = link.url | slice: 0 %}
+      {% if first_char == '/' %}{% assign link_url = link.url | relative_url %}{% endif %}
+      <a href="{{ link_url | escape }}"{% if forloop.first %} class="program-action--primary"{% endif %}>{{ link.label | escape }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </header>
+  {% if page.cover %}<img class="program-cover" src="{{ page.cover | relative_url }}" alt="{{ page.cover_alt | default: page.title | escape }}">{% endif %}
+  <article class="prose">{{ content }}</article>
+</main>

@@ -14,11 +14,55 @@ sass:
 
 highlighter: rouge
 
+collections:
+  programs:
+    output: true
+    permalink: /programs/:name/
+  theory:
+    output: true
+    permalink: /theory/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: programs
+    values:
+      layout: program
+      section: programs
+      nav_title: 프로그램
+      permalink_name: /프로그램
+      css_file: /assets/css/programs.css
+      order: 1000
+  - scope:
+      path: ""
+      type: theory
+    values:
+      layout: theory
+      section: theory
+      nav_title: 이론 자료
+      tab_title: 이론 자료
+      permalink_name: /이론 자료
+      css_file: /assets/css/theory.css
+      js_file: /assets/js/theory.js
+      order: 1000
+  - scope:
+      path: assets/theories
+    values:
+      layout: theory
+      section: theory
+      nav_title: 이론 자료
+      tab_title: 이론 자료
+      permalink_name: /이론 자료
+      css_file: /assets/css/theory.css
+      js_file: /assets/js/theory.js
+      lab_css: /assets/theories/style.css
+      topic: 디지털 회로
+      order: 1000
+
 header_pages:
   - home.md
-  - read-me.md
-  - preview.md
-  - Hello.md
+  - programs.html
+  - assets/theories/index.html
   - cv.md
   - resume.md
 # set the size of the text to 'large' or 'small', default is small

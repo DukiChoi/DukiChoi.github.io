@@ -1,10 +1,4 @@
-<footer>
-  
-  {{ site.title }}/{{ page.permalink_name | replace: "/", "" | replace: " ", "-" }}
-  <br><br>
-<!--   <p style="font-size:36px"> -->
-  {% if site.github_username and site.github_username != "" %} <p> <span style="font-size: 200%;">&#128063;</span> <span style="font-size: 100%;"><a href="https://github.com/{{site.github_username}}">@{{ site.github_username }}</a> {% endif %}</span></p>
-  {% if site.twitter_username and site.twitter_username != "" %} <p> <span style="font-size: 200%;">&#128063;</span> <span style="font-size: 100%;"><a href="https://twitter.com/{{site.twitter_username}}">@{{ site.github_username }}</a> {% endif %}</span></p>
-  
-
+<footer class="site-footer">
+  {% if site.github_username %}<a href="https://github.com/{{ site.github_username }}">{{ site.github_username }}</a>{% endif %}
+  <a class="site-footer__editor" href="{{ '/admin/' | relative_url }}">글쓰기</a>
 </footer>

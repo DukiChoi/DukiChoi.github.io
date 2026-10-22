@@ -1,10 +1,8 @@
 ---
 layout: default
-title:  "POSTS"
 ---
-
-{%- if page.detail_image -%}<img class="detail_header" src="{{ page.detail_image }}">{%- endif -%}
-
-<h1>{{ page.post-title }}</h1>
-
-{{ content }}
+<main class="page-shell page-shell--reading">
+  <header class="page-heading"><h1>{{ page.post-title | default: page.title | escape }}</h1></header>
+  {% if page.detail_image %}<img class="detail_header" src="{{ page.detail_image | relative_url }}" alt="">{% endif %}
+  <article class="prose">{{ content }}</article>
+</main>

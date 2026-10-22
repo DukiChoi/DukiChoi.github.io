@@ -1,0 +1,72 @@
+---
+title: 링 오실레이터
+description: NOT 게이트의 개수를 바꾸며 신호가 계속 진동하는 경우와 일정한 값으로 멈추는 경우를 비교합니다.
+permalink: /theory/ring-oscillator/
+order: 3
+---
+<div class="circuit-lesson">
+<p class="lede">NOT 게이트를 차례로 연결한 뒤 마지막 출력을 첫 번째 입력에 연결하면 고리 모양의 회로가 됩니다. 아래 실험에서 게이트를 홀수 개로 설정하면 신호가 계속 바뀌고, 짝수 개로 설정하면 일정한 값으로 유지됩니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">NOT 게이트의 개수에 따른 신호 변화를 비교하는 시뮬레이션</h2>
+    <div class="circuit-viewport" tabindex="0" role="region" aria-label="회로도 — 좁은 화면에서는 좌우로 스크롤"><svg id="sv" width="100%" viewBox="0 0 680 270" role="img"><title>인버터 링 시뮬레이션</title><desc>인버터들이 원형으로 연결되어 마지막 출력이 첫 입력으로 되돌아갑니다.</desc></svg></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px">
+      <button class="bt mode on" id="m3">홀수 (3개)</button><button class="bt mode" id="m2">짝수 (2개)</button>
+      <button class="bt" id="st">한 단계씩 이동</button><button class="bt" id="pl" data-stop-label="■ 정지" aria-pressed="false">▶자동 재생</button><button class="bt" id="rs">처음부터</button>
+    </div>
+    <p id="msg" style="text-align:center;font-size:15px;color:var(--text-secondary);margin:12px auto 0" aria-live="polite"></p>
+  </div>
+  <p class="hint">빨간 테두리는 다음 단계에서 출력이 바뀔 게이트를 나타냅니다. 회로 아래의 파형은 n0 지점의 신호가 어떻게 변하는지 보여줍니다.</p>
+
+  <h2>홀수 개의 NOT 게이트를 연결하면 신호가 계속 바뀝니다</h2>
+  <p>NOT 게이트는 입력이 0이면 1을, 입력이 1이면 0을 출력합니다. 신호가 홀수 개의 게이트를 거쳐 처음 지점으로 돌아오면 출발할 때와 반대 값이 됩니다. 각 게이트는 이 변화에 따라 출력을 바꾸고, 바뀐 신호는 다시 회로를 한 바퀴 돕니다. 이 과정이 반복되면서 신호가 계속 진동합니다.</p>
+  <p>반대로 짝수 개의 게이트를 거친 신호는 출발할 때와 같은 값으로 돌아옵니다. 모든 게이트의 출력이 입력의 반대 값으로 맞춰지면 회로는 그 상태를 유지합니다. 인버터 두 개를 서로 연결해 이렇게 안정된 상태를 유지하도록 만들면 1비트를 저장할 수 있습니다. 이는 SRAM 셀의 기본 저장 원리이기도 합니다.</p>
+
+  <h2>게이트 수와 전파 지연이 진동 주파수를 결정합니다</h2>
+  <p>실제 게이트는 입력이 바뀌어도 즉시 출력을 바꾸지 않습니다. 입력 변화가 출력에 반영되기까지 걸리는 시간을 전파 지연이라고 합니다. 각 게이트의 지연이 같다고 가정하면, 신호가 회로를 두 바퀴 돌아 0→1→0으로 변하는 시간이 한 주기입니다. 아래 식에서 N은 게이트 수, t_pd는 게이트 하나의 전파 지연입니다.</p>
+  <pre><code>f = 1 / (2 · N · t_pd)
+예) t_pd = 10 ns, N = 5 → 10 MHz</code></pre>
+  <p>게이트 수나 부하 커패시턴스가 커지면 한 주기가 길어지고 주파수는 낮아집니다. 인버터에 흐르는 전류를 제한해도 신호가 바뀌는 속도가 느려집니다. 이 지연을 전압으로 조절하면 전압 제어 발진기(VCO)를 만들 수 있으며, VCO는 PLL에도 사용됩니다.</p>
+  <p>링 오실레이터의 전파 지연은 온도와 공급 전압의 영향을 받습니다. 더 안정적인 기준 주파수가 필요할 때는 수정 결정의 진동을 이용하는 크리스탈 발진기를 사용합니다.</p>
+</div>
+<script>
+(() => {
+let N=3,n=[],hist=[],timer=null,steps=0;
+const sv=document.getElementById('sv');
+const playButton=document.getElementById('pl');
+// Keep the idle label from the HTML, including any symbols the author adds.
+const playLabel=playButton.textContent;
+const C=v=>v?'#E8A317':'#888780';
+function reset(){n=N===3?[0,1,0]:[0,1];hist=[n[0]];steps=0;stop();draw();}
+function pending(){for(let i=0;i<N;i++){const o=(i+1)%N;if(n[o]!==1-n[i])return i;}return -1;}
+function step(){const p=pending();if(p<0){stop();draw();return;}const o=(p+1)%N;n[o]=1-n[p];steps++;hist.push(n[0]);if(hist.length>26)hist.shift();draw();}
+function stop(){if(timer){clearInterval(timer);timer=null;}playButton.textContent=playLabel;playButton.setAttribute('aria-pressed','false');}
+function draw(){
+const w=440/N,cx=i=>120+w*(i+0.5),y=90,p=pending();
+let h='<title>인버터 링 시뮬레이션</title><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>';
+const last=cx(N-1)+30,first=cx(0)-27;
+h+=`<path d="M${last} ${y} L600 ${y} L600 165 L80 165 L80 ${y} L${first} ${y}" fill="none" stroke="${C(n[0])}" stroke-width="2" marker-end="url(#arrow)"/>`;
+h+=`<text class="ts" x="340" y="186" text-anchor="middle">n0 = ${n[0]}  (마지막 출력이 첫 입력으로 되돌아옴)</text>`;
+for(let i=1;i<N;i++){const x1=cx(i-1)+30,x2=cx(i)-27;h+=`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${C(n[i])}" stroke-width="2" marker-end="url(#arrow)"/>`;h+=`<text class="th" x="${(x1+x2)/2}" y="${y-14}" text-anchor="middle">n${i}=${n[i]}</text>`;}
+for(let i=0;i<N;i++){const c=cx(i),hot=i===p;
+h+=`<polygon points="${c-25},${y-22} ${c-25},${y+22} ${c+18},${y}" fill="var(--bg2)" stroke="${hot?'#D85A30':'var(--t)'}" stroke-width="${hot?2:0.8}"/>`;
+h+=`<circle cx="${c+24}" cy="${y}" r="5" fill="var(--bg2)" stroke="${hot?'#D85A30':'var(--t)'}" stroke-width="${hot?2:0.8}"/>`;
+h+=`<text class="ts" x="${c-8}" y="${y+40}" text-anchor="middle">NOT ${i+1}</text>`;}
+h+=`<text class="ts" x="40" y="236">n0</text>`;
+const pts=[];hist.forEach((v,k)=>{const x=80+k*20,yy=v?214:248;if(k>0)pts.push(`${x},${hist[k-1]?214:248}`);pts.push(`${x},${yy}`);pts.push(`${x+20},${yy}`);});
+h+=`<line x1="80" y1="248" x2="600" y2="248" stroke="var(--b)" stroke-width="0.5"/>`;
+h+=`<polyline points="${pts.join(' ')}" fill="none" stroke="#E8A317" stroke-width="1.5"/>`;
+sv.innerHTML=h;
+const m=document.getElementById('msg');
+if(p<0)m.textContent='모든 인버터의 출력이 입력의 반대 값으로 맞춰졌습니다. 회로가 이 값을 유지합니다. (래치 상태)';
+else m.textContent=`다음 단계에서 NOT ${p+1}의 출력이 바뀝니다. (진행 ${steps}단계)`;
+}
+const m3=document.getElementById('m3'),m2=document.getElementById('m2');
+m3.onclick=()=>{N=3;m3.classList.add('on');m2.classList.remove('on');reset();};
+m2.onclick=()=>{N=2;m2.classList.add('on');m3.classList.remove('on');reset();};
+document.getElementById('st').onclick=()=>{stop();step();};
+document.getElementById('rs').onclick=reset;
+playButton.onclick=()=>{if(timer){stop();return;}timer=setInterval(step,550);playButton.textContent=playButton.dataset.stopLabel;playButton.setAttribute('aria-pressed','true');};
+reset();
+})();
+</script>

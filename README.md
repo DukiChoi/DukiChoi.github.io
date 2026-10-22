@@ -57,6 +57,99 @@ Everyone is welcome to fork this repo and modify the code. To set up your enviro
 
 To test the theme, run `bundle exec jekyll serve` and open your browser at `http://localhost:4000`. This starts a Jekyll server using the theme. Add pages, documents, data, etc. like normal to test the theme's contents. As you make modifications to your theme and to your content, your site will regenerate and you should see the changes in the browser after a refresh, just like normal.
 
+### VS Code에서 미리보기
+
+프로젝트 폴더의 터미널에서 실행합니다. Ruby와 Bundler가 필요합니다.
+
+```sh
+bundle config set --local path .bundle/gems
+bundle install
+bundle exec jekyll serve --host 127.0.0.1 --port 4000 --livereload
+```
+
+Ubuntu/WSL에서 명령 이름이 `bundle3.2`인 경우 위 명령의 `bundle`을 `bundle3.2`로 바꿉니다.
+VS Code에서 `Ctrl+Shift+P` → `Simple Browser: Show`를 실행하고 `http://localhost:4000`을 입력합니다.
+`md`, `_data/*.yml`, CSS, JavaScript 변경은 자동으로 다시 빌드됩니다. `_config.yml` 변경 시에는 서버를 재시작합니다.
+
+Home 카드의 스타일은 `assets/css/home.css`, 마우스 반응은 `assets/js/card-tilt.js`, 프로젝트 내용은 `_data/projects.yml`에서 수정합니다.
+카드 줄마다 Amazing Rare → Holofoil Rare → Cosmos → Radiant 효과가 순서대로 반복됩니다. 첫 줄은 항상 Amazing Rare이며, 한 열로 바뀌는 모바일에서도 줄 단위로 순환합니다.
+Holofoil Rare는 세로 반사광이 움직이는 효과이며, 각 효과의 빛에는 선명한 청록·보라·분홍 계열을 사용합니다. 라이트 모드 홈은 회색 배경과 짙은 사파이어 블루 카드, 밝은 글씨로 구분합니다. 다크 모드는 기존의 어두운 남색 바탕을 유지합니다.
+반사 질감은 [Pokémon Cards CSS Holographic Effect](https://poke-holo.simey.me/)를 시각적으로 참고해 만든 CSS와 로컬 SVG(`assets/textures/`)로 표현합니다.
+
+사용 언어와 도구는 `_data/skills.yml`의 `name`, `level`, `start_year`에서 관리합니다.
+사용 기간은 현재 연도에서 시작 연도를 빼서 계산하고 기준 연도를 함께 표시합니다. 2026년 기준 시작 연도는 각각 2021년, 2019년, 2024년으로, 사용 기간은 5년, 7년, 2년입니다.
+`assets/js/experience.js`가 방문 시와 탭 복귀 시에도 갱신하므로 해가 바뀌어도 사이트를 다시 빌드할 필요가 없습니다.
+
+### 웹에서 글 작성하기
+
+웹에서 글을 작성하려면 사이트 하단의 **글쓰기** 또는 `/admin/`을 엽니다. [Pages CMS](https://app.pagescms.org/DukiChoi/DukiChoi.github.io/master)에서 GitHub 계정으로 로그인합니다.
+처음에는 GitHub App 연결 화면에서 **Only select repositories → DukiChoi.github.io**만 선택하고, `master` 브랜치를 엽니다.
+**이론 자료 글**은 `_theory/`, **프로그램 소개**는 `_programs/`, 업로드한 이미지는 `assets/uploads/`에 저장됩니다.
+제목·분류·본문·사진을 편집하고 저장하면 GitHub Pages가 다시 배포합니다. CMS의 필드와 미디어 설정은 `.pages.yml`에서 관리합니다.
+HTML 시뮬레이션 강의는 기존대로 코드에서 수정하며, 새 일반 글은 Markdown으로 작성해 같은 이론 자료 트리에 표시합니다.
+
+GitHub 저장소의 쓰기 권한을 가진 계정만 편집할 수 있습니다. 본인 전용으로 쓰려면 다른 저장소 공동 작업자나 Pages CMS 편집자를 초대하지 마세요.
+관리자 안내 페이지의 `noindex`는 검색 노출 설정이며 인증 기능이 아닙니다. 실제 로그인과 저장 권한 검사는 Pages CMS와 GitHub에서 처리합니다.
+비밀번호나 토큰은 이 사이트에 저장하지 않습니다. GitHub 2단계 인증을 켜고 앱 접근 범위는 이 저장소로 제한하세요.
+저장소가 공개되어 있으므로 **게시를 끈 글과 업로드한 이미지도 GitHub에서는 공개**됩니다. 개인정보나 비밀 초안을 올리는 용도로는 사용하지 마세요.
+
+### 프로그램 홍보 페이지 추가하기
+
+파일에서 직접 추가할 수도 있습니다.
+
+`/programs/`는 프로그램 소개 페이지를 모아 보여주는 탭입니다. 현재 Market Peek 소개 페이지가 등록되어 있습니다.
+`_templates/program.md`를 `_programs/프로그램이름.md`로 복사하고 제목·설명·본문을 작성한 뒤 `published: true`로 바꾸면 됩니다.
+예를 들어 `_programs/my-tool.md`는 `/programs/my-tool/`로 출력되고 목록에도 자동으로 추가됩니다.
+
+`order`는 목록 순서, `platform`은 실행 환경, `links`는 다운로드·실행·소스 코드 버튼입니다.
+`featured: true`를 넣으면 해당 항목의 배경을 강조합니다. `icon`, `cover`, `cover_alt`로 아이콘과 실행 화면을 추가할 수 있습니다.
+사용하지 않는 항목은 생략하세요. `_templates/`의 예시는 사이트에 공개되지 않습니다.
+Home 배너는 `home.md`, 목록 화면은 `programs.html`, 개별 소개 화면은 `_layouts/program.html`에서 수정합니다.
+
+Market Peek는 `/programs/market-peek/`에 별도 소개 화면을 두었습니다. `BTC_ticker_tray/distribution`의 화면과 이미지를 옮겼으며, 사이트 공통 메뉴 없이 원래 프로그램의 디자인을 사용합니다.
+본문은 `_programs/market-peek.html`, 레이아웃은 `_layouts/product.html`, 스타일은 `assets/css/market-peek.css`에 있습니다. 이 HTML 페이지는 일반 글용 CMS 편집 목록에서 제외합니다.
+다운로드 버전·파일 주소·크기는 `_data/market_peek.yml`에서 관리합니다. 공개된 GitHub Release의 EXE·7z 링크를 넣고 `published: true`로 바꾸면 다운로드 버튼이 표시됩니다.
+비공개 저장소의 초안 릴리스는 일반 방문자가 내려받을 수 없으므로, 공개 배포를 확인하기 전에는 `published: false`를 유지합니다.
+배포 전용 공개 저장소는 [Market-Peek-releases](https://github.com/DukiChoi/Market-Peek-releases)입니다. 새 버전은 `v1.0.0`처럼 별도 태그와 릴리스로 등록하고 EXE·7z·SHA256SUMS.txt를 첨부합니다. 기존 버전 파일을 교체하지 말고 새 릴리스 주소로 위 YAML을 갱신합니다. `BTC_ticker_tray` 소스 저장소는 비공개로 유지합니다.
+웹페이지는 HTML·CSS만으로 동작하며 Python 서버나 API 토큰이 필요하지 않습니다. 프로그램 본체는 Electron 앱으로, Windows 배포 파일에도 Python 설치가 필요하지 않습니다.
+
+### 공통 서식과 화면 모드
+
+전체 페이지의 기본 서식과 색상은 `assets/css/main.scss`에서 관리합니다.
+왼쪽 위 해·초승달 스위치로 라이트/다크 모드를 바꿀 수 있으며, 선택은 브라우저에 저장됩니다.
+처음 방문하면 운영체제의 화면 모드를 따릅니다. 전환 동작은 `assets/js/theme.js`에 있습니다.
+공통 상단 메뉴는 두 모드 모두 파란 배경을 사용합니다.
+
+### 이론 자료 추가하기
+
+강의 4개의 본문과 시뮬레이션은 `assets/theories/`의 HTML 파일에서 관리합니다. Jekyll이 공통 강의 화면을 입혀 `/theory/글이름/`으로 출력합니다.
+예를 들어 `assets/theories/full-adder.html`을 수정하면 `/theory/full-adder/`에 반영됩니다.
+목록 첫 화면은 `assets/theories/index.html`, 시뮬레이션 스타일은 `assets/theories/style.css`입니다.
+
+일반 글은 `_theory/` 폴더에 Markdown 파일을 추가하면 오른쪽 글 목록과 이전·다음 글 링크에 자동으로 반영됩니다.
+목록은 `order`가 작은 글부터 표시됩니다. 예를 들어 `_theory/my-note.md`는 `/theory/my-note/`에서 열립니다.
+
+```markdown
+---
+title: 새 이론 노트
+description: 이 글에서 다루는 내용을 한 줄로 적습니다.
+topic: 기초 개념
+order: 5
+---
+
+## 핵심 개념
+
+여기에 본문을 작성합니다.
+```
+
+어느 글을 열어도 상단 메뉴와 브라우저 탭 이름은 **이론 자료**로 유지됩니다.
+오른쪽 글 목록은 전체 자료 → 주제(`topic`) → 각 글로 이어지는 트리입니다. 주제나 전체 자료를 눌러 접고 펼칠 수 있고, 열린 상태는 같은 탭에서 유지됩니다.
+글 화면은 `_layouts/theory.html`, 본문 스타일은 `assets/css/theory.css`에서 수정합니다.
+HTML 강의를 추가할 때는 기존 파일처럼 `title`, `description`, `permalink`, `order`를 YAML 머리말에 적습니다.
+공통 레이아웃이 문서 제목과 메뉴를 만들므로 HTML 파일에는 본문과 필요한 스크립트만 넣습니다.
+
+사이트 전체 글꼴은 로컬의 Pretendard Variable v1.3.9를 사용합니다. 라이선스는 `assets/fonts/OFL-Pretendard.txt`에 포함되어 있습니다.
+
 When your theme is released, only the files in `_layouts`, `_includes`, `_sass` and `assets` tracked with Git will be bundled.
 To add a custom directory to your theme-gem, please edit the regexp in `jekyll-shell-theme.gemspec` accordingly.
 

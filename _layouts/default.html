@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 
   {% include head.html %}
 
-  <body class="{{ site.font-size }}">
+  <body class="{{ site.font-size }}{% if page.section %} section-{{ page.section | slugify }}{% endif %}">
 
     {% include header.html %}
 

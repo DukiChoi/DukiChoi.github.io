@@ -1,0 +1,91 @@
+---
+title: DRAM과 NAND 플래시
+description: DRAM과 NAND가 데이터를 수정하는 방식과 처리 시간을 비교합니다.
+permalink: /theory/memory/
+order: 4
+---
+<div class="circuit-lesson">
+<p class="lede">‘데이터 1개 수정’ 버튼을 누르면 DRAM과 NAND에 같은 요청을 보냅니다. DRAM은 기존 셀에 새 값을 바로 쓰지만, NAND는 빈 페이지에 수정한 데이터를 기록합니다. NAND의 빈 페이지가 부족해지면 사용 중인 데이터를 다른 곳으로 옮기고 블록을 지우는 과정도 확인할 수 있습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">DRAM과 NAND 플래시의 데이터 수정 과정과 처리 시간을 비교하는 시뮬레이션</h2>
+    <div class="lat"><span>DRAM 읽기/쓰기</span><div class="tr"><div class="fl" style="width:26%;background:#378ADD"></div></div><span class="tm">~50 ns</span></div>
+    <div class="lat"><span>NAND 페이지 읽기</span><div class="tr"><div class="fl" style="width:72%;background:#5DCAA5"></div></div><span class="tm">~50 µs</span></div>
+    <div class="lat"><span>NAND 페이지 쓰기</span><div class="tr"><div class="fl" style="width:88%;background:#E8A317"></div></div><span class="tm">~500 µs</span></div>
+    <div class="lat"><span>NAND 블록 지우기</span><div class="tr"><div class="fl" style="width:97%;background:#E24B4A"></div></div><span class="tm">~2 ms</span></div>
+    <p class="lb" style="margin:6px 0 0">막대 길이는 처리 시간의 차이를 로그 눈금으로 나타냅니다.</p>
+
+    <div class="memory-controls">
+      <div class="memory-controls__writes" role="group" aria-label="메모리 쓰기">
+        <button class="bt" id="w1">데이터 1개 수정</button><button class="bt" id="w5">5개 연속 수정</button>
+      </div>
+      <div class="memory-controls__speed" role="group" aria-label="시뮬레이션 속도">
+        <button class="bt mode on" id="s1">1배속</button><button class="bt mode" id="s5">5배속</button>
+      </div>
+    </div>
+    <div class="pan">
+      <div class="ph"><b>DRAM · 커패시터 셀</b><span class="tm">누적 시간 <span id="dt">0</span> µs</span></div>
+      <div class="dg" id="dg"></div>
+      <p class="sts" id="ds">DRAM은 선택한 셀에 새 값을 바로 쓸 수 있습니다. 파란 테두리는 리프레시 중인 행을 나타냅니다.</p>
+    </div>
+    <div class="pan">
+      <div class="ph"><b>NAND 플래시 · 블록과 페이지</b><span class="tm">누적 시간 <span id="nt">0</span> µs, 대기 <span id="nq">0</span></span></div>
+      <div id="nd"></div>
+      <p class="sts" id="ns" aria-live="polite">초록색 페이지에는 현재 사용 중인 데이터가 있습니다. 취소선은 수정 전 데이터가 남은 페이지, 점선은 빈 페이지를 나타냅니다.</p>
+    </div>
+  </div>
+  <p class="hint">1배속에서는 실제 1 µs를 화면의 2 ms로 늘려 보여줍니다. DRAM의 전하 누설과 리프레시는 원리를 살펴볼 수 있도록 별도의 속도로 표시합니다.</p>
+  <p class="hint">L0, L1 등은 데이터 번호입니다. 데이터를 수정해도 번호는 같지만, NAND에서 실제로 저장되는 페이지는 달라집니다.</p>
+
+  <h2>NAND 플래시의 이름은 메모리 셀의 연결 구조에서 왔습니다</h2>
+  <p>NAND 플래시는 메모리 셀을 직렬로 연결한 구조가 NAND 게이트의 트랜지스터 배치와 닮아서 붙은 이름입니다. NAND 논리 게이트 자체에 데이터를 저장한다는 뜻은 아닙니다. NAND 플래시는 데이터를 페이지 단위로 읽고 쓰며, 지울 때는 여러 페이지가 묶인 블록을 한꺼번에 지웁니다.</p>
+
+  <h2>DRAM은 데이터를 유지하려면 주기적으로 전하를 보충해야 합니다</h2>
+  <p>DRAM은 각 셀의 작은 커패시터에 전하를 저장해 데이터를 표현합니다. 기존 셀에 새 값을 바로 쓸 수 있고, 이 예시에서는 쓰기 한 번에 약 50 ns가 걸린다고 가정합니다.</p>
+  <p>커패시터의 전하는 시간이 지나면서 조금씩 새어 나갑니다. 따라서 DRAM은 일정한 주기로 셀의 값을 읽고 다시 써 넣어야 합니다. 이 과정을 리프레시라고 합니다. 전원이 꺼져 전하를 보충할 수 없게 되면 저장된 데이터도 사라집니다.</p>
+
+  <h2>NAND는 같은 위치에 데이터를 바로 덮어쓸 수 없습니다</h2>
+  <p>NAND는 절연막에 갇힌 전하로 데이터를 저장하므로 전원이 꺼져도 데이터를 유지합니다. 하지만 데이터 수정에는 DRAM보다 많은 시간이 걸립니다. 이 예시에서는 페이지 쓰기 한 번에 약 500 µs가 걸린다고 가정합니다.</p>
+  <p>NAND의 이미 사용한 페이지는 새 데이터로 바로 덮어쓸 수 없습니다. 따라서 수정한 데이터는 빈 페이지에 기록하고, 이전 데이터가 있던 페이지는 더 이상 사용하지 않는다고 표시합니다.</p>
+  <p>빈 페이지가 부족해지면 아직 사용 중인 데이터를 다른 블록으로 옮긴 뒤, 원래 블록을 통째로 지워 공간을 확보합니다. 이 과정을 가비지 컬렉션이라고 합니다. 페이지 일부만 골라 지울 수 없기 때문에 이런 정리 과정이 필요합니다.</p>
+  <p>SSD와 eMMC의 컨트롤러는 FTL을 통해 데이터의 주소와 실제 저장 위치를 연결합니다. 컨트롤러는 가비지 컬렉션도 처리하며, 특정 블록에 쓰기가 몰리지 않도록 여러 블록에 나누어 기록합니다. 이렇게 블록의 사용량을 고르게 맞추는 동작을 웨어 레벨링이라고 합니다.</p>
+</div>
+<script>
+(() => {
+const SC=2;let spd=1;const wait=ms=>new Promise(r=>setTimeout(r,ms/spd));
+const R=8,CC=16,bit=[],ch=[],cells=[];const dg=document.getElementById('dg');
+for(let i=0;i<R*CC;i++){bit.push(Math.random()<.5?1:0);ch.push(1);const d=document.createElement('div');d.className='dc';dg.appendChild(d);cells.push(d);}
+function dp(i){cells[i].style.background=bit[i]?`rgba(55,138,221,${(0.2+0.8*ch[i]).toFixed(2)})`:'';}
+cells.forEach((_,i)=>dp(i));
+let dT=0,row=0;
+setInterval(()=>{for(let i=0;i<R*CC;i++)if(bit[i]){ch[i]=Math.max(0.15,ch[i]-0.01);dp(i);}},100);
+setInterval(()=>{const pr=(row+R-1)%R;for(let c=0;c<CC;c++)cells[pr*CC+c].classList.remove('rf');for(let c=0;c<CC;c++){const i=row*CC+c;ch[i]=1;dp(i);cells[i].classList.add('rf');}row=(row+1)%R;},260);
+function dwrite(){const i=Math.floor(Math.random()*R*CC);bit[i]^=1;ch[i]=1;dp(i);cells[i].classList.add('hit');setTimeout(()=>cells[i].classList.remove('hit'),500);dT+=0.05;document.getElementById('dt').textContent=dT.toFixed(2);document.getElementById('ds').textContent=`DRAM 셀 (${Math.floor(i/CC)}, ${i%CC})의 값을 바꿨습니다. 걸린 시간은 약 50 ns입니다.`;}
+const B=4,P=6,pages=[],els=[],blks=[],map=[];let spare=3,nT=0,pend=0,q=Promise.resolve();
+const nd=document.getElementById('nd');
+for(let b=0;b<B;b++){pages.push([]);els.push([]);const bl=document.createElement('div');bl.className='blk';const lb=document.createElement('span');lb.className='lb';bl.appendChild(lb);
+for(let p=0;p<P;p++){const L=b<2?b*P+p:null;pages[b].push({s:b<2?'v':'f',L});if(L!==null)map[L]=[b,p];const e=document.createElement('div');e.className='pg';bl.appendChild(e);els[b].push(e);}nd.appendChild(bl);blks.push({bl,lb});}
+function paint(b,p){const g=pages[b][p],e=els[b][p];e.className='pg'+(g.s==='v'?' v':g.s==='x'?' x':'');e.innerHTML=`<span>${g.s==='f'?'':'L'+g.L}</span>`;}
+function labels(){blks.forEach((k,b)=>k.lb.textContent=`블록 ${b}${b===spare?' (예비)':''}`);}
+for(let b=0;b<B;b++)for(let p=0;p<P;p++)paint(b,p);labels();
+const NS=t=>document.getElementById('ns').textContent=t;
+function addT(u){nT+=u;document.getElementById('nt').textContent=nT.toLocaleString();}
+async function prog(b,p,L){const e=els[b][p];e.className='pg';e.innerHTML=`<div class="bar"></div><span>L${L}</span>`;const bar=e.firstChild;void bar.offsetWidth;bar.style.transition=`width ${500*SC/spd}ms linear`;bar.style.width='100%';await wait(500*SC);pages[b][p]={s:'v',L};paint(b,p);addT(500);}
+async function rd(b,p){els[b][p].style.outline='2px solid #378ADD';await wait(50*SC);els[b][p].style.outline='';addT(50);}
+function free(ex){for(let b=0;b<B;b++){if(b===ex)continue;for(let p=0;p<P;p++)if(pages[b][p].s==='f')return[b,p];}return null;}
+async function gc(){let v=-1,mx=-1;for(let b=0;b<B;b++){if(b===spare)continue;const n=pages[b].filter(g=>g.s==='x').length;if(n>mx){mx=n;v=b;}}
+NS(`NAND의 빈 페이지가 부족합니다. 블록 ${v}에서 사용 중인 데이터를 예비 블록 ${spare}로 옮깁니다.`);
+for(let p=0;p<P;p++){const g=pages[v][p];if(g.s!=='v')continue;await rd(v,p);const d=pages[spare].findIndex(x=>x.s==='f');await prog(spare,d,g.L);pages[v][p].s='x';paint(v,p);map[g.L]=[spare,d];}
+NS(`데이터를 옮겼으므로 블록 ${v}를 지울 수 있습니다. 블록 전체를 지우는 데 약 2 ms가 걸립니다.`);blks[v].bl.classList.add('er');await wait(2000*SC);
+for(let p=0;p<P;p++){pages[v][p]={s:'f',L:null};paint(v,p);}blks[v].bl.classList.remove('er');addT(2000);spare=v;labels();}
+async function nwrite(){const L=Math.floor(Math.random()*12);let f=free(spare);if(!f){await gc();f=free(spare);}
+NS(`데이터 L${L}의 수정된 값을 블록 ${f[0]}의 빈 페이지 ${f[1]}에 씁니다. 약 500 µs가 걸립니다.`);
+const o=map[L];await prog(f[0],f[1],L);pages[o[0]][o[1]].s='x';paint(o[0],o[1]);map[L]=f;
+pend--;document.getElementById('nq').textContent=pend;if(!pend)NS('대기 중인 요청을 모두 처리했습니다.');}
+function req(){dwrite();pend++;document.getElementById('nq').textContent=pend;q=q.then(nwrite);}
+document.getElementById('w1').onclick=req;
+document.getElementById('w5').onclick=()=>{for(let k=0;k<5;k++)setTimeout(req,k*60);};
+const sb=(v,on,off)=>{spd=v;document.getElementById(on).classList.add('on');document.getElementById(off).classList.remove('on');};
+document.getElementById('s1').onclick=()=>sb(1,'s1','s5');document.getElementById('s5').onclick=()=>sb(5,'s5','s1');
+})();
+</script>

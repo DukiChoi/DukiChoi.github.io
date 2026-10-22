@@ -1,0 +1,36 @@
+---
+layout: default
+title: 프로그램
+nav_title: 프로그램
+section: programs
+permalink: /programs/
+permalink_name: /프로그램
+css_file: /assets/css/programs.css
+description: DukiChoi가 만든 프로그램과 사용 방법을 소개합니다.
+---
+<main class="page-shell page-shell--reading programs-hub">
+  <header class="page-heading">
+    <p class="page-eyebrow">DukiChoi</p>
+    <h1>프로그램</h1>
+    <p class="page-description">직접 만든 프로그램과 사용 방법을 소개하는 공간입니다.</p>
+  </header>
+  {% assign programs = site.programs | where_exp: "entry", "entry.published != false" | sort: "order" %}
+  <section class="program-links" aria-label="공개된 프로그램">
+    {% for program in programs %}
+    <a class="program-link{% if program.featured %} program-link--featured{% endif %}" href="{{ program.url | relative_url }}">
+      {% if program.icon %}<img class="program-icon" src="{{ program.icon | relative_url }}" alt="" width="48" height="48" loading="lazy">{% else %}<span class="program-initial" aria-hidden="true">{{ program.title | slice: 0 | escape }}</span>{% endif %}
+      <span class="program-link__text">
+        <strong>{{ program.title | escape }}</strong>
+        {% if program.description %}<span>{{ program.description | escape }}</span>{% endif %}
+        {% if program.platform %}<span class="program-platform">{{ program.platform | escape }}</span>{% endif %}
+      </span>
+      <span class="program-link__arrow" aria-hidden="true">→</span>
+    </a>
+    {% else %}
+    <div class="program-empty">
+      <h2>아직 공개된 프로그램이 없습니다.</h2>
+      <p>프로그램이 공개되면 이곳에서 소개와 사용 링크를 확인할 수 있습니다.</p>
+    </div>
+    {% endfor %}
+  </section>
+</main>

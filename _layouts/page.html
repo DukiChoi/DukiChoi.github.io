@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-
-{%- if page.detail_image -%}<img class="detail_header" src="{{ page.detail_image }}">{%- endif -%}
-
-{{ content }}
+<main class="page-shell page-shell--reading">
+  {% if page.detail_image %}<img class="detail_header" src="{{ page.detail_image | relative_url }}" alt="">{% endif %}
+  <div class="prose">{{ content }}</div>
+</main>
