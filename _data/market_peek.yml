@@ -1,17 +1,18 @@
 # Publish the release before enabling the public download buttons.
-version: "1.0.1"
+version: "1.0.2"
 published: true
-release_url: https://github.com/DukiChoi/Market-Peek-releases/releases/tag/v1.0.1
+release_url: https://github.com/DukiChoi/Market-Peek-releases/releases/tag/v1.0.2
 releases_url: https://github.com/DukiChoi/Market-Peek-releases/releases
 installer:
-  url: https://github.com/DukiChoi/Market-Peek-releases/releases/download/v1.0.1/Market.Peek.Setup.1.0.1.exe
-  filename: Market.Peek.Setup.1.0.1.exe
-  size: 111807278
+  url: https://github.com/DukiChoi/Market-Peek-releases/releases/download/v1.0.2/Market.Peek.Setup.1.0.2.exe
+  filename: Market.Peek.Setup.1.0.2.exe
+  size: 112174018
 archive:
-  url: https://github.com/DukiChoi/Market-Peek-releases/releases/download/v1.0.1/market-peek-1.0.1-x64.7z
-  filename: market-peek-1.0.1-x64.7z
-  size: 100106474
+  url: https://github.com/DukiChoi/Market-Peek-releases/releases/download/v1.0.2/market-peek-1.0.2-x64.7z
+  filename: market-peek-1.0.2-x64.7z
+  size: 100431984
 mac:
+  version: "1.0.1"
   published: true
   url: https://github.com/DukiChoi/Market-Peek-releases/releases/download/v1.0.1/market-peek-1.0.1-universal.dmg
   filename: market-peek-1.0.1-universal.dmg

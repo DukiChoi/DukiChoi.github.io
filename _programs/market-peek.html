@@ -56,7 +56,7 @@ published: true
 
 <div class="download-options">
 <div class="download-panel" id="download-windows">
-<div class="release-heading"><strong>Windows 64비트</strong><span>v{{ release.version | escape }}</span></div>
+<div class="release-heading"><strong>Windows 64비트</strong><span id="windows-release-version">v{{ release.version | escape }} Beta</span></div>
 <p class="platform-label">Windows · x64</p>
   {% if release.published %}
   <a class="button download-button" href="{{ release.installer.url | escape }}" id="download-link">EXE 설치 파일 다운로드 <span aria-hidden="true">↓</span></a>
@@ -64,7 +64,7 @@ published: true
 <a class="button archive-button" href="{{ release.archive.url | escape }}" id="archive-link">7z 압축 파일 다운로드 <span aria-hidden="true">↓</span></a>
 <p class="download-file">{{ release.archive.size | divided_by: 1000000.0 | round: 1 }} MB · 압축을 풀고 실행</p>
 <div class="release-links">
-<a class="release-notes" href="{{ release.release_url | escape }}">v{{ release.version | escape }} 릴리스 정보 <span aria-hidden="true">↗</span></a>
+<a class="release-notes" id="windows-release-notes" href="{{ release.release_url | escape }}">v{{ release.version | escape }} Beta 릴리스 정보 <span aria-hidden="true">↗</span></a>
 <a class="release-notes" href="{{ release.releases_url | escape }}">버전별 다운로드 <span aria-hidden="true">↗</span></a>
 </div>
   {% else %}
@@ -73,14 +73,14 @@ published: true
   {% endif %}
 </div>
 <div class="download-panel" id="download-mac">
-<div class="release-heading"><strong>macOS</strong><span>v{{ release.version | escape }}</span></div>
+<div class="release-heading"><strong>macOS</strong><span id="mac-release-version">v{{ release.mac.version | default: release.version | escape }} Beta</span></div>
 <p class="platform-label">Universal · Apple Silicon / Intel</p>
-  {% if release.mac.published and release.mac.url %}
+  {% if release.mac.published and release.mac.url and release.mac.version == release.version %}
   <a class="button download-button" href="{{ release.mac.url | escape }}" id="mac-download-link">macOS용 다운로드 <span aria-hidden="true">↓</span></a>
 <p class="download-file">{{ release.mac.size | divided_by: 1000000.0 | round: 1 }} MB · DMG 설치 파일</p>
   {% else %}
   <a class="button download-button" id="mac-download-link" aria-disabled="true" tabindex="-1">macOS 설치 파일 준비 중 <span aria-hidden="true">↓</span></a>
-<p class="download-file" role="status">macOS 설치 파일의 공개 다운로드를 준비하고 있습니다.</p>
+<p class="download-file" role="status">최신 버전의 macOS 설치 파일을 준비하고 있습니다.</p>
   {% endif %}
 </div>
 </div>
@@ -92,7 +92,7 @@ published: true
 <div class="faq"><details><summary>Python을 따로 설치해야 하나요?</summary><p>필요 없습니다. Windows와 macOS 설치 파일에 실행에 필요한 환경이 포함되어 있습니다.</p></details>
 <details><summary>거래소 계정은 어떻게 연결하나요?</summary><p>앱 설정에서 거래소마다 API 키를 연결하세요. 저장을 선택하면 각 거래소의 키·Secret·필요한 Passphrase를 이 PC에 암호화해 따로 보관합니다.</p></details>
 <details><summary>작은 현물 잔고를 숨길 수 있나요?</summary><p>설정 → 화면·창에서 현물 숨김 기준을 바꾸세요. 기본값은 평가금액 1 USDT 이하이며, 0으로 설정하면 모두 표시합니다. 선물과 평가금액을 확인할 수 없는 현물은 계속 표시합니다.</p></details>
-<details><summary>최소화와 X·숨기기는 어떻게 다른가요?</summary><p>작업 표시줄 시세를 켠 상태에서 − 버튼을 누르면 작업 표시줄로 최소화됩니다. X와 숨기기·Alt+H는 트레이로 숨깁니다. 트레이 아이콘이나 Alt+H로 다시 열 수 있으며, 완전히 종료하려면 트레이 메뉴 또는 설정의 앱 종료를 사용하세요. 작업 표시줄 시세를 끄면 − 버튼도 트레이로 숨깁니다. 트레이를 사용할 수 없는 환경에서는 최소화됩니다.</p></details>
+<details><summary>최소화와 X·숨기기는 어떻게 다른가요?</summary><p>− 버튼을 누르면 작업 표시줄로 최소화됩니다. X와 숨기기·Alt+H는 트레이로 숨깁니다. 트레이 아이콘이나 Alt+H로 다시 열 수 있으며, 완전히 종료하려면 트레이 메뉴 또는 설정의 앱 종료를 사용하세요. 트레이를 사용할 수 없는 환경에서는 최소화됩니다.</p></details>
 <details><summary>작업 표시줄에 가격이 안 보여요.</summary><p>앱의 설정 → 화면·창 → 작업 표시줄에 시세 표시를 켜세요. Windows 설정 → 개인 설정 → 작업 표시줄에서 단추 합치기 및 레이블 숨기기를 안 함으로 설정해야 제목이 보입니다. Windows 버전에 따라 설정 이름이 다를 수 있습니다. 시세는 한 줄로 표시되며 공간이 부족하면 잘립니다.</p></details>
 <details><summary>TP·SL의 소수점 표시는 어떻게 되나요?</summary><p>포지션 라벨과 관련 툴팁은 소수점 한 자리로 표시합니다. 0이 아닌 값이 0.1보다 작으면 &lt;0.1로 표시합니다. 화면 표시만 간결하게 줄이며, 실제 주문 가격과 수량의 정밀도는 유지합니다.</p></details>
 <details><summary>설치 시 Windows 보안 안내가 표시돼요.</summary><p>현재 설치 파일은 코드 서명되지 않은 개인 개발용 빌드입니다. Windows에서 게시자를 확인할 수 없다는 안내가 나타날 수 있습니다. 배포 출처와 파일을 확인한 뒤 설치 여부를 결정하세요.</p></details>
@@ -105,3 +105,5 @@ published: true
   <span class="brand"><img src="{{ '/assets/programs/market-peek/icon.png' | relative_url }}" width="25" height="25" alt="">Market Peek<span class="brand-dot">.</span></span>
   <a href="{{ '/programs/' | relative_url }}">DukiChoi의 다른 프로그램 <span aria-hidden="true">↗</span></a>
 </footer>
+
+<script src="{{ '/assets/js/market-peek-releases.js' | relative_url }}" defer></script>

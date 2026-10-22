@@ -41,3 +41,5 @@
 .download-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .download-panel .platform-label{margin:12px 0 0;font-size:13px;line-height:1.6}
 @media(max-width:760px){.download-options{grid-template-columns:minmax(0,1fr)}}
+
+.download-button[aria-disabled="true"]{opacity:.5;cursor:default;pointer-events:none}
