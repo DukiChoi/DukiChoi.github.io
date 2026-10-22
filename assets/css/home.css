@@ -71,7 +71,7 @@
 .home-program-banner__text { display: flex; flex-direction: column; gap: 5px; }
 .home-program-banner strong { color: var(--banner-ink); font-size: 23px; }
 .home-program-banner__description { color: var(--banner-muted); font-size: 14px; }
-.home-program-banner__action { flex-shrink: 0; padding: 7px 12px; border: 1px solid rgba(52, 73, 99, .3); border-radius: 6px; background: rgba(240, 246, 255, .25); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45); font-size: 14px; font-weight: 600; }
+.home-program-banner__action { flex-shrink: 0; font-size: 14px; font-weight: 600; }
 .home-skills { margin-bottom: 44px; }
 .home-skills h2 { margin-bottom: 6px; }
 .skills-reference { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
