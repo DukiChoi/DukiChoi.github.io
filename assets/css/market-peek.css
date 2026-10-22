@@ -35,9 +35,9 @@
 .hero-downloads{display:flex;flex-wrap:wrap;gap:12px}
 .hero-downloads .button{padding:16px;gap:8px}
 .hero-downloads .button>span{margin-left:2px}
+.hero-downloads .button>.hero-download-text{display:grid;gap:4px;margin-left:0;font-size:14px;font-weight:750;line-height:1.4;text-align:center}
+.hero-download-text small{font-size:12px;font-weight:500}
 .download-section{grid-template-columns:minmax(0,1fr);gap:28px}
 .download-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .download-panel .platform-label{margin:12px 0 0;font-size:13px;line-height:1.6}
-.beta-label{display:inline-block;margin:0 0 18px;padding:6px 10px;border:1px solid #536847;border-radius:5px;color:var(--accent);font-size:13px;font-weight:650}
-.download-copy .beta-label{margin:0}
 @media(max-width:760px){.download-options{grid-template-columns:minmax(0,1fr)}}
