@@ -2,6 +2,25 @@
 
 # jekyll-shell-theme
 
+## 변경 내역
+
+### 2026-10-22 (한국 시간)
+
+- **공통 화면:** 이론 자료를 기준으로 페이지 서식을 통일하고 Pretendard 글꼴을 적용했습니다. 왼쪽 위 해·초승달 스위치로 라이트/다크 모드를 전환하며, 선택한 모드를 브라우저에 저장합니다. 공통 상단 메뉴는 두 모드 모두 파란 배경을 사용합니다.
+- **홈 카드:** 줄마다 Amazing Rare → Holofoil Rare → Cosmos → Radiant 효과를 적용했습니다. 첫 줄의 반짝이는 입자, 세로 반사광, 원형 무늬, 다이아몬드 질감을 구분하고 기존 회전 방향과 최대 20도 기울기를 유지했습니다. 라이트 모드는 회색 배경과 짙은 파란 카드, 선명한 홀로그램 색으로 대비를 높였습니다.
+- **사용 경력:** 언어·도구별 시작 연도를 `_data/skills.yml`로 분리했습니다. 현재 연도에 맞춰 사용 기간을 자동 계산하고 시작 연도와 기준 연도를 함께 표시합니다.
+- **이론 자료:** 전가산기·2비트 가산기·링 발진기·메모리 강의와 시뮬레이션을 추가했습니다. 전체 자료 → 디지털 회로 → 글 순서의 트리를 접고 펼칠 수 있으며, 다른 글을 열어도 메뉴와 브라우저 탭 이름은 이론 자료로 유지됩니다. 본문 표현과 자동 재생 버튼 문구도 정리했습니다.
+- **프로그램 목록:** `/programs/` 목록과 개별 소개 페이지 구조를 추가하고 홈 배너에 테두리를 적용했습니다. 예시 프로그램 대신 실제 Market Peek 소개 페이지를 등록했습니다.
+- **Market Peek 소개:** `BTC_ticker_tray`의 배포 화면을 바탕으로 `/programs/market-peek/`를 만들었습니다. 공통 상단 메뉴 없이 프로그램만 소개하며, 실제 화면 이미지·주요 기능·설치 안내·FAQ를 포함합니다. Python 서버 없이 동작합니다.
+- **버전별 다운로드:** 공개 배포 전용 저장소 [Market-Peek-releases](https://github.com/DukiChoi/Market-Peek-releases)에 [v1.0.0](https://github.com/DukiChoi/Market-Peek-releases/releases/tag/v1.0.0)을 게시했습니다. EXE·7z·SHA256SUMS.txt를 첨부하고 소개 페이지에 현재 버전과 전체 버전 목록을 연결했습니다. 프로그램 소스 저장소는 비공개로 유지했습니다.
+- **본인용 글쓰기:** `/admin/` 진입 화면과 Pages CMS 설정을 추가했습니다. GitHub 인증을 통해 이론 자료·프로그램 소개·이미지를 관리하도록 구성했으며, 최초 GitHub App 연결은 계정 소유자가 진행해야 합니다. 공개 저장소에서는 게시를 끈 글도 파일 자체는 공개된다는 점을 안내했습니다.
+- **페이지 정리:** Readme·Preview·Hello 페이지를 비활성화하고 CV·Resume은 저장소의 PDF를 표시하도록 바꿨습니다. 일반 페이지의 문장도 자연스럽게 다듬었습니다.
+- **미리보기와 검증:** Jekyll 실행용 Gemfile과 VS Code 미리보기 안내를 추가했습니다. Jekyll 빌드, 모바일 화면, 테마 전환, 카드 반응, 자료 트리, CMS 저장 형식을 확인했습니다. 공개 다운로드의 익명 접근과 파일 해시 일치, GitHub Pages 배포도 확인했습니다.
+
+기능 변경 커밋: [`94e4d90`](https://github.com/DukiChoi/DukiChoi.github.io/commit/94e4d903b849d92e8a9392b897e0354b7908c4ad)
+
+## 원본 테마 소개
+
 **Jekyll Shell Theme** is a light-weight customizable one-column jekyll theme that gives off:
 
 - Hackery Vibes
