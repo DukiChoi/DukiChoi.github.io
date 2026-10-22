@@ -19,14 +19,13 @@ layout: default
 {%- endfor -%}
 
 <main class="theory-shell{% if page.overview %} theory-shell--overview{% endif %}">
+  <header class="theory-masthead">
+    <a class="theory-category" href="{{ '/theory/' | relative_url }}">{{ page.topic | default: "Tech Study" | escape }}</a>
+    <h1 id="theory-title">{{ page.title | escape }}</h1>
+  </header>
   <div class="theory-grid">
     <div class="theory-reading">
-      <article class="theory-article" id="theory-article">
-        <header class="theory-masthead">
-          <a class="theory-category" href="{{ '/theory/' | relative_url }}">{{ page.topic | default: "Tech Study" | escape }}</a>
-          <h1>{{ page.title | escape }}</h1>
-        </header>
-
+      <article class="theory-article" id="theory-article" aria-labelledby="theory-title">
         <div class="theory-content">{{ content }}</div>
 
         {% if page.overview %}

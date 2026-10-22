@@ -103,8 +103,10 @@ hr { margin: 36px 0; border: 0; border-top: 1px solid var(--line); }
 [data-theme="dark"] .theme-icon--sun { color: #bed7f6; }
 [data-theme="dark"] .theme-icon--moon { color: #1a477d; }
 .page-shell { max-width: 1120px; margin: 0 auto; padding: 56px 32px 80px; }
-.page-shell--reading { max-width: 784px; }
-.page-shell--home { max-width: 904px; }
+/* Keep the heading and content start aligned when the study sidebar appears. */
+.page-shell--reading, .page-shell--home { max-width: 1120px; }
+.page-shell--reading > :not(.page-heading) { max-width: 720px; }
+.page-shell--home > :not(.page-heading) { max-width: 840px; }
 .page-heading { margin: 0 0 40px; padding: 8px 0 40px; border-bottom: 1px solid var(--line); text-align: center; }
 .page-heading h1 { margin: 14px 0 0; }
 .page-shell--document .page-heading h1 { font-size: clamp(32px, 7.5vw, 48px); }
