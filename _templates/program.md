@@ -4,8 +4,9 @@ description: 이 프로그램으로 어떤 일을 할 수 있는지 한 문장�
 platform: Windows
 order: 1
 published: false
-# Choose one of the ten styles at /admin/program-styles/; auto follows list order.
+# auto shuffles styles on each visit; use a preset ID to keep a fixed finish.
 banner_style: auto
+# external_url: https://example.com/my-program/
 # featured: true
 # icon: /assets/programs/my-program/icon.png
 # cover: /assets/programs/my-program/screenshot.png

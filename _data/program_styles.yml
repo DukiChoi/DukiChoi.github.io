@@ -1,4 +1,4 @@
-# Colors and foil finishes for program banners. The order is the automatic cycle.
+# Colors and foil finishes for program banners. Order is the no-JavaScript fallback.
 - id: emerald-cosmos
   title: Emerald Cosmos
   description: 에메랄드 바탕에 작은 별과 원형 은박이 반짝입니다.

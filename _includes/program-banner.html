@@ -1,13 +1,18 @@
 {%- assign banner_program = include.program -%}
 {%- assign banner_style = include.style -%}
+{%- assign banner_url = banner_program.external_url | default: banner_program.url -%}
+{%- assign banner_url_start = banner_url | slice: 0 -%}
+{%- if banner_url_start == '/' -%}
+  {%- assign banner_url = banner_url | relative_url -%}
+{%- endif -%}
 <div class="program-slot" data-tilt-slot>
   {% if include.preview %}
   <div class="program-link" tabindex="0" role="group" aria-label="{{ banner_style.title | escape }} 미리보기"
   {% else %}
-  <a class="program-link{% if banner_program.featured %} program-link--featured{% endif %}" href="{{ banner_program.url | relative_url }}"
+  <a class="program-link{% if banner_program.featured %} program-link--featured{% endif %}" href="{{ banner_url | escape }}"
   {% endif %}
     data-holo-tilt data-tilt-x="12" data-tilt-y="10"
-    data-banner-style="{{ banner_style.id | escape }}" data-palette="{{ banner_style.palette | escape }}" data-foil="{{ banner_style.foil | escape }}">
+    data-banner-mode="{{ include.mode | default: 'fixed' | escape }}" data-banner-style="{{ banner_style.id | escape }}" data-palette="{{ banner_style.palette | escape }}" data-foil="{{ banner_style.foil | escape }}">
     <span class="program-foil program-foil--wash" aria-hidden="true"></span>
     <span class="program-foil program-foil--texture" aria-hidden="true"></span>
     <span class="program-foil program-foil--glare" aria-hidden="true"></span>
