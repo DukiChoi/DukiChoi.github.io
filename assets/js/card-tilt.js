@@ -5,7 +5,7 @@
   const singleColumn = window.matchMedia('(max-width: 700px)');
   const clamp = value => Math.max(0, Math.min(1, value));
   const homeCards = Array.from(document.querySelectorAll('.card--holo'));
-  const cards = Array.from(document.querySelectorAll('.card--holo, [data-holo-tilt]'));
+  const cards = Array.from(document.querySelectorAll('.card--holo, [data-holo-tilt], [data-holo-shine]'));
   const foilStyles = ['amazing-rare', 'holo', 'cosmos', 'radiant'];
   const updateRows = () => {
     const columns = singleColumn.matches ? 1 : 2;
@@ -18,7 +18,8 @@
 
   const controllers = cards.map(card => {
     // Measure the stationary slot, so tilting the card never moves its hit area.
-    const slot = card.closest('.card-slot, [data-tilt-slot]');
+    const shineOnly = card.hasAttribute('data-holo-shine');
+    const slot = card.closest('.card-slot, [data-tilt-slot]') || card;
     const rotationX = Math.min(MAX_ROTATION, Math.max(1, Number(card.dataset.tiltX) || MAX_ROTATION));
     const rotationY = Math.min(MAX_ROTATION, Math.max(1, Number(card.dataset.tiltY) || MAX_ROTATION));
     let bounds;
@@ -30,9 +31,9 @@
     const target = { ...current };
 
     const render = () => {
-      card.style.setProperty('--rotate-x', `${((0.5 - current.y) * 2 * rotationX).toFixed(3)}deg`);
-      card.style.setProperty('--rotate-y', `${((current.x - 0.5) * 2 * rotationY).toFixed(3)}deg`);
-      card.style.setProperty('--lift', `${(-current.lift * 4).toFixed(3)}px`);
+      card.style.setProperty('--rotate-x', `${(shineOnly ? 0 : (0.5 - current.y) * 2 * rotationX).toFixed(3)}deg`);
+      card.style.setProperty('--rotate-y', `${(shineOnly ? 0 : (current.x - 0.5) * 2 * rotationY).toFixed(3)}deg`);
+      card.style.setProperty('--lift', `${(shineOnly ? 0 : -current.lift * 4).toFixed(3)}px`);
       card.style.setProperty('--mx', `${(current.x * 100).toFixed(2)}%`);
       card.style.setProperty('--my', `${(current.y * 100).toFixed(2)}%`);
       // Incidence changes the intensity; the grain stays fixed on the surface.

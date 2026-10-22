@@ -3,6 +3,11 @@
 [data-theme="dark"] .page-shell--home { --orange: #ffb75b; }
 .home-intro { margin-bottom: 28px; }
 .home-program-banner {
+  --mx: 50%;
+  --my: 50%;
+  --foil-x: 50%;
+  --foil-y: 50%;
+  --light: 0;
   --banner-ink: #223043;
   --banner-muted: #445165;
   --silver-start: #bcc7d5;
@@ -45,7 +50,12 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(115deg, transparent 12%, rgba(255, 255, 255, .45) 25%, transparent 38%, rgba(189, 213, 245, .15) 63%, transparent 78%);
+  background:
+    radial-gradient(ellipse at var(--mx) var(--my), rgba(255, 255, 255, .9), rgba(220, 239, 255, .35) 24%, transparent 60%),
+    linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, .85) 46%, rgba(158, 203, 247, .4) 51%, transparent 65%);
+  background-size: 100% 100%, 200% 200%;
+  background-position: center, var(--foil-x) var(--foil-y);
+  opacity: calc(.18 + var(--light) * .72);
   -webkit-mask-image: url('../textures/foil-grain.svg');
   mask-image: url('../textures/foil-grain.svg');
   pointer-events: none;
