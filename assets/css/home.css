@@ -45,19 +45,21 @@
 .home-program-banner:hover {
   color: var(--banner-ink);
 }
+.home-program-banner > span { position: relative; z-index: 2; }
 .home-program-banner::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   background:
-    radial-gradient(ellipse at var(--mx) var(--my), rgba(255, 255, 255, .9), rgba(220, 239, 255, .35) 24%, transparent 60%),
-    linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, .85) 46%, rgba(158, 203, 247, .4) 51%, transparent 65%);
-  background-size: 100% 100%, 200% 200%;
-  background-position: center, var(--foil-x) var(--foil-y);
-  opacity: calc(.18 + var(--light) * .72);
-  -webkit-mask-image: url('../textures/foil-grain.svg');
-  mask-image: url('../textures/foil-grain.svg');
+    radial-gradient(ellipse 95px 65px at var(--mx) var(--my), #fff 0%, rgba(255, 255, 255, .85) 15%, transparent 75%),
+    repeating-linear-gradient(115deg, #ff4597 0%, #ffbb43 12%, #eaff65 24%, #44f0b2 36%, #42d8ff 48%, #8d78ff 60%, #f16bea 72%, #ff4597 84%),
+    linear-gradient(115deg, transparent 25%, #fff 48%, transparent 70%);
+  background-size: 100% 100%, 240% 240%, 180% 180%;
+  background-position: center, var(--foil-x) var(--foil-y), var(--mx) var(--my);
+  -webkit-mask-image: radial-gradient(ellipse 340px 170px at var(--mx) var(--my), #000 12%, rgba(0, 0, 0, .88) 38%, transparent 100%);
+  mask-image: radial-gradient(ellipse 340px 170px at var(--mx) var(--my), #000 12%, rgba(0, 0, 0, .88) 38%, transparent 100%);
+  opacity: min(1, calc(var(--light) * 1.35));
   pointer-events: none;
 }
 [data-theme="dark"] .home-program-banner {
