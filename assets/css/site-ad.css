@@ -1,12 +1,12 @@
-/* Shared content with two manual AdSense placements on desktop. */
+/* Shared content with two tall AdSense units in the left desktop column. */
 .site-layout{box-sizing:border-box;flex:1;min-width:0;width:100%;margin:0 auto}
 .site-content{box-sizing:border-box;min-width:0;width:100%;max-width:1160px;margin:0 auto}
-.site-side-ad{box-sizing:border-box;display:none;min-width:0;width:160px;margin:56px 0 32px}
+.site-side-ad{box-sizing:border-box;display:none;align-content:start;gap:24px;min-width:0;width:400px;margin:56px 0 32px}
 .site-side-ad__label{display:block;margin:0 0 8px;color:var(--muted,#657080);font:inherit;font-size:12px;line-height:1.5;text-align:center}
-.site-side-ad__placement{width:160px;min-height:600px;background:var(--surface,var(--panel,#eef0f3));outline:1px solid var(--line,#ccd2d9);border-radius:6px}
+.site-side-ad__placement{width:400px;min-height:700px;background:var(--surface,var(--panel,#eef0f3));outline:1px solid var(--line,#ccd2d9);border-radius:6px}
 @media(min-width:1280px){
-  .site-layout__columns--ads{display:grid;grid-template-columns:160px minmax(0,1160px) 160px;align-items:start;gap:24px;width:calc(100% - 40px);max-width:1528px;margin:0 auto}
-  .site-layout__columns--ads>.site-side-ad{display:block}
+  .site-layout__columns--ads{display:grid;grid-template-columns:400px minmax(0,1160px);align-items:start;gap:24px;width:calc(100% - 40px);max-width:1584px;margin:0 auto}
+  .site-layout__columns--ads>.site-side-ad{display:grid}
 }
 /* Optional top placeholder; disabled while the real ad placements are active. */
 .site-ad{box-sizing:border-box;flex:none;width:100%;padding:18px 16px 0;margin:0 auto}
