@@ -1,0 +1,14 @@
+{% if include.articles.size > 0 %}
+<ol class="theory-index">
+  {% for entry in include.articles %}
+  <li>
+    <a class="theory-index__link" href="{{ entry.url | relative_url }}">
+      <{{ include.heading }}>{{ entry.title | escape }}</{{ include.heading }}>
+      {% if entry.description %}<p>{{ entry.description | escape }}</p>{% endif %}
+    </a>
+  </li>
+  {% endfor %}
+</ol>
+{% else %}
+<p class="theory-subject__empty">아직 등록된 자료가 없습니다.</p>
+{% endif %}

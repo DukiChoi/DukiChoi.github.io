@@ -1,0 +1,82 @@
+---
+title: ADC 샘플링과 에일리어싱
+description: 샘플링 주파수가 신호 주파수의 두 배보다 낮을 때 전혀 다른 주파수의 신호로 보이는 현상을 확인합니다.
+permalink: /theory/adc-aliasing/
+category: embedded
+order: 5
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.lx .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:50px;max-width:none}
+.lx .msg.bad{color:#E24B4A}.lx .msg.ok{color:#1D9E75}
+.lx .lbl{font-size:14px;color:var(--text-secondary);min-width:110px}
+.ad input[type=range]{flex:1;min-width:180px}
+.ad .big{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--text-primary);min-width:70px;text-align:right}
+.ad .info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.ad .info div{background:var(--surface-1);border-radius:8px;padding:8px 10px}
+.ad .info span{display:block;font-size:12px;color:var(--text-secondary)}
+.ad .info b{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--text-primary)}
+.ad .leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--text-secondary);justify-content:center}
+.ad .leg i{display:inline-block;width:18px;height:3px;vertical-align:3px;margin-right:5px}
+</style>
+<div class="circuit-lesson lx ad">
+<p class="lede">ADC는 연속으로 변하는 전압을 일정한 간격으로 찍어서 숫자로 바꿉니다. 찍는 간격이 신호가 변하는 속도에 비해 너무 길면, 샘플을 이은 모양이 원래 신호와 전혀 다른 느린 신호가 됩니다. 이것이 에일리어싱입니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">신호 주파수와 샘플링 주파수를 바꾸며 에일리어싱을 확인하는 그래프</h2>
+    <p class="sub" style="margin-top:0">1. 예시를 고르거나 슬라이더로 직접 바꿔 보세요</p>
+    <div class="row">
+      <button class="bt go" data-pre="5,50">충분히 빠른 샘플링</button>
+      <button class="bt go" data-pre="23,50">한계에 가까운 샘플링</button>
+      <button class="bt go" data-pre="45,50">너무 느린 샘플링</button>
+    </div>
+    <div class="row" style="margin-top:12px"><label class="lbl" for="adF">신호 주파수</label><input type="range" id="adF" min="1" max="60" step="1" value="5"><span class="big" id="adFv"></span></div>
+    <div class="row" style="margin-top:6px"><label class="lbl" for="adS">샘플링 주파수</label><input type="range" id="adS" min="5" max="100" step="1" value="50"><span class="big" id="adSv"></span></div>
+    <svg id="adSvg" width="100%" viewBox="0 0 680 240" role="img" aria-label="원래 신호, 샘플, 샘플로 복원한 신호"></svg>
+    <div class="leg">
+      <span><i style="background:var(--text-muted)"></i>실제 신호</span>
+      <span><i style="background:#E8A317;height:8px;width:8px;border-radius:50%;vertical-align:0"></i>ADC가 찍은 샘플</span>
+      <span><i style="background:#D85A30"></i>샘플만 보고 복원한 신호</span>
+    </div>
+    <div class="info" id="adInfo"></div>
+    <p class="msg" id="adMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">그래프는 0.5초 구간입니다. 신호 주파수를 샘플링 주파수의 절반보다 높게 올리면, 빨간 복원 신호가 회색 실제 신호와 어긋나기 시작합니다.</p>
+
+  <h2>나이퀴스트 주파수</h2>
+  <p>샘플링 주파수의 절반을 나이퀴스트 주파수라고 합니다. 신호에 이보다 높은 주파수가 섞여 있으면, 그 성분은 샘플 위에서 더 낮은 주파수로 둔갑합니다. 둔갑한 주파수는 신호 주파수에서 가장 가까운 샘플링 주파수의 정수배를 뺀 값입니다. 예를 들어 50 Hz로 샘플링하면 45 Hz 신호는 |45 − 50| = 5 Hz로 보입니다.</p>
+  <pre><code>원래 신호를 복원하려면:  샘플링 주파수 > 2 × 신호의 최고 주파수</code></pre>
+
+  <h2>실무에서는</h2>
+  <p>한 번 둔갑한 성분은 샘플만 보고 원래 신호와 구별할 수 없습니다. 그래서 ADC 앞에 나이퀴스트 주파수보다 높은 성분을 미리 깎아 내는 저역 통과 필터(안티에일리어싱 필터)를 둡니다. 필터가 완벽하게 자르지 못하므로, 샘플링 주파수는 관심 있는 최고 주파수의 2배가 아니라 5~10배 정도로 넉넉하게 잡습니다.</p>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const X0=40,X1=660,YC=115,A=80,T=0.5,PH=0.6;
+function draw(){
+  const f=+$('adF').value,fs=+$('adS').value,ny=fs/2,k=Math.round(f/fs),fa=f-k*fs;
+  $('adFv').textContent=f+' Hz';$('adSv').textContent=fs+' Hz';
+  const X=t=>X0+t/T*(X1-X0),Y=v=>YC-A*v;
+  let h=`<line x1="${X0}" y1="${YC}" x2="${X1}" y2="${YC}" stroke="var(--border)"/>`;
+  for(let i=0;i<=5;i++){const t=i*0.1;h+=`<text x="${X(t)}" y="222" text-anchor="middle" font-size="11" fill="var(--text-muted)">${t.toFixed(1)}s</text>`;}
+  let p='';for(let i=0;i<=1400;i++){const t=i/1400*T;p+=(i?'L':'M')+X(t).toFixed(1)+' '+Y(Math.sin(2*Math.PI*f*t+PH)).toFixed(1);}
+  h+=`<path d="${p}" fill="none" stroke="var(--text-muted)" stroke-width="1.3" opacity=".7"/>`;
+  let q='';for(let i=0;i<=700;i++){const t=i/700*T;q+=(i?'L':'M')+X(t).toFixed(1)+' '+Y(Math.sin(2*Math.PI*fa*t+PH)).toFixed(1);}
+  h+=`<path d="${q}" fill="none" stroke="#D85A30" stroke-width="2.2" stroke-dasharray="${Math.abs(fa)===f?'0':'7 4'}"/>`;
+  const n=Math.floor(T*fs+1e-9);
+  for(let i=0;i<=n;i++){const t=i/fs;if(t>T)break;const v=Math.sin(2*Math.PI*f*t+PH);h+=`<line x1="${X(t)}" y1="${YC}" x2="${X(t)}" y2="${Y(v)}" stroke="#E8A317" stroke-width="1" opacity=".5"/><circle cx="${X(t)}" cy="${Y(v)}" r="4.5" fill="#E8A317"/>`;}
+  $('adSvg').innerHTML=h;
+  $('adInfo').innerHTML=[['나이퀴스트 주파수 (fs ÷ 2)',`${ny%1?ny.toFixed(1):ny} Hz`],['실제 신호',`${f} Hz`],['샘플에서 보이는 신호',`${Math.abs(fa)} Hz`]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
+  const m=$('adMsg');
+  if(f<ny){m.className='msg ok';m.textContent=`${f} Hz는 나이퀴스트 주파수 ${ny} Hz보다 낮습니다. 샘플만 보고도 원래 신호를 그대로 복원할 수 있습니다.`;}
+  else if(f===ny){m.className='msg bad';m.textContent=`${f} Hz가 나이퀴스트 주파수와 같습니다. 한 주기에 샘플이 딱 두 개라서, 찍는 위치에 따라 진폭이 줄거나 아예 0으로 보입니다. 샘플링 주파수는 2배보다 커야 합니다.`;}
+  else{m.className='msg bad';m.textContent=Math.abs(fa)===0?`샘플링 주파수가 ${f} Hz 신호와 맞아떨어져서, 샘플이 매번 같은 위치를 찍습니다. 신호가 멈춰 있는 직류처럼 보입니다.`:`${f} Hz 신호가 샘플에서는 ${Math.abs(fa)} Hz로 보입니다. 나이퀴스트 주파수 ${ny} Hz를 넘은 성분이 낮은 주파수로 둔갑한 에일리어싱입니다.`;}
+}
+document.querySelectorAll('.ad [data-pre]').forEach(b=>b.onclick=()=>{const [f,s]=b.dataset.pre.split(',');$('adF').value=f;$('adS').value=s;draw();});
+$('adF').oninput=draw;$('adS').oninput=draw;
+draw();
+})();
+</script>

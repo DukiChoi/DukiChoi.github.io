@@ -1,0 +1,150 @@
+---
+title: I2C와 SPI
+description: 클럭 선을 함께 쓰는 두 직렬 버스가 한 바이트를 주고받는 파형을 클럭 단위로 따라갑니다.
+permalink: /theory/i2c-spi/
+category: embedded
+order: 2
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.lx .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:50px;max-width:none}
+.lx .err{font-size:13px;color:#E24B4A;margin:6px 0 0;min-height:18px}
+.lx input[type=text]{font-family:var(--font-mono);font-size:14px;padding:5px 8px;width:70px;text-align:center;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.bs .regs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
+.bs .reg{background:var(--surface-1);border-radius:8px;padding:8px 12px}
+.bs .reg span{display:block;font-size:12px;color:var(--text-secondary)}
+.bs .reg b{font-family:var(--font-mono);font-size:17px;font-weight:500;color:var(--text-primary);letter-spacing:.08em}
+.bs .leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--text-secondary);justify-content:center;margin-top:4px}
+.bs .leg i{display:inline-block;width:18px;height:3px;vertical-align:3px;margin-right:5px}
+</style>
+<div class="circuit-lesson lx bs">
+<p class="lede">I2C와 SPI는 둘 다 마스터가 클럭을 만들고, 데이터 선의 값을 클럭에 맞춰 읽는 직렬 버스입니다. I2C는 선 두 개로 여러 장치를 주소로 구분하고, SPI는 선 네 개로 더 빠르게 양방향 데이터를 동시에 주고받습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">I2C와 SPI 버스의 클럭과 데이터 파형을 한 단계씩 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 버스를 고르고 보낼 값을 정하세요</p>
+    <div class="row">
+      <button class="bt sel" data-b="i2c">I2C</button><button class="bt" data-b="spi">SPI (모드 0)</button>
+      <span id="bsI2c" class="row" style="margin-left:8px"><label class="lbl">슬레이브 주소 <input type="text" id="bsAddr" value="0x48"></label><label class="lbl">쓸 데이터 <input type="text" id="bsData" value="0xA5"></label></span>
+      <span id="bsSpi" class="row" style="margin-left:8px;display:none"><label class="lbl">마스터가 보낼 값 <input type="text" id="bsMosi" value="0xA5"></label><label class="lbl">슬레이브가 보낼 값 <input type="text" id="bsMiso" value="0x3C"></label></span>
+    </div>
+    <p class="err" id="bsErr"></p>
+    <p class="sub" style="margin-top:4px">2. 한 단계씩 진행하세요</p>
+    <div class="row">
+      <button class="bt go" id="bsStep">다음 단계</button>
+      <button class="bt" id="bsAll">끝까지 재생</button>
+      <button class="bt" id="bsReset">처음으로</button>
+    </div>
+    <svg id="bsSvg" width="100%" viewBox="0 0 680 250" role="img" aria-label="버스 파형"></svg>
+    <div class="leg" id="bsLeg"></div>
+    <p class="msg" id="bsMsg" aria-live="polite"></p>
+    <div class="regs" id="bsRegs"></div>
+  </div>
+  <p class="hint">[다음 단계]를 누를 때마다 파형이 한 비트씩 진하게 그려집니다. 주황색 점은 받는 쪽이 데이터 선을 읽는 순간입니다.</p>
+
+  <h2>I2C: 선 두 개, 주소로 상대를 고릅니다</h2>
+  <p>I2C는 클럭 SCL과 데이터 SDA 두 선만 씁니다. 두 선은 풀업 저항으로 평소에 high를 유지하고, 장치들은 선을 low로 당기기만 합니다. 그래서 여러 장치가 같은 선에 붙어 있어도 충돌하지 않습니다.</p>
+  <p>마스터는 SCL이 high인 동안 SDA를 내려 시작을 알리고, 7비트 주소와 읽기/쓰기 비트를 보냅니다. 주소가 맞는 슬레이브만 SDA를 low로 당겨 ACK로 대답합니다. 데이터는 SCL이 low일 때 바뀌고, SCL이 high일 때 읽힙니다. SCL이 high인 동안 SDA가 바뀌는 경우는 시작과 정지 조건뿐입니다.</p>
+
+  <h2>SPI: 선 네 개, 보내면서 동시에 받습니다</h2>
+  <p>SPI는 클럭 SCK, 마스터 출력 MOSI, 슬레이브 출력 MISO, 칩 선택 CS를 씁니다. 마스터가 CS를 low로 내려 상대를 고르므로 주소가 필요 없고, ACK도 없습니다. 클럭 8번이 지나는 동안 마스터와 슬레이브가 각자의 시프트 레지스터를 맞바꾸듯 한 바이트씩 주고받습니다.</p>
+  <p>모드 0은 클럭이 평소 low이고 상승 에지에서 데이터를 읽는 방식입니다. 클럭 극성(CPOL)과 위상(CPHA)을 바꾼 모드 1~3도 있어서, 데이터시트에서 장치의 모드를 꼭 확인해야 합니다.</p>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const X0=70,X1=665;
+let bus='i2c',M=null,k=0,timer=null;
+const hx=s=>{const t=s.trim();return /^(0x)?[0-9a-f]{1,2}$/i.test(t)?parseInt(t.replace(/^0x/i,''),16):null;};
+const H=v=>'0x'+v.toString(16).toUpperCase().padStart(2,'0');
+function buildI2C(addr,data){
+  const sig={SCL:[],SDA:[]},drv=[],samp=[],steps=[],groups=[];
+  const put=(c,d,w)=>{sig.SCL.push(c);sig.SDA.push(d);drv.push(w);};
+  const grp=(u0,l,c)=>groups.push({u0,u1:sig.SCL.length,l,c});
+  put(1,1,'m');put(1,1,'m');
+  let u=sig.SCL.length;put(1,0,'m');steps.push({u1:sig.SCL.length,msg:'시작 조건: SCL이 high인 동안 마스터가 SDA를 high에서 low로 내립니다. 버스의 모든 슬레이브가 주소를 들을 준비를 합니다.'});grp(u,'시작','#D85A30');
+  const bit=(v,w,msg,rx)=>{put(0,v,w);samp.push(sig.SCL.length);put(1,v,w);steps.push({u1:sig.SCL.length,msg,rx});};
+  u=sig.SCL.length;
+  for(let i=6;i>=0;i--){const v=(addr>>i)&1;bit(v,'m',i===6?`주소 비트 A6 = ${v}: 마스터는 SCL이 low일 때 SDA를 바꾸고, 슬레이브는 SCL이 high일 때 읽습니다. 주소는 가장 높은 비트부터 보냅니다.`:`주소 비트 A${i} = ${v}`,['a',v]);}
+  grp(u,`주소 ${H(addr)}`,'#185FA5');
+  u=sig.SCL.length;bit(0,'m','읽기/쓰기 비트 = 0: 마스터가 슬레이브에게 데이터를 쓰겠다고 알립니다.');grp(u,'W','#185FA5');
+  u=sig.SCL.length;bit(0,'s',`ACK: 주소 ${H(addr)}의 슬레이브가 자기 주소임을 알아듣고 SDA를 low로 당겨 대답합니다.`);grp(u,'ACK','#7F77DD');
+  u=sig.SCL.length;
+  for(let i=7;i>=0;i--){const v=(data>>i)&1;bit(v,'m',i===7?`데이터 비트 D7 = ${v}: 마스터가 데이터 바이트를 가장 높은 비트부터 보냅니다.`:`데이터 비트 D${i} = ${v}`,['d',v]);}
+  grp(u,`데이터 ${H(data)}`,'#185FA5');
+  u=sig.SCL.length;bit(0,'s','ACK: 슬레이브가 데이터 바이트를 잘 받았다고 SDA를 low로 당겨 대답합니다.');grp(u,'ACK','#7F77DD');
+  u=sig.SCL.length;put(0,0,'m');put(1,0,'m');put(1,1,'m');steps.push({u1:sig.SCL.length,msg:'정지 조건: SCL이 high인 동안 마스터가 SDA를 low에서 high로 올립니다. 버스가 다시 비었습니다.'});grp(u,'정지','#D85A30');
+  put(1,1,'m');
+  return {names:['SCL','SDA'],sig,drv,dataRow:'SDA',samp,steps,groups,units:sig.SCL.length,
+    regs:[['a',7,'슬레이브가 받은 주소'],['d',8,'슬레이브가 받은 데이터']],
+    leg:'<span><i style="background:#185FA5"></i>마스터가 구동</span><span><i style="background:#7F77DD"></i>슬레이브가 구동 (ACK)</span>'};
+}
+function buildSPI(mo,mi){
+  const sig={CS:[],SCK:[],MOSI:[],MISO:[]},drv=[],samp=[],steps=[],groups=[];
+  const put=(c,s,a,b)=>{sig.CS.push(c);sig.SCK.push(s);sig.MOSI.push(a);sig.MISO.push(b);drv.push('m');};
+  const grp=(u0,l,c)=>groups.push({u0,u1:sig.CS.length,l,c});
+  put(1,0,null,null);put(1,0,null,null);
+  let u=sig.CS.length;put(0,0,null,null);steps.push({u1:sig.CS.length,msg:'마스터가 CS를 low로 내려 이 슬레이브를 고릅니다. CS가 high인 다른 슬레이브는 MISO에서 손을 뗍니다.'});grp(u,'선택','#D85A30');
+  u=sig.CS.length;
+  for(let i=7;i>=0;i--){const a=(mo>>i)&1,b=(mi>>i)&1;put(0,0,a,b);samp.push(sig.CS.length);put(0,1,a,b);
+    steps.push({u1:sig.CS.length,msg:i===7?`비트 7: SCK가 low일 때 마스터는 MOSI에 ${a}, 슬레이브는 MISO에 ${b}을 내놓고, SCK가 올라가는 순간 서로 상대의 값을 읽습니다.`:`비트 ${i}: MOSI ${a}, MISO ${b}`,rx2:[a,b]});}
+  grp(u,'8클럭 동안 동시에 주고받기','#185FA5');
+  u=sig.CS.length;put(0,0,null,null);put(1,0,null,null);steps.push({u1:sig.CS.length,msg:'마스터가 CS를 다시 high로 올려 전송을 끝냅니다. 클럭 8번 만에 두 바이트가 서로 자리를 바꿨습니다.'});grp(u,'해제','#D85A30');
+  put(1,0,null,null);
+  return {names:['CS','SCK','MOSI','MISO'],sig,drv,dataRow:'MOSI',samp,steps,groups,units:sig.CS.length,
+    regs:[['so',8,'슬레이브가 받은 값 (MOSI)'],['mi',8,'마스터가 받은 값 (MISO)']],
+    leg:'<span><i style="background:#185FA5"></i>마스터 출력</span><span><i style="background:#7F77DD"></i>슬레이브 출력</span><span><i style="background:var(--text-muted)"></i>아무도 구동하지 않음</span>'};
+}
+function build(){
+  stop();let a,b;
+  if(bus==='i2c'){a=hx($('bsAddr').value);b=hx($('bsData').value);
+    if(a===null||a>0x7F||b===null){$('bsErr').textContent='주소는 0x00~0x7F, 데이터는 0x00~0xFF 범위의 16진수로 입력하세요.';return;}
+    M=buildI2C(a,b);}
+  else{a=hx($('bsMosi').value);b=hx($('bsMiso').value);
+    if(a===null||b===null){$('bsErr').textContent='0x00~0xFF 범위의 16진수로 입력하세요.';return;}
+    M=buildSPI(a,b);}
+  $('bsErr').textContent='';k=0;$('bsLeg').innerHTML=M.leg;draw();
+}
+function draw(){
+  const n=M.units,w=(X1-X0)/n,rev=k?M.steps[k-1].u1:0,rows=M.names.length,rh=Math.min(52,190/rows),top=46;
+  let h='';
+  M.groups.forEach(g=>{const x0=X0+g.u0*w,x1=X0+g.u1*w,on=g.u1<=rev;
+    h+=`<rect x="${x0+1}" y="${top-8}" width="${x1-x0-2}" height="${rows*rh+4}" rx="4" fill="${g.c}" opacity="${on?.1:.04}"/>`;
+    h+=`<text x="${(x0+x1)/2}" y="${top-14}" text-anchor="middle" font-size="12" fill="${on?'var(--text-primary)':'var(--text-muted)'}">${g.l}</text>`;});
+  M.names.forEach((nm,r)=>{
+    const yH=top+r*rh+6,yL=top+r*rh+rh-14,ym=(yH+yL)/2,L=M.sig[nm];
+    h+=`<text x="${X0-10}" y="${ym+4}" text-anchor="end" font-size="13" font-weight="500" fill="var(--text-primary)">${nm}</text>`;
+    for(let i=0;i<n;i++){
+      const v=L[i],x0=X0+i*w,x1=x0+w,on=i<rev;
+      let col='#185FA5';if(nm==='MISO'||(nm==='SDA'&&M.drv[i]==='s'))col='#7F77DD';
+      const op=on?1:.22,sw=on?2.2:1.6;
+      if(v===null){h+=`<line x1="${x0}" y1="${ym}" x2="${x1}" y2="${ym}" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3 3" opacity="${op}"/>`;}
+      else{const y=v?yH:yL;h+=`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${col}" stroke-width="${sw}" opacity="${op}"/>`;}
+      if(i>0){const p=L[i-1];if(p!==v){const ya=p===null?ym:(p?yH:yL),yb=v===null?ym:(v?yH:yL);h+=`<line x1="${x0}" y1="${ya}" x2="${x0}" y2="${yb}" stroke="${v===null?'var(--text-muted)':col}" stroke-width="${sw}" opacity="${op}"/>`;}}
+    }
+    if(nm===M.dataRow||nm==='MISO')M.samp.forEach(si=>{if(si<rev){const v=L[si];if(v!==null)h+=`<circle cx="${X0+si*w+w/2}" cy="${v?yH:yL}" r="4" fill="#E8A317"/>`;}});
+  });
+  if(k&&k<M.steps.length)h+=`<line x1="${X0+rev*w}" y1="${top-6}" x2="${X0+rev*w}" y2="${top+rows*rh}" stroke="#E8A317" stroke-width="1.5"/>`;
+  $('bsSvg').innerHTML=h;
+  const got={a:[],d:[],so:[],mi:[]};
+  M.steps.slice(0,k).forEach(s=>{if(s.rx)got[s.rx[0]].push(s.rx[1]);if(s.rx2){got.so.push(s.rx2[0]);got.mi.push(s.rx2[1]);}});
+  $('bsRegs').innerHTML=M.regs.map(([key,len,lbl])=>{const g=got[key],full=g.length===len;
+    return `<div class="reg"><span>${lbl}</span><b>${g.join('')}${'_'.repeat(len-g.length)}</b>${full?` <b>= ${H(parseInt(g.join(''),2))}</b>`:''}</div>`;}).join('');
+  $('bsMsg').textContent=k?M.steps[k-1].msg:'[다음 단계]를 눌러 시작하세요.';
+  $('bsStep').disabled=k>=M.steps.length;
+}
+function step(){if(k<M.steps.length){k++;draw();}if(k>=M.steps.length)stop();}
+function stop(){clearInterval(timer);timer=null;$('bsAll').textContent='끝까지 재생';}
+$('bsStep').onclick=()=>{stop();step();};
+$('bsAll').onclick=()=>{if(timer){stop();return;}if(k>=M.steps.length){k=0;draw();}timer=setInterval(step,550);$('bsAll').textContent='정지';};
+$('bsReset').onclick=()=>{stop();k=0;draw();};
+document.querySelectorAll('.bs [data-b]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.bs [data-b]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');bus=b.dataset.b;$('bsI2c').style.display=bus==='i2c'?'':'none';$('bsSpi').style.display=bus==='spi'?'':'none';build();});
+['bsAddr','bsData','bsMosi','bsMiso'].forEach(id=>$(id).onchange=build);
+build();
+})();
+</script>

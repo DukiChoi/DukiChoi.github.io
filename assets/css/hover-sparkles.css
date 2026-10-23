@@ -1,0 +1,43 @@
+
+/* Irregular pinpoints and fine glints, visible only during mouse hover. */
+.hover-sparkles {
+  --spark-color: #d3eeff;
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  z-index: 5;
+}
+.hover-sparkles--cube {
+  --spark-color: var(--p-edge, #d3eeff);
+  inset: -20px;
+  transform: translateY(-4px);
+}
+.hover-sparkle {
+  position: absolute;
+  display: block;
+  width: var(--spark-size);
+  height: var(--spark-size);
+  opacity: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 10%, var(--spark-color) 18%, transparent 65%);
+  filter: drop-shadow(0 0 3px var(--spark-color));
+  animation: hover-sparkle-flash var(--spark-duration) ease-in-out var(--spark-delay, 0ms) both;
+}
+.hover-sparkle::before, .hover-sparkle::after {
+  content: "";
+  position: absolute;
+  inset: calc(50% - .5px) -40%;
+  background: linear-gradient(90deg, transparent, var(--spark-color) 32%, #fff 50%, var(--spark-color) 68%, transparent);
+  border-radius: 50%;
+}
+.hover-sparkle::after { transform: rotate(90deg) scaleX(.7); }
+.hover-sparkle--pin::before, .hover-sparkle--pin::after { display: none; }
+@keyframes hover-sparkle-flash {
+  0%, 100% { opacity: 0; transform: translate(-50%,-50%) scale(.2) rotate(var(--spark-turn)); }
+  35% { opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(var(--spark-turn)); }
+  65% { opacity: .55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hover-sparkles { display: none; }
+}

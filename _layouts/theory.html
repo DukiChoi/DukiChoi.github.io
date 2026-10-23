@@ -37,18 +37,20 @@ layout: default
           {% assign folder_path = page.path | remove: "index.md" | remove: "index.html" %}
           {% assign index_articles = theory_articles | where_exp: "entry", "entry.path contains folder_path" %}
         {% endif %}
-        <ol class="theory-index">
-          {% for entry in index_articles %}
-          <li>
-            <a class="theory-index__link" href="{{ entry.url | relative_url }}">
-              <h2>{{ entry.title | escape }}</h2>
-              {% if entry.description %}<p>{{ entry.description | escape }}</p>{% endif %}
-            </a>
-          </li>
-          {% else %}
-          <li>아직 등록된 자료가 없습니다.</li>
+        {% if page.overview %}
+          {% assign index_groups = tree_entries | group_by_exp: "entry", "entry.path | split: '/' | slice: 2, 1 | first" | sort: "name" %}
+          <div class="theory-subjects">
+          {% for subject in index_groups %}
+            {% assign subject_articles = subject.items | where_exp: "entry", "entry.folder_overview != true" | sort: "order" %}
+            <section class="theory-subject">
+              <h2 class="theory-subject__title">{{ subject.name | escape }} <span class="theory-count">{{ subject_articles.size }}</span></h2>
+              {% include theory-index-cards.html articles=subject_articles heading="h3" %}
+            </section>
           {% endfor %}
-        </ol>
+          </div>
+        {% else %}
+          {% include theory-index-cards.html articles=index_articles heading="h2" %}
+        {% endif %}
         {% endif %}
       </article>
 

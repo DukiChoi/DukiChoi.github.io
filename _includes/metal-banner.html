@@ -1,0 +1,9 @@
+{%- assign metal_tag = 'a' -%}
+{%- if include.preview -%}{%- assign metal_tag = 'div' -%}{%- endif -%}
+<{{ metal_tag }} class="home-program-banner" data-holo-shine{% if include.preview %} tabindex="0" role="group" aria-label="은색 금속 명패 미리보기"{% else %} href="{{ '/programs/' | relative_url }}"{% endif %}>
+  <span class="home-program-banner__text">
+    <strong>개발자의 삶</strong>
+    <span class="home-program-banner__description">직접 만든 프로그램과 사용 방법을 소개하는 공간입니다.</span>
+  </span>
+  <span class="home-program-banner__action">{% if include.preview %}마우스를 올려보세요{% else %}모아보기 <span aria-hidden="true">→</span>{% endif %}</span>
+</{{ metal_tag }}>

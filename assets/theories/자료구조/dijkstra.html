@@ -1,0 +1,113 @@
+---
+title: 다익스트라 최단 경로
+description: 가장 가까운 노드부터 하나씩 확정하며 나머지 노드까지의 거리를 줄여 가는 과정을 봅니다.
+permalink: /theory/dijkstra/
+category: algorithms
+order: 5
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.lx .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:50px;max-width:none}
+.lx .msg.ok{color:#1D9E75}
+.dj .tw{overflow-x:auto;margin-top:10px}
+.dj table{border-collapse:collapse;margin:0 auto;font-size:14px;background:var(--panel,#fff)}
+.dj td,.dj th{border:1px solid var(--border);padding:5px 14px;text-align:center;font-family:var(--font-mono)}
+.dj th{font-weight:500;color:var(--text-primary);font-family:var(--font-sans)}
+.dj td.lb{font-family:var(--font-sans);color:var(--text-secondary);text-align:left}
+.dj td.up{background:#FAEEDA;color:#633806;font-weight:600}
+.dj td.dn{background:#E1F5EE;color:#085041}
+.dj .leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--text-secondary);justify-content:center}
+.dj .leg i{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+.dj svg{cursor:pointer}
+</style>
+<div class="circuit-lesson lx dj">
+<p class="lede">다익스트라 알고리즘은 출발 노드에서 다른 모든 노드까지의 최단 거리를 구합니다. 아직 확정하지 않은 노드 중 거리가 가장 짧은 노드를 확정하고, 그 노드를 거쳐 가면 더 가까워지는 이웃의 거리를 고칩니다. 이 두 동작을 모든 노드가 확정될 때까지 반복합니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">가중치 그래프에서 다익스트라 알고리즘이 거리를 확정하고 갱신하는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 그래프에서 출발 노드를 누르세요 (지금은 <span id="djS">A</span>)</p>
+    <p class="sub" style="margin-top:4px">2. 한 단계씩 진행하세요</p>
+    <div class="row">
+      <button class="bt go" id="djStep">다음 단계</button><button class="bt" id="djAll">끝까지 재생</button><button class="bt" id="djReset">처음으로</button>
+    </div>
+    <svg id="djSvg" width="100%" viewBox="0 0 680 360" role="img" aria-label="가중치가 있는 노드 6개짜리 그래프"></svg>
+    <div class="leg"><span><i style="background:var(--surface-1);border:1px solid var(--border-strong)"></i>미확정</span><span><i style="background:#185FA5"></i>이번에 확정</span><span><i style="background:#5DCAA5"></i>확정됨</span><span><i style="background:#E8A317;border-radius:2px;height:4px;vertical-align:3px"></i>이번에 거리 확인한 간선</span><span><i style="background:#85B7EB;border-radius:2px;height:4px;vertical-align:3px"></i>확정된 최단 경로</span><span><i style="background:#185FA5;border-radius:2px;height:4px;vertical-align:3px"></i>누른 노드까지의 경로</span></div>
+    <p class="msg" id="djMsg" aria-live="polite"></p>
+    <div class="tw"><table id="djT"></table></div>
+  </div>
+  <p class="hint">표에서 노란색 칸은 이번 단계에서 거리가 줄어든 노드입니다. 모든 단계가 끝난 뒤 그래프의 노드를 누르면 출발 노드에서 그 노드까지의 최단 경로가 표시됩니다.</p>
+
+  <h2>왜 가장 가까운 노드부터 확정해도 될까요</h2>
+  <p>미확정 노드 중 거리가 가장 짧은 노드를 u라고 하겠습니다. u로 가는 더 짧은 길이 있다면 그 길은 다른 미확정 노드를 거쳐야 하는데, 그 노드까지의 거리부터 이미 u보다 깁니다. 간선 가중치가 음수가 아니라면 거기서 더 가도 거리가 줄지 않으므로, u의 거리는 더 짧아질 수 없습니다. 그래서 다익스트라는 가중치가 음수인 간선이 있는 그래프에서는 쓸 수 없고, 그때는 벨만-포드 알고리즘을 씁니다.</p>
+
+  <h2>실행 시간</h2>
+  <p>매번 가장 가까운 노드를 찾는 데 우선순위 큐(힙)를 쓰면 O((V + E) log V) 시간이 걸립니다. 지도 앱의 길 찾기, 네트워크 라우팅 프로토콜 OSPF가 이 알고리즘을 바탕으로 합니다.</p>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const P={A:[80,180],B:[250,70],C:[250,290],D:[430,70],E:[430,290],F:[600,180]};
+const E=[['A','B',4],['A','C',2],['B','C',1],['B','D',5],['C','D',8],['C','E',10],['D','E',2],['D','F',6],['E','F',3]];
+const N=Object.keys(P),NB={};N.forEach(n=>NB[n]=[]);E.forEach(([a,b,w])=>{NB[a].push([b,w]);NB[b].push([a,w]);});
+const eul=n=>n+(n==='F'?'을':'를');
+const fmt=d=>d===Infinity?'∞':d;
+let start='A',S=[],k=0,timer=null,showPath=null;
+function build(){
+  const dist={},prev={},done=new Set();N.forEach(n=>{dist[n]=Infinity;prev[n]=null;});dist[start]=0;
+  S=[{dist:{...dist},prev:{...prev},done:new Set(),cur:null,chk:[],up:[],msg:`출발 노드 ${start}의 거리를 0으로, 나머지는 모두 ∞로 둡니다.`}];
+  while(done.size<N.length){
+    let u=null;N.forEach(n=>{if(!done.has(n)&&dist[n]<Infinity&&(u===null||dist[n]<dist[u]))u=n;});if(u===null)break;
+    done.add(u);const chk=[],up=[],keep=[];
+    NB[u].forEach(([v,w])=>{if(done.has(v))return;chk.push([u,v]);const nd=dist[u]+w;
+      if(nd<dist[v]){up.push(`${v} ${fmt(dist[v])} → ${nd}`);dist[v]=nd;prev[v]=u;}else keep.push(`${v}(${dist[u]} + ${w} = ${nd} ≥ ${dist[v]})`);});
+    let msg=`미확정 노드 중 거리가 가장 짧은 ${u}(${dist[u]})${u==='F'?'을':'를'} 확정합니다.`;
+    if(up.length)msg+=` ${u}를 거치면 더 가까워지는 노드: ${up.join(', ')}.`.replace(`${u}를 거치면`,`${eul(u)} 거치면`);
+    if(keep.length)msg+=` 그대로인 노드: ${keep.join(', ')}.`;
+    if(!chk.length)msg+=' 확인할 미확정 이웃이 없습니다.';
+    S.push({dist:{...dist},prev:{...prev},done:new Set(done),cur:u,chk,up:up.map(x=>x[0]),msg});
+  }
+  S[S.length-1].msg+=' 모든 노드가 확정되었습니다. 노드를 누르면 최단 경로가 보입니다.';
+}
+function pathTo(t,s){const p=[];let x=t;while(x){p.unshift(x);x=s.prev[x];}return p;}
+function draw(){
+  const s=S[k],fin=k===S.length-1;let h='';
+  const onPath=new Set();if(fin&&showPath){const p=pathTo(showPath,s);for(let i=1;i<p.length;i++)onPath.add(p[i-1]+p[i]).add(p[i]+p[i-1]);}
+  E.forEach(([a,b,w])=>{
+    const tree=s.prev[b]===a||s.prev[a]===b,chk=s.chk.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a)),pth=onPath.has(a+b);
+    let col='var(--border-strong)',sw=1.5;
+    if(tree&&(s.done.has(a)&&s.done.has(b))){col='#85B7EB';sw=3;}
+    if(chk){col='#E8A317';sw=4;}
+    if(pth){col='#185FA5';sw=5;}
+    h+=`<line x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[b][0]}" y2="${P[b][1]}" stroke="${col}" stroke-width="${sw}"/>`;
+    const mx=(P[a][0]+P[b][0])/2,my=(P[a][1]+P[b][1])/2;
+    h+=`<rect x="${mx-13}" y="${my-11}" width="26" height="22" rx="4" fill="var(--panel,#fff)" stroke="var(--border)"/><text x="${mx}" y="${my+5}" text-anchor="middle" font-size="13" font-family="var(--font-mono)" fill="var(--text-primary)">${w}</text>`;});
+  N.forEach(n=>{const [x,y]=P[n];let f='var(--surface-1)',st='var(--border-strong)',tc='var(--text-primary)';
+    if(s.done.has(n)){f='#5DCAA5';st='#0F6E56';tc='#04342C';}
+    if(s.cur===n){f='#185FA5';st='#0C447C';tc='#fff';}
+    h+=`<g data-n="${n}"><circle cx="${x}" cy="${y}" r="25" fill="${f}" stroke="${st}" stroke-width="${n===start?3.5:1.5}"/><text x="${x}" y="${y+6}" text-anchor="middle" font-size="17" font-weight="600" fill="${tc}">${n}</text></g>`;
+    const ly=y<180?y-34:y+45;
+    h+=`<text x="${x}" y="${ly}" text-anchor="middle" font-size="13" fill="${s.up.includes(n)?'#BA7517':'var(--text-secondary)'}" font-weight="${s.up.includes(n)?600:400}">거리 ${fmt(s.dist[n])}</text>`;});
+  $('djSvg').innerHTML=h;
+  $('djSvg').querySelectorAll('[data-n]').forEach(g=>g.onclick=()=>{const n=g.dataset.n;
+    if(k===0){start=n;$('djS').textContent=n;build();showPath=null;draw();return;}
+    if(fin){showPath=n;const p=pathTo(n,S[k]);draw();$('djMsg').className='msg ok';$('djMsg').textContent=n===start?`${n}${n==='F'?'은':'는'} 출발 노드입니다.`:`${start}에서 ${n}까지 최단 경로: ${p.join(' → ')}, 거리 ${S[k].dist[n]}`;return;}
+    $('djMsg').textContent='출발 노드는 탐색을 시작하기 전에만 바꿀 수 있습니다.';});
+  let t='<tr><th></th>'+N.map(n=>`<th>${n}</th>`).join('')+'</tr>';
+  t+='<tr><td class="lb">거리</td>'+N.map(n=>`<td class="${s.up.includes(n)?'up':s.done.has(n)?'dn':''}">${fmt(s.dist[n])}</td>`).join('')+'</tr>';
+  t+='<tr><td class="lb">직전 노드</td>'+N.map(n=>`<td>${s.prev[n]??'-'}</td>`).join('')+'</tr>';
+  t+='<tr><td class="lb">확정</td>'+N.map(n=>`<td class="${s.done.has(n)?'dn':''}">${s.done.has(n)?'예':''}</td>`).join('')+'</tr>';
+  $('djT').innerHTML=t;
+  if(!(fin&&showPath)){$('djMsg').className='msg';$('djMsg').textContent=s.msg;}
+  $('djStep').disabled=fin;
+}
+function step(){if(k<S.length-1){k++;showPath=null;draw();}if(k>=S.length-1)stop();}
+function stop(){clearInterval(timer);timer=null;$('djAll').textContent='끝까지 재생';}
+$('djStep').onclick=()=>{stop();step();};
+$('djAll').onclick=()=>{if(timer){stop();return;}if(k>=S.length-1){k=0;draw();}timer=setInterval(step,1400);$('djAll').textContent='정지';};
+$('djReset').onclick=()=>{stop();k=0;showPath=null;draw();};
+build();draw();
+})();
+</script>

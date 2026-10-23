@@ -1,77 +1,8 @@
+@import url('metal-banner.css');
 .page-shell--home { --accent: var(--link); --orange: #93550c; }
 :root:not([data-theme="dark"]) .section-home { --page-bg: #d6d8dc; --line: #bfc4cc; --line-strong: #a6b0be; }
 [data-theme="dark"] .page-shell--home { --orange: #ffb75b; }
 .home-intro { margin-bottom: 28px; }
-.home-program-banner {
-  --mx: 50%;
-  --my: 50%;
-  --foil-x: 50%;
-  --foil-y: 50%;
-  --light: 0;
-  --banner-ink: #223043;
-  --banner-muted: #445165;
-  --silver-start: #bcc7d5;
-  --silver-mid: #dce3ec;
-  --silver-shadow: #a8b4c5;
-  --silver-end: #d0d8e3;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin: 32px 0 40px;
-  padding: 29px 32px;
-  isolation: isolate;
-  overflow: hidden;
-  border: 2px solid transparent;
-  border-radius: 14px;
-  background:
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, .14) 0 .5px, rgba(36, 55, 79, .035) .5px 1px, transparent 1px 3px) padding-box,
-    linear-gradient(118deg, var(--silver-start) 0%, var(--silver-mid) 24%, var(--silver-end) 38%, var(--silver-shadow) 53%, var(--silver-mid) 69%, var(--silver-end) 83%, var(--silver-start) 100%) padding-box,
-    linear-gradient(130deg, #f5f8ff, #94a3b6 22%, #647389 39%, #f4f6fb 56%, #8e9eb4 78%, #dce4ef) border-box;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), inset 0 -1px 0 rgba(29, 44, 63, .15), 0 8px 18px -14px rgba(12, 28, 50, .5);
-  color: var(--banner-ink);
-  text-decoration: none;
-}
-.home-program-banner::before {
-  content: "";
-  position: absolute;
-  inset: 6px;
-  border: 1px solid rgba(255, 255, 255, .6);
-  border-radius: 7px;
-  box-shadow: 0 0 0 1px rgba(64, 81, 107, .13), inset 0 1px 2px rgba(255, 255, 255, .35);
-  pointer-events: none;
-}
-.home-program-banner:hover {
-  color: var(--banner-ink);
-}
-.home-program-banner > span { position: relative; z-index: 2; }
-.home-program-banner::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    radial-gradient(ellipse 150px 100px at var(--mx) var(--my), rgba(222, 235, 250, .36) 0%, rgba(206, 222, 244, .16) 35%, transparent 80%),
-    repeating-linear-gradient(115deg, #ff4597 0%, #ffbb43 12%, #eaff65 24%, #44f0b2 36%, #42d8ff 48%, #8d78ff 60%, #f16bea 72%, #ff4597 84%),
-    linear-gradient(115deg, transparent 25%, rgba(211, 226, 246, .35) 48%, transparent 70%);
-  background-size: 100% 100%, 240% 240%, 180% 180%;
-  background-position: center, var(--foil-x) var(--foil-y), var(--mx) var(--my);
-  -webkit-mask-image: radial-gradient(ellipse 340px 170px at var(--mx) var(--my), #000 12%, rgba(0, 0, 0, .88) 38%, transparent 100%);
-  mask-image: radial-gradient(ellipse 340px 170px at var(--mx) var(--my), #000 12%, rgba(0, 0, 0, .88) 38%, transparent 100%);
-  opacity: min(1, calc(var(--light) * 1.35));
-  pointer-events: none;
-}
-[data-theme="dark"] .home-program-banner {
-  --silver-start: #8e9db0;
-  --silver-mid: #c4cedb;
-  --silver-shadow: #8d9caf;
-  --silver-end: #b7c2d0;
-}
-.home-program-banner__text { display: flex; flex-direction: column; gap: 5px; }
-.home-program-banner strong { color: var(--banner-ink); font-size: 23px; }
-.home-program-banner__description { color: var(--banner-muted); font-size: 14px; }
-.home-program-banner__action { flex-shrink: 0; font-size: 14px; font-weight: 600; }
 .home-skills { margin-bottom: 44px; }
 .home-skills h2 { margin-bottom: 6px; }
 .skills-reference { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
@@ -535,7 +466,6 @@
   --grain-opacity: .9;
 }
 @media (max-width: 520px) {
-  .home-program-banner { flex-direction: column; align-items: flex-start; gap: 14px; padding: 22px; }
   .skills-list > div { grid-template-columns: 1fr; gap: 2px; }
 }
 

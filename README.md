@@ -152,6 +152,10 @@ CMS의 **배너 스타일**에서 고르거나, `_programs/` 파일의 YAML 머�
 | `gold-secret` | 골드 | 두 겹의 금박 입자 |
 | `graphite-shiny` | 흑연·은색 | 은색 별과 금속 반사 |
 
+`/admin/program-styles/`의 **스타일의 비결**은 금속 명패, 회전 큐브와 반짝임, 홀로그램 10종을 별도 섹션으로 보여줍니다. 명패와 큐브는 홈·프로그램 목록과 같은 구성 요소를 사용하므로 실제 적용된 효과를 그대로 비교할 수 있습니다. 반짝임은 마우스를 올린 동안에만 나타나며, 기기의 동작 줄이기 설정을 따릅니다.
+
+은색 명패는 `_includes/metal-banner.html`과 `assets/css/metal-banner.css`, 표면 질감은 `assets/textures/brushed-steel.png`에서 관리합니다. 랜덤 반짝임은 `assets/js/hover-sparkles.js`와 `assets/css/hover-sparkles.css`, 스타일 미리보기의 배치는 `assets/css/program-style-gallery.css`에서 수정합니다.
+
 스타일 목록은 `_data/program_styles.yml`, 배너 구조는 `_includes/program-banner.html`, 질감과 색은 `assets/css/program-foils.css`에서 관리합니다. CMS 선택 항목을 추가하거나 바꿀 때는 `.pages.yml`의 `banner_style`도 맞춰 수정합니다.
 
 #### Market Peek 소개와 배포

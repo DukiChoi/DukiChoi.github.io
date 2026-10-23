@@ -1,0 +1,125 @@
+---
+title: 해시 테이블
+description: 키를 숫자로 바꿔 바로 칸을 찾아가는 원리와, 두 키가 같은 칸을 원할 때 생기는 충돌을 처리하는 방법을 봅니다.
+permalink: /theory/hash-table/
+category: algorithms
+order: 3
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.lx .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:50px;max-width:none}
+.lx .msg.bad{color:#E24B4A}.lx .msg.ok{color:#1D9E75}
+.lx .err{font-size:13px;color:#E24B4A;margin:6px 0 0;min-height:18px}
+.lx input[type=text]{width:120px;font-family:var(--font-mono);font-size:15px;padding:5px 8px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.ht .calc{margin-top:12px;padding:10px 12px;border-radius:8px;background:var(--surface-1);font-family:var(--font-mono);font-size:14px;color:var(--text-primary);text-align:center;min-height:42px;overflow-x:auto;white-space:nowrap}
+.ht .tbl{margin-top:12px;display:flex;flex-direction:column;gap:5px}
+.ht .slot{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;align-items:center}
+.ht .ix{font-family:var(--font-mono);font-size:14px;color:var(--text-secondary);text-align:right;padding-right:4px}
+.ht .cells{display:flex;align-items:center;gap:6px;min-height:38px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;transition:background .2s,border-color .2s;overflow-x:auto}
+.ht .slot.cur .cells{background:#FAEEDA;border-color:#E8A317}
+.ht .slot.hit .cells{background:#E1F5EE;border-color:#1D9E75}
+.ht .k{font-family:var(--font-mono);font-size:14px;padding:4px 10px;border-radius:5px;background:#185FA5;color:#fff;white-space:nowrap}
+.ht .k.new{background:#1D9E75}.ht .k.look{box-shadow:0 0 0 2px #E8A317}
+.ht .k small{opacity:.8;margin-left:4px;font-size:11px}
+.ht .ar{color:var(--text-muted);font-size:13px}
+.ht .empty{font-size:13px;color:var(--text-muted)}
+.ht .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.ht .stats div{background:var(--surface-1);border-radius:8px;padding:8px 10px}
+.ht .stats span{display:block;font-size:12px;color:var(--text-secondary)}
+.ht .stats b{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--text-primary)}
+</style>
+<div class="circuit-lesson lx ht">
+<p class="lede">해시 테이블은 키를 해시 함수로 숫자로 바꾼 뒤, 그 숫자를 칸 번호로 써서 값을 바로 꺼냅니다. 처음부터 하나씩 훑지 않으므로 키가 아무리 많아도 거의 한 번에 찾습니다. 다만 서로 다른 키가 같은 칸 번호를 받는 충돌은 피할 수 없습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">칸이 7개인 해시 테이블에 키를 넣고 찾으며 충돌 처리를 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 충돌 처리 방법을 고르세요</p>
+    <div class="row">
+      <button class="bt sel" data-m="chain">체이닝 (같은 칸에 줄줄이 연결)</button>
+      <button class="bt" data-m="probe">선형 탐사 (옆 빈칸으로 이동)</button>
+    </div>
+    <p class="sub">2. 키를 넣거나 찾으세요</p>
+    <div class="row">
+      <label class="lbl">키 <input type="text" id="htK" value="cat" maxlength="8"></label>
+      <button class="bt go" id="htIns">넣기</button><button class="bt go" id="htFind">찾기</button>
+      <button class="bt" id="htDemo">충돌 예시 넣기</button><button class="bt" id="htClr">비우기</button>
+    </div>
+    <p class="err" id="htErr"></p>
+    <div class="calc" id="htCalc">키의 글자 코드를 모두 더한 뒤 7로 나눈 나머지가 칸 번호입니다.</div>
+    <div class="tbl" id="htTbl"></div>
+    <p class="msg" id="htMsg" aria-live="polite"></p>
+    <div class="stats"><div><span>저장된 키</span><b id="htN">0</b></div><div><span>부하율 (키 수 ÷ 칸 수)</span><b id="htA">0.00</b></div><div><span>방금 확인한 칸 수</span><b id="htP">0</b></div></div>
+  </div>
+  <p class="hint">cat, act, tac처럼 글자 구성이 같은 키는 글자 코드의 합이 같아서 항상 같은 칸 번호를 받습니다. [충돌 예시 넣기]를 누르면 이런 키 다섯 개를 차례로 넣습니다.</p>
+
+  <h2>해시 함수</h2>
+  <p>이 예제의 해시 함수는 키의 글자 코드를 모두 더해 칸 수로 나눈 나머지를 씁니다. 이해하기는 쉽지만 글자 순서를 무시하기 때문에 충돌이 잦습니다. 실제로는 글자 위치마다 다른 수를 곱하는 등의 방법으로 키를 칸 전체에 고르게 흩어 놓는 해시 함수를 씁니다.</p>
+
+  <h2>충돌을 처리하는 두 가지 방법</h2>
+  <p><strong>체이닝</strong>은 칸마다 연결 리스트를 두고, 같은 칸 번호를 받은 키를 줄줄이 이어 붙입니다. 칸이 모자라도 계속 넣을 수 있지만, 한 칸에 키가 몰리면 그 줄을 처음부터 훑어야 합니다.</p>
+  <p><strong>선형 탐사</strong>는 원하는 칸이 차 있으면 바로 다음 칸, 그다음 칸을 차례로 확인해 첫 빈칸에 넣습니다. 찾을 때도 같은 순서로 따라가다가 빈칸을 만나면 "없다"고 판단합니다. 키가 한 구역에 뭉치기 쉬워서, 부하율이 0.7을 넘기 전에 테이블을 키워 다시 배치하는 것이 일반적입니다.</p>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const M=7,sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let mode='chain',T,busy=false,cur=-1,hit=-1,fresh=null,look=null,probes=0;
+function say(t,c){const m=$('htMsg');m.textContent=t;m.className='msg'+(c?' '+c:'');}
+function reset(){T=mode==='chain'?Array.from({length:M},()=>[]):Array(M).fill(null);cur=hit=-1;fresh=look=null;probes=0;render();}
+const count=()=>mode==='chain'?T.reduce((s,c)=>s+c.length,0):T.filter(x=>x!==null).length;
+function hash(k){const codes=[...k].map(c=>c.charCodeAt(0)),sum=codes.reduce((a,b)=>a+b,0);
+  $('htCalc').textContent=[...k].map((c,i)=>`${c}(${codes[i]})`).join(' + ')+` = ${sum},  ${sum} % ${M} = ${sum%M}`;return sum%M;}
+function render(){
+  $('htTbl').innerHTML=T.map((c,i)=>{
+    let inner;
+    if(mode==='chain')inner=c.length?c.map((k,j)=>(j?'<span class="ar">→</span>':'')+`<span class="k${k===fresh?' new':''}${k===look?' look':''}">${k}</span>`).join(''):'<span class="empty">비어 있음</span>';
+    else inner=c!==null?`<span class="k${c.k===fresh?' new':''}${c.k===look?' look':''}">${c.k}<small>원래 ${c.h}번</small></span>`:'<span class="empty">비어 있음</span>';
+    return `<div class="slot${i===hit?' hit':i===cur?' cur':''}"><span class="ix">${i}번</span><div class="cells">${inner}</div></div>`;}).join('');
+  const n=count();$('htN').textContent=n;$('htA').textContent=(n/M).toFixed(2);$('htP').textContent=probes;
+}
+function getK(){const k=$('htK').value.trim();if(!/^[A-Za-z0-9]{1,8}$/.test(k)){$('htErr').textContent='영문자나 숫자로 1~8글자를 입력하세요.';return null;}$('htErr').textContent='';return k;}
+async function insert(k){
+  const h=hash(k);cur=h;hit=-1;fresh=null;look=null;probes=1;render();
+  if(mode==='chain'){
+    const c=T[h];say(`"${k}" 키의 칸 번호는 ${h}번입니다. ${c.length?`이미 키 ${c.length}개가 있어 충돌입니다. 줄을 따라가며 같은 키가 있는지 확인합니다.`:'비어 있습니다.'}`);await sleep(900);
+    for(const x of c){look=x;render();if(x===k){hit=h;render();say(`"${k}" 키는 이미 있어서 다시 넣지 않습니다.`,'bad');return;}await sleep(450);}
+    look=null;c.push(k);fresh=k;hit=h;render();say(c.length>1?`${h}번 칸의 줄 맨 끝에 "${k}" 키를 이어 붙였습니다.`:`${h}번 칸에 "${k}" 키를 넣었습니다.`,'ok');return;
+  }
+  for(let p=0;p<M;p++){
+    const i=(h+p)%M;cur=i;probes=p+1;render();const c=T[i];
+    if(c===null){T[i]={k,h};fresh=k;hit=i;render();say(p?`${i}번 칸이 비어 있어 "${k}" 키를 넣었습니다. 원래 칸 ${h}번에서 ${p}칸 밀려났습니다.`:`${i}번 칸이 비어 있어 "${k}" 키를 바로 넣었습니다.`,'ok');return;}
+    if(c.k===k){hit=i;render();say(`"${k}" 키는 이미 있어서 다시 넣지 않습니다.`,'bad');return;}
+    say(p?`${i}번 칸에도 "${c.k}" 키가 있습니다. 다음 칸으로 갑니다.`:`"${k}" 키의 칸 번호는 ${h}번인데 이미 "${c.k}" 키가 차지하고 있습니다. 충돌이므로 다음 칸을 확인합니다.`);await sleep(900);
+  }
+  cur=-1;render();say('모든 칸이 차서 더 넣을 수 없습니다. 실제로는 이 전에 테이블을 키웁니다.','bad');
+}
+async function find(k){
+  const h=hash(k);cur=h;hit=-1;fresh=null;look=null;probes=1;render();
+  if(mode==='chain'){
+    say(`"${k}" 키의 칸 번호는 ${h}번입니다. 이 칸의 줄만 확인하면 됩니다.`);await sleep(900);let n=0;
+    for(const x of T[h]){n++;look=x;render();await sleep(500);if(x===k){hit=h;render();say(`${h}번 칸에서 키 ${n}개를 확인해 "${k}" 키를 찾았습니다.`,'ok');return;}}
+    look=null;render();say(`${h}번 칸의 줄 끝까지 확인했지만 "${k}" 키는 없습니다.`,'bad');return;
+  }
+  for(let p=0;p<M;p++){
+    const i=(h+p)%M;cur=i;probes=p+1;render();const c=T[i];await sleep(700);
+    if(c===null){say(`${i}번 칸이 비어 있습니다. "${k}" 키가 있었다면 여기까지 오기 전에 나왔어야 하므로, 없다고 판단합니다.`,'bad');return;}
+    if(c.k===k){hit=i;render();say(`칸 ${p+1}개를 확인해 ${i}번 칸에서 "${k}" 키를 찾았습니다.`,'ok');return;}
+  }
+  say(`모든 칸을 확인했지만 "${k}" 키는 없습니다.`,'bad');
+}
+function lock(b){['htIns','htFind','htDemo','htClr'].forEach(id=>$(id).disabled=b);document.querySelectorAll('.ht [data-m]').forEach(x=>x.disabled=b);}
+async function run(fn){if(busy)return;busy=true;lock(true);try{await fn();}finally{busy=false;lock(false);}}
+$('htIns').onclick=()=>{const k=getK();if(k)run(()=>insert(k));};
+$('htFind').onclick=()=>{const k=getK();if(k)run(()=>find(k));};
+$('htDemo').onclick=()=>run(async()=>{for(const k of ['cat','dog','act','god','tac']){$('htK').value=k;await insert(k);await sleep(700);}});
+$('htClr').onclick=()=>{reset();$('htCalc').textContent='키의 글자 코드를 모두 더한 뒤 7로 나눈 나머지가 칸 번호입니다.';say('테이블을 비웠습니다.');};
+$('htK').oninput=()=>{$('htErr').textContent='';};
+document.querySelectorAll('.ht [data-m]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.ht [data-m]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');mode=b.dataset.m;reset();say(mode==='chain'?'체이닝: 같은 칸 번호를 받은 키를 그 칸에 줄줄이 연결합니다.':'선형 탐사: 원하는 칸이 차 있으면 다음 칸으로 넘어가 빈칸을 찾습니다.');});
+reset();say('키를 입력하고 [넣기]를 누르세요.');
+})();
+</script>

@@ -1,0 +1,122 @@
+---
+title: 이진 탐색 트리
+description: 값을 넣고 찾고 지우면서 트리 모양이 바뀌는 과정과, 한쪽으로 치우친 트리가 느린 이유를 봅니다.
+permalink: /theory/bst/
+category: algorithms
+order: 2
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.lx .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:50px;max-width:none}
+.lx .msg.bad{color:#E24B4A}.lx .msg.ok{color:#1D9E75}
+.lx .err{font-size:13px;color:#E24B4A;margin:6px 0 0;min-height:18px}
+.lx input[type=number]{width:80px;font:inherit;font-size:15px;padding:5px 8px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary);text-align:center}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.bst .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
+.bst .stats div{background:var(--surface-1);border-radius:8px;padding:8px 10px}
+.bst .stats span{display:block;font-size:12px;color:var(--text-secondary)}
+.bst .stats b{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--text-primary)}
+</style>
+<div class="circuit-lesson lx bst">
+<p class="lede">이진 탐색 트리는 모든 노드에서 왼쪽에는 더 작은 값, 오른쪽에는 더 큰 값만 오도록 정리한 트리입니다. 값을 찾을 때 노드마다 "작으면 왼쪽, 크면 오른쪽"만 고르면 되므로, 트리가 고르게 퍼져 있으면 아주 빠르게 찾습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">이진 탐색 트리에 값을 넣고 찾고 지우는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 예시 트리를 만들거나 비우세요</p>
+    <div class="row">
+      <button class="bt" id="bsRand">무작위 값 7개로 만들기</button>
+      <button class="bt" id="bsSort">정렬된 값 7개로 만들기</button>
+      <button class="bt" id="bsClr">트리 비우기</button>
+    </div>
+    <p class="sub">2. 값을 입력하고 동작을 고르세요</p>
+    <div class="row">
+      <label class="lbl">값 (1~99) <input type="number" id="bsV" min="1" max="99" value="42"></label>
+      <button class="bt go" id="bsIns">넣기</button><button class="bt go" id="bsFind">찾기</button><button class="bt go" id="bsDel">지우기</button>
+    </div>
+    <p class="err" id="bsErr"></p>
+    <svg id="bsSvg" width="100%" viewBox="0 0 680 320" role="img" aria-label="이진 탐색 트리"></svg>
+    <p class="msg" id="bsMsg" aria-live="polite"></p>
+    <div class="stats"><div><span>노드 수</span><b id="bsN">0</b></div><div><span>높이 (가장 긴 경로의 노드 수)</span><b id="bsH">0</b></div><div><span>찾을 때 최대 비교 횟수</span><b id="bsW">0</b></div></div>
+  </div>
+  <p class="hint">넣기와 찾기를 누르면 루트부터 비교하며 내려가는 길이 주황색으로 표시됩니다. [정렬된 값 7개로 만들기]를 누르면 트리가 한쪽으로 기울어지는 모습을 볼 수 있습니다.</p>
+
+  <h2>찾기, 넣기, 지우기</h2>
+  <p>찾을 때는 루트에서 시작해 찾는 값이 노드보다 작으면 왼쪽, 크면 오른쪽 자식으로 내려갑니다. 넣을 때도 같은 길을 따라 내려가다가 빈자리를 만나면 그곳에 새 노드를 붙입니다.</p>
+  <p>지울 때는 자식 수에 따라 방법이 다릅니다. 자식이 없으면 그냥 떼어 내고, 자식이 하나면 그 자식을 지운 자리로 끌어올립니다. 자식이 둘이면 오른쪽 서브트리에서 가장 작은 값을 가져와 지운 자리를 채웁니다. 이 값은 지운 값 바로 다음으로 큰 값이라서 크기 순서가 깨지지 않습니다.</p>
+
+  <h2>트리 모양이 속도를 정합니다</h2>
+  <p>찾는 데 드는 비교 횟수는 트리의 높이와 같습니다. 노드가 n개일 때 고르게 퍼진 트리의 높이는 약 log₂n이지만, 값을 크기 순서대로 넣으면 노드가 한쪽으로만 이어져 높이가 n이 됩니다. 사실상 연결 리스트가 되는 셈입니다. AVL 트리나 레드-블랙 트리는 넣고 지울 때마다 노드를 회전시켜 높이를 log n 수준으로 유지합니다.</p>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const J=(n,a,b)=>n+('2459'.includes(String(n%10))?b:a);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let root=null,busy=false,path=[],mark={};
+function say(t,c){const m=$('bsMsg');m.textContent=t;m.className='msg'+(c?' '+c:'');}
+const height=n=>n?1+Math.max(height(n.l),height(n.r)):0;
+const count=n=>n?1+count(n.l)+count(n.r):0;
+function insRaw(v){if(!root){root={v,l:null,r:null};return;}let n=root;while(true){if(v===n.v)return;const d=v<n.v?'l':'r';if(!n[d]){n[d]={v,l:null,r:null};return;}n=n[d];}}
+function draw(){
+  const list=[];(function walk(n,d){if(!n)return;walk(n.l,d+1);list.push({n,d});walk(n.r,d+1);})(root,0);
+  const cnt=list.length,H=height(root),gap=Math.min(70,280/Math.max(1,H));
+  const pos=new Map();list.forEach((x,i)=>pos.set(x.n,{x:(i+1)*680/(cnt+1),y:30+x.d*gap}));
+  let h='';
+  list.forEach(({n})=>{const p=pos.get(n);['l','r'].forEach(d=>{if(n[d]){const q=pos.get(n[d]);const on=path.includes(n)&&path.includes(n[d]);h+=`<line x1="${p.x}" y1="${p.y}" x2="${q.x}" y2="${q.y}" stroke="${on?'#E8A317':'var(--border-strong)'}" stroke-width="${on?3:1.5}"/>`;}});});
+  list.forEach(({n})=>{const p=pos.get(n);let f='var(--surface-1)',s='var(--border-strong)',tc='var(--text-primary)';
+    if(path.includes(n)){f='#FAC775';s='#BA7517';tc='#412402';}
+    if(mark.hit===n){f='#5DCAA5';s='#0F6E56';tc='#04342C';}
+    if(mark.del===n){f='#F09595';s='#A32D2D';tc='#501313';}
+    if(mark.cur===n){s='#185FA5';}
+    h+=`<circle cx="${p.x}" cy="${p.y}" r="17" fill="${f}" stroke="${s}" stroke-width="${mark.cur===n?3:1.5}"/><text x="${p.x}" y="${p.y+5}" text-anchor="middle" font-size="14" font-weight="500" font-family="var(--font-mono)" fill="${tc}">${n.v}</text>`;});
+  if(!root)h=`<text x="340" y="150" text-anchor="middle" font-size="15" fill="var(--text-muted)">트리가 비어 있습니다. 값을 넣거나 예시 트리를 만드세요.</text>`;
+  $('bsSvg').innerHTML=h;
+  $('bsN').textContent=cnt;$('bsH').textContent=H;$('bsW').textContent=H;
+}
+function getV(){const v=+$('bsV').value;if(!Number.isInteger(v)||v<1||v>99){$('bsErr').textContent='1부터 99 사이의 정수를 입력하세요.';return null;}$('bsErr').textContent='';return v;}
+async function walk(v,act){
+  path=[];mark={};let n=root,par=null,cmp=0;
+  while(n){path.push(n);mark.cur=n;cmp++;draw();
+    if(v===n.v){say(`${J(v,'은','는')} ${J(n.v,'과','와')} 같습니다.`);await sleep(650);return {n,par,cmp};}
+    const left=v<n.v;say(`${J(v,'은','는')} ${n.v}보다 ${left?'작으므로 왼쪽':'크므로 오른쪽'}으로 내려갑니다.`);await sleep(650);
+    par=n;n=left?n.l:n.r;}
+  return {n:null,par,cmp};
+}
+function minNode(n){while(n.l)n=n.l;return n;}
+function removeNode(rt,v){if(!rt)return null;if(v<rt.v)rt.l=removeNode(rt.l,v);else if(v>rt.v)rt.r=removeNode(rt.r,v);else{if(!rt.l)return rt.r;if(!rt.r)return rt.l;const m=minNode(rt.r);rt.v=m.v;rt.r=removeNode(rt.r,m.v);}return rt;}
+async function run(fn){if(busy)return;const v=getV();if(v===null)return;busy=true;lock(true);try{await fn(v);}finally{busy=false;lock(false);}}
+function lock(b){['bsIns','bsFind','bsDel','bsRand','bsSort','bsClr'].forEach(id=>$(id).disabled=b);}
+$('bsIns').onclick=()=>run(async v=>{
+  if(count(root)>=15){say('노드는 15개까지만 넣을 수 있습니다. 트리를 비우거나 값을 지운 뒤 넣으세요.','bad');return;}
+  if(!root){root={v,l:null,r:null};path=[root];mark={hit:root};draw();say(`트리가 비어 있으므로 ${J(v,'이','가')} 루트가 됩니다.`,'ok');return;}
+  const r=await walk(v);
+  if(r.n){mark={hit:r.n};draw();say(`${J(v,'은','는')} 이미 트리에 있어서 넣지 않습니다.`,'bad');return;}
+  const nn={v,l:null,r:null};if(v<r.par.v)r.par.l=nn;else r.par.r=nn;path.push(nn);mark={hit:nn};draw();
+  say(`빈자리를 만나 ${r.par.v}의 ${v<r.par.v?'왼쪽':'오른쪽'} 자식으로 ${J(v,'을','를')} 붙였습니다. 비교 ${r.cmp}번.`,'ok');
+});
+$('bsFind').onclick=()=>run(async v=>{
+  if(!root){say('트리가 비어 있습니다.','bad');return;}
+  const r=await walk(v);
+  if(r.n){mark={hit:r.n};draw();say(`${J(v,'을','를')} 비교 ${r.cmp}번 만에 찾았습니다.`,'ok');}
+  else{mark={};draw();say(`${J(v,'은','는')} 트리에 없습니다. 내려갈 자식이 없어 비교 ${r.cmp}번 만에 멈췄습니다.`,'bad');}
+});
+$('bsDel').onclick=()=>run(async v=>{
+  if(!root){say('트리가 비어 있습니다.','bad');return;}
+  const r=await walk(v);
+  if(!r.n){mark={};draw();say(`${J(v,'은','는')} 트리에 없어서 지울 수 없습니다.`,'bad');return;}
+  const n=r.n;mark={del:n};draw();
+  if(n.l&&n.r){const m=minNode(n.r);say(`${J(v,'은','는')} 자식이 둘입니다. 오른쪽 서브트리에서 가장 작은 값 ${J(m.v,'을','를')} 가져와 이 자리를 채웁니다.`);}
+  else if(n.l||n.r){say(`${J(v,'은','는')} 자식이 하나입니다. 그 자식이 지운 자리로 올라옵니다.`);}
+  else say(`${J(v,'은','는')} 자식이 없어서 그대로 떼어 냅니다.`);
+  await sleep(1300);root=removeNode(root,v);path=[];mark={};draw();
+});
+$('bsRand').onclick=()=>{if(busy)return;root=null;const s=new Set();while(s.size<7)s.add(1+Math.floor(Math.random()*99));[...s].forEach(insRaw);path=[];mark={};draw();say('무작위 순서로 값 7개를 넣었습니다. 트리가 비교적 고르게 퍼집니다.');};
+$('bsSort').onclick=()=>{if(busy)return;root=null;[10,20,30,40,50,60,70].forEach(insRaw);path=[];mark={};draw();say('10, 20, … 70을 크기 순서대로 넣었습니다. 모든 노드가 오른쪽으로만 이어져서, 70을 찾으려면 7번 비교해야 합니다.','bad');};
+$('bsClr').onclick=()=>{if(busy)return;root=null;path=[];mark={};draw();say('트리를 비웠습니다.');};
+$('bsV').oninput=()=>{$('bsErr').textContent='';};
+[50,30,70,20,40,60,80].forEach(insRaw);draw();say('값을 입력하고 [넣기], [찾기], [지우기] 중 하나를 누르세요.');
+})();
+</script>

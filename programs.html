@@ -7,6 +7,7 @@ permalink: /programs/
 permalink_name: /개발자의 삶
 css_file: /assets/css/programs.css
 js_files:
+  - /assets/js/hover-sparkles.js
   - /assets/js/program-banners.js
   - /assets/js/card-tilt.js
 description: DukiChoi가 만든 프로그램과 사용 방법을 소개합니다.
@@ -30,7 +31,7 @@ description: DukiChoi가 만든 프로그램과 사용 방법을 소개합니다
       {% assign style_index = forloop.index0 | modulo: site.data.program_styles.size %}
       {% assign banner_style = site.data.program_styles[style_index] %}
     {% endunless %}
-    {% include program-banner.html program=program style=banner_style mode=banner_mode %}
+    {% include program-banner.html program=program style=banner_style mode=banner_mode cube=true %}
     {% else %}
     <div class="program-empty">
       <h2>아직 공개된 프로그램이 없습니다.</h2>

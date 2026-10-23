@@ -1,3 +1,4 @@
+@import url('hover-sparkles.css');
 @import url('program-foils.css');
 
 .program-links { display: flex; flex-direction: column; gap: 24px; }
@@ -38,4 +39,82 @@
 /* 프로그램 제목 */
 .programs-hub .page-heading h1 {
   font-size: clamp(32px, 7.5vw, 48px);
+}
+
+/* Leave a little more breathing room between the cube and the description. */
+@media (min-width: 521px) {
+  .program-link--cube .program-link__text { margin-left: 12px; }
+}
+
+/* A gently enlarged card with a slowly revolving icon cube. */
+.program-link--cube {
+  transition: scale .3s cubic-bezier(.2,.8,.2,1), translate .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease;
+}
+.program-slot:focus-within { z-index: 2; }
+.program-link--cube:is(.is-hover, :focus-visible) {
+  scale: 1.025;
+  translate: 0 -5px;
+  box-shadow: 0 26px 42px -22px rgba(3,13,28,.6), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.program-cube-stage {
+  --cube-size: 48px;
+  --cube-half: 24px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  perspective: 500px;
+}
+.program-cube-lift {
+  display: block;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  transform-style: preserve-3d;
+  transform: translateZ(0);
+  transition: transform .4s ease;
+}
+.program-cube {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: program-cube-turn 18s linear infinite paused;
+}
+.program-cube__face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--p-edge);
+  border-radius: 3px;
+  background: linear-gradient(135deg, var(--p-start), var(--p-end));
+  box-shadow: inset 0 1px 5px rgba(255,255,255,.15);
+  color: var(--p-ink);
+  font-size: 23px;
+  backface-visibility: hidden;
+}
+.program-cube__face img { width: 76%; height: 76%; object-fit: contain; }
+.program-cube__face--front { transform: translateZ(var(--cube-half)); }
+.program-cube__face--back { transform: rotateY(180deg) translateZ(var(--cube-half)); }
+.program-cube__face--right { transform: rotateY(90deg) translateZ(var(--cube-half)); }
+.program-cube__face--left { transform: rotateY(-90deg) translateZ(var(--cube-half)); }
+.program-cube__face--top { transform: rotateX(90deg) translateZ(var(--cube-half)); }
+.program-cube__face--bottom { transform: rotateX(-90deg) translateZ(var(--cube-half)); }
+.program-link:is(.is-hover, :focus-visible) .program-cube-lift { transform: translateY(-4px) translateZ(140px) scale(1.125); }
+.program-link:is(.is-hover, :focus-visible) .program-cube { animation-play-state: running; }
+@keyframes program-cube-turn {
+  from { transform: rotateX(-16deg) rotateY(-24deg); }
+  to { transform: rotateX(-16deg) rotateY(336deg); }
+}
+@media (max-width: 520px) {
+  .program-cube-stage { --cube-size: 36px; --cube-half: 18px; grid-row: 1; grid-column: 1; width: 48px; height: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .program-link--cube,
+  .program-link--cube:is(.is-hover, :focus-visible) { scale: 1; translate: none; transition: none; }
+  .program-cube { animation: none; transform: rotateX(-16deg) rotateY(-24deg); }
+  .program-cube-lift,
+  .program-link:is(.is-hover, :focus-visible) .program-cube-lift { transform: none; transition: none; }
 }

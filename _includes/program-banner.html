@@ -7,16 +7,31 @@
 {%- endif -%}
 <div class="program-slot" data-tilt-slot>
   {% if include.preview %}
-  <div class="program-link" tabindex="0" role="group" aria-label="{{ banner_style.title | escape }} 미리보기"
+  <div class="program-link{% if include.cube %} program-link--cube{% endif %}" tabindex="0" role="group" aria-label="{{ banner_style.title | escape }} 미리보기"
   {% else %}
-  <a class="program-link{% if banner_program.featured %} program-link--featured{% endif %}" href="{{ banner_url | escape }}"
+  <a class="program-link{% if include.cube %} program-link--cube{% endif %}{% if banner_program.featured %} program-link--featured{% endif %}" href="{{ banner_url | escape }}"
   {% endif %}
     data-holo-tilt data-tilt-x="12" data-tilt-y="10"
     data-banner-mode="{{ include.mode | default: 'fixed' | escape }}" data-banner-style="{{ banner_style.id | escape }}" data-palette="{{ banner_style.palette | escape }}" data-foil="{{ banner_style.foil | escape }}">
     <span class="program-foil program-foil--wash" aria-hidden="true"></span>
     <span class="program-foil program-foil--texture" aria-hidden="true"></span>
     <span class="program-foil program-foil--glare" aria-hidden="true"></span>
+    {% if include.cube %}
+    <span class="program-cube-stage" aria-hidden="true">
+      <span class="program-cube-lift">
+        <span class="program-cube">
+          {% assign cube_faces = 'front,right,back,left,top,bottom' | split: ',' %}
+          {% for face in cube_faces %}
+          <span class="program-cube__face program-cube__face--{{ face }}">
+            {% if banner_program.icon %}<img src="{{ banner_program.icon | relative_url }}" alt="" width="40" height="40" loading="lazy">{% else %}{{ banner_program.title | slice: 0 | escape }}{% endif %}
+          </span>
+          {% endfor %}
+        </span>
+      </span>
+    </span>
+    {% else %}
     {% if banner_program.icon %}<img class="program-icon" src="{{ banner_program.icon | relative_url }}" alt="" width="60" height="60" loading="lazy">{% else %}<span class="program-initial" aria-hidden="true">{{ banner_program.title | slice: 0 | escape }}</span>{% endif %}
+    {% endif %}
     <span class="program-link__text">
       <strong>{{ banner_program.title | escape }}</strong>
       {% if banner_program.description %}<span>{{ banner_program.description | escape }}</span>{% endif %}

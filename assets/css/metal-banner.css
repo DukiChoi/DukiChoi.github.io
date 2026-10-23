@@ -1,0 +1,71 @@
+@import url('hover-sparkles.css');
+
+.home-program-banner {
+  --mx: 50%;
+  --my: 50%;
+  --foil-x: 50%;
+  --foil-y: 50%;
+  --light: 0;
+  --banner-ink: #20272e;
+  --banner-muted: #36414b;
+  --silver-wash: rgba(210, 216, 219, .45);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 32px 0 40px;
+  padding: 29px 32px;
+  isolation: isolate;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background:
+    linear-gradient(var(--silver-wash), var(--silver-wash)) padding-box,
+    url('../textures/brushed-steel.png') center 18% / cover padding-box,
+    linear-gradient(130deg, #e7ebef, #89929d 22%, #505a66 39%, #e5e9ed 56%, #7c8997 78%, #cbd1d8) border-box;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), inset 0 -2px 2px rgba(29, 36, 43, .26), 0 2px 0 #6c7682, 0 9px 18px -12px rgba(12, 28, 50, .5);
+  color: var(--banner-ink);
+  text-decoration: none;
+}
+.home-program-banner::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(255, 255, 255, .6);
+  border-radius: 7px;
+  box-shadow: 0 0 0 1px rgba(64, 81, 107, .13), inset 0 1px 2px rgba(255, 255, 255, .35);
+  pointer-events: none;
+}
+.home-program-banner:hover {
+  color: var(--banner-ink);
+}
+.home-program-banner > span { position: relative; z-index: 2; }
+.home-program-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 150px 100px at var(--mx) var(--my), rgba(222, 235, 250, .36) 0%, rgba(206, 222, 244, .16) 35%, transparent 80%),
+    repeating-linear-gradient(115deg, #ff4597 0%, #ffbb43 12%, #eaff65 24%, #44f0b2 36%, #42d8ff 48%, #8d78ff 60%, #f16bea 72%, #ff4597 84%),
+    linear-gradient(115deg, transparent 25%, rgba(211, 226, 246, .35) 48%, transparent 70%);
+  background-size: 100% 100%, 240% 240%, 180% 180%;
+  background-position: center, var(--foil-x) var(--foil-y), var(--mx) var(--my);
+  -webkit-mask-image: radial-gradient(ellipse 340px 170px at var(--mx) var(--my), #000 12%, rgba(0, 0, 0, .88) 38%, transparent 100%);
+  mask-image: radial-gradient(ellipse 340px 170px at var(--mx) var(--my), #000 12%, rgba(0, 0, 0, .88) 38%, transparent 100%);
+  opacity: min(1, calc(var(--light) * 1.35));
+  pointer-events: none;
+}
+[data-theme="dark"] .home-program-banner {
+  --silver-wash: rgba(184, 194, 202, .42);
+}
+.home-program-banner__text { display: flex; flex-direction: column; gap: 5px; }
+.home-program-banner strong { color: var(--banner-ink); font-size: clamp(27px, 4vw, 32px); font-weight: 750; letter-spacing: -.035em; text-shadow: 0 1px 0 rgba(255,255,255,.85), 0 -1px 0 rgba(0,0,0,.3); }
+.home-program-banner__description { color: var(--banner-muted); font-size: 15px; text-shadow: 0 1px 0 rgba(255,255,255,.5); }
+.home-program-banner__action { flex-shrink: 0; font-size: 14px; font-weight: 600; }
+
+.home-program-banner > .hover-sparkles { position: absolute; z-index: 1; }
+@media (max-width: 520px) {
+  .home-program-banner { flex-direction: column; align-items: flex-start; gap: 14px; padding: 22px; }
+}

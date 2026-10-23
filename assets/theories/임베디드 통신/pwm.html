@@ -1,0 +1,100 @@
+---
+title: PWM과 듀티비
+description: 켜고 끄기만 하는 디지털 핀으로 LED 밝기와 모터 속도를 조절하는 원리를 듀티비로 확인합니다.
+permalink: /theory/pwm/
+category: embedded
+order: 4
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.lx .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:26px;max-width:none}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.pw input[type=range]{flex:1;min-width:200px}
+.pw .big{font-family:var(--font-mono);font-size:22px;font-weight:500;color:var(--text-primary);min-width:64px;text-align:right}
+.pw .info{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.pw .info div{background:var(--surface-1);border-radius:8px;padding:8px 10px}
+.pw .info span{display:block;font-size:12px;color:var(--text-secondary)}
+.pw .info b{font-family:var(--font-mono);font-size:17px;font-weight:500;color:var(--text-primary)}
+@media (max-width:560px){.pw .info{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<div class="circuit-lesson lx pw">
+<p class="lede">마이크로컨트롤러의 디지털 핀은 0 V와 3.3 V 두 값만 낼 수 있습니다. 그런데 핀을 아주 빠르게 켰다 껐다 하면, LED나 모터는 그 평균값에 반응합니다. 한 주기에서 켜져 있는 시간의 비율을 듀티비라고 합니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">듀티비에 따라 PWM 파형과 평균 전압, LED 밝기가 바뀌는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 듀티비와 주파수를 정하세요</p>
+    <div class="row"><label class="lbl" for="pwD">듀티비</label><input type="range" id="pwD" min="0" max="100" step="1" value="30"><span class="big" id="pwDv">30%</span></div>
+    <div class="row" style="margin-top:8px">
+      <span class="lbl">PWM 주파수</span>
+      <button class="bt" data-f="100">100 Hz</button><button class="bt sel" data-f="1000">1 kHz</button><button class="bt" data-f="20000">20 kHz</button>
+    </div>
+    <p class="sub">2. 보는 방식을 고르세요</p>
+    <div class="row">
+      <button class="bt sel" data-v="avg">실제 속도 (눈에 보이는 밝기)</button>
+      <button class="bt go" data-v="slow">아주 느리게 (1초에 한 주기)</button>
+    </div>
+    <svg id="pwSvg" width="100%" viewBox="0 0 680 220" role="img" aria-label="PWM 파형과 LED"></svg>
+    <p class="msg" id="pwMsg" aria-live="polite"></p>
+    <div class="info" id="pwInfo"></div>
+  </div>
+  <p class="hint">슬라이더를 움직이면 high 구간의 폭과 평균 전압 점선이 함께 바뀝니다. [아주 느리게]를 누르면 LED가 실제로는 켜졌다 꺼졌다 한다는 것을 볼 수 있습니다.</p>
+
+  <h2>평균 전압 = 듀티비 × 전원 전압</h2>
+  <p>3.3 V 핀을 30% 동안만 켜 두면 평균 전압은 0.3 × 3.3 V = 0.99 V입니다. LED는 1초에 수백 번 이상 깜빡이면 사람 눈이 깜빡임을 따라가지 못해 평균 밝기로 보이고, 모터는 회전자의 관성 때문에 평균 전압에 맞는 속도로 돕니다. 모터 구동에 20 kHz 이상을 쓰는 이유는 사람 귀에 들리는 소음을 피하기 위해서입니다.</p>
+
+  <h2>STM32 타이머로 만드는 법</h2>
+  <p>타이머는 0부터 ARR까지 세기를 반복하고, 카운터가 CCR보다 작은 동안 핀을 high로 둡니다. 그래서 주기는 ARR로, 듀티비는 CCR로 정해집니다. PSC는 타이머 클럭을 먼저 나눠서 ARR이 16비트 범위(최대 65535)를 넘지 않게 합니다.</p>
+  <pre><code>PWM 주파수 = 타이머 클럭 / ((PSC + 1) × (ARR + 1))
+듀티비     = CCR / (ARR + 1)</code></pre>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const V=3.3,CLK=72e6,X0=50,X1=500,YH=50,YL=170,PER=4;
+let duty=30,freq=1000,view='avg',raf=null,t0=0;
+function regs(){let psc=Math.max(0,Math.ceil(CLK/freq/65536)-1);const arr=Math.round(CLK/(freq*(psc+1)))-1;const ccr=Math.round(duty/100*(arr+1));return{psc,arr,ccr};}
+function draw(cur,on){
+  const pw=(X1-X0)/PER,d=duty/100;let p=`M${X0} ${YL}`;
+  for(let i=0;i<PER;i++){const x=X0+i*pw;if(d>0){p+=` L${x} ${YH} L${x+pw*d} ${YH}`;}if(d<1)p+=` L${x+pw*d} ${YL} L${x+pw} ${YL}`;else p+=` L${x+pw} ${YH}`;}
+  const ya=YL-d*(YL-YH);
+  let h=`<line x1="${X0}" y1="${YL}" x2="${X1}" y2="${YL}" stroke="var(--border)"/>`;
+  h+=`<text x="${X0-8}" y="${YH+4}" text-anchor="end" font-size="12" fill="var(--text-muted)">3.3V</text><text x="${X0-8}" y="${YL+4}" text-anchor="end" font-size="12" fill="var(--text-muted)">0V</text>`;
+  for(let i=0;i<PER;i++){const x=X0+i*pw;if(d>0)h+=`<rect x="${x}" y="${YH}" width="${pw*d}" height="${YL-YH}" fill="#185FA5" opacity=".12"/>`;}
+  h+=`<path d="${p}" fill="none" stroke="#185FA5" stroke-width="2.5"/>`;
+  h+=`<line x1="${X0}" y1="${ya}" x2="${X1}" y2="${ya}" stroke="#E8A317" stroke-width="2" stroke-dasharray="6 4"/>`;
+  h+=`<text x="${X1+6}" y="${ya+4}" font-size="12" fill="#BA7517">평균 ${(d*V).toFixed(2)}V</text>`;
+  h+=`<text x="${X0+pw/2}" y="${YL+24}" text-anchor="middle" font-size="12" fill="var(--text-secondary)">한 주기</text><line x1="${X0+2}" y1="${YL+12}" x2="${X0+pw-2}" y2="${YL+12}" stroke="var(--text-muted)"/>`;
+  if(cur!=null)h+=`<line x1="${cur}" y1="${YH-12}" x2="${cur}" y2="${YL+4}" stroke="#D85A30" stroke-width="2"/>`;
+  const br=on==null?d:(on?1:0);
+  h+=`<circle cx="610" cy="100" r="58" fill="#E8A317" opacity="${(br*0.35).toFixed(2)}"/>`;
+  h+=`<circle cx="610" cy="100" r="34" fill="#E8A317" opacity="${(0.08+br*0.92).toFixed(2)}" stroke="#BA7517" stroke-width="1.5"/>`;
+  h+=`<text x="610" y="185" text-anchor="middle" font-size="13" fill="var(--text-secondary)">LED</text>`;
+  $('pwSvg').innerHTML=h;
+}
+function info(){
+  const r=regs();
+  $('pwInfo').innerHTML=[['평균 전압',`${(duty/100*V).toFixed(2)} V`],['PSC',r.psc],['ARR',r.arr],['CCR',r.ccr]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
+}
+function update(){
+  duty=+$('pwD').value;$('pwDv').textContent=duty+'%';info();
+  if(view==='avg'){draw(null,null);
+    $('pwMsg').textContent=freq>=100?`핀은 1초에 ${freq.toLocaleString()}번 켜졌다 꺼지지만, 눈에는 ${duty}% 밝기로 보입니다. (타이머 클럭 72 MHz 기준 레지스터 값)`:'';}
+}
+function slowLoop(now){
+  const pw=(X1-X0)/PER,ph=((now-t0)/1000)%PER,i=Math.floor(ph),f=ph-i,on=f<duty/100;
+  draw(X0+i*pw+f*pw,on);
+  $('pwMsg').textContent=`1초에 한 주기씩 아주 느리게 돌립니다. 빨간 선이 high 구간에 있을 때만 LED가 켜집니다. 지금은 ${on?'켜짐':'꺼짐'}`;
+  raf=requestAnimationFrame(slowLoop);
+}
+function setView(v){view=v;cancelAnimationFrame(raf);
+  document.querySelectorAll('.pw [data-v]').forEach(x=>x.classList.toggle('sel',x.dataset.v===v));
+  if(v==='slow'){t0=performance.now();raf=requestAnimationFrame(slowLoop);}else update();}
+$('pwD').oninput=update;
+document.querySelectorAll('.pw [data-f]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.pw [data-f]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');freq=+b.dataset.f;update();});
+document.querySelectorAll('.pw [data-v]').forEach(b=>b.onclick=()=>setView(b.dataset.v));
+update();
+})();
+</script>

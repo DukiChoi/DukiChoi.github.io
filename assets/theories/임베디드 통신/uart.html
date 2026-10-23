@@ -1,0 +1,135 @@
+---
+title: UART 프레임
+description: 한 글자를 시작 비트, 데이터 8비트, 패리티, 정지 비트로 바꿔 선 하나로 보내는 과정을 봅니다.
+permalink: /theory/uart/
+category: embedded
+order: 1
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.lx .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:26px;max-width:none}
+.lx .err{font-size:13px;color:#E24B4A;margin:6px 0 0;min-height:18px}
+.lx input[type=text],.lx select{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.ua .info{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.ua .info div{background:var(--surface-1);border-radius:8px;padding:8px 10px}
+.ua .info span{display:block;font-size:12px;color:var(--text-secondary)}
+.ua .info b{font-family:var(--font-mono);font-size:17px;font-weight:500;color:var(--text-primary)}
+@media (max-width:560px){.ua .info{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ua .rx{text-align:center;font-family:var(--font-mono);font-size:15px;color:var(--text-secondary);margin-top:6px}
+.ua .rx b{color:var(--text-primary)}
+.ua .leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--text-secondary);justify-content:center}
+.ua .leg i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+</style>
+<div class="circuit-lesson lx ua">
+<p class="lede">UART는 선 하나로 바이트를 한 비트씩 보냅니다. 송신기와 수신기는 클럭 선을 공유하지 않는 대신, 미리 약속한 속도(보레이트)와 프레임 형식에 맞춰 각자 시간을 잽니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">한 글자가 UART 프레임으로 바뀌어 전송되는 파형을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 보낼 글자와 통신 설정을 정하세요</p>
+    <div class="row">
+      <label class="lbl">보낼 글자 <input type="text" id="uaIn" value="A" maxlength="4" style="width:70px;text-align:center;font-family:var(--font-mono)"></label>
+      <label class="lbl">보레이트 <select id="uaBaud"><option>9600</option><option>19200</option><option>38400</option><option>115200</option></select></label>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="lbl">패리티</span>
+      <button class="bt sel" data-p="N">없음</button><button class="bt" data-p="E">짝수</button><button class="bt" data-p="O">홀수</button>
+      <span class="lbl" style="margin-left:12px">정지 비트</span>
+      <button class="bt sel" data-s="1">1개</button><button class="bt" data-s="2">2개</button>
+    </div>
+    <p class="err" id="uaErr"></p>
+    <p class="sub" style="margin-top:4px">2. 전송을 재생하세요</p>
+    <div class="row"><button class="bt go" id="uaPlay">전송 재생</button></div>
+    <svg id="uaSvg" width="100%" viewBox="0 0 680 180" role="img" aria-label="UART 파형"></svg>
+    <div class="leg">
+      <span><i style="background:rgba(216,90,48,.3)"></i>시작 비트</span>
+      <span><i style="background:rgba(29,158,117,.3)"></i>데이터 (D0부터)</span>
+      <span><i style="background:rgba(127,119,221,.35)"></i>패리티</span>
+      <span><i style="background:rgba(136,135,128,.35)"></i>정지 비트</span>
+      <span><i style="background:#E8A317;border-radius:50%"></i>수신기가 읽는 지점</span>
+    </div>
+    <p class="rx" id="uaRx"></p>
+    <p class="msg" id="uaMsg" aria-live="polite"></p>
+    <div class="info" id="uaInfo"></div>
+  </div>
+  <p class="hint">글자 대신 0x41처럼 16진수를 넣어도 됩니다. [전송 재생]을 누르면 송신기가 비트를 하나씩 내보내고, 수신기가 각 비트의 한가운데에서 값을 읽습니다.</p>
+
+  <h2>프레임은 시작 비트로 열고 정지 비트로 닫습니다</h2>
+  <p>아무것도 보내지 않을 때 선은 high에 머뭅니다. 송신기가 선을 low로 떨어뜨리면 이것이 시작 비트이고, 수신기는 이 순간부터 자기 클럭으로 시간을 재기 시작합니다. 이어서 데이터 8비트가 가장 낮은 비트(D0)부터 나가고, 마지막에 송신기가 선을 다시 high로 올리는 정지 비트로 프레임을 닫습니다.</p>
+  <p>패리티 비트는 1의 개수를 짝수 또는 홀수로 맞추는 비트입니다. 수신기는 1의 개수를 세어서 비트 하나가 뒤집힌 오류를 알아챌 수 있습니다.</p>
+
+  <h2>보레이트가 맞아야 하는 이유</h2>
+  <p>수신기는 시작 비트를 기준으로 "1.5비트 뒤, 2.5비트 뒤…"처럼 각 비트의 가운데를 계산해서 읽습니다. 양쪽 클럭이 조금씩 다르면 비트를 읽는 지점이 점점 밀립니다. 정지 비트에 이를 때까지 밀린 거리가 반 비트를 넘으면 잘못 읽으므로, 이론상 양쪽 오차의 합이 약 5%를 넘으면 안 되고 실무에서는 2% 이내로 맞춥니다.</p>
+  <p>RS-485는 같은 UART 프레임을 차동 신호로 멀리 보내는 물리 계층입니다. Modbus RTU는 한 글자를 11비트로 정해 두어서, 기본은 짝수 패리티와 정지 비트 1개(8E1)이고 패리티를 쓰지 않으면 정지 비트를 2개(8N2) 씁니다.</p>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const X0=40,X1=660,YH=64,YL=124,BT=380;
+const FILL={start:'rgba(216,90,48,.16)',data:'rgba(29,158,117,.14)',par:'rgba(127,119,221,.18)',stop:'rgba(136,135,128,.18)'};
+let par='N',stp=1,val=0x41,raf=null,lastIdx=-1;
+const hex=v=>'0x'+v.toString(16).toUpperCase().padStart(2,'0');
+const chr=v=>v>=32&&v<127?` '${String.fromCharCode(v)}'`:'';
+function parseIn(){
+  const s=$('uaIn').value,t=s.trim();let v=null;
+  if(/^0x[0-9a-f]{1,2}$/i.test(t))v=parseInt(t,16);else if(s.length===1&&s.charCodeAt(0)<128)v=s.charCodeAt(0);
+  if(v===null){$('uaErr').textContent='영문, 숫자, 기호 중 한 글자 또는 0x41 같은 16진수를 입력하세요.';return null;}
+  $('uaErr').textContent='';return v;
+}
+function bits(){
+  const b=[{k:'idle',v:1,l:'대기'},{k:'start',v:0,l:'시작'}];let ones=0;
+  for(let i=0;i<8;i++){const v=(val>>i)&1;ones+=v;b.push({k:'data',v,l:'D'+i,i});}
+  if(par!=='N')b.push({k:'par',v:par==='E'?ones%2:1-ones%2,l:'P',ones});
+  for(let i=0;i<stp;i++)b.push({k:'stop',v:1,l:'정지'});
+  b.push({k:'idle',v:1,l:'대기'});return b;
+}
+function draw(prog){
+  const b=bits(),n=b.length,w=(X1-X0)/n,rev=prog<0?n:prog,cx=X0+rev*w;let h='',d='';
+  b.forEach((x,i)=>{
+    if(x.k!=='idle')h+=`<rect x="${X0+i*w}" y="40" width="${w}" height="104" fill="${FILL[x.k]}"/>`;
+    h+=`<text x="${X0+i*w+w/2}" y="28" text-anchor="middle" font-size="12" fill="var(--text-secondary)">${x.l}</text>`;
+    if(x.k!=='idle')h+=`<text x="${X0+i*w+w/2}" y="164" text-anchor="middle" font-size="14" font-family="var(--font-mono)" fill="var(--text-primary)">${x.v}</text>`;
+    const y=x.v?YH:YL;d+=(i?` L${X0+i*w} ${y}`:`M${X0} ${y}`)+` L${X0+(i+1)*w} ${y}`;
+  });
+  h+=`<text x="${X0-8}" y="${YH+4}" text-anchor="end" font-size="11" fill="var(--text-muted)">high</text><text x="${X0-8}" y="${YL+4}" text-anchor="end" font-size="11" fill="var(--text-muted)">low</text>`;
+  h+=`<path d="${d}" fill="none" stroke="var(--text-muted)" stroke-width="2" opacity=".35"/>`;
+  h+=`<clipPath id="uaClip"><rect x="0" y="0" width="${cx}" height="180"/></clipPath><path d="${d}" fill="none" stroke="#185FA5" stroke-width="2.5" clip-path="url(#uaClip)"/>`;
+  b.forEach((x,i)=>{if(x.k==='idle')return;const c=X0+i*w+w/2;if(c<=cx+0.1)h+=`<circle cx="${c}" cy="${x.v?YH:YL}" r="4.5" fill="#E8A317"/>`;});
+  if(prog>=0&&prog<n)h+=`<line x1="${cx}" y1="38" x2="${cx}" y2="146" stroke="#E8A317" stroke-width="1.5"/>`;
+  $('uaSvg').innerHTML=h;
+  const got=b.filter((x,i)=>x.k==='data'&&X0+i*w+w/2<=cx+0.1).map(x=>x.v);
+  $('uaRx').innerHTML=`수신기가 읽은 데이터 (D0부터) <b>${got.join(' ')}${' _'.repeat(8-got.length)}</b>`+(got.length===8?` → <b>${hex(val)}${chr(val)}</b>`:'');
+  return {b,n,w};
+}
+function info(){
+  const baud=+$('uaBaud').value,fb=1+8+(par==='N'?0:1)+stp,bt=1e6/baud;
+  const items=[['형식',`8${par}${stp}`],['1비트 시간',bt>=100?bt.toFixed(1)+' µs':bt.toFixed(2)+' µs'],['프레임 길이',`${fb}비트, ${(fb*bt/1000).toFixed(3)} ms`],['초당 최대',`${Math.floor(baud/fb).toLocaleString()} 바이트`]];
+  $('uaInfo').innerHTML=items.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
+}
+function bitMsg(x){
+  if(x.k==='start')return '시작 비트: 송신기가 선을 high에서 low로 떨어뜨립니다. 수신기는 이 순간부터 시간을 재기 시작합니다.';
+  if(x.k==='data')return x.i===0?`D0 = ${x.v}: 데이터는 가장 낮은 비트부터 보냅니다.`:`D${x.i} = ${x.v}`;
+  if(x.k==='par')return `패리티 = ${x.v}: 데이터의 1이 ${x.ones}개라서, 패리티까지 합친 1의 개수를 ${par==='E'?'짝수':'홀수'}로 맞춥니다.`;
+  return '정지 비트: 송신기가 선을 다시 high로 올려 프레임이 끝났음을 알립니다.';
+}
+function stopAnim(){cancelAnimationFrame(raf);raf=null;}
+function still(){stopAnim();const v=parseIn();if(v!==null)val=v;draw(-1);info();$('uaMsg').textContent='[전송 재생]을 누르면 파형이 왼쪽부터 그려집니다.';}
+$('uaPlay').onclick=()=>{
+  const v=parseIn();if(v===null)return;val=v;stopAnim();info();lastIdx=-1;
+  const t0=performance.now(),n=bits().length;
+  const loop=now=>{
+    const p=Math.min(n,(now-t0)/BT),{b}=draw(p),idx=Math.floor(p-0.5);
+    if(idx!==lastIdx&&idx>=0&&idx<n&&b[idx].k!=='idle'){lastIdx=idx;$('uaMsg').textContent=bitMsg(b[idx]);}
+    if(p<n)raf=requestAnimationFrame(loop);else{raf=null;$('uaMsg').textContent=`수신 완료: 수신기가 8비트를 모아 한 바이트를 받았습니다. 받은 값은 ${hex(val)}${chr(val)}입니다.`;}
+  };
+  raf=requestAnimationFrame(loop);
+};
+document.querySelectorAll('.ua [data-p]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.ua [data-p]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');par=b.dataset.p;still();});
+document.querySelectorAll('.ua [data-s]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.ua [data-s]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');stp=+b.dataset.s;still();});
+$('uaIn').oninput=still;$('uaBaud').onchange=still;
+still();
+})();
+</script>

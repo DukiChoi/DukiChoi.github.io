@@ -6,6 +6,7 @@ title: Home
 section: home
 js_file: /assets/js/card-tilt.js
 js_files:
+  - /assets/js/hover-sparkles.js
   - /assets/js/experience.js
 css_file: /assets/css/home.css
 ---
@@ -16,13 +17,7 @@ css_file: /assets/css/home.css
 </header>
 <p class="home-intro">IMU 센서와 BLE를 활용한 기기 개발부터 XR/VR 실험, 머신러닝을 이용한 신호 분석까지 다양한 프로젝트에 참여했습니다.</p>
 
-<a class="home-program-banner" data-holo-shine href="{{ '/programs/' | relative_url }}">
-  <span class="home-program-banner__text">
-    <strong>개발자의 삶</strong>
-    <span class="home-program-banner__description">직접 만든 프로그램과 사용 방법을 소개하는 공간입니다.</span>
-  </span>
-  <span class="home-program-banner__action">모아보기 <span aria-hidden="true">→</span></span>
-</a>
+{% include metal-banner.html %}
 
 <section class="home-skills" aria-labelledby="skills-title">
   <h2 id="skills-title">사용 언어와 도구</h2>

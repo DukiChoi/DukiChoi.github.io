@@ -1,0 +1,106 @@
+---
+title: 정렬 알고리즘
+description: 같은 막대 14개를 버블, 삽입, 퀵, 병합 정렬로 정리하며 비교 횟수를 견줘 봅니다.
+permalink: /theory/sorting/
+category: algorithms
+order: 1
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.lx .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:26px;max-width:none}
+.lx select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.so .bars{display:flex;align-items:flex-end;gap:4px;height:220px;margin-top:16px;padding:0 2px}
+.so .bar{flex:1;border-radius:4px 4px 0 0;background:#85B7EB;position:relative;transition:height .15s,background .15s}
+.so .bar span{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)}
+.so .bar.c{background:#EF9F27}.so .bar.s{background:#D85A30}.so .bar.f{background:#1D9E75}.so .bar.p{background:#7F77DD}
+.so .cnt{display:flex;justify-content:center;gap:28px;margin-top:30px;font-size:14px;color:var(--text-secondary)}
+.so .cnt b{font-family:var(--font-mono);font-size:20px;font-weight:500;color:var(--text-primary);margin-left:6px}
+.so .leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--text-secondary);justify-content:center;margin-top:8px}
+.so .leg i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+.so .cmp{display:grid;grid-template-columns:90px minmax(0,1fr) 56px;gap:8px 12px;align-items:center;font-size:14px;color:var(--text-secondary)}
+.so .cmp .tr{height:14px;background:var(--surface-1);border-radius:3px;overflow:hidden}
+.so .cmp .fl{height:100%;background:var(--border-strong);transition:width .4s}
+.so .cmp .on{color:var(--text-primary);font-weight:500}.so .cmp .fl.on{background:#185FA5}
+</style>
+<div class="circuit-lesson lx so">
+<p class="lede">정렬 알고리즘은 결국 "두 값을 비교하고, 필요하면 자리를 바꾸는 일"을 어떤 순서로 하느냐의 차이입니다. 같은 막대를 네 가지 방법으로 정렬하면서 비교 횟수가 얼마나 달라지는지 보세요.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">막대 그래프로 정렬 과정을 보여 주고 알고리즘별 비교 횟수를 비교하는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 정렬 방법을 고르세요</p>
+    <div class="row">
+      <button class="bt sel" data-a="bubble">버블 정렬</button><button class="bt" data-a="insert">삽입 정렬</button>
+      <button class="bt" data-a="quick">퀵 정렬</button><button class="bt" data-a="merge">병합 정렬</button>
+    </div>
+    <p class="sub">2. 정렬을 실행하세요</p>
+    <div class="row">
+      <button class="bt go" id="soPlay">정렬 시작</button><button class="bt" id="soStep">한 단계</button><button class="bt" id="soShuf">새로 섞기</button>
+      <label class="lbl">속도 <select id="soSpd"><option value="500">느리게</option><option value="180" selected>보통</option><option value="50">빠르게</option></select></label>
+    </div>
+    <div class="bars" id="soBars"></div>
+    <div class="cnt"><span>비교<b id="soC">0</b></span><span>교환·쓰기<b id="soW">0</b></span></div>
+    <div class="leg"><span><i style="background:#EF9F27"></i>비교 중</span><span><i style="background:#D85A30"></i>자리 바꿈</span><span><i style="background:#7F77DD"></i>퀵 정렬 기준값</span><span><i style="background:#1D9E75"></i>제자리 확정</span></div>
+    <p class="msg" id="soMsg" aria-live="polite"></p>
+    <p class="sub">같은 배열에서 방법별 비교 횟수</p>
+    <div class="cmp" id="soCmp"></div>
+  </div>
+  <p class="hint">[정렬 시작]을 누르면 자동으로 진행하고, [한 단계]를 누르면 비교나 교환 한 번씩 진행합니다. [새로 섞기]를 누르면 네 방법 모두 새 배열로 다시 비교합니다.</p>
+
+  <h2>네 가지 방법</h2>
+  <p><strong>버블 정렬</strong>은 이웃한 두 값을 비교해 큰 값을 오른쪽으로 보내는 일을 반복합니다. 한 바퀴 돌 때마다 가장 큰 값이 맨 끝에 자리 잡습니다. 비교 횟수가 n²에 비례해서 늘어납니다.</p>
+  <p><strong>삽입 정렬</strong>은 왼쪽부터 정렬된 구간을 넓혀 가며, 새 값을 왼쪽으로 옮겨 알맞은 자리에 끼웁니다. 거의 정렬된 배열에서는 매우 빠르지만, 최악의 경우는 버블 정렬과 같습니다.</p>
+  <p><strong>퀵 정렬</strong>은 기준값 하나를 골라 그보다 작은 값은 왼쪽, 큰 값은 오른쪽으로 나눈 뒤 양쪽을 다시 같은 방법으로 정렬합니다. 평균 n log n번 비교하지만, 기준값이 계속 한쪽 끝으로 치우치면 n²까지 느려집니다.</p>
+  <p><strong>병합 정렬</strong>은 배열을 반으로 계속 쪼갠 뒤, 정렬된 두 조각을 앞에서부터 비교하며 합칩니다. 항상 n log n번 정도 비교하지만, 합치는 동안 쓸 임시 공간이 필요합니다.</p>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const N=14,NAME={bubble:'버블 정렬',insert:'삽입 정렬',quick:'퀵 정렬',merge:'병합 정렬'};
+const J=(n,a,b)=>n+('2459'.includes(String(n%10))?b:a);
+let base=[],arr=[],ops=[],k=0,timer=null,alg='bubble',cC=0,cW=0,fin=new Set(),pv=-1,hl={};
+function record(al,a0){
+  const a=a0.slice(),o=[];
+  const cmp=(i,j)=>o.push({t:'c',i,j}),sw=(i,j)=>{o.push({t:'s',i,j});[a[i],a[j]]=[a[j],a[i]];},set=(i,v)=>{o.push({t:'w',i,v});a[i]=v;};
+  if(al==='bubble'){for(let e=N-1;e>0;e--){let any=false;for(let j=0;j<e;j++){cmp(j,j+1);if(a[j]>a[j+1]){sw(j,j+1);any=true;}}o.push({t:'f',i:e});if(!any)break;}}
+  else if(al==='insert'){for(let i=1;i<N;i++){let j=i;while(j>0){cmp(j-1,j);if(a[j-1]>a[j]){sw(j-1,j);j--;}else break;}}}
+  else if(al==='quick'){const qs=(lo,hi)=>{if(lo>=hi){if(lo===hi)o.push({t:'f',i:lo});return;}o.push({t:'p',i:hi});let i=lo;for(let j=lo;j<hi;j++){cmp(j,hi);if(a[j]<a[hi]){if(i!==j)sw(i,j);i++;}}if(i!==hi)sw(i,hi);o.push({t:'f',i});qs(lo,i-1);qs(i+1,hi);};qs(0,N-1);}
+  else{const ms=(lo,hi)=>{if(lo>=hi)return;const m=(lo+hi)>>1;ms(lo,m);ms(m+1,hi);const L=a.slice(lo,m+1),R=a.slice(m+1,hi+1);let i=0,j=0,t=lo;
+    while(i<L.length&&j<R.length){cmp(lo+i<t?t:lo+i,m+1+j);if(L[i]<=R[j])set(t++,L[i++]);else set(t++,R[j++]);}
+    while(i<L.length)set(t++,L[i++]);while(j<R.length)set(t++,R[j++]);};ms(0,N-1);}
+  o.push({t:'done'});return o;
+}
+function shuffle(){base=[...Array(N).keys()].map(i=>i+1);for(let i=N-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[base[i],base[j]]=[base[j],base[i]];}}
+function reset(){stop();arr=base.slice();ops=record(alg,base);k=0;cC=0;cW=0;fin=new Set();pv=-1;hl={};$('soMsg').textContent=`${NAME[alg]}을 준비했습니다. [정렬 시작]을 누르세요.`;render();cmpPanel();}
+function apply(o){
+  hl={};
+  if(o.t==='c'){cC++;hl.c=[o.i,o.j];const x=arr[o.i],y=arr[o.j];$('soMsg').textContent=`${J(x,'과','와')} ${J(y,'을','를')} 비교합니다.`;}
+  else if(o.t==='s'){cW++;[arr[o.i],arr[o.j]]=[arr[o.j],arr[o.i]];hl.s=[o.i,o.j];$('soMsg').textContent=`${J(arr[o.i],'과','와')} ${J(arr[o.j],'의','의')} 자리를 바꿉니다.`;}
+  else if(o.t==='w'){cW++;arr[o.i]=o.v;hl.s=[o.i];$('soMsg').textContent=`${J(o.v,'을','를')} ${o.i+1}번째 자리에 씁니다.`;}
+  else if(o.t==='f'){fin.add(o.i);}
+  else if(o.t==='p'){pv=o.i;$('soMsg').textContent=`기준값 ${J(arr[o.i],'을','를')} 골랐습니다. 이보다 작은 값을 왼쪽으로 모읍니다.`;}
+  else if(o.t==='done'){for(let i=0;i<N;i++)fin.add(i);pv=-1;$('soMsg').textContent=`정렬이 끝났습니다. 비교 ${cC}번, 교환·쓰기 ${cW}번이 걸렸습니다.`;}
+}
+function step(){if(k>=ops.length){stop();return;}let o;do{o=ops[k++];apply(o);}while((o.t==='f')&&k<ops.length);render();if(k>=ops.length)stop();}
+function render(){
+  $('soBars').innerHTML=arr.map((v,i)=>{let c='';if(fin.has(i))c='f';if(i===pv)c='p';if(hl.c&&hl.c.includes(i))c='c';if(hl.s&&hl.s.includes(i))c='s';return `<div class="bar ${c}" style="height:${v/N*100}%"><span>${v}</span></div>`;}).join('');
+  $('soC').textContent=cC;$('soW').textContent=cW;
+  $('soStep').disabled=k>=ops.length;
+}
+function cmpPanel(){
+  const cs={};Object.keys(NAME).forEach(a=>cs[a]=record(a,base).filter(o=>o.t==='c').length);const mx=Math.max(...Object.values(cs),1);
+  $('soCmp').innerHTML=Object.keys(cs).map(a=>{const on=a===alg?' on':'';return `<span class="${on}">${NAME[a]}</span><div class="tr"><div class="fl${on}" style="width:${cs[a]/mx*100}%"></div></div><span class="${on}">${cs[a]}번</span>`;}).join('');
+}
+function stop(){clearInterval(timer);timer=null;$('soPlay').textContent='정렬 시작';}
+$('soPlay').onclick=()=>{if(timer){stop();$('soPlay').textContent='이어서 정렬';return;}if(k>=ops.length)reset();timer=setInterval(step,+$('soSpd').value);$('soPlay').textContent='일시정지';};
+$('soSpd').onchange=()=>{if(timer){clearInterval(timer);timer=setInterval(step,+$('soSpd').value);}};
+$('soStep').onclick=()=>{stop();step();};
+$('soShuf').onclick=()=>{shuffle();reset();};
+document.querySelectorAll('.so [data-a]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.so [data-a]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');alg=b.dataset.a;reset();});
+shuffle();reset();
+})();
+</script>
