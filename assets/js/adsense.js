@@ -1,5 +1,5 @@
 (() => {
-  const desktop = window.matchMedia("(min-width: 1280px)");
+  const desktop = window.matchMedia("(min-width: 1440px)");
 
   const requestVisibleAds = () => {
     if (!desktop.matches) return;

@@ -9,16 +9,16 @@ content:
   - name: theory
     label: 이론 자료 글
     type: collection
-    path: _theory
+    path: assets/theories
     format: yaml-frontmatter
     filename:
       template: "{primary}.md"
       field: create
-    subfolders: false
+    subfolders: true
     exclude: [.gitkeep]
     view:
       primary: title
-      fields: [title, topic, published, order]
+      fields: [title, published, order]
       sort: [order, title]
       default:
         sort: order
@@ -31,12 +31,6 @@ content:
       - name: description
         label: 짧은 소개
         type: text
-      - name: topic
-        label: 분류
-        type: string
-        required: true
-        default: 디지털 회로
-        description: 같은 분류의 글은 이론 자료 목록에서 함께 묶입니다.
       - name: order
         label: 목록 순서
         type: number

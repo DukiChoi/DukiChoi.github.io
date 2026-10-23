@@ -56,7 +56,6 @@ defaults:
       css_file: /assets/css/theory.css
       js_file: /assets/js/theory.js
       lab_css: /assets/theories/style.css
-      topic: 디지털 회로
       order: 1000
 
 header_pages:

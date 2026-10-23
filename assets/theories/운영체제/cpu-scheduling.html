@@ -1,0 +1,134 @@
+---
+title: CPU 스케줄링
+description: 같은 프로세스 네 개를 FCFS, SJF, 라운드 로빈으로 실행하고 대기 시간을 비교합니다.
+permalink: /theory/cpu-scheduling/
+category: os
+order: 1
+---
+<style>
+.os .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.os .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.os .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.os .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.os .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:14px auto 0;min-height:26px;max-width:none}
+.os .mono{font-family:var(--font-mono)}
+.sch .tbl{overflow-x:auto}
+.sch table{border-collapse:collapse;font-size:14px;margin:0 auto}
+.sch td,.sch th{border:1px solid var(--border);padding:5px 12px;text-align:center}
+.sch th{font-weight:500;color:var(--text-primary)}
+.sch .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
+.sch input,.sch select{font:inherit;font-size:14px;padding:3px 6px;border:1px solid var(--border-strong);border-radius:4px;background:var(--panel,#fff);color:var(--text-primary)}
+.sch input{width:60px;text-align:center}
+.sch .gantt{position:relative;height:46px;border-radius:6px;background:var(--surface-1);overflow:hidden}
+.sch .seg{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:500;box-shadow:inset -1px 0 0 rgba(255,255,255,.6);transform-origin:left;transform:scaleX(0);transition:transform .35s ease-out}
+.sch .seg.show{transform:scaleX(1)}
+.sch .seg.idle{background:repeating-linear-gradient(45deg,transparent 0 5px,var(--border) 5px 10px);color:var(--text-muted)}
+.sch .axis{position:relative;height:22px;font-size:12px;color:var(--text-muted);font-family:var(--font-mono)}
+.sch .axis span{position:absolute;top:4px;transform:translateX(-50%)}
+.sch .cmp{display:grid;grid-template-columns:100px minmax(0,1fr) 56px;gap:8px 12px;align-items:center;font-size:14px;color:var(--text-secondary)}
+.sch .cmp .tr{height:14px;background:var(--surface-1);border-radius:3px;overflow:hidden}
+.sch .cmp .fl{height:100%;background:var(--border-strong);transition:width .4s}
+.sch .cmp .on{color:var(--text-primary);font-weight:500}
+.sch .cmp .fl.on{background:#185FA5}
+</style>
+<div class="circuit-lesson os sch">
+<p class="lede">CPU를 기다리는 프로세스가 여러 개일 때, 운영체제는 누구를 먼저 실행할지 정해야 합니다. 같은 프로세스 네 개를 세 가지 방식으로 실행해 보고, 각 방식에서 프로세스들이 얼마나 기다리는지 비교해 보세요.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">프로세스 네 개의 실행 순서를 간트 차트로 보여 주는 CPU 스케줄링 시뮬레이터</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>프로세스</th><th>도착 시각</th><th>실행 시간</th><th>대기 시간</th></tr></thead>
+      <tbody id="schBody"></tbody>
+    </table></div>
+
+    <p class="sub">1. 스케줄링 방식을 고르세요</p>
+    <div class="row">
+      <button class="bt sel" data-alg="fcfs">FCFS (도착 순서대로)</button>
+      <button class="bt" data-alg="sjf">SJF (짧은 작업 먼저)</button>
+      <button class="bt" data-alg="rr">라운드 로빈 (번갈아 실행)</button>
+      <label style="font-size:14px;color:var(--text-secondary)">라운드 로빈 시간 할당량
+        <select id="schQ"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+    </div>
+
+    <p class="sub">2. 실행 순서를 재생하세요</p>
+    <div class="row" style="margin-bottom:10px"><button class="bt go" id="schPlay">실행 순서 재생</button></div>
+    <div class="gantt" id="schG" aria-label="간트 차트"></div>
+    <div class="axis" id="schAx"></div>
+    <p class="msg" id="schMsg" aria-live="polite"></p>
+
+    <p class="sub">세 방식의 평균 대기 시간 (짧을수록 좋음)</p>
+    <div class="cmp" id="schCmp"></div>
+  </div>
+  <p class="hint">표에서 도착 시각과 실행 시간을 바꾸면 결과가 바로 다시 계산됩니다. 방식을 고른 뒤 [실행 순서 재생]을 누르면 CPU를 차지하는 순서가 왼쪽부터 차례로 나타납니다.</p>
+
+  <h2>세 가지 방식은 누구를 먼저 고르는지가 다릅니다</h2>
+  <p><strong>FCFS</strong>는 먼저 도착한 프로세스부터 끝까지 실행합니다. 규칙은 단순하지만, 실행 시간이 긴 프로세스가 앞에 있으면 뒤에 온 짧은 프로세스들이 모두 오래 기다립니다.</p>
+  <p><strong>SJF</strong>는 도착해 있는 프로세스 중 실행 시간이 가장 짧은 것부터 실행합니다. 평균 대기 시간은 세 방식 중 가장 짧아집니다. 다만 운영체제가 실행 시간을 미리 정확히 알기 어렵고, 긴 프로세스는 짧은 프로세스가 계속 들어오면 한없이 밀릴 수 있습니다.</p>
+  <p><strong>라운드 로빈</strong>은 각 프로세스에 정해진 시간만큼만 CPU를 주고, 시간이 끝나면 대기열 맨 뒤로 보냅니다. 모든 프로세스가 고르게 차례를 받습니다. 할당량을 너무 작게 잡으면 프로세스를 바꾸는 문맥 교환이 잦아져 오히려 손해가 납니다.</p>
+
+  <h2>대기 시간 계산</h2>
+  <p>프로세스가 준비된 상태로 CPU를 기다린 시간을 모두 더한 값입니다.</p>
+  <pre><code>대기 시간 = 종료 시각 − 도착 시각 − 실행 시간</code></pre>
+</div>
+<script>
+(() => {
+const COL=['#0F6E56','#534AB7','#993C1D','#185FA5'];
+const IGA=['이','가','이','가'];
+const NAME={fcfs:'FCFS',sjf:'SJF',rr:'라운드 로빈'};
+const P=[{a:0,b:6},{a:1,b:3},{a:2,b:8},{a:3,b:2}];
+let alg='fcfs',q=2,tm=[];
+const $=id=>document.getElementById(id);
+const fmt=x=>String(Math.round(x*100)/100);
+const body=$('schBody');
+P.forEach((p,i)=>{const tr=document.createElement('tr');
+tr.innerHTML=`<td><span class="dot" style="background:${COL[i]}"></span>P${i+1}</td><td><input type="number" min="0" max="20" value="${p.a}" data-i="${i}" data-f="a" aria-label="P${i+1} 도착 시각"></td><td><input type="number" min="1" max="12" value="${p.b}" data-i="${i}" data-f="b" aria-label="P${i+1} 실행 시간"></td><td class="mono" id="schW${i}">-</td>`;
+body.appendChild(tr);});
+body.querySelectorAll('input').forEach(inp=>inp.onchange=()=>{const f=inp.dataset.f,mn=f==='a'?0:1,mx=f==='a'?20:12;let v=Math.round(+inp.value);if(isNaN(v))v=mn;v=Math.min(mx,Math.max(mn,v));inp.value=v;P[+inp.dataset.i][f]=v;draw(false);});
+function sim(al){
+  const n=P.length,rem=P.map(p=>p.b),done=Array(n).fill(false),fin=Array(n).fill(0),segs=[];let t=0;
+  const push=(id,s,e)=>{const l=segs[segs.length-1];if(l&&l.id===id&&l.e===s)l.e=e;else segs.push({id,s,e});};
+  if(al==='rr'){
+    const ord=[...Array(n).keys()].sort((x,y)=>P[x].a-P[y].a||x-y);let rq=[],k=0,left=n;
+    const admit=()=>{while(k<n&&P[ord[k]].a<=t)rq.push(ord[k++]);};admit();
+    while(left){
+      if(!rq.length){const nt=P[ord[k]].a;push(-1,t,nt);t=nt;admit();continue;}
+      const i=rq.shift(),r=Math.min(q,rem[i]);push(i,t,t+r);t+=r;rem[i]-=r;admit();
+      if(rem[i])rq.push(i);else{fin[i]=t;left--;}
+    }
+  }else{
+    let left=n;
+    while(left){
+      const av=[...Array(n).keys()].filter(i=>!done[i]&&P[i].a<=t);
+      if(!av.length){const nt=Math.min(...P.filter((p,i)=>!done[i]).map(p=>p.a));push(-1,t,nt);t=nt;continue;}
+      av.sort(al==='sjf'?(x,y)=>P[x].b-P[y].b||P[x].a-P[y].a||x-y:(x,y)=>P[x].a-P[y].a||x-y);
+      const i=av[0];push(i,t,t+P[i].b);t+=P[i].b;fin[i]=t;done[i]=true;left--;
+    }
+  }
+  const w=P.map((p,i)=>fin[i]-p.a-p.b);
+  return {segs,w,avg:w.reduce((s,x)=>s+x,0)/n,end:t};
+}
+function finish(r){r.w.forEach((w,i)=>$('schW'+i).textContent=w);$('schMsg').textContent=`${NAME[alg]}의 평균 대기 시간은 ${fmt(r.avg)}입니다.`;}
+function draw(anim){
+  tm.forEach(clearTimeout);tm=[];
+  const r=sim(alg),g=$('schG');g.innerHTML='';
+  if(anim)P.forEach((_,i)=>$('schW'+i).textContent='-');
+  r.segs.forEach((s,k)=>{
+    const d=document.createElement('div');d.className='seg'+(s.id<0?' idle':'');
+    d.style.left=s.s/r.end*100+'%';d.style.width=(s.e-s.s)/r.end*100+'%';
+    if(s.id>=0)d.style.background=COL[s.id];
+    d.textContent=s.id<0?'유휴':'P'+(s.id+1);g.appendChild(d);
+    if(anim)tm.push(setTimeout(()=>{d.classList.add('show');$('schMsg').textContent=s.id<0?`${s.s}부터 ${s.e}까지는 도착한 프로세스가 없어 CPU가 쉽니다.`:`P${s.id+1}${IGA[s.id]} ${s.s}부터 ${s.e}까지 CPU를 차지합니다.`;},k*500));
+    else d.classList.add('show');
+  });
+  const ticks=[...new Set(r.segs.flatMap(s=>[s.s,s.e]))];
+  $('schAx').innerHTML=ticks.map(t=>`<span style="left:${t/r.end*100}%">${t}</span>`).join('');
+  if(anim)tm.push(setTimeout(()=>finish(r),r.segs.length*500+200));else finish(r);
+  const av={};['fcfs','sjf','rr'].forEach(a=>av[a]=sim(a).avg);const mx=Math.max(...Object.values(av),0.01);
+  $('schCmp').innerHTML=Object.keys(av).map(a=>{const on=a===alg?' on':'';return `<span class="${on}">${NAME[a]}</span><div class="tr"><div class="fl${on}" style="width:${av[a]/mx*100}%"></div></div><span class="mono${on}">${fmt(av[a])}</span>`;}).join('');
+}
+document.querySelectorAll('.sch [data-alg]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.sch [data-alg]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');alg=b.dataset.alg;draw(false);});
+$('schQ').onchange=e=>{q=+e.target.value;draw(false);};
+$('schPlay').onclick=()=>draw(true);
+draw(false);
+})();
+</script>

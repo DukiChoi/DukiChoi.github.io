@@ -4,10 +4,11 @@
   {%- assign has_side_ads = true -%}
 {%- endif -%}
 <div class="site-layout"{% if has_side_ads %} google-side-rail-overlap="false"{% endif %}>
-  <div class="site-layout__columns{% if has_side_ads %} site-layout__columns--ads{% endif %}">
-    {% include side-ad.html side="left" count=2 %}
+  <div class="site-layout__columns{% if has_side_ads %} site-layout__columns--ads site-layout__columns--sticky-ads{% endif %}">
+    {% include side-ad.html side="left" %}
     <div class="site-content" google-side-rail-overlap="false">
       {{ content }}
     </div>
+    {% include side-ad.html side="right" %}
   </div>
 </div>

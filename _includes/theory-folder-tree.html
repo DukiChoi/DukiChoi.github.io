@@ -1,0 +1,31 @@
+{% assign depth = include.depth %}
+{% assign folder_groups = include.entries | group_by_exp: "entry", "entry.path | split: '/' | slice: depth, 1 | first" | sort: "name" %}
+{% for folder in folder_groups %}
+  {% assign depth = include.depth %}
+  {% assign next_depth = depth | plus: 1 %}
+  {% assign sample_parts = folder.items.first.path | split: '/' %}
+  {% assign branch_key = include.prefix | append: '/' | append: folder.name %}
+  {% if sample_parts.size > next_depth %}
+    {% assign articles = folder.items | where_exp: "entry", "entry.folder_overview != true" %}
+    <li>
+      <details class="theory-tree__group" data-tree-key="folder:{{ branch_key | escape }}" open>
+        <summary>{{ folder.name | escape }} <span class="theory-count">{{ articles.size }}</span></summary>
+        <ol class="theory-tree__children">
+          {% include theory-folder-tree.html entries=folder.items depth=next_depth prefix=branch_key %}
+          {% assign branch_articles = folder.items | where_exp: "entry", "entry.folder_overview != true" %}
+          {% if branch_articles.size == 0 %}<li class="theory-folder-empty">아직 등록된 자료가 없습니다.</li>{% endif %}
+        </ol>
+      </details>
+    </li>
+  {% endif %}
+{% endfor %}
+{% assign leaf_depth = include.depth | plus: 1 %}
+{% assign sorted_entries = include.entries | sort: "order" %}
+{% for entry in sorted_entries %}
+  {% assign parts = entry.path | split: '/' %}
+  {% if parts.size == leaf_depth %}
+    {% unless entry.folder_overview %}
+    <li><a class="theory-list__entry{% if entry.url == page.url %} is-current{% endif %}" href="{{ entry.url | relative_url }}"{% if entry.url == page.url %} aria-current="page"{% endif %}>{{ entry.title | escape }}</a></li>
+    {% endunless %}
+  {% endif %}
+{% endfor %}

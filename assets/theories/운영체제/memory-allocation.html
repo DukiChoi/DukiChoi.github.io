@@ -1,0 +1,135 @@
+---
+title: 메모리 할당과 단편화
+description: First-fit, Best-fit, Worst-fit으로 메모리를 나눠 주면서 빈 공간이 조각나는 과정을 봅니다.
+permalink: /theory/memory-allocation/
+category: os
+order: 7
+---
+<style>
+.os .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.os .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.os .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.os .bt:disabled{opacity:.45;cursor:default}
+.os .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.os .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:14px auto 0;min-height:26px;max-width:none}
+.os .msg.bad{color:#E24B4A}
+.ma input[type=number]{width:72px;font:inherit;font-size:15px;padding:5px 8px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary);text-align:center}
+.ma .err{font-size:13px;color:#E24B4A;margin:6px 0 0;min-height:18px}
+.ma .bar{position:relative;height:72px;margin-top:16px;border:1px solid var(--border-strong);border-radius:8px;overflow:hidden;background:var(--panel,#fff)}
+.ma .blk{position:absolute;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;line-height:1.3;overflow:hidden;white-space:nowrap;transition:left .3s,width .3s}
+.ma .blk.u{color:#fff;font-weight:600;cursor:pointer;border:none;font-family:inherit;box-shadow:inset -1px 0 0 rgba(255,255,255,.7)}
+.ma .blk.u small{font-weight:400;font-size:11px;opacity:.9}
+.ma .blk.u:hover{filter:brightness(1.12)}
+.ma .blk.h{background:repeating-linear-gradient(45deg,transparent 0 6px,var(--surface-1) 6px 12px);color:var(--text-muted);font-family:var(--font-mono)}
+.ma .blk.cand{box-shadow:inset 0 0 0 3px #FAC775}
+.ma .blk.pick{box-shadow:inset 0 0 0 4px #E8A317;background:#FAEEDA;color:#633806}
+.ma .axis{position:relative;height:20px;font-size:12px;color:var(--text-muted);font-family:var(--font-mono)}
+.ma .axis span{position:absolute;top:3px;transform:translateX(-50%)}
+.ma .axis span:first-child{transform:none}.ma .axis span:last-child{transform:translateX(-100%)}
+.ma .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.ma .stats div{background:var(--surface-1);border-radius:8px;padding:10px 12px}
+.ma .stats span{display:block;font-size:13px;color:var(--text-secondary)}
+.ma .stats b{font-size:22px;font-weight:500;color:var(--text-primary);font-family:var(--font-mono)}
+</style>
+<div class="circuit-lesson os ma">
+<p class="lede">운영체제는 프로세스가 요청한 크기만큼 연속된 메모리를 떼어 줍니다. 할당과 해제를 반복하면 빈 공간이 여기저기 흩어지고, 빈 공간을 다 합치면 충분한데도 큰 요청을 받아 주지 못하는 상황이 생깁니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">100KB 메모리에서 할당과 해제를 반복하며 외부 단편화가 생기는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 빈 공간을 고르는 방식을 정하세요</p>
+    <div class="row">
+      <button class="bt sel" data-s="first">First-fit (앞에서 처음 맞는 곳)</button>
+      <button class="bt" data-s="best">Best-fit (가장 딱 맞는 곳)</button>
+      <button class="bt" data-s="worst">Worst-fit (가장 넓은 곳)</button>
+    </div>
+    <p class="sub">2. 메모리를 요청하거나, 예시 시나리오를 재생하세요</p>
+    <div class="row">
+      <label style="font-size:14px;color:var(--text-secondary)">요청 크기 <input type="number" id="maSize" min="1" max="100" value="20"> KB</label>
+      <button class="bt go" id="maReq">메모리 요청</button>
+      <button class="bt go" id="maDemo">예시 시나리오 재생</button>
+      <button class="bt" id="maReset">처음으로</button>
+    </div>
+    <p class="err" id="maErr"></p>
+    <div class="bar" id="maBar"></div>
+    <div class="axis"><span style="left:0">0</span><span style="left:25%">25</span><span style="left:50%">50</span><span style="left:75%">75</span><span style="left:100%">100 KB</span></div>
+    <div class="stats">
+      <div><span>빈 공간 합계</span><b id="maTot">100</b> KB</div>
+      <div><span>가장 큰 빈 공간</span><b id="maBig">100</b> KB</div>
+      <div><span>빈 공간 조각 수</span><b id="maCnt">1</b>개</div>
+    </div>
+    <p class="msg" id="maMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">색칠된 블록은 할당된 메모리이고, 빗금 친 곳은 빈 공간입니다. 할당된 블록을 누르면 그 블록이 해제됩니다. 처음이라면 [예시 시나리오 재생]부터 눌러 보세요.</p>
+
+  <h2>빈 공간을 고르는 세 가지 방식</h2>
+  <p><strong>First-fit</strong>은 메모리 앞쪽부터 훑어서 요청이 들어가는 첫 번째 빈 공간을 씁니다. 찾는 시간이 짧습니다.</p>
+  <p><strong>Best-fit</strong>은 요청이 들어가는 빈 공간 중 가장 작은 곳을 씁니다. 남는 조각이 작아서 효율적으로 보이지만, 아무 데도 못 쓸 아주 작은 조각이 많이 생깁니다.</p>
+  <p><strong>Worst-fit</strong>은 가장 넓은 빈 공간을 씁니다. 남는 조각을 크게 남기려는 방식이지만, 큰 빈 공간이 빨리 사라져서 나중에 큰 요청이 오면 받기 어렵습니다.</p>
+
+  <h2>외부 단편화</h2>
+  <p>빈 공간의 합계는 충분한데 조각조각 흩어져 있어서 연속된 공간이 필요한 요청을 받지 못하는 상태를 외부 단편화라고 합니다. 위 통계에서 빈 공간 합계와 가장 큰 빈 공간의 차이가 클수록 단편화가 심한 것입니다.</p>
+  <p>해결 방법은 두 가지입니다. 사용 중인 블록을 한쪽으로 몰아 빈 공간을 하나로 합치는 압축이 있고, 메모리를 같은 크기의 페이지로 나눠 연속된 공간 자체가 필요 없게 만드는 페이징이 있습니다. 오늘날 운영체제는 대부분 페이징을 씁니다.</p>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const TOTAL=100,COL=['#0F6E56','#534AB7','#993C1D','#185FA5','#854F0B'];
+const NAME={first:'First-fit',best:'Best-fit',worst:'Worst-fit'};
+const WHY={first:'주소가 가장 앞에 있는',best:'가장 작은',worst:'가장 넓은'};
+let strat='first',blocks,nextId,busy=false,demo=false,mark={};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function say(t,bad){const m=$('maMsg');m.textContent=t;m.className='msg'+(bad?' bad':'');}
+function reset(){blocks=[{s:0,n:TOTAL,id:null}];nextId=0;mark={};say('크기를 입력하고 [메모리 요청]을 누르세요.');render();}
+const holes=()=>blocks.filter(b=>b.id===null);
+function pick(n){const c=holes().filter(b=>b.n>=n);if(!c.length)return{c,ch:null};
+  const ch=strat==='first'?c[0]:strat==='best'?c.reduce((a,b)=>b.n<a.n?b:a):c.reduce((a,b)=>b.n>a.n?b:a);return{c,ch};}
+async function request(n){
+  busy=true;const {c,ch}=pick(n);
+  if(!ch){const hs=holes(),tot=hs.reduce((s,b)=>s+b.n,0),big=Math.max(0,...hs.map(b=>b.n));
+    say(tot>=n?`빈 공간은 모두 합쳐 ${tot}KB로 충분하지만, 가장 큰 연속 공간이 ${big}KB뿐이라 ${n}KB를 줄 수 없습니다. 이것이 외부 단편화입니다.`:`빈 공간이 모두 합쳐 ${tot}KB뿐이라 ${n}KB를 줄 수 없습니다.`,true);
+    busy=false;render();return;}
+  mark={cand:c,pick:ch};render();
+  say(c.length>1?`${NAME[strat]}: ${n}KB가 들어가는 빈 공간 ${c.length}곳 중 ${WHY[strat]} ${ch.n}KB 공간을 고릅니다.`:`${NAME[strat]}: ${n}KB가 들어가는 빈 공간은 ${ch.n}KB 공간 한 곳뿐입니다.`);
+  await sleep(1100);
+  const id=nextId++,name=String.fromCharCode(65+id%26),i=blocks.indexOf(ch),nb={s:ch.s,n,id,name,col:COL[id%5]};
+  if(ch.n>n)blocks.splice(i,1,nb,{s:ch.s+n,n:ch.n-n,id:null});else blocks.splice(i,1,nb);
+  mark={};say(`${name} 블록에 ${ch.s}KB 위치부터 ${n}KB를 할당했습니다.`);busy=false;render();
+}
+function free(id){
+  const b=blocks.find(x=>x.id===id);if(!b)return;b.id=null;
+  for(let i=blocks.length-2;i>=0;i--){if(blocks[i].id===null&&blocks[i+1].id===null){blocks[i].n+=blocks[i+1].n;blocks.splice(i+1,1);}}
+  say(`${b.name} 블록을 해제했습니다. 바로 옆이 빈 공간이면 하나로 합칩니다.`);render();
+}
+function render(){
+  const bar=$('maBar');
+  bar.innerHTML=blocks.map(b=>{
+    const st=`left:${b.s}%;width:${b.n}%`;
+    if(b.id!==null)return `<button class="blk u" data-id="${b.id}" style="${st};background:${b.col}" aria-label="${b.name} 블록 ${b.n}KB, 눌러서 해제">${b.n>=6?b.name:''}<small>${b.n>=8?b.n+'KB':''}</small></button>`;
+    const cls=mark.pick===b?' pick':mark.cand&&mark.cand.includes(b)?' cand':'';
+    return `<div class="blk h${cls}" style="${st}">${b.n>=5?b.n:''}</div>`;
+  }).join('');
+  bar.querySelectorAll('.blk.u').forEach(el=>el.onclick=()=>{if(!busy&&!demo)free(+el.dataset.id);});
+  const hs=holes();
+  $('maTot').textContent=hs.reduce((s,b)=>s+b.n,0);$('maBig').textContent=Math.max(0,...hs.map(b=>b.n));$('maCnt').textContent=hs.length;
+  ['maReq','maDemo','maReset'].forEach(x=>$(x).disabled=busy||demo);
+}
+$('maReq').onclick=()=>{const v=+$('maSize').value;if(!Number.isInteger(v)||v<1||v>100){$('maErr').textContent='1부터 100 사이의 정수를 입력하세요.';return;}$('maErr').textContent='';if(!busy&&!demo)request(v);};
+$('maSize').oninput=()=>{$('maErr').textContent='';};
+$('maReset').onclick=reset;
+$('maDemo').onclick=async()=>{
+  reset();demo=true;render();
+  say('A~E 다섯 블록을 차례로 할당합니다.');await sleep(1200);
+  for(const n of [20,15,10,25,10]){await request(n);await sleep(500);}
+  demo=true;render();
+  say('B(15KB)와 D(25KB)를 해제합니다. 빈 공간이 세 군데로 흩어집니다.');await sleep(1500);
+  free(1);await sleep(900);free(3);await sleep(1600);
+  say(`이제 18KB를 요청합니다. 현재 방식은 ${NAME[strat]}입니다.`);await sleep(1500);
+  await request(18);await sleep(1800);
+  say('마지막으로 30KB를 요청합니다.');await sleep(1500);
+  await request(30);
+  demo=false;render();
+};
+document.querySelectorAll('.ma [data-s]').forEach(b=>b.onclick=()=>{if(busy||demo)return;document.querySelectorAll('.ma [data-s]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');strat=b.dataset.s;say(`${NAME[strat]} 방식으로 바꿨습니다. 다음 요청부터 적용됩니다.`);});
+reset();
+})();
+</script>

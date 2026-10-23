@@ -1,0 +1,155 @@
+---
+title: 세마포어
+description: 남은 자원 개수를 세는 카운터로 여러 스레드를 조율하는 방법을 주차장과 생산자-소비자 버퍼로 봅니다.
+permalink: /theory/semaphore/
+category: os
+order: 4
+---
+<style>
+.os .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.os .row.c{justify-content:center}
+.os .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.os .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.os .bt:disabled{opacity:.45;cursor:default}
+.os .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.os .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:16px auto 0;min-height:26px;max-width:none}
+.sm .top{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.sm .sv{display:flex;align-items:baseline;gap:8px;font-family:var(--font-mono)}
+.sm .sv b{font-size:44px;line-height:1;color:var(--text-primary);transition:color .2s}
+.sm .sv b.zero{color:#E24B4A}
+.sm .sv span{font-size:15px;color:var(--text-secondary)}
+.sm .lot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.sm .slot{height:84px;border:2px dashed var(--border-strong);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text-muted)}
+.sm .car{width:100%;height:100%;border:none;border-radius:8px;color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.sm .car small{font-weight:400;font-size:12px;opacity:.9}
+.sm .lane{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;min-height:40px;font-size:14px;color:var(--text-secondary)}
+.sm .wcar{padding:6px 10px;border-radius:6px;border:1px solid var(--border-strong);font-size:13px;color:var(--text-primary)}
+.sm .pc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr) minmax(0,1fr);gap:12px;align-items:center}
+@media (max-width:640px){.sm .pc{grid-template-columns:minmax(0,1fr)}}
+.sm .agent{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--panel,#fff);display:flex;flex-direction:column;gap:8px;text-align:center}
+.sm .agent .nm{font-weight:600;font-size:15px}
+.sm .agent .stt{font-size:13px;color:var(--text-secondary);min-height:38px}
+.sm .agent.wait{border-color:#E24B4A}
+.sm .agent.wait .stt{color:#E24B4A}
+.sm .buf{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.sm .cell{height:54px;border:1px solid var(--border-strong);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:16px;color:var(--text-muted);transition:background .25s}
+.sm .cell.f{background:#5DCAA5;border-color:#0F6E56;color:#04342C}
+.sm .mk{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;font-size:12px;font-family:var(--font-mono);text-align:center;height:18px;margin-top:4px}
+.sm .mk .i{color:#185FA5}.sm .mk .o{color:#993C1D}
+.sm .cnt{display:flex;justify-content:center;gap:24px;margin-top:10px;font-family:var(--font-mono);font-size:15px;color:var(--text-secondary)}
+.sm .cnt b{color:var(--text-primary);font-size:20px}
+.sm select{font:inherit;font-size:14px;padding:3px 6px;border:1px solid var(--border-strong);border-radius:4px;background:var(--panel,#fff);color:var(--text-primary)}
+</style>
+<div class="circuit-lesson os sm">
+<p class="lede">세마포어는 남은 자원의 개수를 세는 카운터입니다. 스레드는 자원을 쓰기 전에 wait()로 카운터를 1 줄이고, 다 쓰면 signal()로 1 늘립니다. 카운터가 0이면 wait()를 호출한 스레드는 자원이 돌아올 때까지 기다립니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">자리가 세 개인 주차장을 세마포어로 관리하는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">주차 자리 3개를 세마포어 S로 관리합니다</p>
+    <div class="top">
+      <div class="sv"><span>S =</span><b id="spS">3</b><span>남은 자리</span></div>
+      <span style="flex:1"></span>
+      <button class="bt go" id="spIn">차 한 대 도착 (wait 호출)</button>
+      <button class="bt" id="spReset">처음으로</button>
+    </div>
+    <div class="lot" id="spLot"></div>
+    <div class="lane" id="spLane"></div>
+    <p class="msg" id="spMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">[차 한 대 도착]을 여러 번 눌러 자리를 채워 보세요. 주차된 차를 누르면 그 차가 나가면서 signal()을 호출합니다.</p>
+
+  <h2>wait()와 signal()</h2>
+  <p>wait()를 호출한 스레드는 S가 0보다 크면 S를 1 줄이고 바로 진행합니다. S가 0이면 그 자리에서 멈춰 기다립니다. signal()을 호출한 스레드는 S를 1 늘리고, 기다리는 스레드가 있으면 하나를 깨웁니다. 깨어난 스레드가 그 자원을 바로 가져가므로, 기다리는 차가 있을 때는 S가 0에 머뭅니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">칸이 다섯 개인 버퍼를 두고 생산자와 소비자가 세마포어로 조율하는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">생산자-소비자: 칸이 5개인 버퍼를 empty, full 두 세마포어로 관리합니다</p>
+    <div class="pc">
+      <div class="agent" id="pcP"><span class="nm" style="color:#185FA5">생산자</span><span class="stt" id="pcPs"></span><button class="bt" id="pcPb">데이터 넣기</button></div>
+      <div><div class="buf" id="pcBuf"></div><div class="mk" id="pcMk"></div>
+        <div class="cnt"><span>empty <b id="pcE">5</b></span><span>full <b id="pcF">0</b></span></div></div>
+      <div class="agent" id="pcC"><span class="nm" style="color:#993C1D">소비자</span><span class="stt" id="pcCs"></span><button class="bt" id="pcCb">데이터 꺼내기</button></div>
+    </div>
+    <div class="row c" style="margin-top:14px">
+      <button class="bt go" id="pcAuto">자동 실행 시작</button>
+      <label style="font-size:14px;color:var(--text-secondary)">생산 속도 <select id="pcPv"><option value="700">빠르게</option><option value="1400" selected>보통</option><option value="2600">느리게</option></select></label>
+      <label style="font-size:14px;color:var(--text-secondary)">소비 속도 <select id="pcCv"><option value="700">빠르게</option><option value="1400">보통</option><option value="2600" selected>느리게</option></select></label>
+      <button class="bt" id="pcReset">처음으로</button>
+    </div>
+    <p class="msg" id="pcMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">버튼으로 한 번씩 넣고 꺼내거나, [자동 실행 시작]을 눌러 보세요. 생산이 소비보다 빠르면 버퍼가 가득 차서 생산자가 멈추고, 반대면 소비자가 멈춥니다.</p>
+
+  <h2>생산자-소비자 문제</h2>
+  <p>생산자는 버퍼에 빈 칸이 있어야 넣을 수 있고, 소비자는 찬 칸이 있어야 꺼낼 수 있습니다. 빈 칸 수를 세는 empty와 찬 칸 수를 세는 full, 두 세마포어로 이 조건을 지킵니다. 버퍼 자체를 동시에 건드리지 않도록 뮤텍스도 함께 씁니다.</p>
+  <pre><code>생산자                소비자
+wait(empty)           wait(full)
+lock(m)               lock(m)
+버퍼에 넣기            버퍼에서 꺼내기
+unlock(m)             unlock(m)
+signal(full)          signal(empty)</code></pre>
+
+  <h2>뮤텍스와 무엇이 다른가</h2>
+  <p>뮤텍스는 잠근 스레드만 풀 수 있지만, 세마포어에는 주인이 없어서 어느 스레드든 signal()을 호출할 수 있습니다. 그래서 세마포어는 자원 개수를 세는 일 외에 "일이 생겼다"는 신호를 보내는 데도 씁니다. FreeRTOS에서 인터럽트 핸들러가 <code>xSemaphoreGiveFromISR()</code>로 태스크를 깨우는 것이 대표적인 예입니다.</p>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const CC=['#0F6E56','#534AB7','#993C1D','#185FA5','#854F0B'];
+const ga=n=>n+'이이가이가가이이이가'[n%10];
+const eul=n=>n+('2459'.includes(String(n%10))?'를':'을');
+let S,slots,lane,seq;
+function say(t){$('spMsg').textContent=t;}
+function reset(){S=3;slots=[null,null,null];lane=[];seq=0;say('지금은 자리 3개가 모두 비어 있습니다.');render();}
+function arrive(){
+  const id=++seq;
+  if(S>0){const k=slots.indexOf(null);S--;slots[k]=id;say(`차 ${ga(id)} wait()를 호출합니다. S를 1 줄이고(${S+1} → ${S}) 바로 주차합니다.`);}
+  else{lane.push(id);say(`차 ${ga(id)} wait()를 호출했지만 S가 0입니다. 빈자리가 날 때까지 입구에서 기다립니다.`);}
+  render();
+}
+function leave(k){
+  const id=slots[k];slots[k]=null;
+  if(lane.length){const n=lane.shift();slots[k]=n;say(`차 ${ga(id)} 나가며 signal()을 호출합니다. 기다리던 차 ${ga(n)} 깨어나 그 자리를 바로 차지하므로 S는 0 그대로입니다.`);}
+  else{S++;say(`차 ${ga(id)} 나가며 signal()을 호출합니다. S를 1 늘립니다(${S-1} → ${S}).`);}
+  render();
+}
+function render(){
+  const b=$('spS');b.textContent=S;b.classList.toggle('zero',S===0);
+  $('spLot').innerHTML=slots.map((id,k)=>`<div class="slot">${id?`<button class="car" data-k="${k}" style="background:${CC[(id-1)%5]}">차 ${id}<small>눌러서 내보내기</small></button>`:'빈자리'}</div>`).join('');
+  $('spLot').querySelectorAll('.car').forEach(c=>c.onclick=()=>leave(+c.dataset.k));
+  $('spLane').innerHTML='입구 대기 줄 '+(lane.length?lane.map(id=>`<span class="wcar">차 ${id}</span>`).join(''):'<span style="color:var(--text-muted)">없음</span>');
+}
+$('spIn').onclick=arrive;$('spReset').onclick=reset;reset();
+
+const N=5;let buf,inn,out,empty,full,pid,pW,cW,tP=null,tC=null;
+function say2(t){$('pcMsg').textContent=t;}
+function resetPC(){stopAuto();buf=Array(N).fill(null);inn=0;out=0;empty=N;full=0;pid=0;pW=false;cW=false;say2('버퍼 5칸이 모두 비어 있습니다. empty는 5, full은 0입니다.');renderPC();}
+function produce(){if(pW)return;if(empty===0){pW=true;say2('생산자가 wait(empty)를 호출했지만 empty가 0입니다. 버퍼가 가득 차서 빈 칸이 생길 때까지 기다립니다.');renderPC();return;}doP(false);}
+function doP(woke){
+  empty--;pid++;buf[inn]=pid;const at=inn;inn=(inn+1)%N;full++;
+  say2(`${woke?'기다리던 ':''}생산자가 데이터 ${eul(pid)} ${at}번 칸에 넣고 signal(full)을 호출합니다. empty ${empty}, full ${full}`);
+  if(cW){cW=false;setTimeout(()=>doC(true),500);}renderPC();
+}
+function consume(){if(cW)return;if(full===0){cW=true;say2('소비자가 wait(full)을 호출했지만 full이 0입니다. 데이터가 들어올 때까지 기다립니다.');renderPC();return;}doC(false);}
+function doC(woke){
+  full--;const v=buf[out],at=out;buf[out]=null;out=(out+1)%N;empty++;
+  say2(`${woke?'기다리던 ':''}소비자가 ${at}번 칸에서 데이터 ${eul(v)} 꺼내고 signal(empty)를 호출합니다. empty ${empty}, full ${full}`);
+  if(pW){pW=false;setTimeout(()=>doP(true),500);}renderPC();
+}
+function renderPC(){
+  $('pcBuf').innerHTML=buf.map(v=>`<div class="cell${v?' f':''}">${v??''}</div>`).join('');
+  $('pcMk').innerHTML=[...Array(N).keys()].map(i=>`<span>${i===inn&&i===out?'<span class="i">넣기</span>·<span class="o">꺼내기</span>':i===inn?'<span class="i">넣을 곳</span>':i===out?'<span class="o">꺼낼 곳</span>':''}</span>`).join('');
+  $('pcE').textContent=empty;$('pcF').textContent=full;
+  $('pcP').classList.toggle('wait',pW);$('pcC').classList.toggle('wait',cW);
+  $('pcPs').textContent=pW?'멈춤: 빈 칸이 없어 기다리는 중':'준비됨';
+  $('pcCs').textContent=cW?'멈춤: 꺼낼 데이터가 없어 기다리는 중':'준비됨';
+  $('pcPb').disabled=pW;$('pcCb').disabled=cW;
+}
+function stopAuto(){clearInterval(tP);clearInterval(tC);tP=tC=null;$('pcAuto').textContent='자동 실행 시작';}
+function startAuto(){stopAuto();tP=setInterval(produce,+$('pcPv').value);tC=setInterval(consume,+$('pcCv').value);$('pcAuto').textContent='자동 실행 정지';}
+$('pcAuto').onclick=()=>tP?stopAuto():startAuto();
+$('pcPv').onchange=$('pcCv').onchange=()=>{if(tP)startAuto();};
+$('pcPb').onclick=produce;$('pcCb').onclick=consume;$('pcReset').onclick=resetPC;
+resetPC();
+})();
+</script>

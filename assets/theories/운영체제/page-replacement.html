@@ -1,0 +1,153 @@
+---
+title: 페이지 교체
+description: 메모리 칸이 부족할 때 어떤 페이지를 내보낼지 FIFO, LRU, OPT 규칙으로 비교합니다.
+permalink: /theory/page-replacement/
+category: os
+order: 6
+---
+<style>
+.os .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.os .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.os .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.os .bt:disabled{opacity:.45;cursor:default}
+.os .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.os .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:14px auto 0;min-height:26px;max-width:none}
+.pr input[type=text]{flex:1;min-width:220px;font-family:var(--font-mono);font-size:15px;padding:6px 10px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.pr select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--border-strong);border-radius:4px;background:var(--panel,#fff);color:var(--text-primary)}
+.pr .err{font-size:13px;color:#E24B4A;margin:6px 0 0;min-height:18px}
+.pr .wrap{overflow-x:auto;margin-top:14px;padding-bottom:4px}
+.pr .grid{display:grid;gap:3px;min-width:min-content}
+.pr .grid div{height:34px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:15px;border-radius:4px}
+.pr .lb{justify-content:flex-start!important;font-family:var(--font-sans)!important;font-size:13px!important;color:var(--text-secondary);padding-right:8px;white-space:nowrap}
+.pr .rq{color:var(--text-muted)}
+.pr .rq.done{color:var(--text-primary);font-weight:500}
+.pr .rq.cur{background:#185FA5;color:#fff}
+.pr .fc{background:var(--surface-1);color:var(--text-primary)}
+.pr .fc.e{background:transparent;border:1px dashed var(--border)}
+.pr .fc.fu{background:transparent}
+.pr .fc.new{background:#F5C4B3;color:#712B13}
+.pr .fc.hit{background:#9FE1CB;color:#085041}
+.pr .rs.f{color:#D85A30;font-weight:600}.pr .rs.h{color:#1D9E75;font-weight:600}
+.pr .stat{text-align:center;font-size:15px;color:var(--text-secondary);margin-top:10px}
+.pr .stat b{color:var(--text-primary)}
+.pr .cmp{display:grid;grid-template-columns:70px minmax(0,1fr) 64px;gap:8px 12px;align-items:center;font-size:14px;color:var(--text-secondary)}
+.pr .cmp .tr{height:14px;background:var(--surface-1);border-radius:3px;overflow:hidden}
+.pr .cmp .fl{height:100%;background:var(--border-strong);transition:width .4s}
+.pr .cmp .on{color:var(--text-primary);font-weight:500}.pr .cmp .fl.on{background:#D85A30}
+.pr .leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--text-secondary);margin-top:8px}
+.pr .leg i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+</style>
+<div class="circuit-lesson os pr">
+<p class="lede">프로그램이 쓰려는 페이지가 물리 메모리에 없으면 디스크에서 가져와야 합니다. 이것을 페이지 폴트라고 합니다. 메모리 칸이 꽉 차 있으면 운영체제는 페이지 하나를 내보내야 하는데, 무엇을 내보내느냐에 따라 폴트 횟수가 크게 달라집니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">참조열을 따라 메모리 프레임에 페이지가 들어오고 나가는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 프로그램이 요청할 페이지 순서와 메모리 칸 수를 정하세요</p>
+    <div class="row">
+      <input type="text" id="prRef" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0" aria-label="페이지 요청 순서">
+      <label style="font-size:14px;color:var(--text-secondary)">메모리 칸 <select id="prF"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label>
+      <button class="bt" id="prBel">벨라디 예시 불러오기</button>
+    </div>
+    <p class="err" id="prErr"></p>
+    <p class="sub" style="margin-top:8px">2. 교체 규칙을 고르세요</p>
+    <div class="row">
+      <button class="bt sel" data-a="fifo">FIFO (먼저 들어온 것)</button>
+      <button class="bt" data-a="lru">LRU (오래 안 쓴 것)</button>
+      <button class="bt" data-a="opt">OPT (가장 늦게 쓸 것)</button>
+    </div>
+    <p class="sub">3. 요청을 하나씩 처리하세요</p>
+    <div class="row">
+      <button class="bt go" id="prStep">다음 요청 처리</button>
+      <button class="bt" id="prAll">끝까지 재생</button>
+      <button class="bt" id="prReset">처음으로</button>
+    </div>
+    <div class="wrap"><div class="grid" id="prGrid"></div></div>
+    <div class="leg">
+      <span><i style="background:#F5C4B3"></i>새로 올린 페이지 (폴트)</span>
+      <span><i style="background:#9FE1CB"></i>이미 있던 페이지 (히트)</span>
+    </div>
+    <p class="msg" id="prMsg" aria-live="polite"></p>
+    <p class="stat" id="prStat"></p>
+    <p class="sub">같은 요청 순서에서 규칙별 페이지 폴트 횟수</p>
+    <div class="cmp" id="prCmp"></div>
+  </div>
+  <p class="hint">[다음 요청 처리]를 누를 때마다 위쪽 요청 순서에서 한 칸씩 진행합니다. 각 열은 그 요청을 처리한 직후의 메모리 상태입니다.</p>
+
+  <h2>세 가지 교체 규칙</h2>
+  <p><strong>FIFO</strong>는 가장 먼저 메모리에 들어온 페이지를 내보냅니다. 구현은 쉽지만, 자주 쓰는 페이지라도 오래전에 들어왔다는 이유로 쫓겨날 수 있습니다.</p>
+  <p><strong>LRU</strong>는 가장 오랫동안 쓰지 않은 페이지를 내보냅니다. 최근에 쓴 페이지는 곧 다시 쓸 가능성이 높다는 성질을 이용하므로, 실제 운영체제가 쓰는 방식 대부분이 LRU를 흉내 냅니다.</p>
+  <p><strong>OPT</strong>는 앞으로 가장 늦게 다시 쓸 페이지를 내보냅니다. 폴트가 가장 적지만 운영체제가 미래의 요청을 알 수 없으므로 실제로는 구현할 수 없고, 다른 규칙을 평가하는 기준으로만 씁니다.</p>
+
+  <h2>벨라디의 이상 현상</h2>
+  <p>보통은 메모리 칸을 늘리면 폴트가 줄어듭니다. 그런데 FIFO에서는 칸을 늘렸는데 폴트가 오히려 늘어나는 경우가 있습니다. [벨라디 예시 불러오기]를 누른 뒤 메모리 칸을 3에서 4로 바꿔 보세요. 폴트가 9회에서 10회로 늘어납니다. LRU와 OPT에서는 이런 일이 생기지 않습니다.</p>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const NAME={fifo:'FIFO',lru:'LRU',opt:'OPT'};
+const WHY={fifo:'가장 먼저 들어온',lru:'가장 오랫동안 쓰지 않은',opt:'앞으로 가장 늦게 다시 쓸'};
+const eul=n=>n+('2459'.includes(String(n%10))?'를':'을');
+let alg='fifo',F=3,R=[],run=null,k=0,timer=null;
+function parse(){
+  const tok=$('prRef').value.trim().split(/[\s,]+/).filter(Boolean);
+  if(!tok.length||tok.length>24||!tok.every(t=>/^\d{1,2}$/.test(t))){$('prErr').textContent='0~99 사이 숫자를 띄어쓰기로 구분해서 1~24개 입력하세요.';return null;}
+  $('prErr').textContent='';return tok.map(Number);
+}
+function sim(al,R,F){
+  const fr=Array(F).fill(null),lt=Array(F).fill(0),ut=Array(F).fill(0),out=[];let faults=0;
+  R.forEach((p,t)=>{
+    let slot=fr.indexOf(p),hit=slot>=0,victim=null;
+    if(hit)ut[slot]=t;
+    else{faults++;slot=fr.indexOf(null);
+      if(slot<0){
+        if(al==='fifo')slot=lt.indexOf(Math.min(...lt));
+        else if(al==='lru')slot=ut.indexOf(Math.min(...ut));
+        else{let far=-1;fr.forEach((q,j)=>{let n=R.indexOf(q,t+1);if(n<0)n=Infinity;if(n>far){far=n;slot=j;}});}
+        victim=fr[slot];}
+      fr[slot]=p;lt[slot]=t;ut[slot]=t;}
+    out.push({p,hit,slot,victim,fr:fr.slice(),faults});
+  });
+  return {out,faults};
+}
+function rebuild(){const r=parse();if(!r)return false;R=r;run=sim(alg,R,F);k=0;stop();draw();return true;}
+function stop(){clearInterval(timer);timer=null;$('prAll').textContent='끝까지 재생';}
+function draw(){
+  const n=R.length;let h='';
+  const col=`grid-template-columns:70px repeat(${n},minmax(32px,1fr))`;
+  h+=`<div class="lb">요청</div>`+R.map((p,t)=>`<div class="rq${t<k-1?' done':t===k-1?' cur':''}">${p}</div>`).join('');
+  for(let s=0;s<F;s++){
+    h+=`<div class="lb">칸 ${s+1}</div>`;
+    for(let t=0;t<n;t++){
+      if(t>=k){h+=`<div class="fc fu"></div>`;continue;}
+      const o=run.out[t],v=o.fr[s];
+      let c='fc';if(v===null)c+=' e';else if(o.slot===s)c+=o.hit?' hit':' new';
+      h+=`<div class="${c}">${v??''}</div>`;
+    }
+  }
+  h+=`<div class="lb">결과</div>`+R.map((_,t)=>t<k?(run.out[t].hit?'<div class="rs h">히트</div>':'<div class="rs f">폴트</div>'):'<div></div>').join('');
+  const g=$('prGrid');g.style.cssText=col;g.innerHTML=h;
+  g.querySelectorAll('.rs').forEach(d=>d.style.fontSize='12px');
+  const f=k?run.out[k-1].faults:0;
+  $('prStat').innerHTML=`요청 <b>${k}</b> / ${n}, 페이지 폴트 <b>${f}</b>회`;
+  const m=$('prMsg');
+  if(!k)m.textContent='[다음 요청 처리]를 눌러 시작하세요.';
+  else{const o=run.out[k-1];
+    if(o.hit)m.textContent=`페이지 ${o.p} 요청: 이미 메모리에 있어서 바로 씁니다.`;
+    else if(o.victim===null)m.textContent=`페이지 ${o.p} 요청: 메모리에 없어서 빈칸에 올립니다.`;
+    else m.textContent=`페이지 ${o.p} 요청: 메모리에 없고 빈칸도 없습니다. ${WHY[alg]} 페이지 ${eul(o.victim)} 내보내고 그 자리에 ${eul(o.p)} 올립니다.`;
+    if(k===n)m.textContent+=` 모든 요청을 처리했습니다.`;}
+  const fs={};['fifo','lru','opt'].forEach(a=>fs[a]=sim(a,R,F).faults);const mx=Math.max(...Object.values(fs),1);
+  $('prCmp').innerHTML=Object.keys(fs).map(a=>{const on=a===alg?' on':'';return `<span class="${on}">${NAME[a]}</span><div class="tr"><div class="fl${on}" style="width:${fs[a]/mx*100}%"></div></div><span class="${on}">${fs[a]}회</span>`;}).join('');
+}
+function step(){if(k<R.length){k++;draw();}if(k>=R.length)stop();}
+$('prStep').onclick=()=>{stop();step();};
+$('prAll').onclick=()=>{if(timer){stop();return;}if(k>=R.length){k=0;draw();}timer=setInterval(step,600);$('prAll').textContent='정지';};
+$('prReset').onclick=()=>{k=0;stop();draw();};
+$('prRef').onchange=rebuild;
+$('prRef').oninput=()=>{$('prErr').textContent='';};
+$('prF').onchange=e=>{F=+e.target.value;rebuild();};
+$('prBel').onclick=()=>{$('prRef').value='1 2 3 4 1 2 5 1 2 3 4 5';document.querySelector('.pr [data-a="fifo"]').click();rebuild();$('prMsg').textContent='FIFO에서 메모리 칸을 3에서 4로 바꿔 보세요. 아래 비교에서 FIFO의 폴트가 9회에서 10회로 늘어납니다.';};
+document.querySelectorAll('.pr [data-a]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.pr [data-a]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');alg=b.dataset.a;rebuild();});
+rebuild();
+})();
+</script>

@@ -172,31 +172,49 @@ Market Peek는 `/programs/market-peek/`에 별도 소개 화면을 두었습니�
 
 ### 이론 자료 추가하기
 
-강의 4개의 본문과 시뮬레이션은 `assets/theories/`의 HTML 파일에서 관리합니다. Jekyll이 공통 강의 화면을 입혀 `/theory/글이름/`으로 출력합니다.
-예를 들어 `assets/theories/full-adder.html`을 수정하면 `/theory/full-adder/`에 반영됩니다.
-목록 첫 화면은 `assets/theories/index.html`, 시뮬레이션 스타일은 `assets/theories/style.css`입니다.
+이론 자료는 `assets/theories/` 아래 폴더별로 관리합니다. 폴더 이름이 목차 제목이 되며, 하위 폴더도 자동으로 접고 펼치는 목차로 표시됩니다.
 
-일반 글은 `_theory/` 폴더에 Markdown 파일을 추가하면 오른쪽 글 목록과 이전·다음 글 링크에 자동으로 반영됩니다.
-목록은 `order`가 작은 글부터 표시됩니다. 예를 들어 `_theory/my-note.md`는 `/theory/my-note/`에서 열립니다.
+```text
+assets/theories/
+  index.html              # 전체 자료 첫 화면
+  style.css               # 시뮬레이션 공통 스타일
+  디지털 논리/
+    index.md              # 빈 분류도 표시하기 위한 안내 페이지
+    full-adder.html
+    adder-2bit.html
+    ring-oscillator.html
+    memory.html
+  컴퓨터 구조/index.md
+  운영체제/index.md
+  자료구조/index.md
+  임베디드 통신/index.md
+```
+
+새 분류는 폴더를 만들고 YAML 머리말이 있는 글을 추가하면 자동으로 나타납니다. `_config.yml`이나 기존 `index`에 분류를 등록할 필요가 없습니다. 빈 폴더는 Git에 저장되지 않으므로 글 없이 분류만 먼저 만들 때는 해당 폴더에 아래 `index.md`를 넣습니다.
+
+```markdown
+---
+title: 새 분류
+folder_overview: true
+---
+새 분류의 자료를 정리하는 공간입니다.
+```
+
+일반 글은 원하는 폴더 안에 Markdown 또는 HTML로 추가합니다. `title`은 글 제목, `order`는 글 순서이며 `topic`은 필요하지 않습니다.
 
 ```markdown
 ---
 title: 새 이론 노트
 description: 이 글에서 다루는 내용을 한 줄로 적습니다.
-topic: 기초 개념
 order: 5
 ---
-
-## 핵심 개념
 
 여기에 본문을 작성합니다.
 ```
 
-어느 글을 열어도 상단 메뉴와 브라우저 탭 이름은 **이론 자료**로 유지됩니다.
-오른쪽 글 목록은 전체 자료 → 주제(`topic`) → 각 글로 이어지는 트리입니다. 주제나 전체 자료를 눌러 접고 펼칠 수 있고, 열린 상태는 같은 탭에서 유지됩니다.
-글 화면은 `_layouts/theory.html`, 본문 스타일은 `assets/css/theory.css`에서 수정합니다.
-HTML 강의를 추가할 때는 기존 파일처럼 `title`, `description`, `permalink`, `order`를 YAML 머리말에 적습니다.
-공통 레이아웃이 문서 제목과 메뉴를 만들므로 HTML 파일에는 본문과 필요한 스크립트만 넣습니다.
+기존 강의는 `permalink`를 유지하므로 파일을 이동해도 `/theory/full-adder/` 등 기존 주소는 바뀌지 않습니다. 새 글도 주소를 고정하려면 `permalink: /theory/my-note/`를 추가하세요. 지정하지 않으면 폴더 경로를 따라 주소가 생성됩니다.
+
+목차 생성은 `_includes/theory-folder-tree.html`, 글 화면은 `_layouts/theory.html`, 스타일은 `assets/css/theory.css`에서 관리합니다. `folder_overview: true`인 안내 페이지는 글 개수와 이전·다음 글에서 제외됩니다. 목차의 펼침 상태는 같은 브라우저 탭에서 유지됩니다.
 
 사이트 전체 글꼴은 로컬의 Pretendard Variable v1.3.9를 사용합니다. 라이선스는 `assets/fonts/OFL-Pretendard.txt`에 포함되어 있습니다.
 
