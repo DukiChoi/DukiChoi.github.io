@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="{{ page.lang | default: 'ko' | escape }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Market Peek — Duki Programming</title>
+  <link rel="canonical" href="{{ page.redirect_to | escape }}">
+  <meta http-equiv="refresh" content="0; url={{ page.redirect_to | escape }}">
+  <script>window.location.replace({{ page.redirect_to | jsonify }} + window.location.search + window.location.hash);</script>
+</head>
+<body>
+  <p>{% if page.lang == 'en' %}Market Peek has moved. Continue to{% else %}Market Peek의 새 웹사이트로 이동합니다.{% endif %} <a href="{{ page.redirect_to | escape }}">{{ page.redirect_to | escape }}</a></p>
+</body>
+</html>
