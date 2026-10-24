@@ -1,0 +1,140 @@
+---
+title: 트랜잭션과 격리 수준
+description: 두 트랜잭션이 동시에 실행될 때 격리 수준에 따라 Dirty Read, Non-repeatable Read, Phantom Read가 생기는지 확인합니다.
+permalink: /theory/transaction-isolation/
+category: database
+order: 5
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:18px 0 8px}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.lx input[type=text],.lx input[type=number],.lx select{font:inherit;font-size:14px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .err{font-size:13px;color:#E24B4A;margin:4px 0 0;min-height:18px}
+.lx .msg{font-size:15px;line-height:1.65;color:var(--text-primary);background:var(--surface-1);border-radius:8px;padding:10px 12px;margin-top:12px;min-height:52px;max-width:none}
+.lx .msg.bad{background:rgba(226,75,74,.10)}.lx .msg.ok{background:rgba(29,158,117,.12)}
+.lx .stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.lx .stats span{font-size:13px;color:var(--text-secondary);background:var(--surface-1);border-radius:6px;padding:4px 10px}
+.lx .stats b{font-family:var(--font-mono);font-weight:500;color:var(--text-primary);margin-left:5px}
+.lx .tw{overflow-x:auto;margin-top:10px}
+.lx table.t{border-collapse:collapse;font-size:14px;background:var(--panel,#fff)}
+.lx table.t th,.lx table.t td{border:1px solid var(--border);padding:5px 10px;text-align:center;white-space:nowrap}
+.lx table.t th{font-weight:500;color:var(--text-primary);background:var(--surface-1)}
+.lx table.t td{color:var(--text-primary)}
+.lx .on{background:#FAEEDA!important;color:#633806!important}
+.lx .hit{background:rgba(29,158,117,.16)!important;color:#085041!important}
+.lx .bad{background:rgba(226,75,74,.14)!important;color:#A32D2D!important}
+.lx .out{opacity:.35;text-decoration:line-through}
+.lx .null{color:var(--text-muted)!important;font-style:italic}
+.lx .mono{font-family:var(--font-mono)}
+.lx .leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--text-secondary);margin-top:6px}
+.lx .leg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.lx .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.lx .chips span{font-family:var(--font-mono);font-size:13px;background:var(--surface-1);border-radius:6px;padding:3px 9px;color:var(--text-primary)}
+.lx .code{font-family:var(--font-mono);font-size:13px;line-height:1.6;background:var(--surface-1);border-radius:8px;padding:8px 0;overflow-x:auto;margin-top:10px}
+.lx .code div{padding:0 12px;white-space:pre;color:var(--text-secondary)}
+.lx .code div.on{font-weight:500}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:22px 0 4px}
+.facts div{background:var(--surface-1);border-radius:8px;padding:9px 12px}
+.facts span{display:block;font-size:12px;color:var(--text-secondary)}
+.facts b{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--text-primary)}
+.tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.tip p{margin:4px 0}.tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
+.txw{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:12px;margin-top:12px;align-items:start}
+@media (max-width:640px){.txw{grid-template-columns:minmax(0,1fr)}}
+.lane{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 10px}
+.lane .hd{font-size:13px;font-weight:600;text-align:center;padding:4px;border-radius:6px;color:#fff}
+.lane .st{font-family:var(--font-mono);font-size:12.5px;line-height:1.5;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary);min-height:34px}
+.lane .st.fu{opacity:.25}
+.lane .st.cur{border-color:#E8A317;box-shadow:0 0 0 2px #FAC775}
+.lane .st.wait{border-style:dashed;border-color:#E24B4A}
+.lane .st .rs{display:inline-block;margin-top:4px;font-family:var(--font-sans);font-size:12px;font-weight:600;padding:2px 8px;border-radius:5px}
+.lane .st .rs.g{background:rgba(29,158,117,.16);color:#085041}.lane .st .rs.b{background:rgba(226,75,74,.16);color:#A32D2D}.lane .st .rs.w{background:rgba(232,163,23,.2);color:#633806}
+.lane .em{min-height:34px}
+.db{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--panel,#fff)}
+.db .dbt{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+.db .rw{font-family:var(--font-mono);font-size:13px;padding:4px 8px;border-radius:5px;background:var(--surface-1);margin:3px 0;color:var(--text-primary)}
+.db .rw.p{background:rgba(232,163,23,.2);color:#633806;border:1px dashed #BA7517}
+.db .lb{font-size:11px;color:var(--text-secondary);margin-top:8px}
+</style>
+<div class="circuit-lesson lx">
+<p class="lede">트랜잭션 두 개가 같은 데이터를 동시에 다루면, 한쪽이 다른 쪽의 중간 상태를 보게 될 수 있습니다. 격리 수준은 "다른 트랜잭션의 변경을 어디까지 보지 않을 것인가"를 정하는 설정입니다. 수준이 높을수록 안전하지만 기다리는 시간이 늘어납니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">두 트랜잭션의 실행 순서와 격리 수준에 따라 읽는 값이 달라지는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 상황과 격리 수준을 고르세요</p>
+    <div class="row"><span class="lbl">상황</span><button class="bt sel" data-sc="dirty">Dirty Read</button><button class="bt" data-sc="nonrep">Non-repeatable Read</button><button class="bt" data-sc="phantom">Phantom Read</button></div>
+    <div class="row" style="margin-top:8px"><span class="lbl">격리 수준</span><button class="bt" data-lv="RU">READ UNCOMMITTED</button><button class="bt sel" data-lv="RC">READ COMMITTED</button><button class="bt" data-lv="RR">REPEATABLE READ</button><button class="bt" data-lv="SER">SERIALIZABLE</button></div>
+    <p class="sub">2. 시간 순서대로 실행하세요</p>
+    <div class="row"><button class="bt go" id="txNext">다음 단계</button><button class="bt" id="txAll">끝까지</button><button class="bt" id="txReset">처음으로</button></div>
+    <div class="txw">
+      <div class="lane" id="txLane"></div>
+      <div class="db"><div class="dbt">데이터베이스</div><div id="txDb"></div></div>
+    </div>
+    <div class="msg" id="txMsg" aria-live="polite"></div>
+    <div class="tw"><table class="t" id="txM"></table></div>
+  </div>
+  <p class="hint">왼쪽 칸이 트랜잭션 T1, 오른쪽 칸이 T2입니다. 같은 상황을 격리 수준만 바꿔 다시 실행하면 T1이 읽는 값이 달라집니다. 아래 표에서 지금 보고 있는 칸이 강조됩니다.</p>
+<div class="facts"><div><span>A 원자성</span><b>전부 아니면 전무</b></div><div><span>C 일관성</span><b>규칙을 항상 지킴</b></div><div><span>I 격리성</span><b>서로 간섭하지 않음</b></div><div><span>D 지속성</span><b>커밋하면 남음</b></div></div>
+
+  <h2>세 가지 이상 현상</h2>
+  <p><strong>Dirty Read</strong>는 다른 트랜잭션이 아직 커밋하지 않은 값을 읽는 것입니다. 그 트랜잭션이 롤백하면 존재한 적 없는 값을 읽은 셈이 됩니다. <strong>Non-repeatable Read</strong>는 한 트랜잭션 안에서 같은 행을 두 번 읽었는데, 그사이 다른 트랜잭션이 고치고 커밋해서 값이 달라지는 것입니다. <strong>Phantom Read</strong>는 같은 조건으로 두 번 조회했는데, 그사이 다른 트랜잭션이 조건에 맞는 행을 새로 넣어 행 수가 달라지는 것입니다.</p>
+  <h2>DB마다 기본값과 구현이 다릅니다</h2>
+  <p>PostgreSQL과 Oracle의 기본값은 READ COMMITTED, MySQL InnoDB의 기본값은 REPEATABLE READ입니다. 요즘 DB는 대부분 MVCC 방식으로, 데이터의 이전 버전을 보관해 두고 트랜잭션마다 알맞은 버전을 보여 줍니다. 그래서 읽는 쪽이 쓰는 쪽을 기다리지 않습니다. MySQL InnoDB의 REPEATABLE READ는 스냅숏 덕분에 표준과 달리 일반 SELECT에서 Phantom Read가 나타나지 않습니다. 이 페이지의 SERIALIZABLE은 잠금으로 구현하는 방식을 보여 줍니다.</p>
+<div class="tip"><p class="t">면접에서 자주 묻는 것</p><p>"격리 수준을 높이면 무엇을 잃는가"에는 동시 처리량이라고 답합니다. 잠금 방식이라면 기다리는 트랜잭션이 늘고 교착 상태 가능성도 커집니다. 재고 차감처럼 읽고 나서 고치는 작업은 격리 수준을 올리는 대신 <code>SELECT ... FOR UPDATE</code>로 필요한 행만 잠그는 경우가 많습니다.</p></div>
+
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const LV=['RU','RC','RR','SER'],LVN={RU:'READ UNCOMMITTED',RC:'READ COMMITTED',RR:'REPEATABLE READ',SER:'SERIALIZABLE'};
+const AN={dirty:'Dirty Read',nonrep:'Non-repeatable Read',phantom:'Phantom Read'};
+const MAT={dirty:{RU:1,RC:0,RR:0,SER:0},nonrep:{RU:1,RC:1,RR:0,SER:0},phantom:{RU:1,RC:1,RR:1,SER:0}};
+let sc='dirty',lv='RC',k=-1;
+function steps(){const L=lv,S=[];
+  if(sc==='dirty'){const pend=[['id 1','잔액 1000 → 500 (T2, 미커밋)']];
+    S.push({t:2,sql:'BEGIN;',db:{c:[['id 1','잔액 1000']],p:[]},msg:'T2가 트랜잭션을 시작합니다.'});
+    S.push({t:2,sql:'UPDATE 계좌 SET 잔액 = 500\nWHERE id = 1;',db:{c:[['id 1','잔액 1000']],p:pend},msg:'T2가 잔액을 500으로 바꿨지만 아직 커밋하지 않았습니다. 확정된 값은 여전히 1000입니다.'});
+    S.push({t:1,sql:'BEGIN;',db:{c:[['id 1','잔액 1000']],p:pend},msg:'T1이 트랜잭션을 시작합니다.'});
+    if(L==='RU')S.push({t:1,sql:'SELECT 잔액 FROM 계좌\nWHERE id = 1;',r:['500','b'],db:{c:[['id 1','잔액 1000']],p:pend},msg:'READ UNCOMMITTED는 커밋되지 않은 변경도 읽습니다. T1은 T2가 아직 확정하지 않은 500을 읽었습니다.',bad:1});
+    else if(L==='SER')S.push({t:1,sql:'SELECT 잔액 FROM 계좌\nWHERE id = 1;',r:['대기 → 1000','w'],wait:1,db:{c:[['id 1','잔액 1000']],p:pend},msg:'SERIALIZABLE(잠금 방식)에서는 T2가 이 행에 쓰기 잠금을 쥐고 있어 T1이 기다립니다. T2가 끝난 뒤 확정된 값 1000을 읽습니다.'});
+    else S.push({t:1,sql:'SELECT 잔액 FROM 계좌\nWHERE id = 1;',r:['1000','g'],db:{c:[['id 1','잔액 1000']],p:pend},msg:`${LVN[L]}는 커밋된 값만 읽습니다. T2의 미커밋 변경은 보이지 않으므로 T1은 1000을 읽습니다.`});
+    S.push({t:2,sql:'ROLLBACK;',db:{c:[['id 1','잔액 1000']],p:[]},msg:L==='RU'?'T2가 롤백했습니다. 잔액은 처음부터 끝까지 1000이었고, T1이 읽은 500은 한 번도 확정된 적 없는 값이 되었습니다. 이것이 Dirty Read입니다.':'T2가 롤백해서 500으로 바꾼 일은 없던 일이 되었습니다. T1은 처음부터 확정된 값만 봤으므로 문제가 없습니다.',bad:L==='RU'});
+    S.push({t:1,sql:'COMMIT;',db:{c:[['id 1','잔액 1000']],p:[]},msg:'T1이 커밋합니다.'});}
+  else if(sc==='nonrep'){const W=L==='SER';
+    S.push({t:1,sql:'BEGIN;',db:{c:[['id 1','잔액 1000']],p:[]},msg:'T1이 트랜잭션을 시작합니다.'});
+    S.push({t:1,sql:'SELECT 잔액 FROM 계좌\nWHERE id = 1;',r:['1000','g'],db:{c:[['id 1','잔액 1000']],p:[]},msg:'T1이 처음 읽은 잔액은 1000입니다.'+(L==='RR'?' REPEATABLE READ는 이 순간의 스냅숏을 트랜잭션이 끝날 때까지 씁니다.':'')});
+    S.push({t:2,sql:'UPDATE 계좌 SET 잔액 = 500\nWHERE id = 1;',r:W?['대기','w']:null,wait:W,db:{c:[['id 1','잔액 1000']],p:W?[]:[['id 1','잔액 1000 → 500 (T2, 미커밋)']]},msg:W?'SERIALIZABLE(잠금 방식)에서는 T1이 읽은 행에 공유 잠금이 걸려 있어 T2의 UPDATE가 기다립니다.':'T2가 잔액을 500으로 바꿨습니다. 아직 커밋 전입니다.'});
+    S.push({t:2,sql:'COMMIT;',r:W?['대기','w']:null,wait:W,db:{c:[['id 1',W?'잔액 1000':'잔액 500']],p:[]},msg:W?'T2는 여전히 UPDATE에서 기다리는 중이라 커밋하지 못합니다.':'T2가 커밋했습니다. 이제 확정된 잔액은 500입니다.'});
+    if(L==='RU'||L==='RC')S.push({t:1,sql:'SELECT 잔액 FROM 계좌\nWHERE id = 1;',r:['500','b'],db:{c:[['id 1','잔액 500']],p:[]},msg:`${LVN[L]}는 읽을 때마다 가장 최근에 커밋된 값을 읽습니다. 같은 트랜잭션 안에서 같은 행을 다시 읽었는데 1000이 500으로 바뀌었습니다. 이것이 Non-repeatable Read입니다.`,bad:1});
+    else S.push({t:1,sql:'SELECT 잔액 FROM 계좌\nWHERE id = 1;',r:['1000','g'],db:{c:[['id 1',W?'잔액 1000':'잔액 500']],p:[]},msg:W?'T2가 아직 기다리고 있으므로 값이 바뀌지 않았습니다. T1은 다시 1000을 읽습니다.':'확정된 값은 500으로 바뀌었지만, T1은 처음 읽을 때의 스냅숏을 계속 보므로 다시 1000을 읽습니다.'});
+    S.push({t:1,sql:'COMMIT;',db:{c:[['id 1','잔액 500']],p:[]},msg:W?'T1이 커밋하며 잠금을 풀자, 기다리던 T2의 UPDATE와 COMMIT이 이어서 실행됩니다. 최종 잔액은 500입니다.':'T1이 커밋합니다.'});}
+  else{const W=L==='SER',base=[['id 1','잔액 1000'],['id 2','잔액 2000']],add=[...base,['id 3','잔액 3000']];
+    S.push({t:1,sql:'BEGIN;',db:{c:base,p:[]},msg:'T1이 트랜잭션을 시작합니다.'});
+    S.push({t:1,sql:'SELECT COUNT(*) FROM 계좌\nWHERE 잔액 >= 1000;',r:['2','g'],db:{c:base,p:[]},msg:'잔액이 1000 이상인 계좌는 2개입니다.'});
+    S.push({t:2,sql:"INSERT INTO 계좌\nVALUES (3, 3000);",r:W?['대기','w']:null,wait:W,db:{c:base,p:W?[]:[['id 3','잔액 3000 (T2, 미커밋)']]},msg:W?'SERIALIZABLE(잠금 방식)에서는 T1이 조회한 범위(잔액 ≥ 1000)에 잠금이 걸려 있어, 그 범위에 들어갈 새 행을 넣는 INSERT가 기다립니다.':'T2가 잔액 3000인 새 계좌를 넣었습니다. 아직 커밋 전입니다.'});
+    S.push({t:2,sql:'COMMIT;',r:W?['대기','w']:null,wait:W,db:{c:W?base:add,p:[]},msg:W?'T2는 INSERT에서 기다리는 중이라 커밋하지 못합니다.':'T2가 커밋해서 새 계좌가 확정되었습니다.'});
+    if(W)S.push({t:1,sql:'SELECT COUNT(*) FROM 계좌\nWHERE 잔액 >= 1000;',r:['2','g'],db:{c:base,p:[]},msg:'새 행이 들어오지 못했으므로 T1은 다시 2를 얻습니다.'});
+    else S.push({t:1,sql:'SELECT COUNT(*) FROM 계좌\nWHERE 잔액 >= 1000;',r:['3','b'],db:{c:add,p:[]},msg:`같은 조건으로 다시 셌더니 2개가 3개가 되었습니다. 기존 행은 그대로인데 없던 행이 유령처럼 나타났습니다. 이것이 Phantom Read입니다.`+(L==='RR'?' 표준의 REPEATABLE READ는 기존 행의 값만 지켜 주므로 이 현상을 막지 못합니다. 단, MySQL InnoDB는 스냅숏 덕분에 2를 돌려줍니다.':''),bad:1});
+    S.push({t:1,sql:'COMMIT;',db:{c:add,p:[]},msg:W?'T1이 커밋하며 잠금을 풀자, 기다리던 T2의 INSERT와 COMMIT이 실행됩니다.':'T1이 커밋합니다.'});}
+  return S;}
+function render(){const S=steps(),cur=S[k];
+  let h=`<div class="hd" style="background:#185FA5">T1</div><div class="hd" style="background:#993C1D">T2</div>`;
+  S.forEach((s,i)=>{const c=`st${i>k?' fu':''}${i===k?' cur':''}${s.wait&&i<=k?' wait':''}`;const card=`<div class="${c}">${s.sql.replace(/\n/g,'<br>')}${s.r&&i<=k?`<br><span class="rs ${s.r[1]}">${s.t===1&&s.r[1]!=='w'?'결과: ':''}${s.r[0]}</span>`:''}</div>`;
+    h+=s.t===1?card+'<div class="em"></div>':'<div class="em"></div>'+card;});
+  $('txLane').innerHTML=h;
+  const db=cur?cur.db:S[0].db;
+  $('txDb').innerHTML=`<div class="lb">확정된 데이터</div>${db.c.map(r=>`<div class="rw">${r[0]} · ${r[1]}</div>`).join('')}<div class="lb">커밋 전 변경</div>${db.p.length?db.p.map(r=>`<div class="rw p">${r[0]} · ${r[1]}</div>`).join(''):'<div class="rw" style="color:var(--text-muted)">없음</div>'}`;
+  const M=$('txMsg');M.className='msg'+(cur&&cur.bad?' bad':'');M.textContent=cur?cur.msg:`${AN[sc]} 상황을 ${LVN[lv]} 수준에서 실행합니다. [다음 단계]를 누르세요.`;
+  $('txM').innerHTML='<tr><th></th>'+LV.map(l=>`<th class="${l===lv?'on':''}">${LVN[l]}</th>`).join('')+'</tr>'+Object.keys(AN).map(a=>`<tr><th style="text-align:left" class="${a===sc?'on':''}">${AN[a]}</th>${LV.map(l=>`<td class="${a===sc&&l===lv?'on':MAT[a][l]?'bad':'hit'}">${MAT[a][l]?'발생':'막음'}</td>`).join('')}</tr>`).join('');
+  $('txNext').disabled=k>=S.length-1;$('txAll').disabled=k>=S.length-1;}
+$('txNext').onclick=()=>{k++;render();};$('txAll').onclick=()=>{k=steps().length-1;render();};$('txReset').onclick=()=>{k=-1;render();};
+document.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-sc]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');sc=b.dataset.sc;k=-1;render();});
+document.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-lv]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');lv=b.dataset.lv;k=-1;render();});
+render();
+
+})();
+</script>

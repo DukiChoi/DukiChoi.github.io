@@ -1,0 +1,132 @@
+---
+title: 인덱스와 B+트리
+description: B+트리 인덱스로 값을 찾는 과정과 전체 테이블 스캔을 읽는 페이지 수로 비교합니다.
+permalink: /theory/index-btree/
+category: database
+order: 3
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:18px 0 8px}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.lx input[type=text],.lx input[type=number],.lx select{font:inherit;font-size:14px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .err{font-size:13px;color:#E24B4A;margin:4px 0 0;min-height:18px}
+.lx .msg{font-size:15px;line-height:1.65;color:var(--text-primary);background:var(--surface-1);border-radius:8px;padding:10px 12px;margin-top:12px;min-height:52px;max-width:none}
+.lx .msg.bad{background:rgba(226,75,74,.10)}.lx .msg.ok{background:rgba(29,158,117,.12)}
+.lx .stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.lx .stats span{font-size:13px;color:var(--text-secondary);background:var(--surface-1);border-radius:6px;padding:4px 10px}
+.lx .stats b{font-family:var(--font-mono);font-weight:500;color:var(--text-primary);margin-left:5px}
+.lx .tw{overflow-x:auto;margin-top:10px}
+.lx table.t{border-collapse:collapse;font-size:14px;background:var(--panel,#fff)}
+.lx table.t th,.lx table.t td{border:1px solid var(--border);padding:5px 10px;text-align:center;white-space:nowrap}
+.lx table.t th{font-weight:500;color:var(--text-primary);background:var(--surface-1)}
+.lx table.t td{color:var(--text-primary)}
+.lx .on{background:#FAEEDA!important;color:#633806!important}
+.lx .hit{background:rgba(29,158,117,.16)!important;color:#085041!important}
+.lx .bad{background:rgba(226,75,74,.14)!important;color:#A32D2D!important}
+.lx .out{opacity:.35;text-decoration:line-through}
+.lx .null{color:var(--text-muted)!important;font-style:italic}
+.lx .mono{font-family:var(--font-mono)}
+.lx .leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--text-secondary);margin-top:6px}
+.lx .leg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.lx .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.lx .chips span{font-family:var(--font-mono);font-size:13px;background:var(--surface-1);border-radius:6px;padding:3px 9px;color:var(--text-primary)}
+.lx .code{font-family:var(--font-mono);font-size:13px;line-height:1.6;background:var(--surface-1);border-radius:8px;padding:8px 0;overflow-x:auto;margin-top:10px}
+.lx .code div{padding:0 12px;white-space:pre;color:var(--text-secondary)}
+.lx .code div.on{font-weight:500}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:22px 0 4px}
+.facts div{background:var(--surface-1);border-radius:8px;padding:9px 12px}
+.facts span{display:block;font-size:12px;color:var(--text-secondary)}
+.facts b{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--text-primary)}
+.tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.tip p{margin:4px 0}.tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
+#bxSvg .pg{fill:var(--panel,#fff);stroke:var(--border-strong);stroke-width:1.2}
+#bxSvg .pg.cur{fill:#FAC775;stroke:#BA7517}
+#bxSvg .pg.done{fill:#9FE1CB;stroke:#0F6E56}
+</style>
+<div class="circuit-lesson lx">
+<p class="lede">인덱스는 책 뒤의 찾아보기처럼, 값과 그 값이 있는 행의 위치를 정렬해 둔 별도의 자료구조입니다. 대부분의 DB는 B+트리로 인덱스를 만들어, 수백만 행에서도 페이지 몇 개만 읽고 원하는 행을 찾습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">B+트리 인덱스 탐색과 전체 테이블 스캔을 비교하는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 찾을 값과 방법을 고르세요</p>
+    <div class="row">
+      <label class="lbl">id = <input type="number" id="bxK" value="44" style="width:70px"></label>
+      <button class="bt go" data-op="idx">인덱스로 찾기</button>
+      <button class="bt go" data-op="scan">전체 스캔으로 찾기</button>
+      <span class="lbl" style="margin-left:8px">범위</span><input type="number" id="bxA" value="20" style="width:62px"><span class="lbl">~</span><input type="number" id="bxB" value="45" style="width:62px">
+      <button class="bt go" data-op="range">인덱스로 범위 찾기</button>
+    </div>
+    <p class="err" id="bxErr"></p>
+    <div class="row"><button class="bt" id="bxNext">다음 단계</button><button class="bt" id="bxAll">끝까지</button><span class="lbl" id="bxSt"></span></div>
+    <svg id="bxSvg" width="100%" viewBox="0 0 680 330" role="img" aria-label="B+트리 인덱스와 테이블 페이지"></svg>
+    <div class="leg"><span><i style="background:#FAC775"></i>지금 읽는 페이지</span><span><i style="background:#9FE1CB"></i>이미 읽은 페이지</span><span><i style="background:#639922"></i>찾은 값</span></div>
+    <div class="msg" id="bxMsg" aria-live="polite"></div>
+    <div class="stats" id="bxStats"></div>
+  </div>
+  <p class="hint">위쪽 트리가 id 열에 만든 인덱스이고, 아래쪽 다섯 칸이 실제 행이 저장된 테이블 페이지입니다. 테이블 페이지는 정렬되어 있지 않다는 점을 눈여겨보세요.</p>
+<div class="facts"><div><span>탐색</span><b>O(log n)</b></div><div><span>범위 탐색</span><b>리프 연결 따라감</b></div><div><span>100만 행 높이</span><b>약 3~4</b></div><div><span>대가</span><b>쓰기 느려짐</b></div></div>
+
+  <h2>B+트리의 세 가지 성질</h2>
+  <p>첫째, 모든 노드가 정렬된 키를 여러 개 갖고, 키 사이사이에 자식 포인터가 있습니다. 노드 하나가 디스크 페이지 하나라서 한 번 읽을 때 수백 개의 키를 비교하므로, 트리가 아주 낮습니다. 둘째, 실제 행의 위치는 맨 아래 리프에만 있습니다. 셋째, 리프끼리 옆으로 연결되어 있어서 범위 조건(BETWEEN, &gt;, &lt;)은 시작 리프만 찾은 뒤 옆으로 따라가면 됩니다.</p>
+  <h2>인덱스가 항상 빠르지는 않습니다</h2>
+  <p>인덱스로 찾은 행마다 테이블 페이지를 따로 읽어야 하므로, 조건에 맞는 행이 테이블의 큰 비율을 차지하면 차라리 전체 스캔이 빠릅니다. 범위를 넓혀 실행해 보면 읽는 테이블 페이지 수가 전체 스캔과 비슷해지는 것을 볼 수 있습니다. DB의 옵티마이저는 이 비용을 계산해 인덱스를 쓸지 정합니다.</p>
+<div class="tip"><p class="t">면접에서 자주 묻는 것: 인덱스를 못 타는 경우</p><p>열에 함수나 연산을 씌우면(<code>WHERE YEAR(가입일) = 2024</code>, <code>WHERE 가격 * 2 &gt; 100</code>) 정렬된 값을 쓸 수 없어 인덱스를 못 탑니다. <code>LIKE '%검색어'</code>처럼 앞에 와일드카드가 오면 마찬가지입니다. (a, b) 복합 인덱스는 a로 먼저 정렬되어 있으므로 a 조건 없이 b만으로는 효율적으로 찾지 못합니다(왼쪽 접두사 규칙). 인덱스가 많을수록 INSERT, UPDATE, DELETE 때 모든 인덱스를 함께 고쳐야 해서 쓰기가 느려집니다.</p></div>
+
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const LEAF=[[3,7,12],[15,19,22],[28,31,35],[40,44,47],[52,58,63]];
+const T={id:'R',keys:[40],ch:[{id:'A',keys:[15,28],ch:[0,1,2]},{id:'B',keys:[52],ch:[3,4]}]};
+const HEAP=[[28,3,52],[15,44,7],[63,19,35],[12,58,31],[22,47,40]];
+const POS={R:[340,34],A:[197,118],B:[527,118]},LX=[10,142,274,406,538],LW=110,LY=196,HY=286;
+let S=[],k=0;
+const pageOf=v=>HEAP.findIndex(p=>p.includes(v));
+function descend(v,S0,reads){let n=T,path=[];
+  while(true){const i=n.keys.filter(x=>v>=x).length;reads.idx++;
+    const rel=n.keys.map((x,j)=>v>=x?`${x} ≤ ${v}`:`${v} < ${x}`).join(', ');
+    S0.push({node:n.id,read:[...path],msg:`${n.id==='R'?'루트':'중간'} 노드를 읽습니다. 키는 [${n.keys.join(', ')}]이고, ${rel}이므로 ${i+1}번째 자식으로 내려갑니다.`,st:{...reads}});
+    path.push(n.id);const c=n.ch[i];if(typeof c==='number')return {leaf:c,path};n=c;}}
+function build(op){const v=+$('bxK').value,a=+$('bxA').value,b=+$('bxB').value;S=[];k=0;
+  if(op==='range'&&(!Number.isFinite(a)||!Number.isFinite(b)||a>b)){$('bxErr').textContent='범위는 작은 값 ~ 큰 값 순서의 숫자로 입력하세요.';return false;}
+  if(op!=='range'&&!Number.isFinite(v)){$('bxErr').textContent='찾을 값을 숫자로 입력하세요.';return false;}
+  $('bxErr').textContent='';const reads={idx:0,tbl:0};
+  if(op==='scan'){const read=[];
+    for(let p=0;p<5;p++){reads.tbl++;const f=HEAP[p].includes(v);read.push(p);
+      S.push({hp:p,hread:read.slice(0,-1),found:f?[v]:[],msg:`테이블 페이지 ${p}를 읽고 행(${HEAP[p].join(', ')})을 하나씩 확인합니다.`+(f?` id ${v}가 여기 있습니다. 하지만 id가 유일하다는 보장이 없으면 남은 페이지도 끝까지 읽어야 합니다.`:''),st:{...reads}});}
+    S.push({hread:[0,1,2,3,4],found:HEAP.flat().includes(v)?[v]:[],msg:`전체 스캔을 마쳤습니다. 테이블 페이지 5개를 모두 읽었습니다. 행이 100만 개면 페이지 수천 개를 읽게 됩니다.`,st:{...reads}});return true;}
+  if(op==='idx'){const {leaf,path}=descend(v,S,reads);reads.idx++;const has=LEAF[leaf].includes(v);
+    S.push({leaf,read:path,found:has?[v]:[],msg:`리프 페이지를 읽습니다. 키는 [${LEAF[leaf].join(', ')}]입니다. `+(has?`id ${v}를 찾았습니다. 리프에는 이 행이 테이블 페이지 ${pageOf(v)}에 있다는 위치 정보가 들어 있습니다.`:`id ${v}는 없습니다. 테이블은 한 페이지도 읽지 않고 끝납니다.`),st:{...reads}});
+    if(has){reads.tbl++;S.push({read:[...path],lread:[leaf],hp:pageOf(v),found:[v],msg:`위치 정보를 따라 테이블 페이지 ${pageOf(v)} 하나만 읽어 행을 가져옵니다. 인덱스 ${reads.idx}페이지 + 테이블 1페이지로 끝났습니다.`,st:{...reads}});}
+    return true;}
+  const {leaf,path}=descend(a,S,reads);let L=leaf,got=[],lread=[],pages=new Set();
+  while(L<5){reads.idx++;const ks=LEAF[L].filter(x=>x>=a&&x<=b);got.push(...ks);const stop=LEAF[L].some(x=>x>b);
+    S.push({leaf:L,read:path,lread:lread.slice(),found:got.slice(),msg:`리프 [${LEAF[L].join(', ')}]에서 ${a} 이상 ${b} 이하인 값을 모읍니다: ${ks.length?ks.join(', '):'해당 없음'}. `+(stop?`${b}보다 큰 값을 만났으므로 여기서 멈춥니다.`:'옆 리프로 연결을 따라갑니다.'),st:{...reads}});
+    lread.push(L);if(stop)break;L++;}
+  got.forEach(x=>pages.add(pageOf(x)));reads.tbl+=pages.size;
+  S.push({read:path,lread,found:got,hread:[...pages],msg:`찾은 ${got.length}개 행을 가져오려고 테이블 페이지 ${[...pages].sort().join(', ')}를 읽습니다(${pages.size}페이지). `+(pages.size>=4?'범위가 넓어서 전체 스캔(5페이지)과 별 차이가 없습니다. 이럴 때 옵티마이저는 인덱스 대신 전체 스캔을 고르기도 합니다.':'필요한 페이지만 골라 읽었습니다.'),st:{...reads}});return true;}
+function box(x,y,keys,cls,found,w){const cw=w||32,W=keys.length*cw;let h=`<rect x="${x-W/2}" y="${y-15}" width="${W}" height="30" rx="5" class="${cls}"/>`;
+  keys.forEach((kk,i)=>{const cx=x-W/2+cw*i+cw/2;if(found.includes(kk))h+=`<rect x="${cx-cw/2+2}" y="${y-13}" width="${cw-4}" height="26" rx="4" fill="#639922"/>`;h+=`<text x="${cx}" y="${y+5}" text-anchor="middle" font-size="13" font-family="var(--font-mono)" fill="${found.includes(kk)?'#fff':cls!=='pg'?'#2C2C2A':'var(--text-primary)'}">${kk}</text>`;if(i)h+=`<line x1="${x-W/2+cw*i}" y1="${y-15}" x2="${x-W/2+cw*i}" y2="${y+15}" stroke="var(--border-strong)"/>`;});return h;}
+function render(){const st=S[k]||{msg:'값을 입력하고 위의 파란 버튼 중 하나를 누르세요.',st:{idx:0,tbl:0},found:[]};const found=st.found||[];let h='';
+  const cls=(id,isLeaf)=>{if(isLeaf){if(st.leaf===id)return 'pg cur';if((st.lread||[]).includes(id))return 'pg done';return 'pg';}if(st.node===id)return 'pg cur';if((st.read||[]).includes(id))return 'pg done';return 'pg';};
+  const lc=i=>LX[i]+LW/2;
+  [[POS.R,POS.A],[POS.R,POS.B]].forEach(([p,q])=>h+=`<line x1="${p[0]}" y1="${p[1]+15}" x2="${q[0]}" y2="${q[1]-15}" stroke="var(--border-strong)" stroke-width="1.5"/>`);
+  T.ch.forEach(n=>n.ch.forEach(li=>h+=`<line x1="${POS[n.id][0]}" y1="${POS[n.id][1]+15}" x2="${lc(li)}" y2="${LY-15}" stroke="var(--border-strong)" stroke-width="1.5"/>`));
+  h+=box(...POS.R,T.keys,cls('R'),[]);h+=box(...POS.A,T.ch[0].keys,cls('A'),[]);h+=box(...POS.B,T.ch[1].keys,cls('B'),[]);
+  LEAF.forEach((ks,i)=>{h+=box(lc(i),LY,ks,cls(i,true),found,LW/3);if(i<4)h+=`<line x1="${LX[i]+LW}" y1="${LY}" x2="${LX[i+1]-2}" y2="${LY}" stroke="#378ADD" stroke-width="1.5" marker-end="url(#bxA)"/>`;});
+  h=`<defs><marker id="bxA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#378ADD" stroke-width="1.6"/></marker></defs>`+h;
+  h+=`<text x="12" y="${LY-26}" font-size="12" fill="var(--text-secondary)">리프 (연결 리스트)</text><text x="12" y="${HY-30}" font-size="12" fill="var(--text-secondary)">테이블 페이지 (행이 정렬되지 않은 채 저장됨)</text>`;
+  HEAP.forEach((ks,p)=>{const c=st.hp===p?'pg cur':(st.hread||[]).includes(p)?'pg done':'pg';h+=box(lc(p),HY,ks,c,found,LW/3);h+=`<text x="${lc(p)}" y="${HY+30}" text-anchor="middle" font-size="11" fill="var(--text-muted)">페이지 ${p}</text>`;});
+  $('bxSvg').innerHTML=h;$('bxMsg').textContent=st.msg;
+  $('bxStats').innerHTML=`<span>읽은 인덱스 페이지<b>${st.st.idx}</b></span><span>읽은 테이블 페이지<b>${st.st.tbl}</b></span><span>합계<b>${st.st.idx+st.st.tbl}</b></span>`;
+  $('bxSt').textContent=S.length?`단계 ${k+1} / ${S.length}`:'';$('bxNext').disabled=!S.length||k>=S.length-1;$('bxAll').disabled=!S.length||k>=S.length-1;}
+document.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{if(build(b.dataset.op))render();});
+$('bxNext').onclick=()=>{if(k<S.length-1){k++;render();}};$('bxAll').onclick=()=>{k=S.length-1;render();};
+render();
+
+})();
+</script>

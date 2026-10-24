@@ -1,0 +1,124 @@
+---
+title: JOIN
+description: INNER, LEFT, RIGHT, FULL OUTER JOIN이 두 테이블의 행을 잇는 방식을 행 단위로 봅니다.
+permalink: /theory/join/
+category: database
+order: 2
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:18px 0 8px}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.lx input[type=text],.lx input[type=number],.lx select{font:inherit;font-size:14px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .err{font-size:13px;color:#E24B4A;margin:4px 0 0;min-height:18px}
+.lx .msg{font-size:15px;line-height:1.65;color:var(--text-primary);background:var(--surface-1);border-radius:8px;padding:10px 12px;margin-top:12px;min-height:52px;max-width:none}
+.lx .msg.bad{background:rgba(226,75,74,.10)}.lx .msg.ok{background:rgba(29,158,117,.12)}
+.lx .stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.lx .stats span{font-size:13px;color:var(--text-secondary);background:var(--surface-1);border-radius:6px;padding:4px 10px}
+.lx .stats b{font-family:var(--font-mono);font-weight:500;color:var(--text-primary);margin-left:5px}
+.lx .tw{overflow-x:auto;margin-top:10px}
+.lx table.t{border-collapse:collapse;font-size:14px;background:var(--panel,#fff)}
+.lx table.t th,.lx table.t td{border:1px solid var(--border);padding:5px 10px;text-align:center;white-space:nowrap}
+.lx table.t th{font-weight:500;color:var(--text-primary);background:var(--surface-1)}
+.lx table.t td{color:var(--text-primary)}
+.lx .on{background:#FAEEDA!important;color:#633806!important}
+.lx .hit{background:rgba(29,158,117,.16)!important;color:#085041!important}
+.lx .bad{background:rgba(226,75,74,.14)!important;color:#A32D2D!important}
+.lx .out{opacity:.35;text-decoration:line-through}
+.lx .null{color:var(--text-muted)!important;font-style:italic}
+.lx .mono{font-family:var(--font-mono)}
+.lx .leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--text-secondary);margin-top:6px}
+.lx .leg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.lx .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.lx .chips span{font-family:var(--font-mono);font-size:13px;background:var(--surface-1);border-radius:6px;padding:3px 9px;color:var(--text-primary)}
+.lx .code{font-family:var(--font-mono);font-size:13px;line-height:1.6;background:var(--surface-1);border-radius:8px;padding:8px 0;overflow-x:auto;margin-top:10px}
+.lx .code div{padding:0 12px;white-space:pre;color:var(--text-secondary)}
+.lx .code div.on{font-weight:500}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:22px 0 4px}
+.facts div{background:var(--surface-1);border-radius:8px;padding:9px 12px}
+.facts span{display:block;font-size:12px;color:var(--text-secondary)}
+.facts b{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--text-primary)}
+.tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.tip p{margin:4px 0}.tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
+.jw{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 90px minmax(0,1fr) 150px;gap:0 8px;align-items:start;margin-top:12px}
+@media (max-width:640px){.jw{grid-template-columns:minmax(0,1fr) 50px minmax(0,1fr)}.jw .venn{grid-column:1 / -1;max-width:200px;margin:8px auto 0}}
+.jw .jt{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+.jw table.t{width:100%}
+.jw #jSvg{width:100%;height:100%;overflow:visible}
+.jw .venn{width:100%;margin-top:20px}
+</style>
+<div class="circuit-lesson lx">
+<p class="lede">JOIN은 두 테이블에서 조건이 맞는 행끼리 이어 붙여 한 줄로 만듭니다. 짝이 없는 행을 버리느냐 NULL로 채워 남기느냐에 따라 INNER, LEFT, RIGHT, FULL OUTER로 나뉩니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">두 테이블의 행이 JOIN 조건으로 연결되어 결과 테이블이 만들어지는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. JOIN 종류를 고르세요</p>
+    <div class="row">
+      <button class="bt sel" data-j="INNER">INNER JOIN</button><button class="bt" data-j="LEFT">LEFT JOIN</button><button class="bt" data-j="RIGHT">RIGHT JOIN</button><button class="bt" data-j="FULL">FULL OUTER JOIN</button>
+    </div>
+    <p class="sub">2. 행을 하나씩 맞춰 보세요</p>
+    <div class="row"><button class="bt go" id="jNext">다음 단계</button><button class="bt" id="jAll">끝까지</button><button class="bt" id="jReset">처음으로</button></div>
+    <div class="code" id="jSql"></div>
+    <div class="jw" id="jW">
+      <div><div class="jt">학생 s</div><table class="t" id="jL"></table></div>
+      <svg id="jSvg"></svg>
+      <div><div class="jt">수강 e</div><table class="t" id="jR"></table></div>
+      <svg class="venn" id="jV" viewBox="0 0 160 100" aria-label="벤 다이어그램"></svg>
+    </div>
+    <div class="msg" id="jMsg" aria-live="polite"></div>
+    <div class="sub">결과 <span id="jCnt" class="lbl"></span></div>
+    <div class="tw" style="margin-top:0"><table class="t" id="jRes"></table></div>
+  </div>
+  <p class="hint">[다음 단계]를 누르면 학생 테이블의 행을 하나씩 꺼내 수강 테이블에서 학번이 같은 행을 찾습니다. 오른쪽 벤 다이어그램의 색칠된 부분이 결과에 남는 범위입니다.</p>
+<div class="facts"><div><span>INNER</span><b>짝 있는 행만</b></div><div><span>LEFT</span><b>왼쪽 전부 + 짝</b></div><div><span>RIGHT</span><b>오른쪽 전부 + 짝</b></div><div><span>FULL OUTER</span><b>양쪽 전부</b></div><div><span>짝 없는 칸</span><b>NULL</b></div></div>
+
+  <h2>OUTER JOIN은 짝이 없는 행을 NULL로 채워 남깁니다</h2>
+  <p>LEFT JOIN은 왼쪽 테이블의 모든 행을 결과에 남깁니다. 오른쪽에 짝이 없으면 오른쪽 열을 NULL로 채웁니다. 학생이 한 과목도 듣지 않아도 결과에 나오므로, "수강 신청을 하지 않은 학생 찾기"는 LEFT JOIN 뒤에 <code>WHERE e.학번 IS NULL</code>을 붙여 풉니다.</p>
+  <p>짝이 여러 개면 왼쪽 행이 그 수만큼 복제됩니다. 김하늘이 두 과목을 들으면 결과에 김하늘이 두 줄 나옵니다. JOIN 뒤에 COUNT를 할 때 행 수가 예상보다 많다면 이 복제를 의심하세요.</p>
+<div class="tip"><p class="t">면접에서 자주 묻는 것</p><p>LEFT JOIN에서 오른쪽 테이블 조건을 WHERE에 쓰면 NULL인 행이 걸러져 사실상 INNER JOIN이 됩니다. 오른쪽 테이블을 거르면서 왼쪽 행은 모두 남기려면 그 조건을 ON에 써야 합니다. 조건 없이 모든 조합을 만드는 CROSS JOIN은 행 수가 m × n이 됩니다.</p></div>
+
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const L=[[1,'김하늘'],[2,'이바다'],[3,'박산'],[4,'최별']],R=[[1,'DB'],[1,'OS'],[3,'네트워크'],[5,'알고리즘']];
+let type='INNER',k=0,S=[];
+const NL='<span class="null">NULL</span>';
+function build(){S=[];const res=[],usedR=new Set();
+  S.push({cur:-1,m:[],res:[],msg:`ON s.학번 = e.학번 조건으로 두 테이블을 잇습니다. 학생 테이블의 행을 위에서부터 하나씩 꺼내 짝을 찾습니다.`});
+  L.forEach((l,i)=>{const m=R.map((r,j)=>r[0]===l[0]?j:-1).filter(j=>j>=0);m.forEach(j=>usedR.add(j));
+    let msg=`학번 ${l[0]} ${l[1]}: 수강 테이블에서 학번이 ${l[0]}인 행이 ${m.length}개 있습니다. `;
+    if(m.length){m.forEach(j=>res.push([l[0],l[1],R[j][0],R[j][1]]));msg+=m.length>1?`짝이 ${m.length}개라서 ${l[1]} 행이 ${m.length}줄로 늘어납니다.`:'두 행을 이어 한 줄을 만듭니다.';if(type==='RIGHT')msg+=' (RIGHT JOIN에서도 짝이 있는 행은 그대로 남습니다.)';}
+    else if(type==='LEFT'||type==='FULL'){res.push([l[0],l[1],null,null]);msg+=`짝이 없지만 ${type} JOIN은 왼쪽 행을 모두 남기므로, 수강 쪽 열을 NULL로 채워 넣습니다.`;}
+    else msg+=`짝이 없으므로 ${type==='INNER'?'INNER':'RIGHT'} JOIN 결과에서 빠집니다.`;
+    S.push({cur:i,m,res:res.slice(),msg});});
+  if(type==='RIGHT'||type==='FULL'){const un=R.map((r,j)=>usedR.has(j)?-1:j).filter(j=>j>=0);un.forEach(j=>res.push([null,null,R[j][0],R[j][1]]));
+    S.push({cur:-1,m:[],un,res:res.slice(),msg:`마지막으로 수강 테이블에서 한 번도 짝을 찾지 못한 행(${un.map(j=>'학번 '+R[j][0]).join(', ')})을 ${type} JOIN 규칙에 따라 학생 쪽 열을 NULL로 채워 넣습니다.`});}
+  const last=S[S.length-1];S.push({cur:-1,m:[],res:res.slice(),done:true,msg:`완료했습니다. ${type==='INNER'?'INNER JOIN은 양쪽 모두 짝이 있는 행만 남깁니다.':type==='LEFT'?'LEFT JOIN은 학생을 한 명도 빠뜨리지 않습니다.':type==='RIGHT'?'RIGHT JOIN은 수강 기록을 하나도 빠뜨리지 않습니다.':'FULL OUTER JOIN은 양쪽 테이블의 모든 행을 남깁니다.'} 결과는 ${res.length}줄입니다.`});
+  k=0;}
+function lines(st){const W=$('jW'),svg=$('jSvg'),sr=svg.getBoundingClientRect(),h=Math.max(1,sr.height);svg.setAttribute('viewBox',`0 0 100 ${h}`);svg.setAttribute('preserveAspectRatio','none');
+  const y=(tb,i)=>{const row=$(tb).rows[i+1].getBoundingClientRect();return row.top+row.height/2-sr.top;};let out='';
+  L.forEach((l,i)=>R.forEach((r,j)=>{if(l[0]!==r[0])return;const on=st.cur===i;out+=`<line x1="0" y1="${y('jL',i)}" x2="100" y2="${y('jR',j)}" stroke="${on?'#E8A317':'var(--border-strong)'}" stroke-width="${on?3:1.5}" vector-effect="non-scaling-stroke"/>`;}));
+  svg.innerHTML=out;}
+function venn(){const f={INNER:[0,1,0],LEFT:[1,1,0],RIGHT:[0,1,1],FULL:[1,1,1]}[type],c='rgba(55,138,221,.45)';
+  $('jV').innerHTML=`<defs><clipPath id="cA"><circle cx="58" cy="50" r="36"/></clipPath><clipPath id="cB"><circle cx="102" cy="50" r="36"/></clipPath></defs>
+  ${f[0]?`<circle cx="58" cy="50" r="36" fill="${c}"/>`:''}${f[2]?`<circle cx="102" cy="50" r="36" fill="${c}"/>`:''}${!f[0]&&!f[2]?`<circle cx="102" cy="50" r="36" fill="${c}" clip-path="url(#cA)"/>`:''}
+  <circle cx="58" cy="50" r="36" fill="none" stroke="var(--text-secondary)" stroke-width="1.2"/><circle cx="102" cy="50" r="36" fill="none" stroke="var(--text-secondary)" stroke-width="1.2"/>
+  <text x="40" y="54" text-anchor="middle" font-size="11" fill="var(--text-primary)">학생</text><text x="120" y="54" text-anchor="middle" font-size="11" fill="var(--text-primary)">수강</text>`;}
+function render(){const st=S[k];
+  $('jSql').innerHTML=`<div class="on">SELECT s.학번, s.이름, e.학번, e.과목</div><div>FROM 학생 s ${type==='FULL'?'FULL OUTER':type} JOIN 수강 e</div><div>  ON s.학번 = e.학번;</div>`;
+  $('jL').innerHTML='<tr><th>학번</th><th>이름</th></tr>'+L.map((l,i)=>`<tr class="${st.cur===i?'on':''}"><td class="mono">${l[0]}</td><td>${l[1]}</td></tr>`).join('');
+  $('jR').innerHTML='<tr><th>학번</th><th>과목</th></tr>'+R.map((r,j)=>`<tr class="${st.m.includes(j)?'on':st.un&&st.un.includes(j)?'bad':''}"><td class="mono">${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+  $('jRes').innerHTML='<tr><th>s.학번</th><th>s.이름</th><th>e.학번</th><th>e.과목</th></tr>'+(st.res.length?st.res.map((r,i)=>`<tr>${r.map(v=>`<td class="${typeof v==='number'?'mono':''}">${v===null?NL:v}</td>`).join('')}</tr>`).join(''):'<tr><td colspan="4" class="null">아직 결과가 없습니다</td></tr>');
+  $('jCnt').textContent=`(${st.res.length}줄)`;$('jMsg').textContent=st.msg;$('jNext').disabled=k>=S.length-1;
+  requestAnimationFrame(()=>lines(st));venn();}
+$('jNext').onclick=()=>{if(k<S.length-1){k++;render();}};$('jAll').onclick=()=>{k=S.length-1;render();};$('jReset').onclick=()=>{k=0;render();};
+document.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-j]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');type=b.dataset.j;build();render();});
+window.addEventListener('resize',()=>lines(S[k]));
+build();render();
+
+})();
+</script>

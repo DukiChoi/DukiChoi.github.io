@@ -1,0 +1,118 @@
+---
+title: 분기 예측
+description: 항상 분기, 1비트, 2비트 예측기가 반복문 같은 분기 패턴을 얼마나 맞히는지 비교합니다.
+permalink: /theory/branch-prediction/
+category: architecture
+order: 5
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:18px 0 8px}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.lx input[type=text],.lx input[type=number],.lx select{font:inherit;font-size:14px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .err{font-size:13px;color:#E24B4A;margin:4px 0 0;min-height:18px}
+.lx .msg{font-size:15px;line-height:1.65;color:var(--text-primary);background:var(--surface-1);border-radius:8px;padding:10px 12px;margin-top:12px;min-height:52px;max-width:none}
+.lx .msg.bad{background:rgba(226,75,74,.10)}.lx .msg.ok{background:rgba(29,158,117,.12)}
+.lx .stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.lx .stats span{font-size:13px;color:var(--text-secondary);background:var(--surface-1);border-radius:6px;padding:4px 10px}
+.lx .stats b{font-family:var(--font-mono);font-weight:500;color:var(--text-primary);margin-left:5px}
+.lx .tw{overflow-x:auto;margin-top:10px}
+.lx table.t{border-collapse:collapse;font-size:14px;background:var(--panel,#fff)}
+.lx table.t th,.lx table.t td{border:1px solid var(--border);padding:5px 10px;text-align:center;white-space:nowrap}
+.lx table.t th{font-weight:500;color:var(--text-primary);background:var(--surface-1)}
+.lx table.t td{color:var(--text-primary)}
+.lx .on{background:#FAEEDA!important;color:#633806!important}
+.lx .hit{background:rgba(29,158,117,.16)!important;color:#085041!important}
+.lx .bad{background:rgba(226,75,74,.14)!important;color:#A32D2D!important}
+.lx .out{opacity:.35;text-decoration:line-through}
+.lx .null{color:var(--text-muted)!important;font-style:italic}
+.lx .mono{font-family:var(--font-mono)}
+.lx .leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--text-secondary);margin-top:6px}
+.lx .leg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.lx .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.lx .chips span{font-family:var(--font-mono);font-size:13px;background:var(--surface-1);border-radius:6px;padding:3px 9px;color:var(--text-primary)}
+.lx .code{font-family:var(--font-mono);font-size:13px;line-height:1.6;background:var(--surface-1);border-radius:8px;padding:8px 0;overflow-x:auto;margin-top:10px}
+.lx .code div{padding:0 12px;white-space:pre;color:var(--text-secondary)}
+.lx .code div.on{font-weight:500}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:22px 0 4px}
+.facts div{background:var(--surface-1);border-radius:8px;padding:9px 12px}
+.facts span{display:block;font-size:12px;color:var(--text-secondary)}
+.facts b{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--text-primary)}
+.tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.tip p{margin:4px 0}.tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
+.bpg{display:grid;gap:3px;width:max-content;margin-top:4px}
+.bpg div{height:30px;min-width:30px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:13px;font-weight:600;border-radius:4px}
+.bpg .lb{justify-content:flex-start;font-family:var(--font-sans);font-weight:500;font-size:13px;color:var(--text-primary);padding-right:10px;white-space:nowrap}
+.bpg .hd{color:var(--text-muted);font-weight:400;font-size:11px}
+.bpg .act{background:var(--surface-1);color:var(--text-primary)}
+.bpg .ok{background:rgba(29,158,117,.2);color:#085041}.bpg .no{background:rgba(226,75,74,.18);color:#A32D2D}
+.bpg .fu{opacity:.2;background:var(--surface-1);color:var(--text-muted)}
+.bpg .cur{outline:2px solid #185FA5;outline-offset:-1px}
+.bpw{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:12px;margin-top:12px;align-items:center}
+@media (max-width:640px){.bpw{grid-template-columns:minmax(0,1fr)}}
+.acc .r{display:grid;grid-template-columns:70px minmax(0,1fr) 46px;gap:8px;align-items:center;font-size:13px;color:var(--text-secondary);margin:6px 0}
+.acc .tr{height:12px;background:var(--surface-1);border-radius:3px;overflow:hidden}.acc .fl{height:100%;background:#1D9E75;transition:width .3s}
+.acc b{font-family:var(--font-mono);color:var(--text-primary);font-weight:500;text-align:right}
+</style>
+<div class="circuit-lesson lx">
+<p class="lede">파이프라인 CPU는 분기 명령어의 결과가 나오기 전에 다음 명령어를 미리 가져와야 합니다. 그래서 "이번에도 분기할 것"인지 짐작해서 그쪽 명령어를 가져오고, 틀리면 가져온 명령어를 버립니다. 짐작을 잘할수록 버리는 일이 줄어듭니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">항상 분기, 1비트, 2비트 예측기가 같은 분기 결과를 얼마나 맞히는지 비교하는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 분기 결과 패턴을 고르세요 (T = 분기함, N = 분기 안 함)</p>
+    <div class="row"><button class="bt sel" data-bp="loop">반복문 (TTTN 반복)</button><button class="bt" data-bp="alt">번갈아 (TN 반복)</button><button class="bt" data-bp="most">거의 항상 분기</button><button class="bt" data-bp="rand">무작위</button></div>
+    <p class="sub">2. 분기를 하나씩 실행하세요</p>
+    <div class="row"><button class="bt go" id="bpNext">다음 분기</button><button class="bt" id="bpAll">끝까지</button><button class="bt" id="bpReset">처음으로</button></div>
+    <div class="tw"><div class="bpg" id="bpG"></div></div>
+    <div class="bpw">
+      <svg id="bpSvg" viewBox="0 0 520 170" role="img" aria-label="2비트 예측기 상태도"></svg>
+      <div class="acc" id="bpAcc"></div>
+    </div>
+    <div class="msg" id="bpMsg" aria-live="polite"></div>
+  </div>
+  <p class="hint">표의 맨 윗줄이 실제 분기 결과이고, 아래 세 줄이 각 예측기가 미리 짐작한 값입니다. 초록색은 맞힌 것, 빨간색은 틀린 것입니다. 오른쪽 상태도는 2비트 예측기의 현재 상태입니다.</p>
+<div class="facts"><div><span>틀렸을 때</span><b>파이프라인 비움</b></div><div><span>1비트</span><b>지난번 결과 그대로</b></div><div><span>2비트</span><b>두 번 틀려야 바뀜</b></div><div><span>최신 CPU</span><b>95% 이상 적중</b></div></div>
+
+  <h2>1비트 예측기는 반복문 끝에서 두 번 틀립니다</h2>
+  <p>1비트 예측기는 지난번 결과를 그대로 다음 예측으로 씁니다. 반복문은 대부분 T이다가 마지막에 한 번 N이 나오는데, 1비트는 그 N에서 한 번 틀리고, 다음 반복문의 첫 T에서 "지난번이 N이었으니 N"이라고 또 틀립니다.</p>
+  <h2>2비트 예측기는 한 번의 예외에 흔들리지 않습니다</h2>
+  <p>2비트 예측기는 상태를 네 개 둡니다. "강하게 분기함" 상태에서 N이 한 번 나와도 "약하게 분기함"으로 한 칸 내려갈 뿐 예측은 여전히 T입니다. 같은 방향으로 두 번 연속 틀려야 예측이 바뀌므로, 반복문의 마지막 N 한 번에는 한 번만 틀립니다. 반대로 TNTN처럼 매번 바뀌는 패턴에는 1비트, 2비트 모두 약합니다.</p>
+<div class="tip"><p class="t">코드에서 체감하는 분기 예측</p><p>정렬된 배열에서 <code>if (x &gt;= 128)</code>를 반복하면 결과가 N…N T…T로 뭉쳐 있어 예측이 거의 다 맞지만, 무작위 순서면 절반 가까이 틀려 같은 코드가 몇 배 느려집니다. 성능이 중요한 반복문에서는 분기를 줄이거나 결과가 한쪽으로 몰리게 데이터를 배치합니다. 틀릴 때마다 잃는 클럭은 <a href="{{ '/theory/pipeline/' | relative_url }}">파이프라인</a> 깊이에 비례하므로, 단계가 많은 최신 CPU일수록 예측이 중요합니다.</p></div>
+
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const PAT={loop:'TTTNTTTNTTTNTTTN',alt:'TNTNTNTNTNTNTNTN',most:'TTTTTTTNTTTTTTTT'};
+const SN=['강하게 안 함','약하게 안 함','약하게 분기함','강하게 분기함'];
+let pat='loop',O=[],S=[],k=-1;
+function sim(){O=pat==='rand'?[...Array(16)].map(()=>Math.random()<.5?'T':'N'):[...PAT[pat]];S=[];let one='T',two=2;const c={a:0,o:0,t:0};
+  O.forEach((o,i)=>{const pa='T',po=one,pt=two>=2?'T':'N',before=two;if(pa===o)c.a++;if(po===o)c.o++;if(pt===o)c.t++;
+    one=o;two=o==='T'?Math.min(3,two+1):Math.max(0,two-1);S.push({i,o,pa,po,pt,before,after:two,c:{...c}});});}
+function render(){const s=S[k];
+  let h=`<div class="lb"></div>`+O.map((_,i)=>`<div class="hd">${i+1}</div>`).join('');
+  const row=(lb,f)=>`<div class="lb">${lb}</div>`+O.map((o,i)=>{if(i>k)return `<div class="fu">?</div>`;const v=f(S[i]);return `<div class="${v[1]}${i===k?' cur':''}">${v[0]}</div>`;}).join('');
+  h+=row('실제 결과',x=>[x.o,'act']);h+=row('항상 분기',x=>[x.pa,x.pa===x.o?'ok':'no']);h+=row('1비트',x=>[x.po,x.po===x.o?'ok':'no']);h+=row('2비트',x=>[x.pt,x.pt===x.o?'ok':'no']);
+  const g=$('bpG');g.style.gridTemplateColumns=`90px repeat(${O.length},30px)`;g.innerHTML=h;
+  const cur=s?s.after:2,prev=s?s.before:null;let v=`<defs><marker id="bpA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="context-stroke" stroke-width="2"/></marker></defs>`;
+  const X=i=>70+i*127,Y=78;
+  for(let i=0;i<3;i++){const tOn=s&&prev===i&&cur===i+1,nOn=s&&prev===i+1&&cur===i;
+    v+=`<path d="M${X(i)+34} ${Y-14} Q${X(i)+63} ${Y-44} ${X(i+1)-34} ${Y-14}" fill="none" stroke="${tOn?'#1D9E75':'var(--border-strong)'}" stroke-width="${tOn?3:1.5}" marker-end="url(#bpA)"/><text x="${X(i)+63}" y="${Y-40}" text-anchor="middle" font-size="12" fill="${tOn?'#0F6E56':'var(--text-muted)'}">T</text>`;
+    v+=`<path d="M${X(i+1)-34} ${Y+14} Q${X(i)+63} ${Y+44} ${X(i)+34} ${Y+14}" fill="none" stroke="${nOn?'#E24B4A':'var(--border-strong)'}" stroke-width="${nOn?3:1.5}" marker-end="url(#bpA)"/><text x="${X(i)+63}" y="${Y+50}" text-anchor="middle" font-size="12" fill="${nOn?'#A32D2D':'var(--text-muted)'}">N</text>`;}
+  for(let i=0;i<4;i++){const on=i===cur;v+=`<circle cx="${X(i)}" cy="${Y}" r="32" fill="${on?(i>=2?'#5DCAA5':'#F09595'):'var(--surface-1)'}" stroke="${on?(i>=2?'#0F6E56':'#A32D2D'):'var(--border-strong)'}" stroke-width="${on?2.5:1.2}"/><text x="${X(i)}" y="${Y-3}" text-anchor="middle" font-size="11" font-weight="600" fill="${on?'#2C2C2A':'var(--text-primary)'}">${SN[i].split(' ')[0]}</text><text x="${X(i)}" y="${Y+12}" text-anchor="middle" font-size="11" fill="${on?'#2C2C2A':'var(--text-secondary)'}">${SN[i].split(' ').slice(1).join(' ')}</text><text x="${X(i)}" y="${Y+56+ (i%3?0:0)}" text-anchor="middle" font-size="11" fill="var(--text-muted)">예측 ${i>=2?'T':'N'}</text>`;}
+  $('bpSvg').innerHTML=v;
+  const c=s?s.c:{a:0,o:0,t:0},n=k+1;$('bpAcc').innerHTML=[['항상 분기',c.a],['1비트',c.o],['2비트',c.t]].map(([l,x])=>`<div class="r"><span>${l}</span><div class="tr"><div class="fl" style="width:${n?x/n*100:0}%"></div></div><b>${n?Math.round(x/n*100):0}%</b></div>`).join('');
+  const M=$('bpMsg');
+  if(!s){M.className='msg';M.textContent='처음에 1비트 예측기는 T, 2비트 예측기는 "약하게 분기함" 상태에서 시작합니다. [다음 분기]를 누르세요.';}
+  else{const res=o=>o==='T'?'분기함(T)':'분기 안 함(N)';M.className='msg';
+    M.textContent=`${s.i+1}번째 분기의 실제 결과는 ${res(s.o)}입니다. 1비트는 지난 결과대로 ${s.po}${s.po==='N'?'을':'를'} 예측해 ${s.po===s.o?'맞혔습니다':'틀렸습니다'}. 2비트는 "${SN[s.before]}" 상태라 ${s.pt}${s.pt==='N'?'을':'를'} 예측해 ${s.pt===s.o?'맞혔고':'틀렸고'}, 상태가 "${SN[s.after]}"${s.before===s.after?'에 그대로 머뭅니다':'으로 바뀝니다'}.`;}
+  $('bpNext').disabled=k>=S.length-1;$('bpAll').disabled=k>=S.length-1;}
+$('bpNext').onclick=()=>{if(k<S.length-1){k++;render();}};$('bpAll').onclick=()=>{k=S.length-1;render();};$('bpReset').onclick=()=>{k=-1;render();};
+document.querySelectorAll('[data-bp]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-bp]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');pat=b.dataset.bp;sim();k=-1;render();});
+sim();render();
+
+})();
+</script>

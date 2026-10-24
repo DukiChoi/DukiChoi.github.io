@@ -1,0 +1,121 @@
+---
+title: 캐시 매핑
+description: 메모리 주소를 태그, 인덱스, 오프셋으로 나눠 캐시에 넣는 직접 사상, 집합 연관, 완전 연관 방식을 비교합니다.
+permalink: /theory/cache/
+category: architecture
+order: 3
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:18px 0 8px}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.lx input[type=text],.lx input[type=number],.lx select{font:inherit;font-size:14px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .err{font-size:13px;color:#E24B4A;margin:4px 0 0;min-height:18px}
+.lx .msg{font-size:15px;line-height:1.65;color:var(--text-primary);background:var(--surface-1);border-radius:8px;padding:10px 12px;margin-top:12px;min-height:52px;max-width:none}
+.lx .msg.bad{background:rgba(226,75,74,.10)}.lx .msg.ok{background:rgba(29,158,117,.12)}
+.lx .stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.lx .stats span{font-size:13px;color:var(--text-secondary);background:var(--surface-1);border-radius:6px;padding:4px 10px}
+.lx .stats b{font-family:var(--font-mono);font-weight:500;color:var(--text-primary);margin-left:5px}
+.lx .tw{overflow-x:auto;margin-top:10px}
+.lx table.t{border-collapse:collapse;font-size:14px;background:var(--panel,#fff)}
+.lx table.t th,.lx table.t td{border:1px solid var(--border);padding:5px 10px;text-align:center;white-space:nowrap}
+.lx table.t th{font-weight:500;color:var(--text-primary);background:var(--surface-1)}
+.lx table.t td{color:var(--text-primary)}
+.lx .on{background:#FAEEDA!important;color:#633806!important}
+.lx .hit{background:rgba(29,158,117,.16)!important;color:#085041!important}
+.lx .bad{background:rgba(226,75,74,.14)!important;color:#A32D2D!important}
+.lx .out{opacity:.35;text-decoration:line-through}
+.lx .null{color:var(--text-muted)!important;font-style:italic}
+.lx .mono{font-family:var(--font-mono)}
+.lx .leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--text-secondary);margin-top:6px}
+.lx .leg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.lx .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.lx .chips span{font-family:var(--font-mono);font-size:13px;background:var(--surface-1);border-radius:6px;padding:3px 9px;color:var(--text-primary)}
+.lx .code{font-family:var(--font-mono);font-size:13px;line-height:1.6;background:var(--surface-1);border-radius:8px;padding:8px 0;overflow-x:auto;margin-top:10px}
+.lx .code div{padding:0 12px;white-space:pre;color:var(--text-secondary)}
+.lx .code div.on{font-weight:500}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:22px 0 4px}
+.facts div{background:var(--surface-1);border-radius:8px;padding:9px 12px}
+.facts span{display:block;font-size:12px;color:var(--text-secondary)}
+.facts b{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--text-primary)}
+.tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.tip p{margin:4px 0}.tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
+.abits{display:flex;gap:3px;margin-top:12px;align-items:flex-end;flex-wrap:wrap}
+.abits .b{width:30px;text-align:center}
+.abits .b b{display:block;font-family:var(--font-mono);font-size:16px;font-weight:600;padding:6px 0;border-radius:5px;color:#fff}
+.abits .b span{font-size:10px;color:var(--text-muted)}
+.abits .lg{font-size:12px;color:var(--text-secondary);margin-left:10px;line-height:1.5}
+.hist{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.hist span{font-family:var(--font-mono);font-size:12px;padding:3px 7px;border-radius:5px;background:var(--surface-1);color:var(--text-muted)}
+.hist span.h{background:rgba(29,158,117,.18);color:#085041}.hist span.m{background:rgba(226,75,74,.16);color:#A32D2D}.hist span.c{outline:2px solid #185FA5}
+</style>
+<div class="circuit-lesson lx">
+<p class="lede">캐시는 CPU 가까이에 둔 작고 빠른 메모리입니다. 메모리 주소를 태그, 인덱스, 오프셋으로 쪼개서 어느 칸에 들어갈지 정하고, 같은 블록을 다시 찾으면 메인 메모리까지 가지 않고 바로 꺼냅니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">메모리 주소가 캐시의 어느 칸에 들어가고 적중하거나 실패하는지 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 매핑 방식과 접근 순서를 고르세요 (캐시 4칸, 블록 4바이트, 주소 8비트)</p>
+    <div class="row"><button class="bt sel" data-mp="1">직접 사상</button><button class="bt" data-mp="2">2-way 집합 연관</button><button class="bt" data-mp="4">완전 연관 (LRU)</button></div>
+    <div class="row" style="margin-top:8px"><span class="lbl">접근 순서</span><button class="bt sel" data-cs="seq">순차 접근</button><button class="bt" data-cs="conf">충돌하는 두 주소</button><button class="bt" data-cs="loop">블록 5개 반복</button>
+      <input type="text" id="caIn" style="flex:1;min-width:200px;font-family:var(--font-mono)" aria-label="접근할 주소 목록"></div>
+    <p class="err" id="caErr"></p>
+    <div class="row"><button class="bt go" id="caNext">다음 접근</button><button class="bt" id="caAll">끝까지</button><button class="bt" id="caReset">처음으로</button></div>
+    <div class="abits" id="caBits"></div>
+    <div class="tw"><table class="t" id="caT"></table></div>
+    <div class="msg" id="caMsg" aria-live="polite"></div>
+    <div class="hist" id="caH"></div>
+    <div class="stats" id="caSt"></div>
+  </div>
+  <p class="hint">같은 접근 순서를 매핑 방식만 바꿔 실행해 보세요. [충돌하는 두 주소]는 직접 사상에서 계속 실패하고, [블록 5개 반복]은 완전 연관에서도 LRU 때문에 모두 실패합니다.</p>
+<div class="facts"><div><span>오프셋</span><b>블록 안 위치</b></div><div><span>인덱스</span><b>어느 집합인지</b></div><div><span>태그</span><b>어느 블록인지</b></div><div><span>평균 접근 시간</span><b>적중 시간 + 실패율 × 실패 비용</b></div></div>
+
+  <h2>주소를 세 조각으로 나눕니다</h2>
+  <p>블록이 4바이트이므로 주소의 아래 2비트(오프셋)는 블록 안의 몇 번째 바이트인지를 뜻합니다. 그 위 비트 중 일부(인덱스)로 캐시의 어느 집합에 넣을지 정하고, 나머지(태그)는 그 칸에 지금 어느 블록이 들어 있는지 구별하는 이름표로 저장합니다. 집합당 칸 수(way)가 늘어날수록 인덱스 비트는 줄고 태그 비트는 늘어납니다.</p>
+  <h2>세 가지 매핑 방식</h2>
+  <p><strong>직접 사상</strong>은 블록마다 들어갈 칸이 하나로 정해져 있어 찾기는 빠르지만, 같은 칸을 쓰는 두 블록을 번갈아 쓰면 서로 계속 쫓아냅니다. <strong>완전 연관</strong>은 아무 칸에나 넣을 수 있어 충돌이 없지만, 찾을 때 모든 칸의 태그를 동시에 비교해야 해서 하드웨어가 비쌉니다. 실제 CPU는 그 중간인 <strong>집합 연관</strong>(보통 4~16-way)을 씁니다.</p>
+<div class="tip"><p class="t">코드에서 체감하는 캐시: 지역성</p><p>방금 쓴 데이터를 곧 다시 쓰는 시간 지역성과, 근처 주소를 이어서 쓰는 공간 지역성이 좋을수록 적중률이 오릅니다. 2차원 배열을 <code>a[i][j]</code> 순서(행 우선)로 돌면 메모리에 붙어 있는 값을 차례로 읽어 빠르고, <code>a[j][i]</code> 순서로 돌면 매번 멀리 떨어진 주소를 읽어 느려집니다. 연결 리스트보다 배열이 빠른 이유도 같습니다.</p></div>
+
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const SEQ={seq:'0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15',conf:'0 64 0 64 4 68 0 64',loop:'0 4 8 12 16 0 4 8 12 16 0 4'};
+const J=(x,a,b)=>x+(/[013678]$/.test(String(x))?a:b);
+const FC={t:'#185FA5',i:'#7F77DD',o:'#888780'};
+let ways=1,cs='seq',A=[],S=[],k=-1;
+function parse(){const t=$('caIn').value.trim().split(/[\s,]+/).filter(Boolean);
+  if(!t.length||t.length>24||!t.every(x=>/^\d{1,3}$/.test(x)&&+x<=255)){$('caErr').textContent='0~255 사이 주소를 띄어쓰기로 구분해 1~24개 입력하세요.';return null;}$('caErr').textContent='';return t.map(Number);}
+function sim(){const a=parse();if(!a)return false;A=a;const sets=4/ways,ib=Math.log2(sets),tb=6-ib;
+  const C=Array.from({length:sets},()=>Array.from({length:ways},()=>({v:0,tag:null,blk:null,used:-1})));S=[];let hits=0;
+  A.forEach((ad,t)=>{const blk=ad>>2,set=blk%sets,tag=blk>>ib,off=ad&3;const row=C[set];let w=row.findIndex(x=>x.v&&x.tag===tag),hit=w>=0,victim=null;
+    if(hit){row[w].used=t;hits++;}else{w=row.findIndex(x=>!x.v);if(w<0){w=row.reduce((m,x,i)=>x.used<row[m].used?i:m,0);victim={...row[w]};}row[w]={v:1,tag,blk,used:t};}
+    S.push({ad,blk,set,tag,off,hit,w,victim,C:JSON.parse(JSON.stringify(C)),hits,t,ib,tb});});return true;}
+function render(){const sets=4/ways,ib=Math.log2(sets),tb=6-ib,s=S[k];
+  if(s){const bits=s.ad.toString(2).padStart(8,'0').split('');$('caBits').innerHTML=bits.map((b,i)=>{const f=i<tb?'t':i<tb+ib?'i':'o';return `<div class="b"><b style="background:${FC[f]}">${b}</b><span>${7-i}</span></div>`;}).join('')+
+    `<div class="lg">주소 ${s.ad} = <b style="color:${FC.t}">태그 ${s.tag}</b>${ib?` · <b style="color:${FC.i}">인덱스 ${s.set}</b>`:''} · <b style="color:var(--text-secondary)">오프셋 ${s.off}</b><br>블록 ${s.blk} (주소 ${s.blk*4}~${s.blk*4+3})</div>`;}
+  else $('caBits').innerHTML=`<div class="lg">주소 8비트 = 태그 ${tb}비트${ib?` + 인덱스 ${ib}비트`:''} + 오프셋 2비트. [다음 접근]을 누르세요.</div>`;
+  const C=s?s.C:Array.from({length:sets},()=>Array.from({length:ways},()=>({v:0})));
+  let h=`<tr><th>집합</th><th>웨이</th><th>유효</th><th>태그</th><th>담긴 블록</th><th>마지막 사용</th></tr>`;
+  C.forEach((row,si)=>row.forEach((c,wi)=>{const cur=s&&s.set===si,me=cur&&s.w===wi;const cls=me?(s.hit?'hit':'bad'):cur?'on':'';
+    h+=`<tr class="${cls}">${wi===0?`<td rowspan="${ways}" class="mono">${si}</td>`:''}<td class="mono">${wi}</td><td class="mono">${c.v||0}</td><td class="mono">${c.v?c.tag:'-'}</td><td class="mono">${c.v?`블록 ${c.blk} (${c.blk*4}~${c.blk*4+3})`:'비어 있음'}</td><td class="mono">${c.v?c.used+1+'번째':'-'}</td></tr>`;}));
+  $('caT').innerHTML=h;
+  const M=$('caMsg');
+  if(!s){M.className='msg';M.textContent=ways===1?'직접 사상: 블록 번호를 4로 나눈 나머지가 들어갈 칸입니다.':ways===2?'2-way 집합 연관: 블록 번호를 2로 나눈 나머지로 집합을 고르고, 그 집합의 두 칸 중 아무 곳에나 넣습니다.':'완전 연관: 집합이 하나뿐이라 네 칸 중 아무 곳에나 넣습니다. 꽉 차면 가장 오래 쓰지 않은 칸(LRU)을 비웁니다.';}
+  else{M.className='msg '+(s.hit?'ok':'bad');const where=ib?`집합 ${s.set}`:'캐시 전체';
+    M.textContent=s.hit?`${s.t+1}번째 접근, 주소 ${s.ad}: ${where}에서 태그 ${J(s.tag,'을','를')} 찾았습니다. 적중(hit)입니다. 메인 메모리에 가지 않고 바로 값을 꺼냅니다.`:
+    `${s.t+1}번째 접근, 주소 ${s.ad}: ${where}에 태그 ${J(s.tag,'이','가')} 없습니다. 실패(miss)입니다. 메인 메모리에서 블록 ${s.blk}(주소 ${s.blk*4}~${s.blk*4+3}) 네 바이트를 통째로 가져와 ${s.victim?`웨이 ${s.w}에 있던 블록 ${J(s.victim.blk,'을','를')} ${ways>1?'가장 오래 쓰지 않았기 때문에 ':''}쫓아내고 `:'빈칸 '}웨이 ${s.w}에 넣습니다.`;}
+  $('caH').innerHTML=A.map((ad,i)=>`<span class="${i<=k?(S[i].hit?'h':'m'):''}${i===k?' c':''}">${ad}${i<=k?(S[i].hit?' H':' M'):''}</span>`).join('');
+  const hits=s?s.hits:0,n=k+1;$('caSt').innerHTML=`<span>접근<b>${n}</b></span><span>적중<b>${hits}</b></span><span>실패<b>${n-hits}</b></span><span>적중률<b>${n?Math.round(hits/n*100):0}%</b></span>`;
+  $('caNext').disabled=k>=S.length-1;$('caAll').disabled=k>=S.length-1;}
+function reset(){if(sim()){k=-1;render();}}
+$('caNext').onclick=()=>{if(k<S.length-1){k++;render();}};$('caAll').onclick=()=>{k=S.length-1;render();};$('caReset').onclick=()=>{k=-1;render();};
+$('caIn').onchange=()=>{document.querySelectorAll('[data-cs]').forEach(x=>x.classList.remove('sel'));reset();};$('caIn').oninput=()=>$('caErr').textContent='';
+document.querySelectorAll('[data-mp]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-mp]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');ways=+b.dataset.mp;reset();});
+document.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-cs]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cs=b.dataset.cs;$('caIn').value=SEQ[cs];reset();});
+$('caIn').value=SEQ.seq;reset();
+
+})();
+</script>

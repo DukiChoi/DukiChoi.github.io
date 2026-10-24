@@ -1,0 +1,203 @@
+---
+title: 누적 합
+description: 앞에서부터 더한 값을 미리 저장해 두고 구간 합을 뺄셈 한 번으로 구하는 방법입니다.
+permalink: /theory/prefix-sum/
+category: algorithms
+order: 23
+---
+<style>
+.vz .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.vz .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.vz .bt:disabled{opacity:.45;cursor:default}
+.vz .vz-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.vz .vz-l{font-size:14px;color:var(--text-secondary)}
+.vz input[type=number],.vz select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.vz .vz-err{font-size:13px;color:#E24B4A;margin:0;min-height:18px}
+.vz .vz-box{position:relative;margin-top:4px;overflow:hidden}
+.vz .vz-back,.vz .vz-front{position:absolute;inset:0;pointer-events:none}
+.vz .vz-front{z-index:3}
+.vz .vz-el{position:absolute;z-index:2;border-radius:5px 5px 0 0;background:#85B7EB;color:#042C53;display:flex;align-items:flex-end;justify-content:center;font-family:var(--font-mono);font-size:13px;font-weight:600;padding-bottom:3px;transition:left .32s ease,top .32s ease,height .32s ease,background .2s,opacity .2s}
+.vz.cells .vz-el{border-radius:6px;background:var(--surface-1);color:var(--text-primary);border:1px solid var(--border-strong);align-items:center;padding:0;font-size:16px}
+.vz .vz-el sub{font-size:10px;font-weight:500;margin-left:1px}
+.vz .vz-el.c{background:#EF9F27;color:#412402;border-color:#BA7517}
+.vz .vz-el.s{background:#D85A30;color:#fff;border-color:#993C1D}
+.vz .vz-el.p{background:#7F77DD;color:#fff;border-color:#534AB7}
+.vz .vz-el.m{background:#D4537E;color:#fff;border-color:#993556}
+.vz .vz-el.f{background:#1D9E75;color:#fff;border-color:#0F6E56}
+.vz .vz-el.g{background:#639922;color:#fff;border-color:#3B6D11}
+.vz .vz-el.dim{opacity:.28}
+.vz .idx{position:absolute;transform:translateX(-50%);font-size:11px;color:var(--text-muted);font-family:var(--font-mono)}
+.vz .ptr{position:absolute;transform:translateX(-50%);font-size:12px;font-weight:600;font-family:var(--font-mono);white-space:nowrap;line-height:1}
+.vz .slot{position:absolute;border:1px dashed var(--border-strong);border-radius:5px;opacity:.6}
+.vz .band{position:absolute;border-radius:6px}
+.vz .bandlb{position:absolute;font-size:11px;color:var(--text-secondary);background:var(--panel,#fff);border-radius:4px;padding:0 4px;white-space:nowrap}
+.vz .rowlb{position:absolute;left:0;font-size:12px;color:var(--text-secondary)}
+.vz .vz-scrub{display:flex;align-items:center;gap:10px;margin-top:6px}
+.vz .vz-scrub input{flex:1}
+.vz .vz-scrub span{font-family:var(--font-mono);font-size:13px;color:var(--text-secondary);min-width:72px;text-align:right}
+.vz .vz-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--text-secondary);margin-top:4px}
+.vz .vz-legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.vz .vz-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:12px}
+@media (max-width:720px){.vz .vz-grid{grid-template-columns:minmax(0,1fr)}}
+.vz .vz-msg{font-size:15px;line-height:1.65;color:var(--text-primary);background:var(--surface-1);border-radius:8px;padding:10px 12px;min-height:76px}
+.vz .vz-stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.vz .vz-stats span{font-size:13px;color:var(--text-secondary);background:var(--surface-1);border-radius:6px;padding:4px 10px}
+.vz .vz-stats b{font-family:var(--font-mono);font-weight:500;color:var(--text-primary);margin-left:5px}
+.vz .vz-sub{font-size:12px;color:var(--text-secondary);margin:10px 0 4px}
+.vz .vz-code{font-family:var(--font-mono);font-size:13px;line-height:1.6;background:var(--surface-1);border-radius:8px;padding:8px 0;overflow-x:auto;align-self:start}
+.vz .vz-code div{padding:0 12px 0 6px;white-space:pre;color:var(--text-secondary)}
+.vz .vz-code div.on{background:#FAEEDA;color:#633806}
+.vz .vz-code .ln{display:inline-block;width:24px;color:var(--text-muted);text-align:right;margin-right:10px}
+.vz .stk div{font-family:var(--font-mono);font-size:13px;padding:3px 8px;margin:2px 0;border-left:3px solid var(--border);color:var(--text-secondary)}
+.vz .stk div.on{border-left-color:#185FA5;color:var(--text-primary);background:var(--surface-1)}
+.vz .stk .none{border:none;color:var(--text-muted)}
+.vz .cnt{display:flex;gap:4px}
+.vz .cnt div{flex:1;text-align:center;background:var(--surface-1);border-radius:6px;padding:4px 0}
+.vz .cnt b{display:block;font-family:var(--font-mono);font-size:16px;font-weight:500;color:var(--text-primary)}
+.vz .cnt span{font-size:11px;color:var(--text-muted)}
+.vz .cnt div.on{background:#FAEEDA}.vz .cnt div.on b,.vz .cnt div.on span{color:#633806}
+.vz .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.vz .chips span{font-family:var(--font-mono);font-size:13px;background:var(--surface-1);border-radius:6px;padding:3px 9px;color:var(--text-primary)}
+.vz .chips span.on{background:#FAEEDA;color:#633806}
+.vz .chips i{font-style:normal;color:var(--text-muted);font-size:12px}
+.dsa-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:22px 0 4px}
+.dsa-facts div{background:var(--surface-1);border-radius:8px;padding:9px 12px}
+.dsa-facts span{display:block;font-size:12px;color:var(--text-secondary)}
+.dsa-facts b{font-family:var(--font-mono);font-size:16px;font-weight:500;color:var(--text-primary)}
+.dsa-facts b.good{color:#1D9E75}.dsa-facts b.bad{color:#E24B4A}
+.dsa-tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.dsa-tip p{margin:4px 0}
+.dsa-tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
+</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">앞에서부터 더한 값을 배열 P에 미리 저장해 두면, 어떤 구간의 합이든 뺄셈 한 번으로 구할 수 있습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">누적 합 배열을 만들고 구간 합을 구하는 과정을 보여 주는 시뮬레이터</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">l과 r을 바꾸면 그 구간의 합을 구하는 과정이 다시 재생됩니다. 아래 줄이 누적 합 배열 P입니다.</p>
+<div class="dsa-facts"><div><span>전처리</span><b class="">O(n)</b></div><div><span>구간 합 질의</span><b class="good">O(1)</b></div><div><span>추가 공간</span><b class="">O(n)</b></div><div><span>공식</span><b class="">P[r+1] − P[l]</b></div></div>
+  <h2>왜 빼기 한 번이면 될까요</h2>
+  <p>P[r+1]에는 0~r번의 합이, P[l]에는 0~(l−1)번의 합이 들어 있습니다. 앞부분이 똑같이 겹치므로 빼면 l~r번만 남습니다. P를 a보다 한 칸 길게 만들고 P[0] = 0으로 두면, l = 0일 때도 같은 식을 그대로 씁니다.</p>
+  <h2>2차원 누적 합</h2>
+<pre><code>S[i+1][j+1] = S[i][j+1] + S[i+1][j] - S[i][j] + a[i][j]
+
+# (r1, c1) ~ (r2, c2) 직사각형의 합
+S[r2+1][c2+1] - S[r1][c2+1] - S[r2+1][c1] + S[r1][c1]</code></pre><div class="dsa-tip"><p class="t">코테에서 함께 쓰는 기법</p><p><strong>차분 배열</strong>: 구간 [l, r]에 v를 더하는 작업이 여러 번이면 d[l] += v, d[r+1] −= v만 해 두고, 마지막에 d의 누적 합을 한 번 구합니다. 업데이트 하나가 O(1)이 됩니다.</p><p><strong>누적 합 + 해시</strong>: 합이 정확히 K인 연속 구간의 개수는 P[j] − P[i] = K인 쌍의 개수입니다. P를 만들면서 지금까지 나온 P 값의 개수를 사전에 세어 두면 O(n)에 셉니다. 음수가 섞여 투 포인터를 쓸 수 없을 때 쓰는 방법입니다.</p></div>
+</div>
+<script>
+(() => {
+const J=(x,a,b)=>x+(/[013678flmnr]$/i.test(String(x))?a:b);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const PC={i:'#185FA5',j:'#BA7517',p:'#534AB7',m:'#993556',f:'#0F6E56'};
+const BAND={ok:'rgba(29,158,117,.14)',bad:'rgba(216,90,48,.13)',p:'rgba(127,119,221,.14)',w:'rgba(232,163,23,.18)',b:'rgba(55,138,221,.13)'};
+class Rec{
+  constructor(els,o){this.els=els;this.n=o.n;this.a=els.map(e=>e.id);this.x=o.aux?Array(o.auxN||o.n).fill(null):null;this.fixed=new Set();this.st=Object.assign({},o.stats||{});this.f=[];}
+  v(i){return this.els[this.a[i]].v} xv(i){return this.els[this.x[i]].v}
+  L(i){const e=this.els[this.a[i]];return e.v+(e.tag||'');} XL(i){const e=this.els[this.x[i]];return e.v+(e.tag||'');}
+  swap(i,j){const t=this.a[i];this.a[i]=this.a[j];this.a[j]=t;}
+  mv(i,j){this.a[j]=this.a[i];this.a[i]=null;}
+  down(i,j){this.x[j]=this.a[i];this.a[i]=null;}
+  up(j,i){this.a[i]=this.x[j];this.x[j]=null;}
+  xmv(i,j){this.x[j]=this.x[i];this.x[i]=null;}
+  add(v,j){const id=this.els.length;this.els.push({id,v});this.x[j]=id;return id;}
+  fix(i){if(this.a[i]!=null)this.fixed.add(this.a[i]);}
+  fixAll(){this.a.forEach(id=>id!=null&&this.fixed.add(id));if(this.x)this.x.forEach(id=>id!=null&&this.fixed.add(id));}
+  H(...p){const h={};p.forEach(([i,c,row])=>{const id=row?this.x[i]:this.a[i];if(id!=null)h[id]=c;});return h;}
+  S(line,msg,o={}){this.f.push({a:this.a.slice(),x:this.x?this.x.slice():null,fixed:new Set(this.fixed),hl:o.hl||{},ptr:o.ptr||[],band:o.band||[],rng:o.rng||null,line,msg,st:Object.assign({},this.st),ex:o.ex?JSON.parse(JSON.stringify(o.ex)):null});}
+}
+const stackSide=fn=>fr=>{const s=(fr.ex&&fr.ex.stack)||[];return `<div class="vz-sub">호출 스택 (맨 위가 지금 실행 중)</div><div class="stk">${s.length?s.slice().reverse().map((x,i)=>`<div class="${i===0?'on':''}">${fn}(a, ${x[0]}, ${x[1]})</div>`).join(''):'<div class="none">비어 있음</div>'}</div>`;};
+
+const EUN=n=>/[013678]$/.test(String(n))?'은':'는';
+const CFG={mode:'cells',n:10,aux:'P (누적 합)',auxN:11,tags:false,stats:{'덧셈':0},legend:['c','m',['#639922','새로 만든 값 · P[r+1]'],['#D85A30','P[l]'],[BAND.w,'구할 구간']],
+presets:[['ex1','예시'],['random','무작위']],
+inputs:`<span class="vz-l" style="margin-left:6px">구간</span> l <input type="number" id="pfL" value="2" min="0" max="9" style="width:56px"> r <input type="number" id="pfR" value="6" min="0" max="9" style="width:56px">`,
+gen(p){return p==='ex1'?[3,1,4,1,5,9,2,6,5,3]:[...Array(10)].map(()=>1+Math.floor(Math.random()*9));},
+code:['# 1) 누적 합 만들기: O(n)','P = [0] * (len(a) + 1)','for i in range(len(a)):','    P[i + 1] = P[i] + a[i]','','# 2) 구간 합 a[l] + ... + a[r]: O(1)','def range_sum(l, r):','    return P[r + 1] - P[l]'],
+bind(build,err){['pfL','pfR'].forEach(id=>document.getElementById(id).onchange=()=>{const l=+document.getElementById('pfL').value,r=+document.getElementById('pfR').value;if(!Number.isInteger(l)||!Number.isInteger(r)||l<0||r>9||l>r){err('0 ≤ l ≤ r ≤ 9 범위의 정수로 입력하세요.');return;}build();});},
+record(r){const n=r.n,l=+document.getElementById('pfL').value,R=+document.getElementById('pfR').value;
+  r.add(0,0);r.S(1,'P[0] = 0에서 시작합니다. P[i]는 a[0]부터 a[i−1]까지, 곧 앞에서부터 i개를 더한 값입니다.',{hl:r.H([0,'g',1])});
+  for(let i=0;i<n;i++){const pv=r.xv(i),nv=pv+r.v(i);r.add(nv,i+1);r.st['덧셈']++;
+    r.S(3,`P[${i+1}] = P[${i}] + a[${i}] = ${pv} + ${r.v(i)} = ${nv}`,{hl:Object.assign(r.H([i,'c']),r.H([i,'m',1]),r.H([i+1,'g',1])),ptr:[{i,t:'i'}]});}
+  const big=r.xv(R+1),small=r.xv(l),ans=big-small;
+  r.S(5,`누적 합 준비가 끝났습니다. 이제 a[${l}]부터 a[${R}]까지의 합을 구합니다.`,{band:[{lo:l,hi:R,c:BAND.w,l:`a[${l}..${R}]`}]});
+  r.S(7,`P[${R+1}]${EUN(R+1)} 앞에서부터 ${R+1}개의 합이고, P[${l}]${EUN(l)} 앞에서부터 ${l}개의 합입니다. 둘의 차이가 바로 ${l}~${R}번의 합입니다. P[${R+1}] − P[${l}] = ${big} − ${small} = ${ans}`,{band:[{lo:l,hi:R,c:BAND.w,l:`합 ${ans}`}],hl:Object.assign(r.H([R+1,'g',1]),R+1!==l?r.H([l,'s',1]):{}),ptr:[{r:1,i:R+1,t:'r+1',c:PC.f},{r:1,i:l,t:'l',c:'#993C1D'}]});
+  r.S(7,`답은 ${ans}입니다. 빼기 한 번으로 끝났습니다. 직접 더했다면 덧셈 ${R-l}번이 필요하고, 이런 질문이 q번 들어오면 차이는 q배로 벌어집니다.`,{band:[{lo:l,hi:R,c:BAND.ok,l:`합 ${ans}`}],hl:Object.fromEntries(r.a.slice(l,R+1).map(id=>[id,'g']))});}};
+
+const C=CFG,$=id=>document.getElementById(id),ROOT=$('vzStage');
+const BARS=C.mode!=='cells',COLS=C.cols||Math.max(C.n,C.auxN||0),W=100/COLS;
+const G=BARS?{b0:212,i0:228,p0:236,aux:150,max0:196,max1:128}:{b0:50,i0:66,p0:72,aux:84,cell:44};
+const GEO=(()=>{const g={b:[G.b0],i:[G.i0],p:[G.p0]};if(C.aux){const b1=G.p0+40+G.aux;g.b.push(b1);g.i.push(b1+16);g.p.push(b1+24);g.h=b1+66;}else g.h=G.p0+46;return g;})();
+const LEG={c:['#EF9F27','비교 중'],s:['#D85A30','교환·이동'],p:['#7F77DD','기준값'],m:['#D4537E','key·최솟값'],f:['#1D9E75','자리 확정'],g:['#639922','찾음·결과']};
+let VALS=null,EL=[],F=[],k=0,timer=null,preset=(C.presets&&C.presets.length)?C.presets[0][0]:null,dom={},MAXV=1;
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const ERR=m=>{$('vzErr').textContent=m||'';};
+ROOT.innerHTML=`<div class="vz-ctl">${C.presets?'<span class="vz-l">입력</span>'+C.presets.map(([p,l])=>`<button class="bt${p===preset?' sel':''}" data-pre="${p}">${l}</button>`).join(''):''}${C.inputs||''}</div>
+<div class="vz-ctl"><button class="bt go" id="vzPlay">자동 재생</button><button class="bt" id="vzPrev">이전 단계</button><button class="bt" id="vzNext">다음 단계</button><button class="bt" id="vzReset">처음으로</button><label class="vz-l">속도 <select id="vzSpd"><option value="1100">느리게</option><option value="550" selected>보통</option><option value="160">빠르게</option></select></label></div>
+<p class="vz-err" id="vzErr"></p>
+<div class="vz-box" id="vzBox"><div class="vz-back" id="vzBack"></div><div class="vz-front" id="vzFront"></div></div>
+<div class="vz-scrub"><input type="range" id="vzSl" min="0" max="0" value="0" aria-label="단계 이동"><span id="vzK"></span></div>
+<div class="vz-legend">${(C.legend||['c','s','f']).map(x=>Array.isArray(x)?`<span><i style="background:${x[0]}"></i>${x[1]}</span>`:`<span><i style="background:${LEG[x][0]}"></i>${LEG[x][1]}</span>`).join('')}</div>
+<div class="vz-grid"><div><div class="vz-msg" id="vzMsg" aria-live="polite"></div><div class="vz-stats" id="vzStats"></div><div class="vz-side" id="vzSide"></div></div><div class="vz-code" id="vzCode"></div></div>`;
+function gen(p){const n=C.n,a=[...Array(n).keys()].map(i=>i+1);
+  if(p==='sorted')return a;if(p==='reversed')return a.reverse();
+  if(p==='nearly'){for(let t=0;t<2;t++){const i=Math.floor(Math.random()*(n-1));[a[i],a[i+1]]=[a[i+1],a[i]];}return a;}
+  if(p==='dups')return a.map(()=>1+Math.floor(Math.random()*Math.ceil(n/3)));
+  return shuffle(a);}
+function tag(){const c={},s={};EL.forEach(e=>c[e.v]=(c[e.v]||0)+1);EL.forEach(e=>{if(c[e.v]>1){s[e.v]=(s[e.v]||0)+1;e.tag='abcdefgh'[s[e.v]-1];}});}
+function setup(){
+  Object.values(dom).forEach(d=>d.remove());dom={};$('vzBox').style.height=GEO.h+'px';
+  MAXV=Math.max(1,...EL.map(e=>typeof e.v==='number'?e.v:0));
+  EL.forEach(e=>{const d=document.createElement('div');d.className='vz-el';d.dataset.h='1';d.innerHTML=`<span>${e.v}${e.tag?`<sub>${e.tag}</sub>`:''}</span>`;$('vzBox').insertBefore(d,$('vzFront'));dom[e.id]=d;});
+  const code=typeof C.code==='function'?C.code():C.code;
+  $('vzCode').innerHTML=code.map((l,i)=>`<div><span class="ln">${i+1}</span>${esc(l)}</div>`).join('');
+  $('vzSl').max=F.length-1;
+}
+function draw(){
+  const fr=F[k];if(!fr)return;let back='',front='';
+  (C.aux?[0,1]:[0]).forEach(r=>{const arr=r?fr.x:fr.a;
+    for(let i=0;i<arr.length;i++){
+      if(arr[i]==null){const h=BARS?22:G.cell;back+=`<div class="slot" style="left:calc(${i*W}% + 3px);width:calc(${W}% - 6px);top:${GEO.b[r]-h}px;height:${h}px"></div>`;}
+      front+=`<div class="idx" style="left:${(i+.5)*W}%;top:${GEO.i[r]-11}px">${i}</div>`;}
+    if(r===1)front+=`<div class="rowlb" style="top:${GEO.b[1]-(BARS?G.max1+30:G.cell+22)}px">${C.aux}</div>`;});
+  (fr.band||[]).forEach(b=>{const r=b.r||0,top=r?GEO.b[1]-(BARS?G.max1+8:G.cell+6):GEO.b[0]-(BARS?G.max0+8:G.cell+6),bot=GEO.b[r]+3;
+    back+=`<div class="band" style="left:calc(${b.lo*W}% + 1px);width:calc(${(b.hi-b.lo+1)*W}% - 2px);top:${top}px;height:${bot-top}px;background:${b.c}"></div>`;
+    if(b.l)front+=`<div class="bandlb" style="left:calc(${b.lo*W}% + 3px);top:${top+2}px">${b.l}</div>`;});
+  const stk={};(fr.ptr||[]).forEach(p=>{const r=p.r||0,key=r+'_'+p.i,s=stk[key]=(stk[key]||0)+1;
+    front+=`<div class="ptr" style="left:${(p.i+.5)*W}%;top:${GEO.p[r]+(s-1)*14}px;color:${p.c||PC.i}">▲${p.t}</div>`;});
+  $('vzBack').innerHTML=back;$('vzFront').innerHTML=front;
+  EL.forEach(e=>{const d=dom[e.id];let r=0,i=fr.a.indexOf(e.id);if(i<0&&fr.x){i=fr.x.indexOf(e.id);r=1;}
+    if(i<0){d.style.opacity='0';d.dataset.h='1';return;}
+    const cls=fr.hl[e.id]||(fr.fixed.has(e.id)?'f':''),dim=r===0&&fr.rng&&(i<fr.rng[0]||i>fr.rng[1]);
+    const appear=d.dataset.h==='1';if(appear){d.style.transition='none';}
+    d.className='vz-el'+(cls?' '+cls:'')+(dim?' dim':'');d.style.opacity='';
+    d.style.left=`calc(${i*W}% + 3px)`;d.style.width=`calc(${W}% - 6px)`;
+    if(BARS){const mx=r?G.max1:G.max0,h=Math.round(20+(typeof e.v==='number'?e.v:0)/MAXV*(mx-20));d.style.height=h+'px';d.style.top=(GEO.b[r]-h)+'px';}
+    else{d.style.height=G.cell+'px';d.style.top=(GEO.b[r]-G.cell)+'px';}
+    if(appear){void d.offsetWidth;d.style.transition='';d.dataset.h='';}
+  });
+  const ln=Array.isArray(fr.line)?fr.line:[fr.line];
+  $('vzCode').querySelectorAll('div').forEach((d,i)=>d.classList.toggle('on',ln.includes(i)));
+  $('vzMsg').innerHTML=fr.msg;
+  $('vzStats').innerHTML=Object.entries(fr.st).map(([a,b])=>`<span>${a}<b>${b===Infinity?'∞':b}</b></span>`).join('');
+  $('vzSide').innerHTML=C.side?C.side(fr,EL):'';
+  $('vzSl').value=k;$('vzK').textContent=`${k+1} / ${F.length}`;
+  $('vzPrev').disabled=k===0;$('vzNext').disabled=k>=F.length-1;
+}
+function stop(){clearInterval(timer);timer=null;$('vzPlay').textContent='자동 재생';}
+function go(n){k=Math.max(0,Math.min(F.length-1,n));draw();}
+function play(){if(k>=F.length-1)k=0;draw();timer=setInterval(()=>{if(k>=F.length-1){stop();return;}go(k+1);},+$('vzSpd').value);$('vzPlay').textContent='일시정지';}
+$('vzPlay').onclick=()=>{if(timer)stop();else play();};
+$('vzSpd').onchange=()=>{if(timer){stop();play();}};
+$('vzPrev').onclick=()=>{stop();go(k-1);};$('vzNext').onclick=()=>{stop();go(k+1);};$('vzReset').onclick=()=>{stop();go(0);};
+$('vzSl').oninput=e=>{stop();go(+e.target.value);};
+ROOT.querySelectorAll('[data-pre]').forEach(b=>b.onclick=()=>{ROOT.querySelectorAll('[data-pre]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');preset=b.dataset.pre;build(true);});
+function build(regen){stop();ERR('');if(regen||!VALS){const v=(C.gen||gen)(preset,ERR);if(!v)return;VALS=v;}
+  EL=VALS.map((v,i)=>({id:i,v}));if(C.tags!==false)tag();
+  const r=new Rec(EL,{n:EL.length,aux:C.aux,auxN:C.auxN,stats:C.stats});C.record(r,ERR);if(!r.f.length)r.S(-1,'');F=r.f;setup();k=0;draw();}
+if(C.bind)C.bind(build,ERR);
+build(true);
+
+})();
+</script>

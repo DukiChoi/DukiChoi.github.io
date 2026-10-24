@@ -1,0 +1,226 @@
+---
+title: 이분 탐색
+description: 정렬된 배열에서 후보를 매번 절반으로 줄여 값을 찾는 방법과 lower bound, upper bound, 파라메트릭 서치를 다룹니다.
+permalink: /theory/binary-search/
+category: algorithms
+order: 20
+---
+<style>
+.vz .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.vz .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.vz .bt:disabled{opacity:.45;cursor:default}
+.vz .vz-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.vz .vz-l{font-size:14px;color:var(--text-secondary)}
+.vz input[type=number],.vz select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.vz .vz-err{font-size:13px;color:#E24B4A;margin:0;min-height:18px}
+.vz .vz-box{position:relative;margin-top:4px;overflow:hidden}
+.vz .vz-back,.vz .vz-front{position:absolute;inset:0;pointer-events:none}
+.vz .vz-front{z-index:3}
+.vz .vz-el{position:absolute;z-index:2;border-radius:5px 5px 0 0;background:#85B7EB;color:#042C53;display:flex;align-items:flex-end;justify-content:center;font-family:var(--font-mono);font-size:13px;font-weight:600;padding-bottom:3px;transition:left .32s ease,top .32s ease,height .32s ease,background .2s,opacity .2s}
+.vz.cells .vz-el{border-radius:6px;background:var(--surface-1);color:var(--text-primary);border:1px solid var(--border-strong);align-items:center;padding:0;font-size:16px}
+.vz .vz-el sub{font-size:10px;font-weight:500;margin-left:1px}
+.vz .vz-el.c{background:#EF9F27;color:#412402;border-color:#BA7517}
+.vz .vz-el.s{background:#D85A30;color:#fff;border-color:#993C1D}
+.vz .vz-el.p{background:#7F77DD;color:#fff;border-color:#534AB7}
+.vz .vz-el.m{background:#D4537E;color:#fff;border-color:#993556}
+.vz .vz-el.f{background:#1D9E75;color:#fff;border-color:#0F6E56}
+.vz .vz-el.g{background:#639922;color:#fff;border-color:#3B6D11}
+.vz .vz-el.dim{opacity:.28}
+.vz .idx{position:absolute;transform:translateX(-50%);font-size:11px;color:var(--text-muted);font-family:var(--font-mono)}
+.vz .ptr{position:absolute;transform:translateX(-50%);font-size:12px;font-weight:600;font-family:var(--font-mono);white-space:nowrap;line-height:1}
+.vz .slot{position:absolute;border:1px dashed var(--border-strong);border-radius:5px;opacity:.6}
+.vz .band{position:absolute;border-radius:6px}
+.vz .bandlb{position:absolute;font-size:11px;color:var(--text-secondary);background:var(--panel,#fff);border-radius:4px;padding:0 4px;white-space:nowrap}
+.vz .rowlb{position:absolute;left:0;font-size:12px;color:var(--text-secondary)}
+.vz .vz-scrub{display:flex;align-items:center;gap:10px;margin-top:6px}
+.vz .vz-scrub input{flex:1}
+.vz .vz-scrub span{font-family:var(--font-mono);font-size:13px;color:var(--text-secondary);min-width:72px;text-align:right}
+.vz .vz-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--text-secondary);margin-top:4px}
+.vz .vz-legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.vz .vz-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:12px}
+@media (max-width:720px){.vz .vz-grid{grid-template-columns:minmax(0,1fr)}}
+.vz .vz-msg{font-size:15px;line-height:1.65;color:var(--text-primary);background:var(--surface-1);border-radius:8px;padding:10px 12px;min-height:76px}
+.vz .vz-stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.vz .vz-stats span{font-size:13px;color:var(--text-secondary);background:var(--surface-1);border-radius:6px;padding:4px 10px}
+.vz .vz-stats b{font-family:var(--font-mono);font-weight:500;color:var(--text-primary);margin-left:5px}
+.vz .vz-sub{font-size:12px;color:var(--text-secondary);margin:10px 0 4px}
+.vz .vz-code{font-family:var(--font-mono);font-size:13px;line-height:1.6;background:var(--surface-1);border-radius:8px;padding:8px 0;overflow-x:auto;align-self:start}
+.vz .vz-code div{padding:0 12px 0 6px;white-space:pre;color:var(--text-secondary)}
+.vz .vz-code div.on{background:#FAEEDA;color:#633806}
+.vz .vz-code .ln{display:inline-block;width:24px;color:var(--text-muted);text-align:right;margin-right:10px}
+.vz .stk div{font-family:var(--font-mono);font-size:13px;padding:3px 8px;margin:2px 0;border-left:3px solid var(--border);color:var(--text-secondary)}
+.vz .stk div.on{border-left-color:#185FA5;color:var(--text-primary);background:var(--surface-1)}
+.vz .stk .none{border:none;color:var(--text-muted)}
+.vz .cnt{display:flex;gap:4px}
+.vz .cnt div{flex:1;text-align:center;background:var(--surface-1);border-radius:6px;padding:4px 0}
+.vz .cnt b{display:block;font-family:var(--font-mono);font-size:16px;font-weight:500;color:var(--text-primary)}
+.vz .cnt span{font-size:11px;color:var(--text-muted)}
+.vz .cnt div.on{background:#FAEEDA}.vz .cnt div.on b,.vz .cnt div.on span{color:#633806}
+.vz .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.vz .chips span{font-family:var(--font-mono);font-size:13px;background:var(--surface-1);border-radius:6px;padding:3px 9px;color:var(--text-primary)}
+.vz .chips span.on{background:#FAEEDA;color:#633806}
+.vz .chips i{font-style:normal;color:var(--text-muted);font-size:12px}
+.dsa-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:22px 0 4px}
+.dsa-facts div{background:var(--surface-1);border-radius:8px;padding:9px 12px}
+.dsa-facts span{display:block;font-size:12px;color:var(--text-secondary)}
+.dsa-facts b{font-family:var(--font-mono);font-size:16px;font-weight:500;color:var(--text-primary)}
+.dsa-facts b.good{color:#1D9E75}.dsa-facts b.bad{color:#E24B4A}
+.dsa-tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.dsa-tip p{margin:4px 0}
+.dsa-tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
+</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">정렬된 배열에서 가운데 값을 보고, 찾는 값이 왼쪽 절반에 있는지 오른쪽 절반에 있는지 판단해 후보를 매번 절반으로 줄입니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">이분 탐색에서 lo, mid, hi가 움직이며 후보가 줄어드는 과정을 보여 주는 시뮬레이터</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">찾는 값을 바꾸거나 [배열 안의 값 고르기]를 누른 뒤 재생하세요. 흐려진 칸은 이미 후보에서 버린 칸입니다.</p>
+<div class="dsa-facts"><div><span>시간</span><b class="good">O(log n)</b></div><div><span>조건</span><b class="bad">정렬된 배열</b></div><div><span>100만 개</span><b class="">최대 20번</b></div><div><span>10억 개</span><b class="">최대 30번</b></div></div>
+  <h2>세 가지 형태</h2>
+  <p>값 찾기는 같은 값을 만나면 바로 끝냅니다. lower bound는 x 이상인 값이 처음 나오는 위치를, upper bound는 x를 초과하는 값이 처음 나오는 위치를 돌려줍니다. upper bound − lower bound가 배열 안의 x의 개수입니다. [같은 값 많음]에서 두 버튼을 번갈아 실행해 보세요. 파이썬에서는 <code>bisect_left(a, x)</code>가 lower bound, <code>bisect_right(a, x)</code>가 upper bound입니다.</p>
+  <h2>경계 조건을 하나로 정하세요</h2>
+  <p>값 찾기는 닫힌 구간 [lo, hi]와 <code>lo &lt;= hi</code>를, lower/upper bound는 반열린 구간 [lo, hi)와 <code>lo &lt; hi</code>를 씁니다. 한 코드 안에서 두 방식을 섞으면 무한 루프에 빠지거나 답이 한 칸 어긋납니다.</p>
+<div class="dsa-tip"><p class="t">코테에서는: 답을 이분 탐색하는 파라메트릭 서치</p><p>"조건을 만족하는 가장 큰(작은) 값"을 묻는 문제는, 답을 x로 정했을 때 조건을 만족하는지 판정하는 문제로 바꿉니다. x를 키워 가면 판정 결과가 참 참 참 거짓 거짓처럼 한 번만 바뀌므로, 그 경계를 이분 탐색으로 찾습니다. 랜선 자르기, 나무 자르기, 공유기 설치가 대표적인 유형입니다.</p><pre><code>lo, hi = 1, max(a)          # 답이 될 수 있는 범위
+while lo &lt;= hi:
+    mid = (lo + hi) // 2
+    if ok(mid):             # mid로 조건을 만족하면
+        ans = mid
+        lo = mid + 1        # 더 큰 답을 시도
+    else:
+        hi = mid - 1</code></pre></div>
+</div>
+<script>
+(() => {
+const J=(x,a,b)=>x+(/[013678flmnr]$/i.test(String(x))?a:b);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const PC={i:'#185FA5',j:'#BA7517',p:'#534AB7',m:'#993556',f:'#0F6E56'};
+const BAND={ok:'rgba(29,158,117,.14)',bad:'rgba(216,90,48,.13)',p:'rgba(127,119,221,.14)',w:'rgba(232,163,23,.18)',b:'rgba(55,138,221,.13)'};
+class Rec{
+  constructor(els,o){this.els=els;this.n=o.n;this.a=els.map(e=>e.id);this.x=o.aux?Array(o.auxN||o.n).fill(null):null;this.fixed=new Set();this.st=Object.assign({},o.stats||{});this.f=[];}
+  v(i){return this.els[this.a[i]].v} xv(i){return this.els[this.x[i]].v}
+  L(i){const e=this.els[this.a[i]];return e.v+(e.tag||'');} XL(i){const e=this.els[this.x[i]];return e.v+(e.tag||'');}
+  swap(i,j){const t=this.a[i];this.a[i]=this.a[j];this.a[j]=t;}
+  mv(i,j){this.a[j]=this.a[i];this.a[i]=null;}
+  down(i,j){this.x[j]=this.a[i];this.a[i]=null;}
+  up(j,i){this.a[i]=this.x[j];this.x[j]=null;}
+  xmv(i,j){this.x[j]=this.x[i];this.x[i]=null;}
+  add(v,j){const id=this.els.length;this.els.push({id,v});this.x[j]=id;return id;}
+  fix(i){if(this.a[i]!=null)this.fixed.add(this.a[i]);}
+  fixAll(){this.a.forEach(id=>id!=null&&this.fixed.add(id));if(this.x)this.x.forEach(id=>id!=null&&this.fixed.add(id));}
+  H(...p){const h={};p.forEach(([i,c,row])=>{const id=row?this.x[i]:this.a[i];if(id!=null)h[id]=c;});return h;}
+  S(line,msg,o={}){this.f.push({a:this.a.slice(),x:this.x?this.x.slice():null,fixed:new Set(this.fixed),hl:o.hl||{},ptr:o.ptr||[],band:o.band||[],rng:o.rng||null,line,msg,st:Object.assign({},this.st),ex:o.ex?JSON.parse(JSON.stringify(o.ex)):null});}
+}
+const stackSide=fn=>fr=>{const s=(fr.ex&&fr.ex.stack)||[];return `<div class="vz-sub">호출 스택 (맨 위가 지금 실행 중)</div><div class="stk">${s.length?s.slice().reverse().map((x,i)=>`<div class="${i===0?'on':''}">${fn}(a, ${x[0]}, ${x[1]})</div>`).join(''):'<div class="none">비어 있음</div>'}</div>`;};
+
+let MODE='find';
+const CODES={find:['def binary_search(a, x):','    lo, hi = 0, len(a) - 1','    while lo <= hi:','        mid = (lo + hi) // 2','        if a[mid] == x:','            return mid','        elif a[mid] < x:','            lo = mid + 1','        else:','            hi = mid - 1','    return -1'],
+lower:['def lower_bound(a, x):   # x 이상이 처음 나오는 위치','    lo, hi = 0, len(a)','    while lo < hi:','        mid = (lo + hi) // 2','        if a[mid] < x:','            lo = mid + 1','        else:','            hi = mid','    return lo'],
+upper:['def upper_bound(a, x):   # x 초과가 처음 나오는 위치','    lo, hi = 0, len(a)','    while lo < hi:','        mid = (lo + hi) // 2','        if a[mid] <= x:','            lo = mid + 1','        else:','            hi = mid','    return lo']};
+const CFG={mode:'cells',n:15,cols:16,tags:false,stats:{'비교':0,'남은 후보':15},legend:['c',['#639922','찾은 위치']],
+presets:[['random','무작위'],['dups','같은 값 많음']],
+inputs:`<span class="vz-l" style="margin-left:6px">찾는 값</span><input type="number" id="bsX" value="23" style="width:70px"><button class="bt" id="bsPick">배열 안의 값 고르기</button><span class="vz-l" style="margin-left:6px">종류</span><button class="bt sel" data-bm="find">값 찾기</button><button class="bt" data-bm="lower">lower bound</button><button class="bt" data-bm="upper">upper bound</button>`,
+gen(p){const a=[];let v=1+Math.floor(Math.random()*5);for(let i=0;i<15;i++){a.push(v);v+=p==='dups'?Math.floor(Math.random()*3):1+Math.floor(Math.random()*6);}return a;},
+code:()=>CODES[MODE],
+side(fr){const h=(fr.ex&&fr.ex.hist)||[];return `<div class="vz-sub">남은 후보 수의 변화</div><div class="chips">${h.map((x,i)=>`<span class="${i===h.length-1?'on':''}">${x}</span>`).join('<i>→</i>')}</div>`;},
+bind(build,err){
+  const x=document.getElementById('bsX');x.onchange=()=>{if(x.value===''||isNaN(+x.value)){err('찾는 값을 숫자로 입력하세요.');return;}build();};
+  document.getElementById('bsPick').onclick=()=>{const vs=[...document.querySelectorAll('.vz-el')].filter(d=>d.style.opacity!=='0').map(d=>parseInt(d.textContent));x.value=vs[Math.floor(Math.random()*vs.length)];build();};
+  document.querySelectorAll('[data-bm]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-bm]').forEach(y=>y.classList.remove('sel'));b.classList.add('sel');MODE=b.dataset.bm;build();});},
+record(r){const n=r.n,x=+document.getElementById('bsX').value,hist=[];
+  if(MODE==='find'){let lo=0,hi=n-1,found=-1;hist.push(n);r.st['남은 후보']=n;
+    r.S(1,`찾는 값은 ${x}입니다. 처음에는 배열 전체(0~${n-1}번)가 후보입니다.`,{ptr:[{i:lo,t:'lo'},{i:hi,t:'hi'}],rng:[lo,hi],ex:{hist}});
+    while(lo<=hi){const mid=(lo+hi)>>1,v=r.v(mid),P=[{i:lo,t:'lo'},{i:mid,t:'mid',c:PC.m},{i:hi,t:'hi'}];r.st['비교']++;
+      r.S(3,`mid = (${lo} + ${hi}) // 2 = ${mid}. 가운데 값 a[${mid}] = ${J(v,'을','를')} ${J(x,'과','와')} 비교합니다.`,{hl:r.H([mid,'c']),ptr:P,rng:[lo,hi],ex:{hist}});
+      if(v===x){found=mid;r.S(5,`${v} = ${x}. ${mid}번에서 찾았습니다.`,{hl:r.H([mid,'g']),ptr:P,rng:[lo,hi],ex:{hist}});break;}
+      if(v<x){lo=mid+1;hist.push(Math.max(0,hi-lo+1));r.st['남은 후보']=Math.max(0,hi-lo+1);r.S(7,`${v} < ${x}이므로 답은 mid보다 오른쪽에 있습니다. lo를 mid + 1(= ${lo})로 옮겨 왼쪽 절반을 한 번에 버립니다.`,{ptr:[{i:lo,t:'lo'},{i:hi,t:'hi'}],rng:[lo,hi],ex:{hist}});}
+      else{hi=mid-1;hist.push(Math.max(0,hi-lo+1));r.st['남은 후보']=Math.max(0,hi-lo+1);r.S(9,`${v} > ${x}이므로 답은 mid보다 왼쪽에 있습니다. hi를 mid − 1(= ${hi})로 옮겨 오른쪽 절반을 한 번에 버립니다.`,{ptr:[{i:Math.min(lo,n-1),t:'lo'},{i:Math.max(hi,0),t:'hi'}],rng:[lo,hi],ex:{hist}});}}
+    let lin=0;for(let i=0;i<n;i++){lin++;if(r.v(i)===x)break;}
+    if(found<0)r.S(10,`lo(${lo})가 hi(${hi})보다 커져서 후보가 없습니다. ${J(x,'은','는')} 배열에 없습니다. 비교 ${r.st['비교']}번 (앞에서부터 찾았다면 ${n}번).`,{ex:{hist}});
+    else r.S(5,`비교 ${r.st['비교']}번 만에 찾았습니다. 앞에서부터 하나씩 찾았다면 ${lin}번 비교했을 것입니다.`,{hl:r.H([found,'g']),ex:{hist}});
+    return;}
+  const up=MODE==='upper',word=up?'초과':'이상';let lo=0,hi=n;hist.push(n+1);r.st['남은 후보']=n+1;
+  r.S(1,`lo = 0, hi = ${n}. 답이 될 수 있는 위치는 0~${n}번입니다. ${n}번은 ${x} ${word}인 값이 하나도 없을 때 돌려줄 "배열 끝"입니다.`,{ptr:[{i:lo,t:'lo'},{i:hi,t:'hi'}],rng:[lo,hi-1],ex:{hist}});
+  while(lo<hi){const mid=(lo+hi)>>1,v=r.v(mid),P=[{i:lo,t:'lo'},{i:mid,t:'mid',c:PC.m},{i:hi,t:'hi'}];r.st['비교']++;const go=up?v<=x:v<x;
+    r.S(3,`mid = (${lo} + ${hi}) // 2 = ${mid}. a[${mid}] = ${v}`+(go?(up?` ≤ ${x}이므로 mid는 답이 아닙니다.`:` < ${x}이므로 mid는 답이 아닙니다.`):(up?` > ${x}이므로 mid가 답일 수 있습니다.`:` ≥ ${x}이므로 mid가 답일 수 있습니다.`)),{hl:r.H([mid,'c']),ptr:P,rng:[lo,hi-1],ex:{hist}});
+    if(go){lo=mid+1;hist.push(hi-lo+1);r.st['남은 후보']=hi-lo+1;r.S(5,`lo = mid + 1 = ${lo}. mid까지는 버립니다.`,{ptr:[{i:lo,t:'lo'},{i:hi,t:'hi'}],rng:[lo,hi-1],ex:{hist}});}
+    else{hi=mid;hist.push(hi-lo+1);r.st['남은 후보']=hi-lo+1;r.S(7,`hi = mid = ${hi}. mid는 답 후보로 남기고 그 오른쪽을 버립니다.`,{ptr:[{i:lo,t:'lo'},{i:hi,t:'hi'}],rng:[lo,hi-1],ex:{hist}});}}
+  r.S(8,lo<n?`lo와 hi가 ${lo}에서 만났습니다. ${x} ${word}인 값이 처음 나오는 위치는 ${lo}번(a[${lo}] = ${r.v(lo)})입니다.`:`lo와 hi가 ${n}에서 만났습니다. ${x} ${word}인 값이 없어서 배열 끝 ${n}을 돌려줍니다.`,{hl:lo<n?r.H([lo,'g']):{},ptr:[{i:lo,t:'답'}],ex:{hist}});}};
+
+const C=CFG,$=id=>document.getElementById(id),ROOT=$('vzStage');
+const BARS=C.mode!=='cells',COLS=C.cols||Math.max(C.n,C.auxN||0),W=100/COLS;
+const G=BARS?{b0:212,i0:228,p0:236,aux:150,max0:196,max1:128}:{b0:50,i0:66,p0:72,aux:84,cell:44};
+const GEO=(()=>{const g={b:[G.b0],i:[G.i0],p:[G.p0]};if(C.aux){const b1=G.p0+40+G.aux;g.b.push(b1);g.i.push(b1+16);g.p.push(b1+24);g.h=b1+66;}else g.h=G.p0+46;return g;})();
+const LEG={c:['#EF9F27','비교 중'],s:['#D85A30','교환·이동'],p:['#7F77DD','기준값'],m:['#D4537E','key·최솟값'],f:['#1D9E75','자리 확정'],g:['#639922','찾음·결과']};
+let VALS=null,EL=[],F=[],k=0,timer=null,preset=(C.presets&&C.presets.length)?C.presets[0][0]:null,dom={},MAXV=1;
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const ERR=m=>{$('vzErr').textContent=m||'';};
+ROOT.innerHTML=`<div class="vz-ctl">${C.presets?'<span class="vz-l">입력</span>'+C.presets.map(([p,l])=>`<button class="bt${p===preset?' sel':''}" data-pre="${p}">${l}</button>`).join(''):''}${C.inputs||''}</div>
+<div class="vz-ctl"><button class="bt go" id="vzPlay">자동 재생</button><button class="bt" id="vzPrev">이전 단계</button><button class="bt" id="vzNext">다음 단계</button><button class="bt" id="vzReset">처음으로</button><label class="vz-l">속도 <select id="vzSpd"><option value="1100">느리게</option><option value="550" selected>보통</option><option value="160">빠르게</option></select></label></div>
+<p class="vz-err" id="vzErr"></p>
+<div class="vz-box" id="vzBox"><div class="vz-back" id="vzBack"></div><div class="vz-front" id="vzFront"></div></div>
+<div class="vz-scrub"><input type="range" id="vzSl" min="0" max="0" value="0" aria-label="단계 이동"><span id="vzK"></span></div>
+<div class="vz-legend">${(C.legend||['c','s','f']).map(x=>Array.isArray(x)?`<span><i style="background:${x[0]}"></i>${x[1]}</span>`:`<span><i style="background:${LEG[x][0]}"></i>${LEG[x][1]}</span>`).join('')}</div>
+<div class="vz-grid"><div><div class="vz-msg" id="vzMsg" aria-live="polite"></div><div class="vz-stats" id="vzStats"></div><div class="vz-side" id="vzSide"></div></div><div class="vz-code" id="vzCode"></div></div>`;
+function gen(p){const n=C.n,a=[...Array(n).keys()].map(i=>i+1);
+  if(p==='sorted')return a;if(p==='reversed')return a.reverse();
+  if(p==='nearly'){for(let t=0;t<2;t++){const i=Math.floor(Math.random()*(n-1));[a[i],a[i+1]]=[a[i+1],a[i]];}return a;}
+  if(p==='dups')return a.map(()=>1+Math.floor(Math.random()*Math.ceil(n/3)));
+  return shuffle(a);}
+function tag(){const c={},s={};EL.forEach(e=>c[e.v]=(c[e.v]||0)+1);EL.forEach(e=>{if(c[e.v]>1){s[e.v]=(s[e.v]||0)+1;e.tag='abcdefgh'[s[e.v]-1];}});}
+function setup(){
+  Object.values(dom).forEach(d=>d.remove());dom={};$('vzBox').style.height=GEO.h+'px';
+  MAXV=Math.max(1,...EL.map(e=>typeof e.v==='number'?e.v:0));
+  EL.forEach(e=>{const d=document.createElement('div');d.className='vz-el';d.dataset.h='1';d.innerHTML=`<span>${e.v}${e.tag?`<sub>${e.tag}</sub>`:''}</span>`;$('vzBox').insertBefore(d,$('vzFront'));dom[e.id]=d;});
+  const code=typeof C.code==='function'?C.code():C.code;
+  $('vzCode').innerHTML=code.map((l,i)=>`<div><span class="ln">${i+1}</span>${esc(l)}</div>`).join('');
+  $('vzSl').max=F.length-1;
+}
+function draw(){
+  const fr=F[k];if(!fr)return;let back='',front='';
+  (C.aux?[0,1]:[0]).forEach(r=>{const arr=r?fr.x:fr.a;
+    for(let i=0;i<arr.length;i++){
+      if(arr[i]==null){const h=BARS?22:G.cell;back+=`<div class="slot" style="left:calc(${i*W}% + 3px);width:calc(${W}% - 6px);top:${GEO.b[r]-h}px;height:${h}px"></div>`;}
+      front+=`<div class="idx" style="left:${(i+.5)*W}%;top:${GEO.i[r]-11}px">${i}</div>`;}
+    if(r===1)front+=`<div class="rowlb" style="top:${GEO.b[1]-(BARS?G.max1+30:G.cell+22)}px">${C.aux}</div>`;});
+  (fr.band||[]).forEach(b=>{const r=b.r||0,top=r?GEO.b[1]-(BARS?G.max1+8:G.cell+6):GEO.b[0]-(BARS?G.max0+8:G.cell+6),bot=GEO.b[r]+3;
+    back+=`<div class="band" style="left:calc(${b.lo*W}% + 1px);width:calc(${(b.hi-b.lo+1)*W}% - 2px);top:${top}px;height:${bot-top}px;background:${b.c}"></div>`;
+    if(b.l)front+=`<div class="bandlb" style="left:calc(${b.lo*W}% + 3px);top:${top+2}px">${b.l}</div>`;});
+  const stk={};(fr.ptr||[]).forEach(p=>{const r=p.r||0,key=r+'_'+p.i,s=stk[key]=(stk[key]||0)+1;
+    front+=`<div class="ptr" style="left:${(p.i+.5)*W}%;top:${GEO.p[r]+(s-1)*14}px;color:${p.c||PC.i}">▲${p.t}</div>`;});
+  $('vzBack').innerHTML=back;$('vzFront').innerHTML=front;
+  EL.forEach(e=>{const d=dom[e.id];let r=0,i=fr.a.indexOf(e.id);if(i<0&&fr.x){i=fr.x.indexOf(e.id);r=1;}
+    if(i<0){d.style.opacity='0';d.dataset.h='1';return;}
+    const cls=fr.hl[e.id]||(fr.fixed.has(e.id)?'f':''),dim=r===0&&fr.rng&&(i<fr.rng[0]||i>fr.rng[1]);
+    const appear=d.dataset.h==='1';if(appear){d.style.transition='none';}
+    d.className='vz-el'+(cls?' '+cls:'')+(dim?' dim':'');d.style.opacity='';
+    d.style.left=`calc(${i*W}% + 3px)`;d.style.width=`calc(${W}% - 6px)`;
+    if(BARS){const mx=r?G.max1:G.max0,h=Math.round(20+(typeof e.v==='number'?e.v:0)/MAXV*(mx-20));d.style.height=h+'px';d.style.top=(GEO.b[r]-h)+'px';}
+    else{d.style.height=G.cell+'px';d.style.top=(GEO.b[r]-G.cell)+'px';}
+    if(appear){void d.offsetWidth;d.style.transition='';d.dataset.h='';}
+  });
+  const ln=Array.isArray(fr.line)?fr.line:[fr.line];
+  $('vzCode').querySelectorAll('div').forEach((d,i)=>d.classList.toggle('on',ln.includes(i)));
+  $('vzMsg').innerHTML=fr.msg;
+  $('vzStats').innerHTML=Object.entries(fr.st).map(([a,b])=>`<span>${a}<b>${b===Infinity?'∞':b}</b></span>`).join('');
+  $('vzSide').innerHTML=C.side?C.side(fr,EL):'';
+  $('vzSl').value=k;$('vzK').textContent=`${k+1} / ${F.length}`;
+  $('vzPrev').disabled=k===0;$('vzNext').disabled=k>=F.length-1;
+}
+function stop(){clearInterval(timer);timer=null;$('vzPlay').textContent='자동 재생';}
+function go(n){k=Math.max(0,Math.min(F.length-1,n));draw();}
+function play(){if(k>=F.length-1)k=0;draw();timer=setInterval(()=>{if(k>=F.length-1){stop();return;}go(k+1);},+$('vzSpd').value);$('vzPlay').textContent='일시정지';}
+$('vzPlay').onclick=()=>{if(timer)stop();else play();};
+$('vzSpd').onchange=()=>{if(timer){stop();play();}};
+$('vzPrev').onclick=()=>{stop();go(k-1);};$('vzNext').onclick=()=>{stop();go(k+1);};$('vzReset').onclick=()=>{stop();go(0);};
+$('vzSl').oninput=e=>{stop();go(+e.target.value);};
+ROOT.querySelectorAll('[data-pre]').forEach(b=>b.onclick=()=>{ROOT.querySelectorAll('[data-pre]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');preset=b.dataset.pre;build(true);});
+function build(regen){stop();ERR('');if(regen||!VALS){const v=(C.gen||gen)(preset,ERR);if(!v)return;VALS=v;}
+  EL=VALS.map((v,i)=>({id:i,v}));if(C.tags!==false)tag();
+  const r=new Rec(EL,{n:EL.length,aux:C.aux,auxN:C.auxN,stats:C.stats});C.record(r,ERR);if(!r.f.length)r.S(-1,'');F=r.f;setup();k=0;draw();}
+if(C.bind)C.bind(build,ERR);
+build(true);
+
+})();
+</script>

@@ -1,106 +1,235 @@
 ---
-title: 정렬 알고리즘
-description: 같은 막대 14개를 버블, 삽입, 퀵, 병합 정렬로 정리하며 비교 횟수를 견줘 봅니다.
+title: 정렬 한눈에 비교
+description: 일곱 가지 정렬이 같은 배열을 동시에 정렬하는 경주로 속도 차이를 비교하고, 복잡도와 쓰임새를 정리합니다.
 permalink: /theory/sorting/
 category: algorithms
-order: 1
+order: 10
 ---
 <style>
-.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
-.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
-.lx .bt:disabled{opacity:.45;cursor:default}
-.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
-.lx .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:26px;max-width:none}
-.lx select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
-.lx .lbl{font-size:14px;color:var(--text-secondary)}
-.so .bars{display:flex;align-items:flex-end;gap:4px;height:220px;margin-top:16px;padding:0 2px}
-.so .bar{flex:1;border-radius:4px 4px 0 0;background:#85B7EB;position:relative;transition:height .15s,background .15s}
-.so .bar span{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)}
-.so .bar.c{background:#EF9F27}.so .bar.s{background:#D85A30}.so .bar.f{background:#1D9E75}.so .bar.p{background:#7F77DD}
-.so .cnt{display:flex;justify-content:center;gap:28px;margin-top:30px;font-size:14px;color:var(--text-secondary)}
-.so .cnt b{font-family:var(--font-mono);font-size:20px;font-weight:500;color:var(--text-primary);margin-left:6px}
-.so .leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--text-secondary);justify-content:center;margin-top:8px}
-.so .leg i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:5px}
-.so .cmp{display:grid;grid-template-columns:90px minmax(0,1fr) 56px;gap:8px 12px;align-items:center;font-size:14px;color:var(--text-secondary)}
-.so .cmp .tr{height:14px;background:var(--surface-1);border-radius:3px;overflow:hidden}
-.so .cmp .fl{height:100%;background:var(--border-strong);transition:width .4s}
-.so .cmp .on{color:var(--text-primary);font-weight:500}.so .cmp .fl.on{background:#185FA5}
+.rc .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.rc .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.rc .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.rc .l{font-size:14px;color:var(--text-secondary)}
+.rc select{font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.rc .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:10px}
+.rc .rc-p{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--panel,#fff);transition:border-color .3s}
+.rc .rc-p.fin{border-color:#1D9E75}
+.rc .rc-h{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;margin-bottom:6px}
+.rc .rc-h b{font-weight:600;color:var(--text-primary)}
+.rc .rk{font-size:12px;color:#1D9E75;font-weight:600}
+.rc .rc-bars{display:flex;align-items:flex-end;gap:2px;height:84px}
+.rc .rc-bars.aux{height:36px;margin-top:4px;border-top:1px dashed var(--border)}
+.rc .rc-bars i{flex:1;background:#85B7EB;border-radius:2px 2px 0 0;transition:height .08s}
+.rc .rc-bars i.e{background:transparent}
+.rc .rc-bars i.c{background:#EF9F27}.rc .rc-bars i.s{background:#D85A30}.rc .rc-bars i.p{background:#7F77DD}.rc .rc-bars i.m{background:#D4537E}.rc .rc-bars i.f{background:#1D9E75}.rc .rc-bars i.g{background:#639922}
+.rc .rc-n{font-size:12px;color:var(--text-secondary);margin-top:6px}
+.rc .rc-n b{font-family:var(--font-mono);color:var(--text-primary);font-weight:500}
+.rc .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:26px;max-width:none}
+.cx{overflow-x:auto;margin:16px 0}
+.cx table{border-collapse:collapse;font-size:14px;width:100%;min-width:520px}
+.cx th,.cx td{border:1px solid var(--border);padding:7px 10px;text-align:center}
+.cx th{font-weight:500;color:var(--text-primary);background:var(--surface-1)}
+.cx td{font-family:var(--font-mono);color:var(--text-primary)}
+.cx td:first-child{font-family:var(--font-sans);text-align:left}
+.cx td.g{background:rgba(29,158,117,.12);color:#0F6E56}.cx td.b{background:rgba(226,75,74,.10);color:#A32D2D}
+.use{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:14px 0}
+.use div{border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.use b{display:block;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+.use p{margin:0;font-size:14px;color:var(--text-secondary);line-height:1.6}
+.dsa-tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.dsa-tip p{margin:4px 0}.dsa-tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
 </style>
-<div class="circuit-lesson lx so">
-<p class="lede">정렬 알고리즘은 결국 "두 값을 비교하고, 필요하면 자리를 바꾸는 일"을 어떤 순서로 하느냐의 차이입니다. 같은 막대를 네 가지 방법으로 정렬하면서 비교 횟수가 얼마나 달라지는지 보세요.</p>
+<div class="circuit-lesson rc">
+<p class="lede">일곱 가지 정렬이 같은 배열을 동시에 정렬합니다. 모든 알고리즘이 한 번에 한 단계(비교나 이동 한 번)씩 진행하므로, 먼저 끝나는 쪽이 할 일이 적은 알고리즘입니다. 입력 종류를 바꾸면 순위가 달라집니다.</p>
 
   <div class="stage">
-    <h2 class="sr-only">막대 그래프로 정렬 과정을 보여 주고 알고리즘별 비교 횟수를 비교하는 시뮬레이터</h2>
-    <p class="sub" style="margin-top:0">1. 정렬 방법을 고르세요</p>
-    <div class="row">
-      <button class="bt sel" data-a="bubble">버블 정렬</button><button class="bt" data-a="insert">삽입 정렬</button>
-      <button class="bt" data-a="quick">퀵 정렬</button><button class="bt" data-a="merge">병합 정렬</button>
-    </div>
-    <p class="sub">2. 정렬을 실행하세요</p>
-    <div class="row">
-      <button class="bt go" id="soPlay">정렬 시작</button><button class="bt" id="soStep">한 단계</button><button class="bt" id="soShuf">새로 섞기</button>
-      <label class="lbl">속도 <select id="soSpd"><option value="500">느리게</option><option value="180" selected>보통</option><option value="50">빠르게</option></select></label>
-    </div>
-    <div class="bars" id="soBars"></div>
-    <div class="cnt"><span>비교<b id="soC">0</b></span><span>교환·쓰기<b id="soW">0</b></span></div>
-    <div class="leg"><span><i style="background:#EF9F27"></i>비교 중</span><span><i style="background:#D85A30"></i>자리 바꿈</span><span><i style="background:#7F77DD"></i>퀵 정렬 기준값</span><span><i style="background:#1D9E75"></i>제자리 확정</span></div>
-    <p class="msg" id="soMsg" aria-live="polite"></p>
-    <p class="sub">같은 배열에서 방법별 비교 횟수</p>
-    <div class="cmp" id="soCmp"></div>
+    <h2 class="sr-only">일곱 가지 정렬 알고리즘이 같은 배열을 동시에 정렬하는 경주</h2>
+    <div class="ctl"><span class="l">입력</span><button class="bt sel" data-rp="random">무작위</button><button class="bt" data-rp="nearly">거의 정렬됨</button><button class="bt" data-rp="reversed">역순</button><button class="bt" data-rp="dups">같은 값 많음</button></div>
+    <div class="ctl"><button class="bt go" id="rcGo">동시에 시작</button><button class="bt" id="rcReset">새 배열로 다시</button><label class="l">속도 <select id="rcSpd"><option value="120">느리게</option><option value="45" selected>보통</option><option value="12">빠르게</option></select></label></div>
+    <div class="grid" id="rcGrid"></div>
+    <p class="msg" id="rcMsg" aria-live="polite"></p>
   </div>
-  <p class="hint">[정렬 시작]을 누르면 자동으로 진행하고, [한 단계]를 누르면 비교나 교환 한 번씩 진행합니다. [새로 섞기]를 누르면 네 방법 모두 새 배열로 다시 비교합니다.</p>
+  <p class="hint">[거의 정렬됨]에서는 삽입 정렬과 버블 정렬이 빠르게 끝나고, [역순]에서는 둘 다 가장 느려집니다. 병합 정렬과 힙 정렬은 입력이 바뀌어도 단계 수가 거의 같습니다. 각 정렬의 자세한 과정은 표의 이름을 눌러 확인하세요.</p>
 
-  <h2>네 가지 방법</h2>
-  <p><strong>버블 정렬</strong>은 이웃한 두 값을 비교해 큰 값을 오른쪽으로 보내는 일을 반복합니다. 한 바퀴 돌 때마다 가장 큰 값이 맨 끝에 자리 잡습니다. 비교 횟수가 n²에 비례해서 늘어납니다.</p>
-  <p><strong>삽입 정렬</strong>은 왼쪽부터 정렬된 구간을 넓혀 가며, 새 값을 왼쪽으로 옮겨 알맞은 자리에 끼웁니다. 거의 정렬된 배열에서는 매우 빠르지만, 최악의 경우는 버블 정렬과 같습니다.</p>
-  <p><strong>퀵 정렬</strong>은 기준값 하나를 골라 그보다 작은 값은 왼쪽, 큰 값은 오른쪽으로 나눈 뒤 양쪽을 다시 같은 방법으로 정렬합니다. 평균 n log n번 비교하지만, 기준값이 계속 한쪽 끝으로 치우치면 n²까지 느려집니다.</p>
-  <p><strong>병합 정렬</strong>은 배열을 반으로 계속 쪼갠 뒤, 정렬된 두 조각을 앞에서부터 비교하며 합칩니다. 항상 n log n번 정도 비교하지만, 합치는 동안 쓸 임시 공간이 필요합니다.</p>
+  <h2>복잡도 한눈에 보기</h2>
+<div class="cx"><table><thead><tr><th>정렬</th><th>최선</th><th>평균</th><th>최악</th><th>추가 공간</th><th>안정</th></tr></thead><tbody><tr><td><a href="{{ '/theory/bubble-sort/' | relative_url }}">버블</a></td><td class="g">O(n)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="g">예</td></tr><tr><td><a href="{{ '/theory/selection-sort/' | relative_url }}">선택</a></td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="b">아니요</td></tr><tr><td><a href="{{ '/theory/insertion-sort/' | relative_url }}">삽입</a></td><td class="g">O(n)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="g">예</td></tr><tr><td><a href="{{ '/theory/quick-sort/' | relative_url }}">퀵</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="b">O(n²)</td><td class="">O(log n)</td><td class="b">아니요</td></tr><tr><td><a href="{{ '/theory/merge-sort/' | relative_url }}">병합</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="b">O(n)</td><td class="g">예</td></tr><tr><td><a href="{{ '/theory/heap-sort/' | relative_url }}">힙</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(1)</td><td class="b">아니요</td></tr><tr><td><a href="{{ '/theory/counting-sort/' | relative_url }}">계수</a></td><td class="g">O(n + k)</td><td class="g">O(n + k)</td><td class="g">O(n + k)</td><td class="">O(n + k)</td><td class="g">예</td></tr></tbody></table></div>
+  <p>k는 계수 정렬에서 값의 범위입니다. 안정 정렬은 같은 값끼리의 원래 순서를 유지하는 정렬입니다. 여러 기준으로 차례로 정렬할 때(예: 이름순으로 정렬한 뒤 점수순으로 다시 정렬) 안정성이 필요합니다.</p>
+
+  <h2>언제 무엇을 쓰나요</h2>
+  <div class="use">
+    <div><b>보통은 언어의 기본 정렬</b><p>파이썬 sort()는 Timsort로 O(n log n)이고 안정 정렬입니다. 직접 짜는 것보다 빠르고 틀릴 일이 없습니다.</p></div>
+    <div><b>최악에도 O(n log n)이 필요할 때</b><p>병합 정렬이나 힙 정렬. 메모리가 넉넉하고 안정성이 필요하면 병합, 추가 메모리가 없어야 하면 힙입니다.</p></div>
+    <div><b>거의 정렬된 데이터, 작은 n</b><p>삽입 정렬이 가장 빠릅니다. 기본 정렬들도 작은 구간은 삽입 정렬로 처리합니다.</p></div>
+    <div><b>범위가 좁은 정수가 아주 많을 때</b><p>계수 정렬. 비교 없이 O(n + k)에 끝나고, 개수만 세면 메모리도 아낄 수 있습니다.</p></div>
+  </div>
+
+  <div class="dsa-tip"><p class="t">코테에서는: 정렬 기준 다루기</p>
+  <p>문제의 대부분은 정렬을 직접 구현하기보다 "무엇을 기준으로 정렬하느냐"를 묻습니다. key에 튜플을 주면 앞 원소부터 차례로 비교하고, 내림차순으로 하고 싶은 숫자 기준에는 −를 붙입니다.</p>
+<pre><code>a.sort()                                   # 제자리 정렬, 안정
+b = sorted(a, reverse=True)                # 새 리스트, 내림차순
+people.sort(key=lambda p: (-p[1], p[0]))   # 점수 내림차순, 같으면 이름 오름차순</code></pre>
+  <p>시간 제한 1초 기준으로 n이 수천 이하면 O(n²)도 통과하지만, n이 10만을 넘으면 O(n log n)이 필요합니다. 파이썬은 C++보다 느리므로 더 보수적으로 잡으세요.</p></div>
 </div>
 <script>
 (() => {
+const J=(x,a,b)=>x+(/[013678flmnr]$/i.test(String(x))?a:b);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const PC={i:'#185FA5',j:'#BA7517',p:'#534AB7',m:'#993556',f:'#0F6E56'};
+const BAND={ok:'rgba(29,158,117,.14)',bad:'rgba(216,90,48,.13)',p:'rgba(127,119,221,.14)',w:'rgba(232,163,23,.18)',b:'rgba(55,138,221,.13)'};
+class Rec{
+  constructor(els,o){this.els=els;this.n=o.n;this.a=els.map(e=>e.id);this.x=o.aux?Array(o.auxN||o.n).fill(null):null;this.fixed=new Set();this.st=Object.assign({},o.stats||{});this.f=[];}
+  v(i){return this.els[this.a[i]].v} xv(i){return this.els[this.x[i]].v}
+  L(i){const e=this.els[this.a[i]];return e.v+(e.tag||'');} XL(i){const e=this.els[this.x[i]];return e.v+(e.tag||'');}
+  swap(i,j){const t=this.a[i];this.a[i]=this.a[j];this.a[j]=t;}
+  mv(i,j){this.a[j]=this.a[i];this.a[i]=null;}
+  down(i,j){this.x[j]=this.a[i];this.a[i]=null;}
+  up(j,i){this.a[i]=this.x[j];this.x[j]=null;}
+  xmv(i,j){this.x[j]=this.x[i];this.x[i]=null;}
+  add(v,j){const id=this.els.length;this.els.push({id,v});this.x[j]=id;return id;}
+  fix(i){if(this.a[i]!=null)this.fixed.add(this.a[i]);}
+  fixAll(){this.a.forEach(id=>id!=null&&this.fixed.add(id));if(this.x)this.x.forEach(id=>id!=null&&this.fixed.add(id));}
+  H(...p){const h={};p.forEach(([i,c,row])=>{const id=row?this.x[i]:this.a[i];if(id!=null)h[id]=c;});return h;}
+  S(line,msg,o={}){this.f.push({a:this.a.slice(),x:this.x?this.x.slice():null,fixed:new Set(this.fixed),hl:o.hl||{},ptr:o.ptr||[],band:o.band||[],rng:o.rng||null,line,msg,st:Object.assign({},this.st),ex:o.ex?JSON.parse(JSON.stringify(o.ex)):null});}
+}
+const stackSide=fn=>fr=>{const s=(fr.ex&&fr.ex.stack)||[];return `<div class="vz-sub">호출 스택 (맨 위가 지금 실행 중)</div><div class="stk">${s.length?s.slice().reverse().map((x,i)=>`<div class="${i===0?'on':''}">${fn}(a, ${x[0]}, ${x[1]})</div>`).join(''):'<div class="none">비어 있음</div>'}</div>`;};
+
+const ALG={};
+ALG.bubble={name:'버블 정렬',stats:{'비교':0,'교환':0},legend:['c','s','f'],
+code:['def bubble_sort(a):','    n = len(a)','    for end in range(n - 1, 0, -1):','        swapped = False','        for j in range(end):','            if a[j] > a[j + 1]:','                a[j], a[j + 1] = a[j + 1], a[j]','                swapped = True','        if not swapped:','            break'],
+record(r){const n=r.n;
+  for(let end=n-1;end>0;end--){let sw=false;
+    r.S(2,`${n-end}번째 바퀴: 0번부터 ${end}번까지 이웃한 두 값을 비교해 큰 값을 오른쪽으로 보냅니다. 바퀴가 끝나면 이 구간에서 가장 큰 값이 ${end}번 자리에 놓입니다.`,{rng:[0,end],ptr:[{i:end,t:'end',c:PC.f}]});
+    for(let j=0;j<end;j++){r.st['비교']++;const x=r.v(j),y=r.v(j+1),lx=r.L(j),ly=r.L(j+1),P=[{i:j,t:'j',c:PC.j},{i:j+1,t:'j+1',c:PC.j},{i:end,t:'end',c:PC.f}];
+      r.S(5,`${J(lx,'과','와')} ${J(ly,'을','를')} 비교합니다. `+(x>y?'앞쪽이 더 크므로 자리를 바꿉니다.':'순서가 맞으므로 그대로 둡니다.'),{hl:r.H([j,'c'],[j+1,'c']),ptr:P,rng:[0,end]});
+      if(x>y){r.swap(j,j+1);r.st['교환']++;sw=true;r.S(6,`${J(lx,'과','와')} ${ly}의 자리를 바꿨습니다.`,{hl:r.H([j,'s'],[j+1,'s']),ptr:P,rng:[0,end]});}}
+    r.fix(end);
+    if(!sw){r.fixAll();r.S(9,'이번 바퀴에서 교환이 한 번도 없었습니다. 이미 정렬된 상태이므로 여기서 끝냅니다.');return;}
+    r.S(2,`${end}번 자리에 ${J(r.L(end),'이','가')} 확정되었습니다.`,{ptr:[{i:end,t:'end',c:PC.f}]});}
+  r.fixAll();r.S(-1,`정렬이 끝났습니다. 비교 ${r.st['비교']}번, 교환 ${r.st['교환']}번.`);}};
+
+ALG.selection={name:'선택 정렬',stats:{'비교':0,'교환':0},legend:['c','m','s','f'],
+code:['def selection_sort(a):','    n = len(a)','    for i in range(n - 1):','        m = i','        for j in range(i + 1, n):','            if a[j] < a[m]:','                m = j','        a[i], a[m] = a[m], a[i]'],
+record(r){const n=r.n;
+  for(let i=0;i<n-1;i++){let m=i;const P=j=>[{i,t:'i',c:PC.i},...(j!=null?[{i:j,t:'j',c:PC.j}]:[]),{i:m,t:'min',c:PC.m}];
+    r.S(3,`${i}번 자리에 올 값을 찾습니다. 일단 a[${i}] = ${J(r.L(i),'을','를')} 최솟값으로 둡니다.`,{hl:r.H([i,'m']),ptr:P(null),rng:[i,n-1]});
+    for(let j=i+1;j<n;j++){r.st['비교']++;const sm=r.v(j)<r.v(m);
+      r.S(5,`${J(r.L(j),'과','와')} 지금까지의 최솟값 ${J(r.L(m),'을','를')} 비교합니다. `+(sm?'더 작으므로 최솟값 위치를 옮깁니다.':'최솟값은 그대로입니다.'),{hl:r.H([m,'m'],[j,'c']),ptr:P(j),rng:[i,n-1]});
+      if(sm){m=j;r.S(6,`새 최솟값은 ${m}번의 ${r.L(m)}입니다.`,{hl:r.H([m,'m']),ptr:P(j),rng:[i,n-1]});}}
+    if(m!==i){const a=r.L(i),b=r.L(m);r.swap(i,m);r.st['교환']++;r.S(7,`최솟값 ${J(b,'을','를')} ${i}번 자리의 ${J(a,'과','와')} 맞바꿉니다.`,{hl:r.H([i,'s'],[m,'s']),ptr:[{i,t:'i',c:PC.i},{i:m,t:'min',c:PC.m}]});}
+    else r.S(7,`최솟값이 이미 ${i}번 자리에 있어서 바꾸지 않습니다.`,{ptr:[{i,t:'i',c:PC.i}]});
+    r.fix(i);}
+  r.fixAll();r.S(-1,`정렬이 끝났습니다. 비교 ${r.st['비교']}번, 교환 ${r.st['교환']}번. 비교 횟수는 입력 순서와 상관없이 항상 n(n−1)/2 = ${n*(n-1)/2}번입니다.`);}};
+
+ALG.insertion={name:'삽입 정렬',aux:'꺼내 둔 key',stats:{'비교':0,'이동':0},legend:['c','m','s',['#639922','key를 넣은 자리'],[BAND.ok,'정렬된 구간'],'f'],
+code:['def insertion_sort(a):','    for i in range(1, len(a)):','        key = a[i]','        j = i - 1','        while j >= 0 and a[j] > key:','            a[j + 1] = a[j]','            j -= 1','        a[j + 1] = key'],
+record(r){const n=r.n,B=hi=>[{lo:0,hi,c:BAND.ok,l:'정렬됨'}];
+  r.S(1,'0번 하나만 있는 구간은 이미 정렬된 상태입니다. 1번부터 하나씩 꺼내 왼쪽의 정렬된 구간에 끼워 넣습니다.',{band:B(0)});
+  for(let i=1;i<n;i++){const key=r.v(i),kl=r.L(i);r.down(i,i);let pos=i,j=i-1;
+    r.S(2,`a[${i}] = ${J(kl,'을','를')} key로 꺼냅니다. 왼쪽 0~${i-1}번은 이미 정렬되어 있습니다.`,{hl:r.H([pos,'m',1]),band:B(i-1),ptr:[{i,t:'i',c:PC.i}]});
+    while(j>=0){r.st['비교']++;const big=r.v(j)>key;
+      r.S(4,`${J(r.L(j),'과','와')} key ${J(kl,'을','를')} 비교합니다. `+(big?'key보다 크므로 한 칸 오른쪽으로 밉니다.':'key보다 크지 않으므로 여기서 멈춥니다.'),{hl:Object.assign(r.H([j,'c']),r.H([pos,'m',1])),band:B(i),ptr:[{i:j,t:'j',c:PC.j}]});
+      if(!big)break;
+      r.mv(j,j+1);r.xmv(pos,j);pos=j;r.st['이동']++;
+      r.S(5,`${J(r.L(j+1),'이','가')} ${j+1}번으로 옮겨졌습니다. key는 빈자리 ${j}번 위에서 기다립니다.`,{hl:Object.assign(r.H([j+1,'s']),r.H([pos,'m',1])),band:B(i),ptr:[{i:j,t:'j',c:PC.j}]});
+      j--;}
+    r.up(pos,j+1);r.st['이동']++;
+    r.S(7,(j<0?'맨 앞까지 왔습니다. ':'')+`빈자리 ${j+1}번에 key ${J(kl,'을','를')} 넣습니다. 이제 0~${i}번이 정렬되었습니다.`,{hl:r.H([j+1,'g']),band:B(i)});}
+  r.fixAll();r.S(-1,`정렬이 끝났습니다. 비교 ${r.st['비교']}번, 이동 ${r.st['이동']}번.`);}};
+
+ALG.quick={name:'퀵 정렬',stats:{'비교':0,'교환':0,'최대 깊이':0},legend:['c','s','p',[BAND.ok,'기준값보다 작음'],[BAND.bad,'기준값 이상'],'f'],
+code:['def quick_sort(a, lo, hi):','    if lo >= hi:','        return','    pivot = a[hi]','    i = lo','    for j in range(lo, hi):','        if a[j] < pivot:','            a[i], a[j] = a[j], a[i]','            i += 1','    a[i], a[hi] = a[hi], a[i]','    quick_sort(a, lo, i - 1)','    quick_sort(a, i + 1, hi)'],
+side:stackSide('quick_sort'),
+record(r){const n=r.n,stack=[];
+  const qs=(lo,hi)=>{stack.push([lo,hi]);r.st['최대 깊이']=Math.max(r.st['최대 깊이'],stack.length);const ex=()=>({stack});
+    r.S(0,`quick_sort(a, ${lo}, ${hi})를 호출합니다. ${lo}~${hi}번 구간을 정렬합니다.`,{rng:[lo,Math.max(lo,hi)],ex:ex()});
+    if(lo>=hi){if(lo===hi)r.fix(lo);r.S(2,lo===hi?'원소가 하나뿐이라 이미 정렬된 상태입니다. 바로 돌아갑니다.':'구간이 비어 있어 바로 돌아갑니다.',{rng:[lo,Math.max(lo,hi)],ex:ex()});stack.pop();return;}
+    const pl=r.L(hi);let i=lo;
+    const band=j=>[{lo,hi:i-1,c:BAND.ok},{lo:i,hi:j-1,c:BAND.bad}].filter(b=>b.hi>=b.lo);
+    r.S(3,`맨 오른쪽 값 ${J(pl,'을','를')} 기준값으로 정합니다. 기준값보다 작은 값을 i 왼쪽으로 모으겠습니다.`,{hl:r.H([hi,'p']),ptr:[{i,t:'i',c:PC.i}],rng:[lo,hi],ex:ex()});
+    for(let j=lo;j<hi;j++){r.st['비교']++;const sm=r.v(j)<r.v(hi),P=[{i,t:'i',c:PC.i},{i:j,t:'j',c:PC.j}];
+      r.S(6,`${J(r.L(j),'과','와')} 기준값 ${J(pl,'을','를')} 비교합니다. `+(sm?(i===j?'더 작습니다. 이미 i 자리에 있으므로 i만 한 칸 옮깁니다.':'더 작으므로 i 자리의 값과 바꾸고 i를 한 칸 옮깁니다.'):'크거나 같으므로 그대로 두고 j만 진행합니다.'),{hl:Object.assign(r.H([hi,'p']),r.H([j,'c'])),ptr:P,band:band(j),rng:[lo,hi],ex:ex()});
+      if(sm){if(i!==j){r.swap(i,j);r.st['교환']++;r.S(7,`${J(r.L(i),'과','와')} ${r.L(j)}의 자리를 바꿨습니다.`,{hl:Object.assign(r.H([hi,'p']),r.H([i,'s'],[j,'s'])),ptr:P,band:band(j),rng:[lo,hi],ex:ex()});}i++;}}
+    if(i!==hi){r.swap(i,hi);r.st['교환']++;}r.fix(i);
+    r.S(9,`기준값 ${J(pl,'을','를')} ${i}번 자리로 옮깁니다. 왼쪽은 모두 기준값보다 작고 오른쪽은 모두 크거나 같으므로, ${i}번이 기준값의 최종 자리입니다.`,{hl:r.H([i,'p']),band:[{lo,hi:i-1,c:BAND.ok},{lo:i+1,hi,c:BAND.bad}].filter(b=>b.hi>=b.lo),rng:[lo,hi],ex:ex()});
+    qs(lo,i-1);qs(i+1,hi);stack.pop();};
+  qs(0,n-1);r.fixAll();r.S(-1,`정렬이 끝났습니다. 비교 ${r.st['비교']}번, 교환 ${r.st['교환']}번, 재귀 최대 깊이 ${r.st['최대 깊이']}.`,{ex:{stack:[]}});}};
+
+ALG.merge={name:'병합 정렬',aux:'tmp (임시 배열)',stats:{'비교':0,'이동':0},legend:['c','s',[BAND.b,'왼쪽 조각'],[BAND.p,'오른쪽 조각'],['#639922','합친 결과'],'f'],
+code:['def merge_sort(a, lo, hi):','    if lo >= hi:','        return','    mid = (lo + hi) // 2','    merge_sort(a, lo, mid)','    merge_sort(a, mid + 1, hi)','    tmp = []','    i, j = lo, mid + 1','    while i <= mid and j <= hi:','        if a[i] <= a[j]:','            tmp.append(a[i]); i += 1','        else:','            tmp.append(a[j]); j += 1','    tmp += a[i:mid + 1] + a[j:hi + 1]','    a[lo:hi + 1] = tmp'],
+side:stackSide('merge_sort'),
+record(r){const n=r.n,stack=[];
+  const ms=(lo,hi)=>{stack.push([lo,hi]);const ex=()=>({stack});
+    r.S(0,`merge_sort(a, ${lo}, ${hi})를 호출합니다.`,{rng:[lo,hi],ex:ex()});
+    if(lo>=hi){r.S(2,'원소가 하나뿐이라 이미 정렬된 상태로 봅니다.',{rng:[lo,hi],ex:ex()});stack.pop();return;}
+    const mid=(lo+hi)>>1,BB=[{lo,hi:mid,c:BAND.b,l:'왼쪽'},{lo:mid+1,hi,c:BAND.p,l:'오른쪽'}];
+    r.S(3,`가운데 ${mid}번을 기준으로 ${lo}~${mid}번과 ${mid+1}~${hi}번으로 나눕니다.`,{band:BB,rng:[lo,hi],ex:ex()});
+    ms(lo,mid);ms(mid+1,hi);
+    r.S(6,`정렬된 두 조각 ${lo}~${mid}번과 ${mid+1}~${hi}번을 앞에서부터 비교하며 tmp에 합칩니다.`,{band:BB,rng:[lo,hi],ex:ex()});
+    let i=lo,j=mid+1,t=lo;
+    while(i<=mid&&j<=hi){r.st['비교']++;const le=r.v(i)<=r.v(j),P=[{i,t:'i',c:PC.i},{i:j,t:'j',c:PC.j},{r:1,i:t,t:'다음 칸',c:PC.m}];
+      r.S(9,`왼쪽의 ${J(r.L(i),'과','와')} 오른쪽의 ${J(r.L(j),'을','를')} 비교합니다. `+(le?'왼쪽이 작거나 같으므로 왼쪽 값을 tmp에 넣습니다.':'오른쪽이 더 작으므로 오른쪽 값을 tmp에 넣습니다.'),{hl:r.H([i,'c'],[j,'c']),ptr:P,band:BB,rng:[lo,hi],ex:ex()});
+      if(le){r.down(i,t);i++;}else{r.down(j,t);j++;}r.st['이동']++;
+      r.S(le?10:12,`tmp의 ${t}번 칸에 ${J(r.XL(t),'을','를')} 넣었습니다.`,{hl:r.H([t,'s',1]),ptr:[{i:Math.min(i,mid),t:'i',c:PC.i},{i:Math.min(j,hi),t:'j',c:PC.j}],band:BB,rng:[lo,hi],ex:ex()});t++;}
+    if(i<=mid||j<=hi){const sd=i<=mid?'왼쪽':'오른쪽';while(i<=mid){r.down(i,t++);i++;r.st['이동']++;}while(j<=hi){r.down(j,t++);j++;r.st['이동']++;}
+      r.S(13,`한쪽 조각이 바닥났습니다. ${sd} 조각에 남은 값은 이미 정렬되어 있으므로 그대로 tmp 뒤에 붙입니다.`,{band:BB,rng:[lo,hi],ex:ex()});}
+    for(let p=lo;p<=hi;p++){r.up(p,p);r.st['이동']++;}
+    r.S(14,`tmp에 모인 값을 원래 배열의 ${lo}~${hi}번에 옮겨 적습니다. 이 구간이 정렬되었습니다.`,{hl:Object.fromEntries(r.a.slice(lo,hi+1).map(id=>[id,'g'])),rng:[lo,hi],ex:ex()});
+    stack.pop();};
+  ms(0,n-1);r.fixAll();r.S(-1,`정렬이 끝났습니다. 비교 ${r.st['비교']}번, 이동 ${r.st['이동']}번.`,{ex:{stack:[]}});}};
+
+ALG.heap={name:'힙 정렬',stats:{'비교':0,'교환':0},legend:['m','c','s',[BAND.p,'힙 구간'],'f'],
+code:['def heap_sort(a):','    n = len(a)','    for i in range(n // 2 - 1, -1, -1):','        sift_down(a, i, n)','    for end in range(n - 1, 0, -1):','        a[0], a[end] = a[end], a[0]','        sift_down(a, 0, end)','','def sift_down(a, i, size):','    while 2 * i + 1 < size:','        c = 2 * i + 1','        if c + 1 < size and a[c + 1] > a[c]:','            c += 1','        if a[i] >= a[c]:','            break','        a[i], a[c] = a[c], a[i]','        i = c'],
+side(fr,EL){const ex=fr.ex||{size:fr.a.length},n=fr.a.length,Wd=400;let h='';
+  const pos=i=>{const d=Math.floor(Math.log2(i+1)),p=i-(2**d-1);return [(p+.5)*Wd/2**d,22+d*50];};
+  for(let i=1;i<n;i++){const [x1,y1]=pos(Math.floor((i-1)/2)),[x2,y2]=pos(i);h+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--border-strong)" stroke-width="1.5" opacity="${i<ex.size?1:.25}"/>`;}
+  for(let i=0;i<n;i++){const id=fr.a[i];if(id==null)continue;const e=EL[id],[x,y]=pos(i),c=fr.hl[id],out=i>=ex.size;
+    const fill=c==='c'?'#EF9F27':c==='s'?'#D85A30':c==='m'?'#D4537E':out?'#1D9E75':'#85B7EB';
+    h+=`<g opacity="${out&&!c?.45:1}"><circle cx="${x}" cy="${y}" r="16" fill="${fill}"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="13" font-weight="600" fill="${c||out?'#fff':'#042C53'}">${e.v}</text><text x="${x+21}" y="${y-9}" font-size="10" fill="var(--text-muted)">${i}</text></g>`;}
+  return `<div class="vz-sub">배열을 완전 이진 트리로 본 모습 (힙 크기 ${ex.size})</div><svg viewBox="0 0 400 190" width="100%">${h}</svg>`;},
+record(r){const n=r.n;let size=n;const ex=()=>({size}),band=()=>size>0?[{lo:0,hi:size-1,c:BAND.p,l:'힙'}]:[];
+  const sift=i=>{while(2*i+1<size){let c=2*i+1;
+      if(c+1<size){r.st['비교']++;const rb=r.v(c+1)>r.v(c);r.S(11,`${i}번 노드의 두 자식 ${J(r.L(c),'과','와')} ${J(r.L(c+1),'을','를')} 비교해 더 큰 쪽을 고릅니다.`,{hl:Object.assign(r.H([i,'m']),r.H([c,'c'],[c+1,'c'])),band:band(),ex:ex(),ptr:[{i,t:'부모',c:PC.m},{i:c,t:'왼쪽',c:PC.j},{i:c+1,t:'오른쪽',c:PC.j}]});if(rb)c++;}
+      r.st['비교']++;const ok=r.v(i)>=r.v(c);
+      r.S(13,`부모 ${J(r.L(i),'과','와')} 더 큰 자식 ${J(r.L(c),'을','를')} 비교합니다. `+(ok?'부모가 크거나 같으므로 힙 조건을 만족합니다. 멈춥니다.':'자식이 더 크므로 둘을 바꿉니다.'),{hl:Object.assign(r.H([i,'m']),r.H([c,'c'])),band:band(),ex:ex(),ptr:[{i,t:'부모',c:PC.m},{i:c,t:'자식',c:PC.j}]});
+      if(ok)return;r.swap(i,c);r.st['교환']++;r.S(15,`${J(r.L(i),'이','가')} 위로 올라가고 ${J(r.L(c),'이','가')} 아래로 내려갔습니다.`,{hl:r.H([i,'s'],[c,'s']),band:band(),ex:ex()});i=c;}};
+  r.S(2,`1단계: 배열을 최대 힙(모든 부모가 자식보다 크거나 같은 트리)으로 만듭니다. 자식이 있는 마지막 노드 ${Math.floor(n/2)-1}번부터 0번까지 거꾸로 sift_down 합니다.`,{band:band(),ex:ex()});
+  for(let i=Math.floor(n/2)-1;i>=0;i--){r.S(3,`${i}번 노드에서 sift_down을 시작합니다.`,{hl:r.H([i,'m']),band:band(),ex:ex()});sift(i);}
+  r.S(4,`최대 힙이 완성되었습니다. 루트(0번)의 ${J(r.L(0),'이','가')} 가장 큰 값입니다. 2단계: 루트를 맨 뒤로 보내고 힙 크기를 1 줄이는 일을 반복합니다.`,{hl:r.H([0,'m']),band:band(),ex:ex()});
+  for(let end=n-1;end>0;end--){const mx=r.L(0);r.swap(0,end);r.st['교환']++;size=end;r.fix(end);
+    r.S(5,`루트의 최댓값 ${J(mx,'을','를')} ${end}번과 바꿔 맨 뒤에 확정합니다. 이제 힙에는 ${size}개가 남았습니다.`,{hl:r.H([0,'s'],[end,'s']),band:band(),ex:ex()});sift(0);}
+  size=0;r.fixAll();r.S(-1,`정렬이 끝났습니다. 비교 ${r.st['비교']}번, 교환 ${r.st['교환']}번.`,{ex:{size:0}});}};
+
+ALG.counting={name:'계수 정렬',aux:'out (결과 배열)',stats:{'비교':0,'이동':0},legend:['c','s','f'],
+code:['def counting_sort(a):','    k = max(a)','    count = [0] * (k + 1)','    for x in a:','        count[x] += 1','    for v in range(1, k + 1):','        count[v] += count[v - 1]','    out = [0] * len(a)','    for x in reversed(a):','        count[x] -= 1','        out[count[x]] = x','    return out'],
+side(fr){const ex=fr.ex;if(!ex||!ex.cnt)return '';return `<div class="vz-sub">count 배열 (${ex.ph})</div><div class="cnt">${ex.cnt.map((c,i)=>`<div class="${i===ex.hi?'on':''}"><b>${c}</b><span>${i}</span></div>`).join('')}</div>`;},
+record(r){const n=r.n,K=Math.max(...[...Array(n).keys()].map(i=>r.v(i))),cnt=Array(K+1).fill(0);
+  r.S(2,`가장 큰 값이 ${K}이므로 0~${K} 각각의 개수를 셀 count 배열(크기 ${K+1})을 0으로 채웁니다. 이 정렬은 값끼리 한 번도 비교하지 않습니다.`,{ex:{cnt,hi:-1,ph:'개수 세기'}});
+  for(let i=0;i<n;i++){const x=r.v(i);cnt[x]++;r.S(4,`a[${i}] = ${r.L(i)} → count[${x}]에 1을 더합니다.`,{hl:r.H([i,'c']),ex:{cnt,hi:x,ph:'개수 세기'},ptr:[{i,t:'x',c:PC.i}]});}
+  for(let v=1;v<=K;v++){cnt[v]+=cnt[v-1];r.S(6,`count[${v}] += count[${v-1}] → ${cnt[v]}. 이제 count[${v}]는 ${v} 이하인 값의 개수이고, ${J(v,'이','가')} 들어갈 구역의 끝 위치입니다.`,{ex:{cnt,hi:v,ph:'누적 합'}});}
+  for(let i=n-1;i>=0;i--){const x=r.v(i),l=r.L(i);cnt[x]--;r.down(i,cnt[x]);r.st['이동']++;
+    r.S(10,`뒤에서부터 꺼냅니다. count[${x}]에서 1을 빼면 ${cnt[x]}이므로, ${J(l,'을','를')} out의 ${cnt[x]}번 칸에 놓습니다.`,{hl:r.H([cnt[x],'s',1]),ex:{cnt,hi:x,ph:'자리 배치'},ptr:[{i,t:'x',c:PC.i}]});}
+  r.fixAll();r.S(11,'완료했습니다. 같은 값끼리는 원래 순서(a, b, c…)가 그대로 유지됩니다. 뒤에서부터 꺼내 각 구역의 끝부터 채웠기 때문입니다.',{ex:{cnt,hi:-1,ph:'완료'}});}};
+
 const $=id=>document.getElementById(id);
-const N=14,NAME={bubble:'버블 정렬',insert:'삽입 정렬',quick:'퀵 정렬',merge:'병합 정렬'};
-const J=(n,a,b)=>n+('2459'.includes(String(n%10))?b:a);
-let base=[],arr=[],ops=[],k=0,timer=null,alg='bubble',cC=0,cW=0,fin=new Set(),pv=-1,hl={};
-function record(al,a0){
-  const a=a0.slice(),o=[];
-  const cmp=(i,j)=>o.push({t:'c',i,j}),sw=(i,j)=>{o.push({t:'s',i,j});[a[i],a[j]]=[a[j],a[i]];},set=(i,v)=>{o.push({t:'w',i,v});a[i]=v;};
-  if(al==='bubble'){for(let e=N-1;e>0;e--){let any=false;for(let j=0;j<e;j++){cmp(j,j+1);if(a[j]>a[j+1]){sw(j,j+1);any=true;}}o.push({t:'f',i:e});if(!any)break;}}
-  else if(al==='insert'){for(let i=1;i<N;i++){let j=i;while(j>0){cmp(j-1,j);if(a[j-1]>a[j]){sw(j-1,j);j--;}else break;}}}
-  else if(al==='quick'){const qs=(lo,hi)=>{if(lo>=hi){if(lo===hi)o.push({t:'f',i:lo});return;}o.push({t:'p',i:hi});let i=lo;for(let j=lo;j<hi;j++){cmp(j,hi);if(a[j]<a[hi]){if(i!==j)sw(i,j);i++;}}if(i!==hi)sw(i,hi);o.push({t:'f',i});qs(lo,i-1);qs(i+1,hi);};qs(0,N-1);}
-  else{const ms=(lo,hi)=>{if(lo>=hi)return;const m=(lo+hi)>>1;ms(lo,m);ms(m+1,hi);const L=a.slice(lo,m+1),R=a.slice(m+1,hi+1);let i=0,j=0,t=lo;
-    while(i<L.length&&j<R.length){cmp(lo+i<t?t:lo+i,m+1+j);if(L[i]<=R[j])set(t++,L[i++]);else set(t++,R[j++]);}
-    while(i<L.length)set(t++,L[i++]);while(j<R.length)set(t++,R[j++]);};ms(0,N-1);}
-  o.push({t:'done'});return o;
-}
-function shuffle(){base=[...Array(N).keys()].map(i=>i+1);for(let i=N-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[base[i],base[j]]=[base[j],base[i]];}}
-function reset(){stop();arr=base.slice();ops=record(alg,base);k=0;cC=0;cW=0;fin=new Set();pv=-1;hl={};$('soMsg').textContent=`${NAME[alg]}을 준비했습니다. [정렬 시작]을 누르세요.`;render();cmpPanel();}
-function apply(o){
-  hl={};
-  if(o.t==='c'){cC++;hl.c=[o.i,o.j];const x=arr[o.i],y=arr[o.j];$('soMsg').textContent=`${J(x,'과','와')} ${J(y,'을','를')} 비교합니다.`;}
-  else if(o.t==='s'){cW++;[arr[o.i],arr[o.j]]=[arr[o.j],arr[o.i]];hl.s=[o.i,o.j];$('soMsg').textContent=`${J(arr[o.i],'과','와')} ${J(arr[o.j],'의','의')} 자리를 바꿉니다.`;}
-  else if(o.t==='w'){cW++;arr[o.i]=o.v;hl.s=[o.i];$('soMsg').textContent=`${J(o.v,'을','를')} ${o.i+1}번째 자리에 씁니다.`;}
-  else if(o.t==='f'){fin.add(o.i);}
-  else if(o.t==='p'){pv=o.i;$('soMsg').textContent=`기준값 ${J(arr[o.i],'을','를')} 골랐습니다. 이보다 작은 값을 왼쪽으로 모읍니다.`;}
-  else if(o.t==='done'){for(let i=0;i<N;i++)fin.add(i);pv=-1;$('soMsg').textContent=`정렬이 끝났습니다. 비교 ${cC}번, 교환·쓰기 ${cW}번이 걸렸습니다.`;}
-}
-function step(){if(k>=ops.length){stop();return;}let o;do{o=ops[k++];apply(o);}while((o.t==='f')&&k<ops.length);render();if(k>=ops.length)stop();}
-function render(){
-  $('soBars').innerHTML=arr.map((v,i)=>{let c='';if(fin.has(i))c='f';if(i===pv)c='p';if(hl.c&&hl.c.includes(i))c='c';if(hl.s&&hl.s.includes(i))c='s';return `<div class="bar ${c}" style="height:${v/N*100}%"><span>${v}</span></div>`;}).join('');
-  $('soC').textContent=cC;$('soW').textContent=cW;
-  $('soStep').disabled=k>=ops.length;
-}
-function cmpPanel(){
-  const cs={};Object.keys(NAME).forEach(a=>cs[a]=record(a,base).filter(o=>o.t==='c').length);const mx=Math.max(...Object.values(cs),1);
-  $('soCmp').innerHTML=Object.keys(cs).map(a=>{const on=a===alg?' on':'';return `<span class="${on}">${NAME[a]}</span><div class="tr"><div class="fl${on}" style="width:${cs[a]/mx*100}%"></div></div><span class="${on}">${cs[a]}번</span>`;}).join('');
-}
-function stop(){clearInterval(timer);timer=null;$('soPlay').textContent='정렬 시작';}
-$('soPlay').onclick=()=>{if(timer){stop();$('soPlay').textContent='이어서 정렬';return;}if(k>=ops.length)reset();timer=setInterval(step,+$('soSpd').value);$('soPlay').textContent='일시정지';};
-$('soSpd').onchange=()=>{if(timer){clearInterval(timer);timer=setInterval(step,+$('soSpd').value);}};
-$('soStep').onclick=()=>{stop();step();};
-$('soShuf').onclick=()=>{shuffle();reset();};
-document.querySelectorAll('.so [data-a]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.so [data-a]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');alg=b.dataset.a;reset();});
-shuffle();reset();
+const KEYS=['bubble','selection','insertion','quick','merge','heap','counting'];
+const N=16;let base=[],P=[],timer=null,rank=0,preset='random';
+function gen(p){const a=[...Array(N).keys()].map(i=>i+1);if(p==='reversed')return a.reverse();if(p==='nearly'){for(let t=0;t<2;t++){const i=Math.floor(Math.random()*(N-1));[a[i],a[i+1]]=[a[i+1],a[i]];}return a;}if(p==='dups')return a.map(()=>1+Math.floor(Math.random()*5));return shuffle(a);}
+function setup(){stop();base=gen(preset);rank=0;
+  P=KEYS.map(key=>{const A=ALG[key],els=base.map((v,i)=>({id:i,v}));const r=new Rec(els,{n:N,aux:A.aux,auxN:N,stats:A.stats});A.record(r);return {key,A,els,f:r.f,k:0,done:false,rk:0};});
+  $('rcGrid').innerHTML=P.map((p,i)=>`<div class="rc-p" id="rcP${i}"><div class="rc-h"><b>${p.A.name}</b><span class="rk" id="rcR${i}"></span></div><div class="rc-bars" id="rcB${i}"></div>${p.A.aux?`<div class="rc-bars aux" id="rcX${i}"></div>`:''}<div class="rc-n" id="rcN${i}"></div></div>`).join('');
+  P.forEach((p,i)=>paint(i));$('rcMsg').textContent='[동시에 시작]을 누르면 일곱 가지 정렬이 같은 배열을 한 단계씩 동시에 진행합니다.';}
+function bars(arr,p,fr,mx){return arr.map(id=>{if(id==null)return '<i class="e"></i>';const e=p.els[id],c=fr.hl[id]||(fr.fixed.has(id)?'f':'');return `<i class="${c}" style="height:${12+e.v/mx*88}%"></i>`;}).join('');}
+function paint(i){const p=P[i],fr=p.f[Math.min(p.k,p.f.length-1)],mx=Math.max(...p.els.map(e=>e.v));
+  $('rcB'+i).innerHTML=bars(fr.a,p,fr,mx);if(fr.x)$('rcX'+i).innerHTML=bars(fr.x,p,fr,mx);
+  $('rcN'+i).innerHTML=Object.entries(fr.st).filter(([a])=>a!=='최대 깊이').map(([a,b])=>`${a} <b>${b}</b>`).join(' · ')+` · 단계 <b>${Math.min(p.k+1,p.f.length)}</b>`;}
+function tick(){let all=true;P.forEach((p,i)=>{if(p.done)return;p.k++;if(p.k>=p.f.length-1){p.k=p.f.length-1;p.done=true;p.rk=++rank;$('rcR'+i).textContent=`${p.rk}위로 완료`;$('rcP'+i).classList.add('fin');}else all=false;paint(i);});
+  if(all){stop();const order=P.slice().sort((a,b)=>a.rk-b.rk).map(p=>p.A.name);$('rcMsg').textContent=`모두 끝났습니다. 단계 수가 적은 순서: ${order.join(' → ')}`;}}
+function stop(){clearInterval(timer);timer=null;$('rcGo').textContent='동시에 시작';}
+$('rcGo').onclick=()=>{if(timer){stop();return;}if(P.every(p=>p.done))setup();timer=setInterval(tick,+$('rcSpd').value);$('rcGo').textContent='일시정지';$('rcMsg').textContent='진행 중입니다. 막대가 모두 초록색이 되면 그 정렬이 끝난 것입니다.';};
+$('rcSpd').onchange=()=>{if(timer){clearInterval(timer);timer=setInterval(tick,+$('rcSpd').value);}};
+$('rcReset').onclick=setup;
+document.querySelectorAll('[data-rp]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-rp]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');preset=b.dataset.rp;setup();});
+setup();
+
 })();
 </script>

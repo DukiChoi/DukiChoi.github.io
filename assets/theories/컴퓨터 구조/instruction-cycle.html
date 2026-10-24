@@ -1,0 +1,130 @@
+---
+title: 명령어 사이클
+description: CPU가 명령어를 인출, 해석, 실행하는 동안 레지스터와 메모리 사이로 값이 오가는 과정을 봅니다.
+permalink: /theory/instruction-cycle/
+category: architecture
+order: 1
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:18px 0 8px}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.lx input[type=text],.lx input[type=number],.lx select{font:inherit;font-size:14px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .err{font-size:13px;color:#E24B4A;margin:4px 0 0;min-height:18px}
+.lx .msg{font-size:15px;line-height:1.65;color:var(--text-primary);background:var(--surface-1);border-radius:8px;padding:10px 12px;margin-top:12px;min-height:52px;max-width:none}
+.lx .msg.bad{background:rgba(226,75,74,.10)}.lx .msg.ok{background:rgba(29,158,117,.12)}
+.lx .stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.lx .stats span{font-size:13px;color:var(--text-secondary);background:var(--surface-1);border-radius:6px;padding:4px 10px}
+.lx .stats b{font-family:var(--font-mono);font-weight:500;color:var(--text-primary);margin-left:5px}
+.lx .tw{overflow-x:auto;margin-top:10px}
+.lx table.t{border-collapse:collapse;font-size:14px;background:var(--panel,#fff)}
+.lx table.t th,.lx table.t td{border:1px solid var(--border);padding:5px 10px;text-align:center;white-space:nowrap}
+.lx table.t th{font-weight:500;color:var(--text-primary);background:var(--surface-1)}
+.lx table.t td{color:var(--text-primary)}
+.lx .on{background:#FAEEDA!important;color:#633806!important}
+.lx .hit{background:rgba(29,158,117,.16)!important;color:#085041!important}
+.lx .bad{background:rgba(226,75,74,.14)!important;color:#A32D2D!important}
+.lx .out{opacity:.35;text-decoration:line-through}
+.lx .null{color:var(--text-muted)!important;font-style:italic}
+.lx .mono{font-family:var(--font-mono)}
+.lx .leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--text-secondary);margin-top:6px}
+.lx .leg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.lx .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.lx .chips span{font-family:var(--font-mono);font-size:13px;background:var(--surface-1);border-radius:6px;padding:3px 9px;color:var(--text-primary)}
+.lx .code{font-family:var(--font-mono);font-size:13px;line-height:1.6;background:var(--surface-1);border-radius:8px;padding:8px 0;overflow-x:auto;margin-top:10px}
+.lx .code div{padding:0 12px;white-space:pre;color:var(--text-secondary)}
+.lx .code div.on{font-weight:500}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:22px 0 4px}
+.facts div{background:var(--surface-1);border-radius:8px;padding:9px 12px}
+.facts span{display:block;font-size:12px;color:var(--text-secondary)}
+.facts b{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--text-primary)}
+.tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.tip p{margin:4px 0}.tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
+.ph{display:flex;gap:6px;margin-top:12px}
+.ph span{flex:1;text-align:center;font-size:13px;font-weight:600;padding:5px;border-radius:6px;background:var(--surface-1);color:var(--text-secondary)}
+.ph span.on{background:#185FA5!important;color:#fff!important}
+</style>
+<div class="circuit-lesson lx">
+<p class="lede">CPU는 메모리에서 명령어를 하나 가져오고(인출), 무슨 일을 할지 해석하고(해석), 그 일을 실행하는 과정을 끝없이 반복합니다. 레지스터 사이로 값이 어떻게 오가는지 한 단계씩 따라가 보세요.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">간단한 CPU가 명령어를 인출, 해석, 실행하는 과정을 레지스터와 메모리로 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 실행할 프로그램을 고르세요</p>
+    <div class="row"><button class="bt sel" data-pg="add">두 수 더하기</button><button class="bt" data-pg="loop">3부터 0까지 세기 (반복문)</button></div>
+    <p class="sub">2. 한 단계씩 실행하세요</p>
+    <div class="row"><button class="bt go" id="icNext">다음 단계</button><button class="bt" id="icPlay">자동 재생</button><button class="bt" id="icInstr">명령어 하나 끝까지</button><button class="bt" id="icReset">처음으로</button><span class="lbl" id="icCnt"></span></div>
+    <div class="ph" id="icPh"></div>
+    <svg id="icSvg" width="100%" viewBox="0 0 680 360" role="img" aria-label="CPU 레지스터와 메모리"></svg>
+    <div class="msg" id="icMsg" aria-live="polite"></div>
+  </div>
+  <p class="hint">주황색 화살표가 이번 단계에서 값이 이동한 길이고, 주황색 상자가 값이 바뀐 곳입니다. 메모리 옆 ▶ 표시는 PC가 가리키는 다음 명령어 위치입니다.</p>
+<div class="facts"><div><span>PC</span><b>다음 명령어 주소</b></div><div><span>IR</span><b>지금 명령어</b></div><div><span>MAR</span><b>읽고 쓸 주소</b></div><div><span>MDR</span><b>오가는 데이터</b></div><div><span>ACC</span><b>계산 결과</b></div></div>
+
+  <h2>인출은 모든 명령어가 똑같습니다</h2>
+  <p>PC가 가리키는 주소를 MAR에 옮기고, 메모리가 그 주소의 내용을 MDR에 실어 보내면, 그것을 IR에 넣고 PC를 1 늘립니다. 어떤 명령어든 이 세 단계는 같습니다. 실행 단계만 명령어마다 다르고, 점프 명령어는 실행 단계에서 PC를 새 주소로 덮어써서 다음에 인출할 위치를 바꿉니다. 반복문이 바로 이 원리로 동작합니다.</p>
+  <h2>메모리 접근이 느린 이유</h2>
+  <p>명령어 하나를 처리하는 데 메모리를 최소 한 번(인출), 많게는 두 번(LOAD, ADD, STORE의 실행) 읽고 씁니다. CPU 안의 레지스터는 1클럭이면 읽지만 메인 메모리는 수십~수백 클럭이 걸립니다. 그래서 CPU와 메모리 사이에 <a href="{{ '/theory/cache/' | relative_url }}">캐시</a>를 두고, 여러 명령어를 겹쳐 처리하는 <a href="{{ '/theory/pipeline/' | relative_url }}">파이프라인</a>을 씁니다.</p>
+<div class="tip"><p class="t">이 CPU의 명령어</p><p><code>LOAD a</code> ACC ← M[a], <code>ADD a</code> ACC ← ACC + M[a], <code>SUB a</code> ACC ← ACC − M[a], <code>STORE a</code> M[a] ← ACC, <code>JZ a</code> ACC가 0이면 PC ← a, <code>JMP a</code> PC ← a, <code>HALT</code> 정지. 계산 결과를 ACC 하나에 모으는 이런 구조를 누산기 구조라고 합니다. 실제 CPU는 범용 레지스터를 수십 개 둡니다.</p></div>
+
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const PROGS={add:{0:['LOAD',10],1:['ADD',11],2:['STORE',12],3:['HALT'],10:7,11:5,12:0},loop:{0:['LOAD',13],1:['JZ',6],2:['SUB',14],3:['STORE',13],4:['JMP',1],6:['HALT'],13:3,14:1}};
+const B={PC:[30,30,120,46],IR:[30,110,150,46],CU:[30,200,150,56],MAR:[240,30,120,46],MDR:[240,110,120,46],ACC:[240,200,120,46]};
+const MX=430,MY=22,MH=20;
+let prog='add',S=[],k=0,timer=null;
+const J=(x,a,b)=>x+(/[013678flmnr]$/i.test(String(x))?a:b),RO=x=>x+(/[036]$/.test(String(x))?'으로':'로');
+const show=v=>v==null?'-':Array.isArray(v)?v.join(' '):String(v);
+function sim(){const M=Array(16).fill(0);Object.entries(PROGS[prog]).forEach(([a,v])=>M[+a]=v);
+  const st={PC:0,IR:null,MAR:null,MDR:null,ACC:0,M:M.slice()};S=[];let n=0;
+  const snap=(ph,msg,ch,path,mem,ins)=>S.push({ph,msg,ch,path,mem,ins,st:JSON.parse(JSON.stringify(st))});
+  snap(null,'모든 레지스터가 비어 있고 PC는 0입니다. CPU는 0번지의 명령어부터 실행합니다.',[],[],null,0);
+  while(n++<40){const ins=n;
+    st.MAR=st.PC;snap('인출',`PC의 값 ${J(st.PC,'을','를')} MAR로 옮깁니다. 메모리에 "${st.PC}번지를 읽겠다"고 알리는 단계입니다.`,['MAR'],[['PC','MAR']],null,ins);
+    st.MDR=st.M[st.MAR];snap('인출',`메모리가 ${st.MAR}번지의 내용 ${J(show(st.MDR),'을','를')} MDR로 보냅니다.`,['MDR'],[['MEM','MDR']],st.MAR,ins);
+    st.IR=st.MDR;st.PC++;snap('인출',`MDR의 명령어를 IR에 넣고, PC를 1 늘려 ${RO(st.PC)} 만듭니다. 다음에 가져올 명령어 위치를 미리 가리켜 두는 것입니다.`,['IR','PC'],[['MDR','IR'],['PC','PC']],null,ins);
+    const [op,a]=st.IR;
+    snap('해석',`제어장치가 IR의 ${J(show(st.IR),'을','를')} 해석합니다. 연산은 ${op}`+(a!=null?`, 대상 주소는 ${a}입니다.`:'입니다.'),['CU'],[['IR','CU']],null,ins);
+    if(op==='HALT'){snap('실행','HALT: 프로그램을 멈춥니다.',[],[],null,ins);break;}
+    if(op==='LOAD'||op==='ADD'||op==='SUB'){
+      st.MAR=a;snap('실행',`대상 주소 ${J(a,'을','를')} MAR로 옮깁니다.`,['MAR'],[['IR','MAR']],null,ins);
+      st.MDR=st.M[a];snap('실행',`메모리가 ${a}번지의 값 ${J(st.MDR,'을','를')} MDR로 보냅니다.`,['MDR'],[['MEM','MDR']],a,ins);
+      const old=st.ACC;if(op==='LOAD')st.ACC=st.MDR;else if(op==='ADD')st.ACC=old+st.MDR;else st.ACC=old-st.MDR;
+      snap('실행',op==='LOAD'?`MDR의 값 ${J(st.MDR,'을','를')} ACC에 넣습니다.`:`ALU가 ACC ${old} ${op==='ADD'?'+':'−'} MDR ${J(st.MDR,'을','를')} 계산해 결과 ${J(st.ACC,'을','를')} ACC에 넣습니다.`,['ACC'],op==='LOAD'?[['MDR','ACC']]:[['MDR','ALU'],['ACC','ALU'],['ALU','ACC']],null,ins);}
+    else if(op==='STORE'){st.MAR=a;snap('실행',`저장할 주소 ${J(a,'을','를')} MAR로 옮깁니다.`,['MAR'],[['IR','MAR']],null,ins);
+      st.MDR=st.ACC;snap('실행',`ACC의 값 ${J(st.ACC,'을','를')} MDR로 옮깁니다.`,['MDR'],[['ACC','MDR']],null,ins);
+      st.M[a]=st.MDR;snap('실행',`MDR의 값 ${J(st.MDR,'을','를')} 메모리 ${a}번지에 씁니다.`,[],[['MDR','MEM']],a,ins);}
+    else if(op==='JZ'){if(st.ACC===0){st.PC=a;snap('실행',`ACC가 0이므로 PC를 ${RO(a)} 바꿉니다. 다음에는 ${a}번지의 명령어를 가져옵니다.`,['PC'],[['IR','PC']],null,ins);}
+      else snap('실행',`ACC가 ${st.ACC}로 0이 아니므로 아무것도 하지 않습니다. PC는 그대로 ${st.PC}입니다.`,[],[],null,ins);}
+    else if(op==='JMP'){st.PC=a;snap('실행',`PC를 ${RO(a)} 바꿉니다. 다음 인출은 ${a}번지에서 일어나므로, 프로그램이 앞으로 되돌아가 반복합니다.`,['PC'],[['IR','PC']],null,ins);}}
+  k=0;}
+const AN={PC:{r:[150,53],b:[90,76],t:[90,30],l:[30,53]},IR:{r:[180,133],t:[105,110],b:[105,156]},CU:{t:[105,200]},MAR:{l:[240,53],r:[360,53]},MDR:{l:[240,133],r:[360,133],b:[300,156]},ACC:{t:[300,200],b:[300,246],l:[240,223]},ALU:{t:[300,280],l:[262,300]}};
+function seg(a,b){const P={'PC>MAR':[AN.PC.r,AN.MAR.l],'MDR>IR':[AN.MDR.l,AN.IR.r],'IR>CU':[AN.IR.b,AN.CU.t],'IR>MAR':[[180,120],[240,45]],'IR>PC':[AN.IR.t,AN.PC.b],'MDR>ACC':[AN.MDR.b,AN.ACC.t],'ACC>MDR':[[320,200],[320,156]],'MDR>ALU':[[372,133],[372,300],[338,300]],'ACC>ALU':[AN.ACC.b,AN.ALU.t],'ALU>ACC':[[262,300],[222,300],[222,223],[240,223]]}[a+'>'+b];return P;}
+function render(){const s=S[k],st=s.st;let h=`<defs><marker id="icA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#E8A317" stroke-width="2"/></marker></defs>`;
+  h+=`<rect x="14" y="10" width="390" height="340" rx="10" fill="none" stroke="var(--border-strong)" stroke-dasharray="4 4"/><text x="24" y="342" font-size="12" fill="var(--text-muted)">CPU</text>`;
+  h+=`<line x1="360" y1="53" x2="${MX}" y2="53" stroke="var(--border-strong)" stroke-width="2"/><text x="372" y="46" font-size="10" fill="var(--text-muted)">주소 버스</text><line x1="360" y1="133" x2="${MX}" y2="133" stroke="var(--border-strong)" stroke-width="2"/><text x="372" y="126" font-size="10" fill="var(--text-muted)">데이터 버스</text>`;
+  Object.entries(B).forEach(([n,[x,y,w,hh]])=>{const on=s.ch.includes(n);const val=n==='CU'?(st.IR?`해석: ${show(st.IR)}`:''):show(st[n]);
+    h+=`<rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="6" fill="${on?'#FAC775':'var(--panel,#fff)'}" stroke="${on?'#BA7517':'var(--border-strong)'}" stroke-width="1.5"/><text x="${x+8}" y="${y+16}" font-size="11" font-weight="600" fill="${on?'#633806':'var(--text-secondary)'}">${n==='CU'?'제어장치':n}</text><text x="${x+w/2}" y="${y+hh-10}" text-anchor="middle" font-size="16" font-family="var(--font-mono)" font-weight="600" fill="${on?'#412402':'var(--text-primary)'}">${val}</text>`;});
+  const aluOn=s.path.some(p=>p.includes('ALU'));h+=`<polygon points="250,280 350,280 330,320 270,320" fill="${aluOn?'#FAC775':'var(--surface-1)'}" stroke="${aluOn?'#BA7517':'var(--border-strong)'}" stroke-width="1.5"/><text x="300" y="305" text-anchor="middle" font-size="13" font-weight="600" fill="${aluOn?'#633806':'var(--text-secondary)'}">ALU</text>`;
+  h+=`<text x="${MX}" y="14" font-size="12" fill="var(--text-secondary)">메모리</text>`;
+  for(let i=0;i<16;i++){const y=MY+i*MH,acc=s.mem===i,pc=st.PC===i;h+=`<rect x="${MX}" y="${y}" width="230" height="${MH-2}" rx="3" fill="${acc?'#FAC775':'var(--surface-1)'}"/><text x="${MX+8}" y="${y+13}" font-size="11" font-family="var(--font-mono)" fill="${acc?'#633806':'var(--text-muted)'}">${String(i).padStart(2,'0')}</text><text x="${MX+40}" y="${y+13}" font-size="12.5" font-family="var(--font-mono)" fill="${acc?'#412402':'var(--text-primary)'}">${Array.isArray(st.M[i])?st.M[i].join(' '):st.M[i]}</text>${pc?`<text x="${MX-14}" y="${y+13}" font-size="12" fill="#185FA5">▶</text>`:''}`;}
+  s.path.forEach(([a,b])=>{if(a==='PC'&&b==='PC'){h+=`<path d="M150 40 C178 40 178 66 150 66" fill="none" stroke="#E8A317" stroke-width="2.5" marker-end="url(#icA)"/><text x="182" y="57" font-size="12" font-weight="600" fill="#BA7517">+1</text>`;return;}
+    if(a==='MEM'||b==='MEM'){const y=MY+(s.mem??0)*MH+9;h+=a==='MEM'?`<polyline points="${MX},${y} 400,${y} 400,133 362,133" fill="none" stroke="#E8A317" stroke-width="2.5" marker-end="url(#icA)"/>`:`<polyline points="360,133 400,133 400,${y} ${MX-2},${y}" fill="none" stroke="#E8A317" stroke-width="2.5" marker-end="url(#icA)"/>`;return;}
+    const P=seg(a,b);if(P)h+=`<polyline points="${P.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#E8A317" stroke-width="2.5" marker-end="url(#icA)"/>`;});
+  $('icSvg').innerHTML=h;$('icMsg').textContent=s.msg;
+  $('icPh').innerHTML=['인출','해석','실행'].map(p=>`<span class="${s.ph===p?'on':''}">${p}</span>`).join('');
+  $('icCnt').textContent=`단계 ${k+1} / ${S.length}`;$('icNext').disabled=k>=S.length-1;}
+function stop(){clearInterval(timer);timer=null;$('icPlay').textContent='자동 재생';}
+$('icNext').onclick=()=>{stop();if(k<S.length-1){k++;render();}};
+$('icInstr').onclick=()=>{stop();if(k>=S.length-1)return;if(S[k].ins===0||S[k+1].ins!==S[k].ins)k++;const cur=S[k].ins;while(k<S.length-1&&S[k+1].ins===cur)k++;render();};
+$('icPlay').onclick=()=>{if(timer){stop();return;}if(k>=S.length-1)k=0;timer=setInterval(()=>{if(k>=S.length-1){stop();return;}k++;render();},900);$('icPlay').textContent='일시정지';};
+$('icReset').onclick=()=>{stop();k=0;render();};
+document.querySelectorAll('[data-pg]').forEach(b=>b.onclick=()=>{stop();document.querySelectorAll('[data-pg]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');prog=b.dataset.pg;sim();render();});
+sim();render();
+
+})();
+</script>

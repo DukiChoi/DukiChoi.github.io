@@ -1,0 +1,131 @@
+---
+title: 가상 메모리와 TLB
+description: 가상 주소가 TLB와 페이지 테이블을 거쳐 물리 주소로 바뀌는 과정과 페이지 폴트를 봅니다.
+permalink: /theory/virtual-memory/
+category: architecture
+order: 4
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:18px 0 8px}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.lx input[type=text],.lx input[type=number],.lx select{font:inherit;font-size:14px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .err{font-size:13px;color:#E24B4A;margin:4px 0 0;min-height:18px}
+.lx .msg{font-size:15px;line-height:1.65;color:var(--text-primary);background:var(--surface-1);border-radius:8px;padding:10px 12px;margin-top:12px;min-height:52px;max-width:none}
+.lx .msg.bad{background:rgba(226,75,74,.10)}.lx .msg.ok{background:rgba(29,158,117,.12)}
+.lx .stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.lx .stats span{font-size:13px;color:var(--text-secondary);background:var(--surface-1);border-radius:6px;padding:4px 10px}
+.lx .stats b{font-family:var(--font-mono);font-weight:500;color:var(--text-primary);margin-left:5px}
+.lx .tw{overflow-x:auto;margin-top:10px}
+.lx table.t{border-collapse:collapse;font-size:14px;background:var(--panel,#fff)}
+.lx table.t th,.lx table.t td{border:1px solid var(--border);padding:5px 10px;text-align:center;white-space:nowrap}
+.lx table.t th{font-weight:500;color:var(--text-primary);background:var(--surface-1)}
+.lx table.t td{color:var(--text-primary)}
+.lx .on{background:#FAEEDA!important;color:#633806!important}
+.lx .hit{background:rgba(29,158,117,.16)!important;color:#085041!important}
+.lx .bad{background:rgba(226,75,74,.14)!important;color:#A32D2D!important}
+.lx .out{opacity:.35;text-decoration:line-through}
+.lx .null{color:var(--text-muted)!important;font-style:italic}
+.lx .mono{font-family:var(--font-mono)}
+.lx .leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--text-secondary);margin-top:6px}
+.lx .leg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.lx .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.lx .chips span{font-family:var(--font-mono);font-size:13px;background:var(--surface-1);border-radius:6px;padding:3px 9px;color:var(--text-primary)}
+.lx .code{font-family:var(--font-mono);font-size:13px;line-height:1.6;background:var(--surface-1);border-radius:8px;padding:8px 0;overflow-x:auto;margin-top:10px}
+.lx .code div{padding:0 12px;white-space:pre;color:var(--text-secondary)}
+.lx .code div.on{font-weight:500}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:22px 0 4px}
+.facts div{background:var(--surface-1);border-radius:8px;padding:9px 12px}
+.facts span{display:block;font-size:12px;color:var(--text-secondary)}
+.facts b{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--text-primary)}
+.tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.tip p{margin:4px 0}.tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
+.va{display:flex;flex-wrap:wrap;gap:3px;align-items:flex-end;margin-top:12px}
+.va .b{width:26px;text-align:center}
+.va .b b{display:block;font-family:var(--font-mono);font-size:15px;font-weight:600;padding:5px 0;border-radius:5px;color:#fff}
+.va .b span{font-size:10px;color:var(--text-muted)}
+.va .lg{font-size:13px;color:var(--text-secondary);margin-left:10px;line-height:1.6}
+.vmg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:12px;align-items:start}
+.vmg .vt{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+.vmg table.t{width:100%}
+.vmg .fr{font-family:var(--font-mono);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:6px;margin-bottom:5px;background:var(--panel,#fff);color:var(--text-primary)}
+</style>
+<div class="circuit-lesson lx">
+<p class="lede">프로그램은 0번지부터 시작하는 자기만의 가상 주소를 씁니다. CPU는 가상 주소를 페이지 번호와 오프셋으로 나누고, 페이지 테이블에서 그 페이지가 실제 메모리의 어느 프레임에 있는지 찾아 물리 주소로 바꿉니다. 이 변환을 빠르게 하려고 최근 결과를 TLB에 기억해 둡니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">가상 주소가 TLB와 페이지 테이블을 거쳐 물리 주소로 바뀌는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 접근할 가상 주소를 정하세요 (페이지 크기 256바이트, 가상 페이지 8개, 물리 프레임 4개)</p>
+    <div class="row"><button class="bt sel" data-vs="a">예시 1</button><button class="bt" data-vs="b">예시 2 (페이지 많이 바뀜)</button>
+      <input type="text" id="vmIn" style="flex:1;min-width:220px;font-family:var(--font-mono)" aria-label="가상 주소 목록"></div>
+    <p class="err" id="vmErr"></p>
+    <div class="row"><button class="bt go" id="vmNext">다음 단계</button><button class="bt" id="vmAcc">주소 하나 끝까지</button><button class="bt" id="vmAll">끝까지</button><button class="bt" id="vmReset">처음으로</button><span class="lbl" id="vmCnt"></span></div>
+    <div class="va" id="vmVa"></div>
+    <div class="vmg">
+      <div><div class="vt">TLB (최근 변환 4개)</div><table class="t" id="vmTlb"></table></div>
+      <div><div class="vt">페이지 테이블</div><table class="t" id="vmPt"></table></div>
+      <div><div class="vt">물리 메모리</div><div id="vmFr"></div></div>
+    </div>
+    <div class="msg" id="vmMsg" aria-live="polite"></div>
+    <div class="stats" id="vmSt"></div>
+  </div>
+  <p class="hint">[다음 단계]를 누를 때마다 주소 분해 → TLB 확인 → (필요하면) 페이지 테이블 확인 → 물리 주소 계산 순서로 한 단계씩 진행합니다. 처음에는 페이지 0과 3만 메모리에 올라와 있습니다.</p>
+<div class="facts"><div><span>페이지 번호</span><b>주소 ÷ 256</b></div><div><span>오프셋</span><b>주소 % 256</b></div><div><span>물리 주소</span><b>프레임 × 256 + 오프셋</b></div><div><span>TLB 적중률</span><b>보통 99% 이상</b></div></div>
+
+  <h2>왜 가상 메모리를 쓸까요</h2>
+  <p>프로그램마다 독립된 주소 공간을 주면 서로의 메모리를 건드릴 수 없어 안전하고, 실제 메모리보다 큰 프로그램도 필요한 페이지만 올려서 실행할 수 있습니다. 페이지 테이블에 없는(유효 비트가 0인) 페이지를 쓰려 하면 페이지 폴트가 일어나고, 운영체제가 디스크에서 그 페이지를 가져와 빈 프레임에 올립니다. 빈 프레임이 없으면 하나를 내보내야 하는데, 무엇을 내보낼지는 <a href="{{ '/theory/page-replacement/' | relative_url }}">페이지 교체 알고리즘</a>이 정합니다. 이 예제는 가장 먼저 올라온 페이지를 내보내는 FIFO를 씁니다.</p>
+  <h2>TLB가 없으면 메모리를 두 번 읽습니다</h2>
+  <p>페이지 테이블도 메모리에 있으므로, 변환할 때마다 페이지 테이블을 한 번 읽고 실제 데이터를 또 한 번 읽어야 합니다. TLB는 최근에 쓴 변환 결과를 CPU 안에 기억해 두는 작은 캐시라서, 적중하면 페이지 테이블을 읽지 않습니다.</p>
+<div class="tip"><p class="t">계산 문제로 자주 나옵니다: 유효 접근 시간</p><p>TLB 검색 시간을 t, 메모리 접근 시간을 m, TLB 적중률을 h라고 하면, 적중 시 t + m, 실패 시 t + 2m이 걸립니다. 따라서 유효 접근 시간 = h(t + m) + (1 − h)(t + 2m)입니다. 예를 들어 t = 1ns, m = 100ns, h = 0.98이면 0.98 × 101 + 0.02 × 201 = 103ns입니다.</p></div>
+
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const SEQ={a:'52 100 800 830 300 60 820 310 1500 70',b:'300 1100 1500 1900 300 600 1100 2000 300 1600'};
+let A=[],S=[],k=-1;
+const hex=n=>'0x'+n.toString(16).toUpperCase();
+const J=(x,a,b)=>x+(/[013678]$/.test(String(x))?a:b);
+function parse(){const t=$('vmIn').value.trim().split(/[\s,]+/).filter(Boolean);
+  if(!t.length||t.length>16||!t.every(x=>/^\d{1,4}$/.test(x)&&+x<=2047)){$('vmErr').textContent='0~2047 사이 주소를 띄어쓰기로 구분해 1~16개 입력하세요.';return null;}$('vmErr').textContent='';return t.map(Number);}
+function sim(){const a=parse();if(!a)return false;A=a;S=[];
+  const PT=Array.from({length:8},()=>({v:0,f:null}));PT[0]={v:1,f:2};PT[3]={v:1,f:0};const FR=[3,null,0,null];let fifo=[3,0];
+  let TLB=[],tick=0;const st={th:0,tm:0,pf:0};
+  const snap=(i,ph,msg,hl,res)=>S.push({i,ph,msg,hl,res,PT:JSON.parse(JSON.stringify(PT)),FR:FR.slice(),TLB:JSON.parse(JSON.stringify(TLB)),st:{...st}});
+  A.forEach((va,i)=>{const vpn=va>>8,off=va&255;tick++;
+    snap(i,'split',`${i+1}번째 주소 ${va}(${hex(va)}): 위 3비트는 페이지 번호 ${vpn}, 아래 8비트는 오프셋 ${off}입니다.`,{},null);
+    let e=TLB.find(x=>x.vpn===vpn);
+    if(e){st.th++;e.used=tick;const pa=e.f*256+off;snap(i,'tlb',`TLB에 페이지 ${vpn}의 변환이 있습니다(TLB 적중). 페이지 테이블을 읽지 않고 바로 프레임 ${J(e.f,'을','를')} 얻습니다.`,{tlb:vpn},null);
+      snap(i,'pa',`물리 주소 = 프레임 ${e.f} × 256 + 오프셋 ${off} = ${pa}`,{tlb:vpn,fr:e.f},pa);return;}
+    st.tm++;snap(i,'tlb',`TLB에 페이지 ${vpn}가 없습니다(TLB 실패). 메모리에 있는 페이지 테이블을 읽으러 갑니다.`.replace(`페이지 ${vpn}가`,`페이지 ${J(vpn,'이','가')}`),{tlbMiss:1},null);
+    if(!PT[vpn].v){st.pf++;let f=FR.indexOf(null),out=null;if(f<0){out=fifo.shift();f=PT[out].f;PT[out]={v:0,f:null};TLB=TLB.filter(x=>x.vpn!==out);}
+      snap(i,'pt',`페이지 테이블에서 페이지 ${vpn}의 유효 비트가 0입니다. 페이지 폴트! 운영체제가 디스크에서 페이지 ${J(vpn,'을','를')} 가져옵니다.`+(out!==null?` 빈 프레임이 없어서 가장 먼저 올라온 페이지 ${J(out,'을','를')} 내보내고 프레임 ${J(f,'을','를')} 비웁니다.`:` 빈 프레임 ${J(f,'을','를')} 씁니다.`),{pt:vpn,bad:1},null);
+      FR[f]=vpn;PT[vpn]={v:1,f};fifo.push(vpn);
+      snap(i,'load',`페이지 ${vpn}를 프레임 ${f}에 올리고 페이지 테이블을 고쳤습니다(유효 비트 1, 프레임 ${f}).`.replace(`페이지 ${vpn}를`,`페이지 ${J(vpn,'을','를')}`),{pt:vpn,fr:f},null);}
+    else snap(i,'pt',`페이지 테이블에서 페이지 ${vpn}는 프레임 ${PT[vpn].f}에 있습니다.`.replace(`페이지 ${vpn}는`,`페이지 ${J(vpn,'은','는')}`),{pt:vpn},null);
+    const f=PT[vpn].f;if(TLB.length>=4){TLB.sort((x,y)=>x.used-y.used);TLB.shift();}TLB.push({vpn,f,used:tick});
+    const pa=f*256+off;snap(i,'pa',`이 변환을 TLB에 기록해 두고, 물리 주소 = 프레임 ${f} × 256 + 오프셋 ${off} = ${pa}를 계산합니다.`.replace(`= ${pa}를`,`= ${J(pa,'을','를')}`),{tlb:vpn,fr:f,pt:vpn},pa);});
+  return true;}
+function render(){const s=S[k];
+  if(s){const va=A[s.i],bits=va.toString(2).padStart(11,'0').split('');$('vmVa').innerHTML=bits.map((b,i)=>`<div class="b"><b style="background:${i<3?'#185FA5':'#888780'}">${b}</b><span>${10-i}</span></div>`).join('')+`<div class="lg">가상 주소 ${va} = <b style="color:#185FA5">페이지 ${va>>8}</b> · 오프셋 ${va&255}${s.res!=null?`<br>→ <b style="color:#0F6E56">물리 주소 ${s.res}</b>`:''}</div>`;}
+  else $('vmVa').innerHTML='<div class="lg">가상 주소 11비트 = 페이지 번호 3비트 + 오프셋 8비트. [다음 단계]를 누르세요.</div>';
+  const PT=s?s.PT:(()=>{const p=Array.from({length:8},()=>({v:0,f:null}));p[0]={v:1,f:2};p[3]={v:1,f:0};return p;})(),FR=s?s.FR:[3,null,0,null],TLB=s?s.TLB:[],hl=s?s.hl:{};
+  $('vmTlb').innerHTML='<tr><th>페이지</th><th>프레임</th></tr>'+[0,1,2,3].map(i=>{const e=TLB[i];return e?`<tr class="${hl.tlb===e.vpn?'hit':''}"><td class="mono">${e.vpn}</td><td class="mono">${e.f}</td></tr>`:`<tr class="${hl.tlbMiss&&i===0?'bad':''}"><td class="null">-</td><td class="null">-</td></tr>`;}).join('');
+  $('vmPt').innerHTML='<tr><th>페이지</th><th>유효</th><th>프레임</th></tr>'+PT.map((p,i)=>`<tr class="${hl.pt===i?(hl.bad?'bad':'on'):''}"><td class="mono">${i}</td><td class="mono">${p.v}</td><td class="mono">${p.v?p.f:'-'}</td></tr>`).join('');
+  $('vmFr').innerHTML=FR.map((p,f)=>`<div class="fr ${hl.fr===f?'hit':''}">프레임 ${f} · ${p===null?'<span class="null">비어 있음</span>':'페이지 '+p}<br><span style="font-size:11px;color:var(--text-muted)">물리 주소 ${f*256}~${f*256+255}</span></div>`).join('');
+  const M=$('vmMsg');M.className='msg'+(s&&s.hl.bad?' bad':s&&s.res!=null?' ok':'');M.textContent=s?s.msg:'처음에는 페이지 0이 프레임 2에, 페이지 3이 프레임 0에 올라와 있고 TLB는 비어 있습니다.';
+  const st=s?s.st:{th:0,tm:0,pf:0};$('vmSt').innerHTML=`<span>TLB 적중<b>${st.th}</b></span><span>TLB 실패<b>${st.tm}</b></span><span>페이지 폴트<b>${st.pf}</b></span>`;
+  $('vmCnt').textContent=S.length?`단계 ${k+1} / ${S.length}`:'';['vmNext','vmAcc','vmAll'].forEach(id=>$(id).disabled=k>=S.length-1);}
+function reset(){if(sim()){k=-1;render();}}
+$('vmNext').onclick=()=>{if(k<S.length-1){k++;render();}};
+$('vmAcc').onclick=()=>{if(k>=S.length-1)return;k++;const i=S[k].i;while(k<S.length-1&&S[k+1].i===i)k++;render();};
+$('vmAll').onclick=()=>{k=S.length-1;render();};$('vmReset').onclick=()=>{k=-1;render();};
+$('vmIn').onchange=()=>{document.querySelectorAll('[data-vs]').forEach(x=>x.classList.remove('sel'));reset();};$('vmIn').oninput=()=>$('vmErr').textContent='';
+document.querySelectorAll('[data-vs]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-vs]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');$('vmIn').value=SEQ[b.dataset.vs];reset();});
+$('vmIn').value=SEQ.a;reset();
+
+})();
+</script>

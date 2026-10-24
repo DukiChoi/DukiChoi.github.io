@@ -41,6 +41,7 @@ css_file: /assets/css/home.css
       {% assign foil_row = forloop.index0 | divided_by: 2 | modulo: 4 %}
       <li class="card-slot">
         <article class="card card--holo" data-foil="{{ foil_styles[foil_row] }}">
+          <span class="card__metal" aria-hidden="true"></span>
           <span class="foil-layer" aria-hidden="true"></span>
           <header class="card__head">
             <h3 class="card__title">

@@ -1,0 +1,135 @@
+---
+title: 파이프라인과 해저드
+description: 5단계 파이프라인에서 명령어가 겹쳐 실행되는 모습과 데이터·제어 해저드, 포워딩을 클럭 단위로 봅니다.
+permalink: /theory/pipeline/
+category: architecture
+order: 2
+---
+<style>
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:18px 0 8px}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.lx input[type=text],.lx input[type=number],.lx select{font:inherit;font-size:14px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .err{font-size:13px;color:#E24B4A;margin:4px 0 0;min-height:18px}
+.lx .msg{font-size:15px;line-height:1.65;color:var(--text-primary);background:var(--surface-1);border-radius:8px;padding:10px 12px;margin-top:12px;min-height:52px;max-width:none}
+.lx .msg.bad{background:rgba(226,75,74,.10)}.lx .msg.ok{background:rgba(29,158,117,.12)}
+.lx .stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.lx .stats span{font-size:13px;color:var(--text-secondary);background:var(--surface-1);border-radius:6px;padding:4px 10px}
+.lx .stats b{font-family:var(--font-mono);font-weight:500;color:var(--text-primary);margin-left:5px}
+.lx .tw{overflow-x:auto;margin-top:10px}
+.lx table.t{border-collapse:collapse;font-size:14px;background:var(--panel,#fff)}
+.lx table.t th,.lx table.t td{border:1px solid var(--border);padding:5px 10px;text-align:center;white-space:nowrap}
+.lx table.t th{font-weight:500;color:var(--text-primary);background:var(--surface-1)}
+.lx table.t td{color:var(--text-primary)}
+.lx .on{background:#FAEEDA!important;color:#633806!important}
+.lx .hit{background:rgba(29,158,117,.16)!important;color:#085041!important}
+.lx .bad{background:rgba(226,75,74,.14)!important;color:#A32D2D!important}
+.lx .out{opacity:.35;text-decoration:line-through}
+.lx .null{color:var(--text-muted)!important;font-style:italic}
+.lx .mono{font-family:var(--font-mono)}
+.lx .leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--text-secondary);margin-top:6px}
+.lx .leg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.lx .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.lx .chips span{font-family:var(--font-mono);font-size:13px;background:var(--surface-1);border-radius:6px;padding:3px 9px;color:var(--text-primary)}
+.lx .code{font-family:var(--font-mono);font-size:13px;line-height:1.6;background:var(--surface-1);border-radius:8px;padding:8px 0;overflow-x:auto;margin-top:10px}
+.lx .code div{padding:0 12px;white-space:pre;color:var(--text-secondary)}
+.lx .code div.on{font-weight:500}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:22px 0 4px}
+.facts div{background:var(--surface-1);border-radius:8px;padding:9px 12px}
+.facts span{display:block;font-size:12px;color:var(--text-secondary)}
+.facts b{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--text-primary)}
+.tip{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:14px 0}
+.tip p{margin:4px 0}.tip .t{font-size:13px;font-weight:600;color:#185FA5;margin:0 0 4px}
+.pw{position:relative;overflow-x:auto;margin-top:12px;padding-bottom:4px}
+.pg{display:grid;gap:2px;width:max-content}
+.pg div{height:32px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border-radius:4px}
+.pg .lb{justify-content:flex-start;font-family:var(--font-mono);font-weight:400;font-size:12.5px;color:var(--text-primary);padding-right:10px;white-space:nowrap}
+.pg .hd{font-family:var(--font-mono);font-weight:400;color:var(--text-muted)}
+.pg .hd.cur{background:#185FA5;color:#fff}
+.pg .IF{background:#B5D4F4;color:#0C447C}.pg .ID{background:#CECBF6;color:#3C3489}.pg .EX{background:#FAC775;color:#633806}.pg .MEM{background:#9FE1CB;color:#085041}.pg .WB{background:#C0DD97;color:#27500A}
+.pg .stl{background:repeating-linear-gradient(45deg,var(--surface-1) 0 5px,var(--border-strong) 5px 7px);color:var(--text-secondary);font-weight:400}
+.pg .fl{background:#F7C1C1;color:#791F1F;text-decoration:line-through}
+.pg .fut{opacity:.18}
+.pg .colcur{outline:2px solid #185FA5;outline-offset:-1px}
+#ppSvg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+</style>
+<div class="circuit-lesson lx">
+<p class="lede">파이프라인은 명령어 처리를 다섯 단계로 나누고, 앞 명령어가 다음 단계로 넘어가면 바로 다음 명령어를 들여보내 여러 명령어를 겹쳐 처리합니다. 세탁기가 돌아가는 동안 건조기도 돌리는 것과 같습니다. 다만 앞 명령어의 결과가 필요하거나 분기가 있으면 흐름이 막힙니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">5단계 파이프라인에서 명령어가 겹쳐 실행되고 해저드로 멈추는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 명령어 묶음과 포워딩 여부를 고르세요</p>
+    <div class="row"><button class="bt sel" data-ps="ind">서로 독립</button><button class="bt" data-ps="raw">데이터 해저드</button><button class="bt" data-ps="lu">load-use</button><button class="bt" data-ps="br">분기</button>
+      <span class="lbl" style="margin-left:10px">포워딩</span><button class="bt sel" data-fw="1">켜기</button><button class="bt" data-fw="0">끄기</button></div>
+    <p class="sub">2. 클럭을 한 번씩 진행하세요</p>
+    <div class="row"><button class="bt go" id="ppNext">다음 클럭</button><button class="bt" id="ppAll">끝까지</button><button class="bt" id="ppReset">처음으로</button></div>
+    <div class="pw" id="ppW"><div class="pg" id="ppG"></div><svg id="ppSvg"></svg></div>
+    <div class="leg"><span><i style="background:#B5D4F4"></i>IF 인출</span><span><i style="background:#CECBF6"></i>ID 해석·레지스터 읽기</span><span><i style="background:#FAC775"></i>EX 실행</span><span><i style="background:#9FE1CB"></i>MEM 메모리</span><span><i style="background:#C0DD97"></i>WB 레지스터 쓰기</span><span><i style="background:repeating-linear-gradient(45deg,var(--surface-1) 0 4px,var(--border-strong) 4px 6px)"></i>스톨(대기)</span><span><i style="background:#F7C1C1"></i>버려진 명령어</span><span style="color:#D85A30">→ 포워딩</span></div>
+    <div class="msg" id="ppMsg" aria-live="polite"></div>
+    <div class="stats" id="ppSt"></div>
+  </div>
+  <p class="hint">각 행이 명령어, 각 열이 클럭입니다. 포워딩을 껐다 켜며 같은 묶음을 실행해 스톨 칸 수와 총 클럭을 비교해 보세요.</p>
+<div class="facts"><div><span>이상적인 CPI</span><b>1</b></div><div><span>데이터 해저드</span><b>앞 결과를 기다림</b></div><div><span>제어 해저드</span><b>분기 결과를 기다림</b></div><div><span>구조 해저드</span><b>자원 충돌</b></div></div>
+
+  <h2>데이터 해저드와 포워딩</h2>
+  <p><code>add r1, r2, r3</code> 바로 다음에 <code>sub r4, r1, r5</code>가 오면, sub는 r1이 필요한데 add는 아직 WB 단계에 이르지 않았습니다. 포워딩이 없으면 sub는 add가 r1을 레지스터에 쓸 때까지 ID에서 기다립니다. 포워딩은 add의 EX 결과를 레지스터를 거치지 않고 바로 sub의 EX 입력으로 넘겨 대기를 없앱니다.</p>
+  <h2>load-use는 포워딩으로도 한 칸 남습니다</h2>
+  <p><code>lw</code>는 값을 MEM 단계에서야 메모리에서 가져옵니다. 바로 다음 명령어가 그 값을 EX에서 쓰려면, 포워딩을 해도 한 클럭은 기다려야 합니다. 컴파일러는 이 빈칸에 관계없는 명령어를 끼워 넣어 스톨을 숨깁니다.</p>
+  <h2>분기는 다음에 가져올 명령어를 모르게 만듭니다</h2>
+  <p>분기 명령어의 결과는 EX 단계에서 정해지는데, 그동안 CPU는 이미 다음 명령어 두 개를 가져왔습니다. 분기가 일어나면 그 둘을 버리고 목표 주소에서 다시 가져와야 합니다. 그래서 CPU는 <a href="{{ '/theory/branch-prediction/' | relative_url }}">분기 예측</a>으로 결과를 미리 짐작합니다.</p>
+
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const SETS={
+ind:[['add r1, r2, r3','r1',['r2','r3']],['sub r4, r5, r6','r4',['r5','r6']],['and r7, r8, r9','r7',['r8','r9']],['or r10, r11, r12','r10',['r11','r12']],['add r13, r14, r15','r13',['r14','r15']]],
+raw:[['add r1, r2, r3','r1',['r2','r3']],['sub r4, r1, r5','r4',['r1','r5']],['and r6, r4, r7','r6',['r4','r7']],['or r8, r1, r9','r8',['r1','r9']],['add r10, r6, r8','r10',['r6','r8']]],
+lu:[['lw r1, 0(r2)','r1',['r2'],'ld'],['add r3, r1, r4','r3',['r1','r4']],['sub r5, r3, r6','r5',['r3','r6']],['lw r7, 4(r2)','r7',['r2'],'ld'],['or r8, r7, r5','r8',['r7','r5']]],
+br:[['add r1, r2, r3','r1',['r2','r3']],['beq r1, r0, L','',['r1','r0'],'br'],['sub r4, r5, r6','r4',['r5','r6'],'fl'],['and r7, r8, r9','r7',['r8','r9'],'fl'],['L: or r6, r7, r8','r6',['r7','r8']],['add r9, r6, r1','r9',['r6','r1']]]};
+const CW=50,LW=150,RH=34;
+let set='ind',fw=true,P=[],cyc=0,maxC=0,fwd=[];
+function schedule(){const I=SETS[set];P=[];fwd=[];let last=null,brEX=null,flPrev=null;
+  I.forEach(ins=>{const [txt,dst,src,kind]=ins,o={txt,dst,src,kind};
+    if(kind==='fl'){o.IFs=flPrev?flPrev.IFs+1:last.IDs;o.IDs=o.IFs+1;o.cut=brEX;flPrev=o;P.push(o);return;}
+    o.IFs=!last?1:(flPrev&&brEX?brEX+1:last.IDs);flPrev=null;
+    o.IDs=Math.max(o.IFs+1,last?last.EX:0);
+    let ex=Math.max(o.IDs+1,last?last.EX+1:0),why=null;
+    const prods=P.filter(p=>p.kind!=='fl'&&p.dst&&src.includes(p.dst));
+    prods.forEach(p=>{const need=fw?(p.kind==='ld'?p.EX+2:p.EX+1):p.EX+3;if(need>ex){why={p,reg:p.dst};ex=need;}});
+    if(fw)prods.forEach(p=>{if(ex<=p.WB)fwd.push({from:p,stage:p.kind==='ld'?'MEM':'EX',reg:p.dst,to:o});});
+    o.EX=ex;o.MEM=ex+1;o.WB=ex+2;o.why=why;if(kind==='br')brEX=ex;P.push(o);last=o;});
+  P.forEach((p,i)=>p.i=i);maxC=Math.max(...P.map(p=>p.WB||p.cut))+1;}
+function cells(p){const c={};if(p.kind==='fl'){for(let t=p.IFs;t<p.IDs&&t<=p.cut;t++)c[t]=['IF','fl'];if(p.IDs<=p.cut)c[p.IDs]=['ID','fl'];return c;}
+  for(let t=p.IFs;t<p.IDs;t++)c[t]=t===p.IFs?['IF','IF']:['stall','stl'];for(let t=p.IDs;t<p.EX;t++)c[t]=t===p.IDs?['ID','ID']:['stall','stl'];c[p.EX]=['EX','EX'];c[p.MEM]=['MEM','MEM'];c[p.WB]=['WB','WB'];return c;}
+function render(){const g=$('ppG');g.style.gridTemplateColumns=`${LW}px repeat(${maxC},${CW}px)`;
+  let h='<div class="lb"></div>'+[...Array(maxC).keys()].map(t=>`<div class="hd${t+1===cyc?' cur':''}">${t+1}</div>`).join('');
+  P.forEach(p=>{const c=cells(p);h+=`<div class="lb">${p.kind==='fl'?'<span style="text-decoration:line-through;color:var(--text-muted)">'+p.txt+'</span>':p.txt}</div>`;
+    for(let t=1;t<=maxC;t++){const v=c[t];h+=v?`<div class="${v[1]}${t>cyc?' fut':''}${t===cyc?' colcur':''}">${v[0]==='stall'?'대기':v[0]}</div>`:'<div></div>';}});
+  g.innerHTML=h;
+  const svg=$('ppSvg');svg.setAttribute('width',LW+maxC*(CW+2));svg.setAttribute('height',(P.length+1)*(RH));
+  let a=`<defs><marker id="ppA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#D85A30" stroke-width="2"/></marker></defs>`;
+  const X=t=>LW+2+(t-1)*(CW+2),Y=i=>(i+1)*RH+16;
+  fwd.forEach(f=>{const ft=f.stage==='MEM'?f.from.MEM:f.from.EX;if(f.to.EX>cyc)return;a+=`<path d="M${X(ft)+CW-6} ${Y(f.from.i)+8} C${X(ft)+CW+10} ${Y(f.from.i)+20}, ${X(f.to.EX)-14} ${Y(f.to.i)-20}, ${X(f.to.EX)+6} ${Y(f.to.i)-9}" fill="none" stroke="#D85A30" stroke-width="2" marker-end="url(#ppA)"/>`;});
+  svg.innerHTML=a;
+  const occ={IF:[],ID:[],EX:[],MEM:[],WB:[]};let notes=[];
+  P.forEach(p=>{const v=cells(p)[cyc];if(!v)return;const nm=p.txt.replace(/^L: /,'');if(v[0]==='stall'){notes.push(`${nm}: 대기`);}else occ[v[0]].push(nm+(v[1]==='fl'?' (버려짐)':''));});
+  let m=cyc===0?'[다음 클럭]을 누르면 첫 명령어가 IF 단계에 들어갑니다.':`클럭 ${cyc}: `+Object.entries(occ).map(([s,l])=>`${s} = ${l.length?l.join(', '):'비어 있음'}`).join(' · ');
+  P.forEach(p=>{if(p.why&&cyc===p.IDs+1)m+=`. ${p.txt} 명령어는 ${p.why.reg} 값이 아직 준비되지 않아 ${fw?(p.why.p.kind==='ld'?'lw가 MEM 단계에서 값을 가져올 때까지':'앞 명령어의 EX 결과가 나올 때까지'):'앞 명령어가 WB 단계에서 레지스터에 쓸 때까지'} ID에서 멈춥니다`;
+    if(p.kind==='br'&&cyc===p.EX)m+='. 분기 결과가 EX에서 정해졌습니다(분기함). 그사이 가져온 두 명령어를 버리고 L에서 다시 가져옵니다';});
+  fwd.forEach(f=>{if(cyc===f.to.EX)m+=`. ${f.from.txt.replace(/^L: /,'')} 명령어의 ${f.stage} 결과(${f.reg} 값)를 레지스터를 거치지 않고 바로 ${f.to.txt.replace(/^L: /,'')} 명령어의 EX로 넘깁니다`;});
+  if(cyc>=maxC-1)m+='. 모든 명령어가 끝났습니다';
+  $('ppMsg').textContent=m+(cyc?'.':'');
+  const real=P.filter(p=>p.kind!=='fl'),stalls=P.reduce((s,p)=>s+Object.values(cells(p)).filter(v=>v[0]==='stall').length,0),last=Math.max(...real.map(p=>p.WB));
+  $('ppSt').innerHTML=`<span>명령어<b>${real.length}</b></span><span>총 클럭<b>${last}</b></span><span>스톨 칸<b>${stalls}</b></span><span>버린 명령어<b>${P.length-real.length}</b></span><span>CPI (총 클럭 − 4) ÷ 명령어<b>${((last-4)/real.length).toFixed(2)}</b></span>`;
+  $('ppNext').disabled=cyc>=maxC-1;}
+$('ppNext').onclick=()=>{if(cyc<maxC-1){cyc++;render();}};$('ppAll').onclick=()=>{cyc=maxC-1;render();};$('ppReset').onclick=()=>{cyc=0;render();};
+document.querySelectorAll('[data-ps]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-ps]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');set=b.dataset.ps;schedule();cyc=0;render();});
+document.querySelectorAll('[data-fw]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-fw]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');fw=b.dataset.fw==='1';schedule();cyc=0;render();});
+schedule();render();
+
+})();
+</script>
