@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="{{ page.lang | default: 'ko' | escape }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,9 +8,15 @@
   <meta property="og:title" content="{{ page.title | escape }}">
   <meta property="og:description" content="{{ page.description | escape }}">
   <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:locale" content="{% if page.lang == 'en' %}en_US{% else %}ko_KR{% endif %}">
   {% if page.cover %}<meta property="og:image" content="{{ page.cover | absolute_url }}">{% endif %}
   <title>{{ page.title | escape }} — {{ page.tagline | escape }}</title>
   <link rel="canonical" href="{{ page.url | absolute_url }}">
+  {% if page.product == 'market-peek' %}
+  <link rel="alternate" hreflang="ko" href="{{ '/programs/market-peek/' | absolute_url }}">
+  <link rel="alternate" hreflang="en" href="{{ '/programs/market-peek/en/' | absolute_url }}">
+  <link rel="alternate" hreflang="x-default" href="{{ '/programs/market-peek/' | absolute_url }}">
+  {% endif %}
   {% if page.icon %}<link rel="icon" href="{{ page.icon | relative_url }}">{% endif %}
   <link rel="stylesheet" href="{{ page.css_file | relative_url }}">
   {% include advertising-head.html %}

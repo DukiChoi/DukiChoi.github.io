@@ -5,10 +5,13 @@
   {% assign next_depth = depth | plus: 1 %}
   {% assign sample_parts = folder.items.first.path | split: '/' %}
   {% assign branch_key = include.prefix | append: '/' | append: folder.name %}
+  {% assign branch_path = 'assets/theories' | append: branch_key | append: '/' %}
+  {% assign current_branch = false %}
+  {% if page.path contains branch_path %}{% assign current_branch = true %}{% endif %}
   {% if sample_parts.size > next_depth %}
     {% assign articles = folder.items | where_exp: "entry", "entry.folder_overview != true" %}
     <li>
-      <details class="theory-tree__group" data-tree-key="folder:{{ branch_key | escape }}" open>
+      <details class="theory-tree__group" data-tree-key="folder:{{ branch_key | escape }}"{% if current_branch %} data-tree-current{% endif %}{% if page.overview or current_branch %} open{% endif %}>
         <summary>{{ folder.name | escape }} <span class="theory-count">{{ articles.size }}</span></summary>
         <ol class="theory-tree__children">
           {% include theory-folder-tree.html entries=folder.items depth=next_depth prefix=branch_key %}

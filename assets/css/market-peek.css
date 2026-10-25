@@ -43,3 +43,23 @@
 @media(max-width:760px){.download-options{grid-template-columns:minmax(0,1fr)}}
 
 .download-button[aria-disabled="true"]{opacity:.5;cursor:default;pointer-events:none}
+
+/* Product-only language navigation; creator credits remain plain text. */
+.product-topbar { display: flex; justify-content: flex-end; align-items: center; min-height: 80px; padding-top: 18px; padding-bottom: 14px; }
+.product-language { display: inline-flex; align-items: center; gap: 4px; padding: 5px 6px 5px 13px; border: 1px solid #34413c; border-radius: 999px; background: #192220; font-size: 13px; }
+.product-language__globe { width: 19px; height: 19px; margin-right: 5px; color: #a9baac; flex-shrink: 0; }
+.product-language a { padding: 8px 13px; border-radius: 999px; color: #aebcb3; line-height: 1.3; }
+.product-language a:hover { color: var(--text); background: #25312b; }
+.product-language a[aria-current="page"] { color: var(--accent); background: #2b382b; font-weight: 650; }
+.product-language__divider { width: 1px; height: 14px; background: #3b493f; }
+.market-peek-page .hero { padding-top: 30px; }
+.download-copy .download-language-note { max-width: 680px; margin: 18px 0 0; color: #c0cbbc; font-size: 13px; line-height: 1.8; }
+.product-credits { display: flex; flex-direction: column; gap: 7px; text-align: right; }
+.product-credits strong { color: #c0cdc3; font-size: 14px; font-weight: 650; letter-spacing: .015em; }
+.product-credits span { color: #8d9c93; font-size: 12px; }
+html[lang="en"] .market-peek-page h1 { font-size: clamp(38px, 4.2vw, 56px); letter-spacing: -.045em; }
+html[lang="en"] .market-peek-page h2 { letter-spacing: -.035em; }
+@media (max-width: 400px) {
+  .product-topbar { min-height: 72px; }
+  .product-credits { text-align: left; }
+}

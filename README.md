@@ -14,7 +14,7 @@
 - **프로그램 배너:** 홈의 Program 배너를 움직임 없는 은색 금속 질감으로 바꿨습니다. 프로그램별 배너에는 서로 다른 색과 반사 무늬를 가진 홀로그램 10종을 마련하고 마우스·터치 기울기를 적용했습니다. `/admin/program-styles/`에서 전부 미리 보고 CMS 또는 `banner_style`로 선택할 수 있습니다.
 - **모바일 카드 반응:** 마우스 입력만 받던 조건을 수정했습니다. 홈 카드와 프로그램별 배너를 손가락으로 누르고 좌우로 움직이면 기울기와 반사광이 따라옵니다. 손을 떼면 원위치로 돌아오며, 세로 스크롤·확대 제스처·링크 터치는 그대로 사용할 수 있습니다. 기기의 동작 줄이기 설정도 따릅니다.
 - **큐브 앱과 무작위 배너:** BLE Smart Cube를 프로그램 목록에 추가하고 기존 [공개 소개·다운로드 페이지](https://github.com/DukiChoi/BLESmartCube)로 바로 연결했습니다. Market Peek와 큐브 배너는 목록을 열 때마다 서로 다른 스타일을 무작위로 받습니다. 같은 탭에서는 직전 스타일을 피하고, 보고 있는 동안에는 배정을 유지합니다.
-- **Market Peek 소개:** `BTC_ticker_tray`의 배포 화면을 바탕으로 `/programs/market-peek/`를 만들었습니다. 공통 상단 메뉴 없이 프로그램만 소개하며, 실제 화면 이미지·주요 기능·설치 안내·FAQ를 포함합니다. Python 서버 없이 동작합니다.
+- **Market Peek 소개:** `https://duki-programming.github.io/market-peek/`의 독립 사이트에서 한국어·영어 소개와 다운로드를 제공합니다. 기존 `/programs/market-peek/` 주소는 새 사이트로 자동 이동합니다.
 - **버전별 다운로드:** 공개 배포 전용 저장소 [Market-Peek-releases](https://github.com/DukiChoi/Market-Peek-releases)에 [v1.0.0](https://github.com/DukiChoi/Market-Peek-releases/releases/tag/v1.0.0)을 게시했습니다. EXE·7z·SHA256SUMS.txt를 첨부하고 소개 페이지에 현재 버전과 전체 버전 목록을 연결했습니다. 프로그램 소스 저장소는 비공개로 유지했습니다.
 - **본인용 글쓰기:** `/admin/` 진입 화면과 Pages CMS 설정을 추가했습니다. GitHub 인증을 통해 이론 자료·프로그램 소개·이미지를 관리하도록 구성했으며, 최초 GitHub App 연결은 계정 소유자가 진행해야 합니다. 공개 저장소에서는 게시를 끈 글도 파일 자체는 공개된다는 점을 안내했습니다.
 - **페이지 정리:** Readme·Preview·Hello 페이지를 비활성화하고 CV·Resume은 저장소의 PDF를 표시하도록 바꿨습니다. 일반 페이지의 문장도 자연스럽게 다듬었습니다.
@@ -160,8 +160,10 @@ CMS의 **배너 스타일**에서 고르거나, `_programs/` 파일의 YAML 머�
 
 #### Market Peek 소개와 배포
 
-Market Peek는 `/programs/market-peek/`에 별도 소개 화면을 두었습니다. `BTC_ticker_tray/distribution`의 화면과 이미지를 옮겼으며, 사이트 공통 메뉴 없이 원래 프로그램의 디자인을 사용합니다.
-본문은 `_programs/market-peek.html`, 레이아웃은 `_layouts/product.html`, 스타일은 `assets/css/market-peek.css`에 있습니다. 이 HTML 페이지는 일반 글용 CMS 편집 목록에서 제외합니다.
+Market Peek 소개 사이트는 `https://duki-programming.github.io/market-peek/`에 별도로 배포합니다. 원본은 `_sites/duki-programming`의 독립 Git 저장소이며, 개인 홈페이지와 별도로 커밋·푸시합니다.
+한국어는 `/market-peek/`, 영어는 `/market-peek/en/`입니다. 개인 홈페이지의 이전 주소는 `_layouts/market-peek-redirect.html`을 통해 해당 언어의 새 주소로 이동하며, 프로그램 카드도 새 사이트를 직접 엽니다.
+두 페이지의 공통 본문은 `_includes/market-peek-page.html`, 번역 문구는 `_data/market_peek_copy.yml`, 레이아웃은 `_layouts/product.html`, 스타일은 `assets/css/market-peek.css`에서 관리합니다. 개인 홈페이지로 이동하는 링크 없이 하단에 Duki Programming과 DukiChoi를 텍스트로 표시합니다. 이 HTML 페이지는 일반 글용 CMS 편집 목록에서 제외합니다.
+이번 영어 지원은 웹사이트에 적용되며, 두 언어 페이지는 현재 배포된 같은 앱 파일을 제공합니다. 영어 다운로드 영역에는 앱과 Windows 설치 안내가 한국어임을 표시합니다. 자동 다운로드 갱신 문구도 페이지 언어를 따릅니다.
 다운로드 버전·파일 주소·크기는 `_data/market_peek.yml`에서 관리합니다. 공개된 GitHub Release의 EXE·7z 링크를 넣고 `published: true`로 바꾸면 다운로드 버튼이 표시됩니다.
 비공개 저장소의 초안 릴리스는 일반 방문자가 내려받을 수 없으므로, 공개 배포를 확인하기 전에는 `published: false`를 유지합니다.
 배포 전용 공개 저장소는 [Market-Peek-releases](https://github.com/DukiChoi/Market-Peek-releases)입니다. 새 버전은 `v1.0.0`처럼 별도 태그와 릴리스로 등록하고 EXE·7z·SHA256SUMS.txt를 첨부합니다. 기존 버전 파일을 교체하지 말고 새 릴리스 주소로 위 YAML을 갱신합니다. `BTC_ticker_tray` 소스 저장소는 비공개로 유지합니다.
@@ -218,7 +220,7 @@ order: 5
 
 기존 강의는 `permalink`를 유지하므로 파일을 이동해도 `/theory/full-adder/` 등 기존 주소는 바뀌지 않습니다. 새 글도 주소를 고정하려면 `permalink: /theory/my-note/`를 추가하세요. 지정하지 않으면 폴더 경로를 따라 주소가 생성됩니다.
 
-목차 생성은 `_includes/theory-folder-tree.html`, 글 화면은 `_layouts/theory.html`, 스타일은 `assets/css/theory.css`에서 관리합니다. `folder_overview: true`인 안내 페이지는 글 개수와 이전·다음 글에서 제외됩니다. 목차의 펼침 상태는 같은 브라우저 탭에서 유지됩니다.
+목차 생성은 `_includes/theory-folder-tree.html`, 글 화면은 `_layouts/theory.html`, 스타일은 `assets/css/theory.css`에서 관리합니다. `folder_overview: true`인 안내 페이지는 글 개수와 이전·다음 글에서 제외됩니다. Tech Study 첫 화면은 전체 분류를 펼치고, 글이나 분류 안내 페이지에서는 현재 분류와 그 상위 폴더만 펼칩니다. 다른 분류는 직접 열 수 있으며, 페이지를 이동하면 새 페이지의 분류에 맞춰 다시 정리됩니다.
 
 사이트 전체 글꼴은 로컬의 Pretendard Variable v1.3.9를 사용합니다. 라이선스는 `assets/fonts/OFL-Pretendard.txt`에 포함되어 있습니다.
 

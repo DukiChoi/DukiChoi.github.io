@@ -1,0 +1,142 @@
+ko:
+  skip: 본문으로 이동
+  language_navigation: 웹사이트 언어
+  hero_title: "시세를 가까이.<br>작업은 <span>그대로.</span>"
+  intro: "차트를 보러 창을 옮길 필요 없이.<br>코인부터 한국·미국 주식까지,<br>바탕화면 한편에서 가볍게 확인하세요."
+  windows_download: Windows용 다운로드
+  mac_download: macOS용 다운로드
+  beta: Beta 버전
+  chart_alt: Market Peek의 Binance BTC/USDT 1시간 캔들 차트
+  widget_alt: Market Peek BTC 가격 위젯
+  features_title: 필요할 때만, 더 자세히.
+  features_intro: 작은 가격 위젯에서 차트, 작업 표시줄, 내 포지션까지.
+  features:
+    - title: 필요할 때 꺼내 보는 위젯
+      body: 항상 위로 띄워 두거나, X와 숨기기로 트레이에 넣어 두세요. 기본 단축키 Alt+H로 숨기고 다시 꺼낼 수 있습니다.
+    - title: 클릭 한 번, 펼쳐지는 차트
+      body: 가격을 누르면 캔들 차트가 펼쳐집니다. 이동평균부터 RSI, MACD까지 10가지 보조지표를 조합하세요.
+    - title: 내가 보는 종목을 한곳에
+      body: 코인과 한국·미국 주식을 검색하고 즐겨찾기에 담으세요. 코인은 5개 거래소의 차트를 지원합니다.
+    - title: 최소화해도 시세는 한 줄로
+      body: 설정에서 작업 표시줄 시세를 켜면 − 버튼으로 최소화한 뒤에도 종목·가격·등락률을 확인할 수 있습니다. Windows의 작업 표시줄 레이블 표시 설정이 필요합니다.
+    - title: 현물과 선물을 함께
+      body: 연결한 모든 거래소 계정의 현물·USDT 선물 포지션을 종목별로 함께 표시합니다. Spot·Long·Short로 구분하고, Upbit는 현물만 지원합니다.
+    - title: 포지션 정보도 간결하게
+      body: 포지션마다 한두 줄로 아래에 쌓아 표시합니다. PnL 금액은 소수점 한 자리까지 표시하고, 미설정 TP·SL 등록과 지원 거래소의 기존 TP·SL 수정을 제공합니다.
+  api_title: 계정 API 지원 거래소
+  spot_futures: 현물 · USDT 선물
+  spot: 현물
+  download_title: "이제, 바탕화면에서<br>만나보세요."
+  windows_platform: Windows 64비트
+  installer_download: EXE 설치 파일 다운로드
+  installer_detail: 한국어 설치 안내
+  archive_download: 7z 압축 파일 다운로드
+  archive_detail: 압축을 풀고 실행
+  release_notes: 릴리스 정보
+  version_downloads: 버전별 다운로드
+  windows_pending: 다운로드를 준비하고 있습니다.
+  windows_pending_detail: Windows용 EXE 설치 파일과 7z 압축 파일을 제공할 예정입니다.
+  mac_detail: DMG 설치 파일
+  mac_pending: macOS 설치 파일 준비 중
+  mac_pending_detail: 최신 버전의 macOS 설치 파일을 준비하고 있습니다.
+  install_title: 세 단계면 준비 끝.
+  install_steps:
+    - title: 설치 파일 다운로드
+      body: Windows는 EXE 또는 7z, Mac은 Universal DMG를 내려받으세요.
+    - title: 앱 설치
+      body: Windows는 EXE의 한국어 안내에 따라 설치하거나 7z 압축을 풀어 실행하세요. Mac은 DMG를 열고 Market Peek를 Applications 폴더로 드래그하세요.
+    - title: 관심 종목 선택
+      body: 종목명을 눌러 검색하세요. 가격을 클릭하면 차트를 펼칠 수 있습니다.
+  faq:
+    - question: Python을 따로 설치해야 하나요?
+      answer: 필요 없습니다. Windows와 macOS 설치 파일에 실행에 필요한 환경이 포함되어 있습니다.
+    - question: 거래소 계정은 어떻게 연결하나요?
+      answer: 앱 설정에서 거래소마다 API 키를 연결하세요. 저장을 선택하면 각 거래소의 키·Secret·필요한 Passphrase를 이 PC에 암호화해 따로 보관합니다.
+    - question: 작은 현물 잔고를 숨길 수 있나요?
+      answer: 설정 → 화면·창에서 현물 숨김 기준을 바꾸세요. 기본값은 평가금액 1 USDT 이하이며, 0으로 설정하면 모두 표시합니다. 선물과 평가금액을 확인할 수 없는 현물은 계속 표시합니다.
+    - question: 최소화와 X·숨기기는 어떻게 다른가요?
+      answer: − 버튼을 누르면 작업 표시줄로 최소화됩니다. X와 숨기기·Alt+H는 트레이로 숨깁니다. 트레이 아이콘이나 Alt+H로 다시 열 수 있으며, 완전히 종료하려면 트레이 메뉴 또는 설정의 앱 종료를 사용하세요. 트레이를 사용할 수 없는 환경에서는 최소화됩니다.
+    - question: 작업 표시줄에 가격이 안 보여요.
+      answer: 앱의 설정 → 화면·창 → 작업 표시줄에 시세 표시를 켜세요. Windows 설정 → 개인 설정 → 작업 표시줄에서 단추 합치기 및 레이블 숨기기를 안 함으로 설정해야 제목이 보입니다. Windows 버전에 따라 설정 이름이 다를 수 있습니다. 시세는 한 줄로 표시되며 공간이 부족하면 잘립니다.
+    - question: TP·SL의 소수점 표시는 어떻게 되나요?
+      answer: 포지션 라벨과 관련 툴팁은 소수점 한 자리로 표시합니다. 0이 아닌 값이 0.1보다 작으면 <0.1로 표시합니다. 화면 표시만 간결하게 줄이며, 실제 주문 가격과 수량의 정밀도는 유지합니다.
+    - question: 설치 시 Windows 보안 안내가 표시돼요.
+      answer: 현재 설치 파일은 코드 서명되지 않은 개인 개발용 빌드입니다. Windows에서 게시자를 확인할 수 없다는 안내가 나타날 수 있습니다. 배포 출처와 파일을 확인한 뒤 설치 여부를 결정하세요.
+    - question: Mac이나 휴대폰에서도 사용할 수 있나요?
+      answer: macOS용 Universal DMG는 Apple Silicon과 Intel Mac을 모두 지원합니다. Windows 전용인 작업 표시줄 시세와 자동 시작 설정은 Mac에서 제공하지 않습니다. 휴대폰에서는 이 다운로드 페이지를 볼 수 있습니다.
+    - question: Mac에서 개발자를 확인할 수 없다고 표시돼요.
+      answer: 현재 macOS 빌드는 Apple Developer ID 서명과 공증을 받지 않았습니다. 배포 출처와 파일을 확인한 경우, 앱 실행을 한 번 시도한 뒤 시스템 설정 → 개인정보 보호 및 보안에서 차단된 앱의 열기 옵션을 확인하세요.
+  creator: 개발자
+
+en:
+  skip: Skip to content
+  language_navigation: Website language
+  hero_title: "Markets in sight.<br>Stay in <span>your flow.</span>"
+  intro: "Check prices without switching windows.<br>Follow crypto, Korean stocks, and US stocks<br>from a small corner of your desktop."
+  windows_download: Download for Windows
+  mac_download: Download for macOS
+  beta: Beta version
+  chart_alt: Market Peek showing a Binance BTC/USDT one-hour candlestick chart
+  widget_alt: Market Peek BTC price widget
+  features_title: A closer look, when you need it.
+  features_intro: From a compact price widget to charts, taskbar prices, and your positions.
+  features:
+    - title: A widget that stays within reach
+      body: Keep it on top, or use Close or Hide to send it to the tray. The default Alt+H shortcut hides the widget and brings it back.
+    - title: One click to open your chart
+      body: Click the price to expand the candlestick chart. Combine 10 technical indicators, including moving averages, RSI, and MACD.
+    - title: Your watchlist in one place
+      body: Search for crypto, Korean stocks, and US stocks, then add them to your favorites. Crypto charts support five exchanges.
+    - title: Prices stay visible when minimized
+      body: Enable taskbar prices to keep the symbol, price, and change visible after minimizing with the − button. Windows must be configured to show taskbar labels.
+    - title: Spot and futures, together
+      body: View spot holdings and USDT futures positions from all connected exchange accounts, grouped by symbol. Positions are labeled Spot, Long, or Short. Upbit supports spot holdings only.
+    - title: Clear, compact position details
+      body: Positions stack in one or two lines each, with PnL amounts shown to one decimal place. Add missing take-profit and stop-loss levels, or edit existing levels on supported exchanges.
+  api_title: Supported exchange account APIs
+  spot_futures: Spot · USDT futures
+  spot: Spot
+  download_title: "Make room for markets.<br>Right on your desktop."
+  download_language_note: This website is available in English. The current app interface and Windows installer are in Korean.
+  windows_platform: Windows 64-bit
+  installer_download: Download EXE installer
+  installer_detail: Korean-language installer
+  archive_download: Download 7z archive
+  archive_detail: Extract and run · Korean-language app
+  release_notes: release notes
+  version_downloads: All versions
+  windows_pending: Your download is on its way.
+  windows_pending_detail: An EXE installer and a 7z archive for Windows will be available here.
+  mac_detail: DMG installer · Korean-language app
+  mac_pending: macOS download coming soon
+  mac_pending_detail: The macOS installer for the latest version is being prepared.
+  install_title: Three steps to get started.
+  install_steps:
+    - title: Download your file
+      body: Choose the EXE installer or 7z archive for Windows, or the Universal DMG for Mac.
+    - title: Install the app
+      body: On Windows, follow the installer’s Korean-language prompts, or extract the 7z archive and run the app. On Mac, open the DMG and drag Market Peek into Applications.
+    - title: Pick a market to follow
+      body: Click the symbol name to search for an instrument. Click the price to expand its chart.
+  faq:
+    - question: Is the app available in English?
+      answer: The website is available in Korean and English. The current desktop app and Windows installer use Korean. Changing the website language does not change the app language.
+    - question: Do I need to install Python?
+      answer: No. The Windows and macOS downloads include the environment needed to run the app.
+    - question: How do I connect an exchange account?
+      answer: Add each exchange’s API credentials in the app settings. If you choose to save them, the key, secret, and any required passphrase are encrypted and stored separately for each exchange on this computer.
+    - question: Can I hide small spot balances?
+      answer: In Settings → Display & window, adjust the minimum spot value. By default, spot holdings worth 1 USDT or less are hidden. Set it to 0 to show all holdings. Futures and spot holdings without a known value remain visible.
+    - question: What is the difference between Minimize and Close or Hide?
+      answer: The − button minimizes to the taskbar. Close, Hide, and Alt+H hide the window in the tray. Use the tray icon or Alt+H to bring it back. To quit completely, use the tray menu or Quit in settings. If the tray is unavailable, the app minimizes instead.
+    - question: Why can’t I see prices on the taskbar?
+      answer: Enable taskbar prices in the app’s Settings → Display & window. In Windows Settings → Personalization → Taskbar, set the option for combining buttons and hiding labels to Never. The exact setting name varies by Windows version. Prices appear on one line and may be clipped if space is limited.
+    - question: How are TP and SL values displayed?
+      answer: Position labels and related tooltips use one decimal place. Nonzero values below 0.1 appear as <0.1. This only simplifies the display; order price and quantity precision are preserved.
+    - question: Why does Windows show a security notice?
+      answer: The current installer is an unsigned, independently developed build. Windows may display a notice that the publisher cannot be verified. Check the download source and file before deciding whether to install it.
+    - question: Can I use Market Peek on Mac or a phone?
+      answer: The Universal DMG supports Apple Silicon and Intel Macs. Taskbar prices and launch at login are Windows-only features. You can visit this download page on a phone, but the app is for desktop computers.
+    - question: Why does my Mac say the developer cannot be verified?
+      answer: The current macOS build is not signed with an Apple Developer ID or notarized. After verifying the source and file, try opening the app once, then check System Settings → Privacy & Security for the option to open the blocked app.
+  creator: Created by

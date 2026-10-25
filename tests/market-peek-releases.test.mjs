@@ -8,7 +8,7 @@ const release = (version, names, extra = {}) => ({ tag_name: `v${version}`, asse
 const windows = release('1.0.2', ['Market.Peek.Setup.1.0.2.exe', 'market-peek-1.0.2-x64.7z']);
 const oldMac = release('1.0.1', ['market-peek-1.0.1-universal.dmg']);
 
-function page() {
+function page(language = 'ko') {
   const nodes = new Map();
   for (const id of ['windows-release-version', 'mac-release-version', 'download-link', 'archive-link', 'mac-download-link', 'windows-release-notes']) {
     nodes.set(id, { textContent: 'static', href: 'static-link', firstChild: { textContent: 'static button' }, nextElementSibling: { textContent: 'static size' }, attributes: {},
@@ -17,7 +17,7 @@ function page() {
     });
   }
   const storage = new Map();
-  return { nodes, storage, context: { document: { getElementById: id => nodes.get(id) }, AbortSignal,
+  return { nodes, storage, context: { document: { documentElement: { lang: language }, getElementById: id => nodes.get(id) }, AbortSignal,
     window: { localStorage: { getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value) } } } };
 }
 
@@ -52,4 +52,26 @@ test('API errors retain static downloads and a valid cache avoids additional req
   await vm.runInNewContext(source, { ...p.context, fetch: async () => { assert.fail('A fresh cache should avoid another request'); } });
   assert.equal(p.nodes.get('windows-release-version').textContent, 'v1.0.2 Beta');
   assert.equal(p.nodes.get('mac-download-link').href, undefined);
+});
+
+test('English downloads retain English labels after release data is refreshed', async () => {
+  const p = page('en');
+  await vm.runInNewContext(source, { ...p.context, fetch: async () => ({ ok: true, json: async () => [windows, release('1.0.2', ['market-peek-1.0.2-universal.dmg'])] }) });
+  assert.equal(p.nodes.get('download-link').nextElementSibling.textContent, '100.0 MB · Korean-language installer');
+  assert.equal(p.nodes.get('archive-link').nextElementSibling.textContent, '100.0 MB · Extract and run · Korean-language app');
+  assert.equal(p.nodes.get('mac-download-link').firstChild.textContent, 'Download for macOS ');
+  assert.equal(p.nodes.get('mac-download-link').nextElementSibling.textContent, '100.0 MB · DMG installer · Korean-language app');
+  assert.equal(p.nodes.get('windows-release-notes').textContent, 'v1.0.2 Beta release notes ↗');
+  assert.match(p.nodes.get('download-link').href, /Market\.Peek\.Setup\.1\.0\.2\.exe$/);
+});
+
+test('an English page can reuse the shared release cache without Korean status messages', async () => {
+  const p = page('en-US');
+  p.storage.set('market-peek-downloads-v1', JSON.stringify({ savedAt: Date.now(), releases: [windows, oldMac] }));
+  await vm.runInNewContext(source, { ...p.context, fetch: async () => { assert.fail('The shared cache should be reused'); } });
+  assert.equal(p.nodes.get('mac-release-version').textContent, 'v1.0.2 Beta coming soon');
+  assert.equal(p.nodes.get('mac-download-link').firstChild.textContent, 'macOS download coming soon ');
+  assert.equal(p.nodes.get('mac-download-link').nextElementSibling.textContent, 'The macOS installer for the latest version is being prepared.');
+  assert.equal(p.nodes.get('mac-download-link').href, undefined);
+  assert.equal(p.nodes.get('windows-release-notes').textContent, 'v1.0.2 Beta release notes ↗');
 });

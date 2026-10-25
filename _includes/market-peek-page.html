@@ -1,0 +1,101 @@
+{% assign language = page.lang | default: 'ko' %}
+{% assign copy = site.data.market_peek_copy[language] %}
+{% assign release = site.data.market_peek %}
+<a class="skip" href="#main">{{ copy.skip | escape }}</a>
+<header class="product-topbar wrap">
+  <nav class="product-language" aria-label="{{ copy.language_navigation | escape }}">
+    <svg class="product-language__globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"></circle>
+      <ellipse cx="12" cy="12" rx="4" ry="9"></ellipse>
+      <path d="M3 12h18M5 6.5c4 2 10 2 14 0M5 17.5c4-2 10-2 14 0"></path>
+    </svg>
+    <a href="{{ '/programs/market-peek/' | relative_url }}" lang="ko" hreflang="ko"{% if language == 'ko' %} aria-current="page"{% endif %}>한국어</a>
+    <span class="product-language__divider" aria-hidden="true"></span>
+    <a href="{{ '/programs/market-peek/en/' | relative_url }}" lang="en" hreflang="en"{% if language == 'en' %} aria-current="page"{% endif %}>English</a>
+  </nav>
+</header>
+<main id="main" class="market-peek-page">
+  <section aria-labelledby="hero-title" class="hero wrap">
+    <div class="hero-copy">
+      <p class="product-brand"><img alt="" height="30" src="{{ '/assets/programs/market-peek/icon.png' | relative_url }}" width="30">Market Peek<span aria-hidden="true">.</span></p>
+      <h1 id="hero-title">{{ copy.hero_title }}</h1>
+      <p class="intro">{{ copy.intro }}</p>
+      <div class="hero-downloads">
+        <a class="button" href="#download-windows"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M2 3l7-1v7H2zm9-1l7-1v8h-7zM2 11h7v7l-7-1zm9 0h7v8l-7-1z"></path></svg><span class="hero-download-text">{{ copy.windows_download | escape }}<small>({{ copy.beta | escape }})</small></span><span aria-hidden="true">↓</span></a>
+        <a class="button" href="#download-mac"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M3 2h14a1 1 0 0 1 1 1v11H2V3a1 1 0 0 1 1-1zm1 2v8h12V4zM1 15h18v2H1z"></path></svg><span class="hero-download-text">{{ copy.mac_download | escape }}<small>({{ copy.beta | escape }})</small></span><span aria-hidden="true">↓</span></a>
+      </div>
+    </div>
+    <div class="showcase real-screens">
+      <img alt="{{ copy.chart_alt | escape }}" class="app-screenshot" fetchpriority="high" height="1080" src="{{ '/assets/programs/market-peek/btc-chart.png' | relative_url }}" width="1360">
+      <img alt="{{ copy.widget_alt | escape }}" class="widget-screenshot" height="208" src="{{ '/assets/programs/market-peek/btc-widget.png' | relative_url }}" width="704">
+    </div>
+  </section>
+  <section aria-labelledby="features-title" class="features wrap" id="features">
+    <div class="section-heading"><h2 id="features-title">{{ copy.features_title | escape }}</h2><p>{{ copy.features_intro | escape }}</p></div>
+    <div class="feature-grid">
+      {% for feature in copy.features %}
+      <article><h3>{{ feature.title | escape }}</h3><p>{{ feature.body | escape }}</p></article>
+      {% endfor %}
+    </div>
+    <div aria-labelledby="api-title" class="api-support">
+      <h3 id="api-title">{{ copy.api_title | escape }}</h3>
+      <ul class="api-exchanges">
+        <li><strong>Binance</strong><span>{{ copy.spot_futures | escape }}</span></li>
+        <li><strong>Bitget</strong><span>{{ copy.spot_futures | escape }}</span></li>
+        <li><strong>Bybit</strong><span>{{ copy.spot_futures | escape }}</span></li>
+        <li><strong>OKX</strong><span>{{ copy.spot_futures | escape }}</span></li>
+        <li><strong>Upbit</strong><span>{{ copy.spot | escape }}</span></li>
+      </ul>
+    </div>
+  </section>
+  <section aria-labelledby="download-title" class="download-section wrap" id="download">
+    <div class="download-copy">
+      <h2 id="download-title">{{ copy.download_title }}</h2>
+      {% if copy.download_language_note %}<p class="download-language-note">{{ copy.download_language_note | escape }}</p>{% endif %}
+    </div>
+    <div class="download-options">
+      <div class="download-panel" id="download-windows">
+        <div class="release-heading"><strong>{{ copy.windows_platform | escape }}</strong><span id="windows-release-version">v{{ release.version | escape }} Beta</span></div>
+        <p class="platform-label">Windows · x64</p>
+        {% if release.published %}
+        <a class="button download-button" href="{{ release.installer.url | escape }}" id="download-link">{{ copy.installer_download | escape }} <span aria-hidden="true">↓</span></a>
+        <p class="download-file">{{ release.installer.size | divided_by: 1000000.0 | round: 1 }} MB · {{ copy.installer_detail | escape }}</p>
+        <a class="button archive-button" href="{{ release.archive.url | escape }}" id="archive-link">{{ copy.archive_download | escape }} <span aria-hidden="true">↓</span></a>
+        <p class="download-file">{{ release.archive.size | divided_by: 1000000.0 | round: 1 }} MB · {{ copy.archive_detail | escape }}</p>
+        <div class="release-links">
+          <a class="release-notes" id="windows-release-notes" href="{{ release.release_url | escape }}">v{{ release.version | escape }} Beta {{ copy.release_notes | escape }} <span aria-hidden="true">↗</span></a>
+          <a class="release-notes" href="{{ release.releases_url | escape }}">{{ copy.version_downloads | escape }} <span aria-hidden="true">↗</span></a>
+        </div>
+        {% else %}
+        <p class="download-pending" role="status">{{ copy.windows_pending | escape }}</p>
+        <p class="download-file">{{ copy.windows_pending_detail | escape }}</p>
+        {% endif %}
+      </div>
+      <div class="download-panel" id="download-mac">
+        <div class="release-heading"><strong>macOS</strong><span id="mac-release-version">v{{ release.version | escape }} Beta</span></div>
+        <p class="platform-label">Universal · Apple Silicon / Intel</p>
+        {% if release.mac.published and release.mac.url and release.mac.version == release.version %}
+        <a class="button download-button" href="{{ release.mac.url | escape }}" id="mac-download-link">{{ copy.mac_download | escape }} <span aria-hidden="true">↓</span></a>
+        <p class="download-file">{{ release.mac.size | divided_by: 1000000.0 | round: 1 }} MB · {{ copy.mac_detail | escape }}</p>
+        {% else %}
+        <a class="button download-button" id="mac-download-link" aria-disabled="true" tabindex="-1">{{ copy.mac_pending | escape }} <span aria-hidden="true">↓</span></a>
+        <p class="download-file" role="status">{{ copy.mac_pending_detail | escape }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+  <section aria-labelledby="install-title" class="install wrap" id="install">
+    <div class="section-heading"><h2 id="install-title">{{ copy.install_title | escape }}</h2></div>
+    <ol class="install-steps">
+      {% for step in copy.install_steps %}<li><h3>{{ step.title | escape }}</h3><p>{{ step.body | escape }}</p></li>{% endfor %}
+    </ol>
+    <div class="faq">
+      {% for item in copy.faq %}<details><summary>{{ item.question | escape }}</summary><p>{{ item.answer | escape }}</p></details>{% endfor %}
+    </div>
+  </section>
+</main>
+<footer class="wrap product-footer">
+  <span class="brand"><img src="{{ '/assets/programs/market-peek/icon.png' | relative_url }}" width="25" height="25" alt="">Market Peek<span class="brand-dot">.</span></span>
+  <div class="product-credits"><strong>Duki Programming</strong></div>
+</footer>
+<script src="{{ '/assets/js/market-peek-releases.js' | relative_url }}" defer></script>

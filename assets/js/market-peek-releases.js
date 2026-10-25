@@ -3,6 +3,26 @@
   const repository = 'DukiChoi/Market-Peek-releases';
   const base = `https://github.com/${repository}`;
   const cacheKey = 'market-peek-downloads-v1';
+  const english = document.documentElement?.lang?.toLowerCase().startsWith('en');
+  const text = english ? {
+    installer: 'Korean-language installer',
+    archive: 'Extract and run · Korean-language app',
+    mac: 'DMG installer · Korean-language app',
+    macDownload: 'Download for macOS ',
+    notes: 'release notes',
+    pending: 'coming soon',
+    macPending: 'macOS download coming soon ',
+    macPendingDetail: 'The macOS installer for the latest version is being prepared.',
+  } : {
+    installer: '한국어 설치 안내',
+    archive: '압축을 풀고 실행',
+    mac: 'DMG 설치 파일',
+    macDownload: 'macOS용 다운로드 ',
+    notes: '릴리스 정보',
+    pending: '준비 중',
+    macPending: 'macOS 설치 파일 준비 중 ',
+    macPendingDetail: '최신 버전의 macOS 설치 파일을 준비하고 있습니다.',
+  };
   const findAsset = (release, name) => release.assets?.find(asset => asset.name === name && Number.isFinite(asset.size) && asset.size > 0);
   const fileUrl = (release, asset) => `${base}/releases/download/${encodeURIComponent(release.tag_name)}/${encodeURIComponent(asset.name)}`;
 
@@ -25,34 +45,34 @@
       element.href = fileUrl(release, asset);
       element.removeAttribute('aria-disabled');
       element.removeAttribute('tabindex');
-      if (id === 'mac-download-link' && element.firstChild) element.firstChild.textContent = 'macOS용 다운로드 ';
+      if (id === 'mac-download-link' && element.firstChild) element.firstChild.textContent = text.macDownload;
       if (detail) detail.textContent = `${(asset.size / 1000000).toFixed(1)} MB · ${description}`;
     }
     const windows = published.find(release => installer(release));
     if (windows) {
       version('windows-release-version', windows);
-      button('download-link', windows, installer(windows), '한국어 설치 안내');
-      button('archive-link', windows, findAsset(windows, `market-peek-${windows.tag_name.slice(1)}-x64.7z`), '압축을 풀고 실행');
+      button('download-link', windows, installer(windows), text.installer);
+      button('archive-link', windows, findAsset(windows, `market-peek-${windows.tag_name.slice(1)}-x64.7z`), text.archive);
       const notes = document.getElementById('windows-release-notes');
       if (notes) {
         notes.href = `${base}/releases/tag/${encodeURIComponent(windows.tag_name)}`;
-        notes.textContent = `${windows.tag_name} Beta 릴리스 정보 ↗`;
+        notes.textContent = `${windows.tag_name} Beta ${text.notes} ↗`;
       }
     }
     const mac = published.find(release => dmg(release));
     if (mac && mac.tag_name === published[0]?.tag_name) {
       version('mac-release-version', mac);
-      button('mac-download-link', mac, dmg(mac), 'DMG 설치 파일');
+      button('mac-download-link', mac, dmg(mac), text.mac);
     } else if (published.length) {
       const element = document.getElementById('mac-download-link');
       const heading = document.getElementById('mac-release-version');
-      if (heading) heading.textContent = `${published[0].tag_name} Beta 준비 중`;
+      if (heading) heading.textContent = `${published[0].tag_name} Beta ${text.pending}`;
       if (element) {
         element.removeAttribute('href');
         element.setAttribute('aria-disabled', 'true');
         element.setAttribute('tabindex', '-1');
-        if (element.firstChild) element.firstChild.textContent = 'macOS 설치 파일 준비 중 ';
-        if (element.nextElementSibling) element.nextElementSibling.textContent = '최신 버전의 macOS 설치 파일을 준비하고 있습니다.';
+        if (element.firstChild) element.firstChild.textContent = text.macPending;
+        if (element.nextElementSibling) element.nextElementSibling.textContent = text.macPendingDetail;
       }
     }
   }

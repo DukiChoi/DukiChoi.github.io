@@ -13,7 +13,7 @@ css_file: /assets/css/home.css
 <header class="page-heading">
   <p class="page-eyebrow">소개</p>
   <h1>DukiChoi</h1>
-  <p class="page-description">임베디드 시스템과 IoT, 바이오 신호처리를 연구하고 개발합니다.</p>
+  <p class="page-description">생체 계측 연구 관련 임베디드 시스템과 IoT 시스템을 연구 개발하였습니다.</p>
 </header>
 <p class="home-intro">IMU 센서와 BLE를 활용한 기기 개발부터 XR/VR 실험, 머신러닝을 이용한 신호 분석까지 다양한 프로젝트에 참여했습니다.</p>
 
