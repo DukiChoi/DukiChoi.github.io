@@ -6,7 +6,7 @@ permalink: /duki-alarm/
 order: 3
 published: true
 banner_style: auto
-icon: /assets/programs/duki-alarm/icon.svg
+icon: /assets/programs/duki-alarm/icon.png
 links:
   - label: Xcode 프로젝트 다운로드
     url: https://github.com/DukiChoi/duki-notifier/archive/refs/heads/main.zip
