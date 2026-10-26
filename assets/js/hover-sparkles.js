@@ -1,4 +1,5 @@
-(() => {
+(async () => {
+  if (window.programCatalogReady) await window.programCatalogReady;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const finePointer = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
   const targets = document.querySelectorAll('.home-program-banner, .program-link--cube');

@@ -7,6 +7,7 @@ permalink: /programs/
 permalink_name: /개발자의 삶
 css_file: /assets/css/programs.css
 js_files:
+  - /assets/js/program-catalog.js
   - /assets/js/hover-sparkles.js
   - /assets/js/program-banners.js
   - /assets/js/card-tilt.js
@@ -39,6 +40,11 @@ description: DukiChoi가 만든 프로그램과 사용 방법을 소개합니다
     </div>
     {% endfor %}
   </section>
+  <template id="program-card-template">
+    {% assign template_program = site.programs | first %}
+    {% assign template_style = site.data.program_styles | first %}
+    {% include program-banner.html program=template_program style=template_style mode='auto' cube=true %}
+  </template>
   <p class="program-style-note"><a href="{{ '/admin/program-styles/' | relative_url }}">스타일의 비결 <span aria-hidden="true">→</span></a></p>
   <script type="application/json" id="program-banner-styles">{{ site.data.program_styles | jsonify }}</script>
 </main>

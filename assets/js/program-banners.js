@@ -1,4 +1,5 @@
-(() => {
+(async () => {
+  if (window.programCatalogReady) await window.programCatalogReady;
   const catalogElement = document.getElementById('program-banner-styles');
   if (!catalogElement) return;
   const styles = JSON.parse(catalogElement.textContent);

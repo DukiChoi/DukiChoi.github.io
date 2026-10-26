@@ -1,4 +1,5 @@
-(() => {
+(async () => {
+  if (window.programCatalogReady) await window.programCatalogReady;
   const MAX_ROTATION = 20;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const finePointer = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');

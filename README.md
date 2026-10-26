@@ -234,3 +234,9 @@ The theme is available as open source under the terms of the [MIT License](https
 
 이것이 블로구 주소
 https://dukichoi.github.io/
+
+### 외부 프로그램 목록 자동 반영
+
+`/programs/`는 방문 시 `https://duki-programming.github.io/api/programs.json`을 가져옵니다. 해당 사이트의 `_data/catalog.yml`에 등록한 프로그램을 원본 순서로 표시하고, BLE Smart Cube 등 이 저장소의 독립적인 `_programs/` 항목을 뒤에 유지합니다. 같은 링크는 중복 표시하지 않습니다. 원본 사이트로 연결되는 기존 카드는 원본 목록으로 교체되어 이름·설명·아이콘·링크·추가·삭제가 반영됩니다. 카드 디자인과 효과는 이 사이트의 구성 요소를 사용합니다.
+
+원본 사이트 배포 후 다음 방문/새로고침에 반영되므로 이 저장소를 다시 배포할 필요가 없습니다. 요청 실패나 JavaScript 비활성화 시에는 기존 정적 프로그램 목록을 표시합니다. 제목과 설명은 HTML이 아닌 텍스트로 삽입하고 링크와 아이콘은 HTTPS만 허용합니다.
