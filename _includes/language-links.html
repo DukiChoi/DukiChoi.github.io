@@ -11,6 +11,7 @@
   {% if korean_page %}<link rel="alternate" hreflang="x-default" href="{{ korean_page.url | absolute_url }}">{% endif %}
 {% elsif language_pages.size > 1 %}
 <div class="language-switch" role="group" aria-label="{{ ui.language | escape }}">
+  <svg class="language-switch__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 6.5c4 2 10 2 14 0M5 17.5c4-2 10-2 14 0"/></svg>
   {% for code in language_codes %}
     {% assign counterpart = language_pages | where: 'lang', code | first %}
     {% if counterpart %}<a href="{{ counterpart.url | relative_url }}" lang="{{ code }}" hreflang="{{ code }}"{% if page.lang == code %} aria-current="page"{% endif %}>{{ language_labels[forloop.index0] }}</a>{% endif %}

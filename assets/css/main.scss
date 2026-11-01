@@ -168,9 +168,12 @@ th { background: var(--surface); font-weight: 600; }
 
 /* The language switch stays in the top-right corner when navigation wraps. */
 .menu { grid-template-columns: 58px minmax(0, 1fr) auto auto; }
-.language-switch { grid-column: 4; display: flex; align-items: center; gap: 3px; white-space: nowrap; font-size: 13px; color: #b6cce8; }
-.menu .language-switch a { padding: 5px 7px; }
-.language-switch a[aria-current="page"] { color: #fff; background: rgba(234, 244, 255, .16); border-color: rgba(207, 229, 255, .28); }
+.language-switch { grid-column: 4; display: inline-flex; align-items: center; gap: 4px; padding: 5px 6px 5px 10px; border: 1px solid rgba(171, 200, 235, .38); border-radius: 8px; background: rgba(9, 28, 53, .6); white-space: nowrap; font-size: 13px; color: #bed2eb; }
+.language-switch__icon { width: 19px; height: 19px; flex-shrink: 0; margin-right: 4px; }
+.menu .language-switch a { padding: 6px 9px; border-color: transparent; border-radius: 4px; color: #bed2eb; line-height: 1.6; }
+.menu .language-switch a:hover { color: #fff; background: rgba(154, 196, 241, .14); }
+.menu .language-switch a[aria-current="page"] { color: #e4f2ff; background: rgba(154, 196, 241, .24); font-weight: 650; }
+.menu .language-switch a:focus-visible { outline-offset: 2px; }
 :lang(en) { word-break: normal; }
 @media (max-width: 1000px) {
   .menu { grid-template-columns: 58px minmax(0, 1fr) auto; }
