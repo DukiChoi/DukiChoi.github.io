@@ -1,0 +1,39 @@
+[
+  {
+    "id": "market-peek",
+    "title": "Market Peek",
+    "description": "A small desktop widget for crypto and Korean and US stock prices.",
+    "platform": "Windows · macOS",
+    "icon": "/assets/programs/market-peek/icon.png",
+    "external_url": "https://duki-programming.github.io/market-peek/en/",
+    "featured": true,
+    "order": 1
+  },
+  {
+    "id": "doro-modbus",
+    "title": "Doro Modbus",
+    "description": "A Modbus RTU master/slave simulator with CSV address management, test values, and communication graphs.",
+    "platform": "Windows · Beta",
+    "icon": "https://duki-programming.github.io/assets/programs/doro-modbus/icon.png",
+    "external_url": "https://duki-programming.github.io/doro-modbus/en/",
+    "order": 2
+  },
+  {
+    "id": "bitbox",
+    "title": "BitBox",
+    "description": "View Bitget accounts and positions on iPhone and Apple Watch. In development; downloads are not available yet.",
+    "platform": "iPhone · Apple Watch · In development",
+    "icon": "https://duki-programming.github.io/assets/programs/bitbox/icon.png",
+    "external_url": "https://duki-programming.github.io/bitbox/en/",
+    "order": 3
+  },
+  {
+    "id": "ble-smart-cube",
+    "title": "BLE Smart Cube",
+    "description": "View and record movement and pressure data from a BLE smart cube.",
+    "platform": "Android · BLE",
+    "icon": "/assets/programs/ble-smart-cube/icon.svg",
+    "external_url": "/en/programs/ble-smart-cube/",
+    "order": 4
+  }
+]

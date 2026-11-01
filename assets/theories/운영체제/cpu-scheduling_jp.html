@@ -1,0 +1,55 @@
+---
+lang: ja
+translation_key: theory-cpu-scheduling
+subject: operating-systems
+title: "CPUスケジューリング"
+description: "同じ4プロセスをFCFS、SJF、ラウンドロビンで動かし、待ち時間を比較します。"
+permalink: /ja/theory/cpu-scheduling/
+category: os
+order: 1
+---
+<style>{% include lessons/cpu-scheduling.css %}</style>
+<div class="circuit-lesson os sch">
+<p class="lede">実行可能なプロセスが複数あるとき、OSは実行順を決めます。同じ入力で3方式の待ち時間を比べましょう。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">4プロセスの実行順を示すガントチャート</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>プロセス</th><th>到着時刻</th><th>実行時間</th><th>待ち時間</th></tr></thead>
+      <tbody id="schBody"></tbody>
+    </table></div>
+
+    <p class="sub">1. 方式を選択</p>
+    <div class="row">
+      <button class="bt sel" data-alg="fcfs">FCFS（到着順）</button>
+      <button class="bt" data-alg="sjf">SJF（短い仕事から）</button>
+      <button class="bt" data-alg="rr">ラウンドロビン（交代）</button>
+      <label style="font-size:14px;color:var(--text-secondary)">タイムクォンタム
+        <select id="schQ"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+    </div>
+
+    <p class="sub">2. 実行順を再生</p>
+    <div class="row" style="margin-bottom:10px"><button class="bt go" id="schPlay">スケジュール再生</button></div>
+    <div class="gantt" id="schG" aria-label="ガントチャート"></div>
+    <div class="axis" id="schAx"></div>
+    <p class="msg" id="schMsg" aria-live="polite"></p>
+
+    <p class="sub">平均待ち時間（小さいほど短い）</p>
+    <div class="cmp" id="schCmp"></div>
+  </div>
+  <p class="hint">表の時刻や時間を変更すると再計算します。再生するとCPUの使用順が表示されます。</p>
+
+  <h2>次に誰を選ぶかが異なる</h2>
+  <p><strong>FCFS</strong>は到着順に完了まで実行します。長い処理が先頭だと、後続の短い処理も待たされます。</p>
+  <p><strong>SJF</strong>は到着済みの短い仕事を先に実行します。平均待ち時間を減らせますが、所要時間の予測が必要で、長い仕事が飢餓状態になる場合もあります。</p>
+  <p><strong>ラウンドロビン</strong>は一定時間ずつ実行して列の末尾へ戻します。公平に機会を与えますが、割当時間が短すぎると切替コストが増えます。</p>
+
+  <h2>待ち時間の計算</h2>
+  <p>実行可能な状態でCPUを待った時間の合計です。</p>
+  <pre><code>待ち時間＝終了時刻−到着時刻−実行時間</code></pre>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/cpu-scheduling.js %}
+</script>

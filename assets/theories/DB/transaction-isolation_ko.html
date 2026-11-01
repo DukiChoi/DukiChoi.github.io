@@ -1,0 +1,43 @@
+---
+lang: ko
+translation_key: theory-transaction-isolation
+subject: db
+title: 트랜잭션과 격리 수준
+description: 두 트랜잭션이 동시에 실행될 때 격리 수준에 따라 Dirty Read, Non-repeatable Read, Phantom Read가 생기는지 확인합니다.
+permalink: /theory/transaction-isolation/
+category: database
+order: 5
+---
+<style>{% include lessons/transaction-isolation.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">트랜잭션 두 개가 같은 데이터를 동시에 다루면, 한쪽이 다른 쪽의 중간 상태를 보게 될 수 있습니다. 격리 수준은 "다른 트랜잭션의 변경을 어디까지 보지 않을 것인가"를 정하는 설정입니다. 수준이 높을수록 안전하지만 기다리는 시간이 늘어납니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">두 트랜잭션의 실행 순서와 격리 수준에 따라 읽는 값이 달라지는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 상황과 격리 수준을 고르세요</p>
+    <div class="row"><span class="lbl">상황</span><button class="bt sel" data-sc="dirty">Dirty Read</button><button class="bt" data-sc="nonrep">Non-repeatable Read</button><button class="bt" data-sc="phantom">Phantom Read</button></div>
+    <div class="row" style="margin-top:8px"><span class="lbl">격리 수준</span><button class="bt" data-lv="RU">READ UNCOMMITTED</button><button class="bt sel" data-lv="RC">READ COMMITTED</button><button class="bt" data-lv="RR">REPEATABLE READ</button><button class="bt" data-lv="SER">SERIALIZABLE</button></div>
+    <p class="sub">2. 시간 순서대로 실행하세요</p>
+    <div class="row"><button class="bt go" id="txNext">다음 단계</button><button class="bt" id="txAll">끝까지</button><button class="bt" id="txReset">처음으로</button></div>
+    <div class="txw">
+      <div class="lane" id="txLane"></div>
+      <div class="db"><div class="dbt">데이터베이스</div><div id="txDb"></div></div>
+    </div>
+    <div class="msg" id="txMsg" aria-live="polite"></div>
+    <div class="tw"><table class="t" id="txM"></table></div>
+  </div>
+  <p class="hint">왼쪽 칸이 트랜잭션 T1, 오른쪽 칸이 T2입니다. 같은 상황을 격리 수준만 바꿔 다시 실행하면 T1이 읽는 값이 달라집니다. 아래 표에서 지금 보고 있는 칸이 강조됩니다.</p>
+<div class="facts"><div><span>A 원자성</span><b>전부 아니면 전무</b></div><div><span>C 일관성</span><b>규칙을 항상 지킴</b></div><div><span>I 격리성</span><b>서로 간섭하지 않음</b></div><div><span>D 지속성</span><b>커밋하면 남음</b></div></div>
+
+  <h2>세 가지 이상 현상</h2>
+  <p><strong>Dirty Read</strong>는 다른 트랜잭션이 아직 커밋하지 않은 값을 읽는 것입니다. 그 트랜잭션이 롤백하면 존재한 적 없는 값을 읽은 셈이 됩니다. <strong>Non-repeatable Read</strong>는 한 트랜잭션 안에서 같은 행을 두 번 읽었는데, 그사이 다른 트랜잭션이 고치고 커밋해서 값이 달라지는 것입니다. <strong>Phantom Read</strong>는 같은 조건으로 두 번 조회했는데, 그사이 다른 트랜잭션이 조건에 맞는 행을 새로 넣어 행 수가 달라지는 것입니다.</p>
+  <h2>DB마다 기본값과 구현이 다릅니다</h2>
+  <p>PostgreSQL과 Oracle의 기본값은 READ COMMITTED, MySQL InnoDB의 기본값은 REPEATABLE READ입니다. 요즘 DB는 대부분 MVCC 방식으로, 데이터의 이전 버전을 보관해 두고 트랜잭션마다 알맞은 버전을 보여 줍니다. 그래서 읽는 쪽이 쓰는 쪽을 기다리지 않습니다. MySQL InnoDB의 REPEATABLE READ는 스냅숏 덕분에 표준과 달리 일반 SELECT에서 Phantom Read가 나타나지 않습니다. 이 페이지의 SERIALIZABLE은 잠금으로 구현하는 방식을 보여 줍니다.</p>
+<div class="tip"><p class="t">면접에서 자주 묻는 것</p><p>"격리 수준을 높이면 무엇을 잃는가"에는 동시 처리량이라고 답합니다. 잠금 방식이라면 기다리는 트랜잭션이 늘고 교착 상태 가능성도 커집니다. 재고 차감처럼 읽고 나서 고치는 작업은 격리 수준을 올리는 대신 <code>SELECT ... FOR UPDATE</code>로 필요한 행만 잠그는 경우가 많습니다.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/transaction-isolation.js %}
+</script>

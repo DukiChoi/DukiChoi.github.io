@@ -1,0 +1,31 @@
+---
+lang: ja
+translation_key: theory-quick-sort
+subject: data-structures
+title: "クイックソート"
+description: "ピボットを基準に分割し、左右を再帰的に整列します。"
+permalink: /ja/theory/quick-sort/
+category: algorithms
+order: 14
+---
+<style>{% include lessons/quick-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">ピボット未満の値を左、以上の値を右へ分け、それぞれを再帰的に整列します。分割によってピボットの最終位置が確定します。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">分割と呼び出しスタックを示すクイックソートシミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">再生・ステップ実行・スライダーで操作できます。右端をピボットにするこの実装では、「整列済み」が最悪の場合になります。</p>
+<div class="dsa-facts"><div><span>最良</span><b class="good">O(n log n)</b></div><div><span>平均</span><b class="good">O(n log n)</b></div><div><span>最悪</span><b class="bad">O(n²)</b></div><div><span>追加領域</span><b class="">O(log n)</b></div><div><span>安定</span><b class="bad">いいえ</b></div><div><span>一般的な性能</span><b class="good">高速</b></div></div>
+  <h2>iとjによる分割</h2>
+  <p>jは未処理の値を走査し、iはピボット未満の値を置く次の位置です。緑のlo…i−1はピボット未満、赤のi…j−1はピボット以上です。最後に両区間の境界iへピボットを移します。</p>
+  <h2>最悪の場合</h2>
+  <p>整列済み入力で右端を選ぶと常に最大値となり、片側がほとんど縮まりません。深さはn、比較回数はn(n−1)/2になります。実用的な実装ではランダムなピボット、3要素の中央値、別アルゴリズムへの切り替えなどを使います。</p>
+<div class="dsa-tip"><p class="t">演習：クイックセレクト</p><p>分割後のピボット位置iがkなら、それが求める順序統計量です。異なる場合はkを含む側だけを再帰処理します。適切なピボット選択で期待O(n)になります。通常の整列には <code>sort()</code>、大きい方から少数の値を求める場合には <code>heapq.nsmallest</code>, <code>heapq.nlargest</code>などを利用できます。</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/quick-sort.js %}
+</script>

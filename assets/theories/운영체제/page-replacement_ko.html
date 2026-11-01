@@ -1,0 +1,60 @@
+---
+lang: ko
+translation_key: theory-page-replacement
+subject: operating-systems
+title: 페이지 교체
+description: 메모리 칸이 부족할 때 어떤 페이지를 내보낼지 FIFO, LRU, OPT 규칙으로 비교합니다.
+permalink: /theory/page-replacement/
+category: os
+order: 6
+---
+<style>{% include lessons/page-replacement.css %}</style>
+<div class="circuit-lesson os pr">
+<p class="lede">프로그램이 쓰려는 페이지가 물리 메모리에 없으면 디스크에서 가져와야 합니다. 이것을 페이지 폴트라고 합니다. 메모리 칸이 꽉 차 있으면 운영체제는 페이지 하나를 내보내야 하는데, 무엇을 내보내느냐에 따라 폴트 횟수가 크게 달라집니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">참조열을 따라 메모리 프레임에 페이지가 들어오고 나가는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 프로그램이 요청할 페이지 순서와 메모리 칸 수를 정하세요</p>
+    <div class="row">
+      <input type="text" id="prRef" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0" aria-label="페이지 요청 순서">
+      <label style="font-size:14px;color:var(--text-secondary)">메모리 칸 <select id="prF"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label>
+      <button class="bt" id="prBel">벨라디 예시 불러오기</button>
+    </div>
+    <p class="err" id="prErr"></p>
+    <p class="sub" style="margin-top:8px">2. 교체 규칙을 고르세요</p>
+    <div class="row">
+      <button class="bt sel" data-a="fifo">FIFO (먼저 들어온 것)</button>
+      <button class="bt" data-a="lru">LRU (오래 안 쓴 것)</button>
+      <button class="bt" data-a="opt">OPT (가장 늦게 쓸 것)</button>
+    </div>
+    <p class="sub">3. 요청을 하나씩 처리하세요</p>
+    <div class="row">
+      <button class="bt go" id="prStep">다음 요청 처리</button>
+      <button class="bt" id="prAll">끝까지 재생</button>
+      <button class="bt" id="prReset">처음으로</button>
+    </div>
+    <div class="wrap"><div class="grid" id="prGrid"></div></div>
+    <div class="leg">
+      <span><i style="background:#F5C4B3"></i>새로 올린 페이지 (폴트)</span>
+      <span><i style="background:#9FE1CB"></i>이미 있던 페이지 (히트)</span>
+    </div>
+    <p class="msg" id="prMsg" aria-live="polite"></p>
+    <p class="stat" id="prStat"></p>
+    <p class="sub">같은 요청 순서에서 규칙별 페이지 폴트 횟수</p>
+    <div class="cmp" id="prCmp"></div>
+  </div>
+  <p class="hint">[다음 요청 처리]를 누를 때마다 위쪽 요청 순서에서 한 칸씩 진행합니다. 각 열은 그 요청을 처리한 직후의 메모리 상태입니다.</p>
+
+  <h2>세 가지 교체 규칙</h2>
+  <p><strong>FIFO</strong>는 가장 먼저 메모리에 들어온 페이지를 내보냅니다. 구현은 쉽지만, 자주 쓰는 페이지라도 오래전에 들어왔다는 이유로 쫓겨날 수 있습니다.</p>
+  <p><strong>LRU</strong>는 가장 오랫동안 쓰지 않은 페이지를 내보냅니다. 최근에 쓴 페이지는 곧 다시 쓸 가능성이 높다는 성질을 이용하므로, 실제 운영체제가 쓰는 방식 대부분이 LRU를 흉내 냅니다.</p>
+  <p><strong>OPT</strong>는 앞으로 가장 늦게 다시 쓸 페이지를 내보냅니다. 폴트가 가장 적지만 운영체제가 미래의 요청을 알 수 없으므로 실제로는 구현할 수 없고, 다른 규칙을 평가하는 기준으로만 씁니다.</p>
+
+  <h2>벨라디의 이상 현상</h2>
+  <p>보통은 메모리 칸을 늘리면 폴트가 줄어듭니다. 그런데 FIFO에서는 칸을 늘렸는데 폴트가 오히려 늘어나는 경우가 있습니다. [벨라디 예시 불러오기]를 누른 뒤 메모리 칸을 3에서 4로 바꿔 보세요. 폴트가 9회에서 10회로 늘어납니다. LRU와 OPT에서는 이런 일이 생기지 않습니다.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/page-replacement.js %}
+</script>

@@ -1,0 +1,31 @@
+---
+lang: ja
+translation_key: theory-selection-sort
+subject: data-structures
+title: "選択ソート"
+description: "残りの最小値を繰り返し選び、次の確定位置へ交換します。"
+permalink: /ja/theory/selection-sort/
+category: algorithms
+order: 12
+---
+<style>{% include lessons/selection-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">未確定部分の最小値を見つけ、その先頭と交換します。左から順に位置が確定します。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">選択ソートを棒グラフで示すシミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">再生・ステップ実行・スライダーで操作できます。ピンクは現在見つかっている最小値です。</p>
+<div class="dsa-facts"><div><span>最良</span><b class="bad">O(n²)</b></div><div><span>平均</span><b class="bad">O(n²)</b></div><div><span>最悪</span><b class="bad">O(n²)</b></div><div><span>追加領域</span><b class="good">O(1)</b></div><div><span>安定</span><b class="bad">いいえ</b></div><div><span>最大交換回数</span><b class="good">n − 1</b></div></div>
+  <h2>比較は多く、交換は少ない</h2>
+  <p>整列済みでも最小値を探すために残りの全要素を調べます。一方、1周の交換は最大1回なので、比較よりデータ移動のコストが大きい場合に有利なことがあります。</p>
+  <h2>なぜ不安定なのか</h2>
+  <p>「重複が多い」を最後まで実行し、同じ値のa/bラベルを比較してください。離れた位置との交換により、移された値が同じ値を飛び越え、元の順序が逆転することがあります。</p>
+<div class="dsa-tip"><p class="t">演習</p><p>応用として、k周で止めると小さい方からk個をO(nk)で得られます。また、相異なる要素の置換を整列する最小交換回数は、要素数から置換のサイクル数を引いた値になります。</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/selection-sort.js %}
+</script>

@@ -1,0 +1,60 @@
+---
+lang: ja
+translation_key: theory-memory
+subject: digital-logic
+title: "DRAMとNANDフラッシュ"
+description: "データ更新の方法と処理時間をDRAMとNANDで比較します。"
+permalink: /ja/theory/memory/
+order: 4
+---
+<div class="circuit-lesson">
+<p class="lede">同じ更新要求に対し、DRAMは既存セルへ直接書込み、NANDは空きページへ新しい版を書きます。空きが減ると、有効データの移動とブロック消去が必要になります。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">DRAMとNANDの更新処理比較</h2>
+    <div class="lat"><span>DRAM読書き</span><div class="tr"><div class="fl" style="width:26%;background:#378ADD"></div></div><span class="tm">~50 ns</span></div>
+    <div class="lat"><span>NANDページ読出し</span><div class="tr"><div class="fl" style="width:72%;background:#5DCAA5"></div></div><span class="tm">~50 µs</span></div>
+    <div class="lat"><span>NANDページ書込み</span><div class="tr"><div class="fl" style="width:88%;background:#E8A317"></div></div><span class="tm">~500 µs</span></div>
+    <div class="lat"><span>NANDブロック消去</span><div class="tr"><div class="fl" style="width:97%;background:#E24B4A"></div></div><span class="tm">~2 ms</span></div>
+    <p class="lb" style="margin:6px 0 0">棒の長さは対数目盛で処理時間を表します。</p>
+
+    <div class="memory-controls">
+      <div class="memory-controls__writes" role="group" aria-label="メモリ更新">
+        <button class="bt" id="w1">1件更新</button><button class="bt" id="w5">5件連続更新</button>
+      </div>
+      <div class="memory-controls__speed" role="group" aria-label="再生速度">
+        <button class="bt mode on" id="s1">1倍速</button><button class="bt mode" id="s5">5倍速</button>
+      </div>
+    </div>
+    <div class="pan">
+      <div class="ph"><b>DRAM：コンデンサセル</b><span class="tm">累積時間 <span id="dt">0</span> µs</span></div>
+      <div class="dg" id="dg"></div>
+      <p class="sts" id="ds">選択セルへ直接書けます。青い枠はリフレッシュ中の行です。</p>
+    </div>
+    <div class="pan">
+      <div class="ph"><b>NAND：ブロックとページ</b><span class="tm">累積時間 <span id="nt">0</span> µs、待機 <span id="nq">0</span></span></div>
+      <div id="nd"></div>
+      <p class="sts" id="ns" aria-live="polite">緑は有効データ、取消線は無効な旧データ、点線は空きページです。</p>
+    </div>
+  </div>
+  <p class="hint">1倍速では実時間1µsを画面上2msに拡大します。DRAMの漏電とリフレッシュは別の説明用速度です。</p>
+  <p class="hint">L0などは論理データ番号です。更新しても番号は同じですが、NANDの物理保存先は変わります。</p>
+
+  <h2>NANDという名前の由来</h2>
+  <p>セルの直列接続がNANDゲートのトランジスタ配置に似ているための名称です。論理ゲートに保存するという意味ではありません。読書きはページ、消去はブロック単位です。</p>
+
+  <h2>DRAMにはリフレッシュが必要</h2>
+  <p>DRAMは小さなコンデンサの電荷で値を保持します。既存セルを上書きでき、この例では約50nsを仮定します。</p>
+  <p>電荷は時間とともに漏れるため、定期的に読んで書き戻すリフレッシュが必要です。電源が切れると保持できません。</p>
+
+  <h2>NANDは使用済みページを直接上書きできない</h2>
+  <p>絶縁された構造に電荷を保持するため不揮発性ですが、書込みはDRAMより遅く、この例では約500µsです。</p>
+  <p>更新は空きページへ書き、旧ページを無効にします。</p>
+  <p>空きが不足すると有効データを別ブロックへ移し、元ブロック全体を消去します。これがガベージコレクションです。</p>
+  <p>SSDやeMMCのFTLは論理アドレスと物理位置を対応付けます。GCや、書込みの偏りを減らすウェアレベリングも管理します。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/memory.js %}
+</script>

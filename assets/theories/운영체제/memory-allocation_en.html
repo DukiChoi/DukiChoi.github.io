@@ -1,0 +1,55 @@
+---
+lang: en
+translation_key: theory-memory-allocation
+subject: operating-systems
+title: "Memory Allocation and Fragmentation"
+description: "Compare first-fit, best-fit, and worst-fit allocation and observe free memory fragmenting."
+permalink: /en/theory/memory-allocation/
+category: os
+order: 7
+---
+<style>{% include lessons/memory-allocation.css %}</style>
+<div class="circuit-lesson os ma">
+<p class="lede">A contiguous allocator gives each request one continuous region of memory. Repeated allocation and release scatter free space into holes. A large request can fail even when their combined size would be sufficient.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A 100 KB memory allocation simulator illustrating external fragmentation</h2>
+    <p class="sub" style="margin-top:0">1. Choose how to select a free hole</p>
+    <div class="row">
+      <button class="bt sel" data-s="first">First-fit (first suitable hole)</button>
+      <button class="bt" data-s="best">Best-fit (smallest suitable hole)</button>
+      <button class="bt" data-s="worst">Worst-fit (largest hole)</button>
+    </div>
+    <p class="sub">2. Request memory or play the example</p>
+    <div class="row">
+      <label style="font-size:14px;color:var(--text-secondary)">Requested size <input type="number" id="maSize" min="1" max="100" value="20"> KB</label>
+      <button class="bt go" id="maReq">Request memory</button>
+      <button class="bt go" id="maDemo">Play example</button>
+      <button class="bt" id="maReset">Reset</button>
+    </div>
+    <p class="err" id="maErr"></p>
+    <div class="bar" id="maBar"></div>
+    <div class="axis"><span style="left:0">0</span><span style="left:25%">25</span><span style="left:50%">50</span><span style="left:75%">75</span><span style="left:100%">100 KB</span></div>
+    <div class="stats">
+      <div><span>Total free space</span><b id="maTot">100</b> KB</div>
+      <div><span>Largest free hole</span><b id="maBig">100</b> KB</div>
+      <div><span>Number of free holes</span><b id="maCnt">1</b> blocks</div>
+    </div>
+    <p class="msg" id="maMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">Colored blocks are allocated; hatched areas are free. Click an allocated block to release it. Try Play example to see a complete scenario.</p>
+
+  <h2>Three allocation policies</h2>
+  <p><strong>First-fit</strong> scans from the beginning and uses the first hole large enough for the request. The search is usually quick.</p>
+  <p><strong>Best-fit</strong> chooses the smallest suitable hole. Although the leftover looks efficient, it may create many tiny unusable holes.</p>
+  <p><strong>Worst-fit</strong> uses the largest hole to leave a large remainder. However, large holes can disappear quickly, making later large requests difficult.</p>
+
+  <h2>External fragmentation</h2>
+  <p>External fragmentation occurs when enough total space is free but it is scattered into holes too small for a contiguous request. Compare total free space with the largest free hole above.</p>
+  <p>Compaction moves allocated blocks together to create one large free region. Paging divides memory into fixed-size units so allocations need not be contiguous. Modern operating systems primarily use paging.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/memory-allocation.js %}
+</script>

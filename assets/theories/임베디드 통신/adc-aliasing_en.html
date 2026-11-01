@@ -1,0 +1,47 @@
+---
+lang: en
+translation_key: theory-adc-aliasing
+subject: embedded
+title: "ADC Sampling and Aliasing"
+description: "See how undersampling can make a signal appear to have an entirely different frequency."
+permalink: /en/theory/adc-aliasing/
+category: embedded
+order: 5
+---
+<style>{% include lessons/adc-aliasing.css %}</style>
+<div class="circuit-lesson lx ad">
+<p class="lede">An ADC samples a continuously varying voltage at regular intervals. If the sampling rate is too slow, those samples can resemble a completely different, slower signal. This is aliasing.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A graph showing aliasing as signal and sampling frequencies change</h2>
+    <p class="sub" style="margin-top:0">1. Choose an example or adjust the sliders</p>
+    <div class="row">
+      <button class="bt go" data-pre="5,50">Fast sampling</button>
+      <button class="bt go" data-pre="23,50">Near the limit</button>
+      <button class="bt go" data-pre="45,50">Sampling too slowly</button>
+    </div>
+    <div class="row" style="margin-top:12px"><label class="lbl" for="adF">Signal frequency</label><input type="range" id="adF" min="1" max="60" step="1" value="5"><span class="big" id="adFv"></span></div>
+    <div class="row" style="margin-top:6px"><label class="lbl" for="adS">Sampling frequency</label><input type="range" id="adS" min="5" max="100" step="1" value="50"><span class="big" id="adSv"></span></div>
+    <svg id="adSvg" width="100%" viewBox="0 0 680 240" role="img" aria-label="Original signal, samples, and apparent reconstructed signal"></svg>
+    <div class="leg">
+      <span><i style="background:var(--text-muted)"></i>Original signal</span>
+      <span><i style="background:#E8A317;height:8px;width:8px;border-radius:50%;vertical-align:0"></i>ADC samples</span>
+      <span><i style="background:#D85A30"></i>Signal inferred from samples</span>
+    </div>
+    <div class="info" id="adInfo"></div>
+    <p class="msg" id="adMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">The graph covers 0.5 seconds. Raise the signal frequency above half the sampling frequency to see the red apparent signal diverge from the gray original.</p>
+
+  <h2>Nyquist frequency</h2>
+  <p>Half the sampling frequency is the Nyquist frequency. Higher-frequency components can fold into lower frequencies. The apparent frequency is the absolute difference between the signal frequency and its nearest integer multiple of the sampling frequency. For example, sampling 45 Hz at 50 Hz makes it appear as |45 − 50| = 5 Hz.</p>
+  <pre><code>To reconstruct the signal: sampling frequency > 2 × highest signal frequency</code></pre>
+
+  <h2>In practice</h2>
+  <p>Once sampled, an aliased component cannot be distinguished from a true low-frequency signal using those samples alone. An analog low-pass anti-aliasing filter removes unwanted components before the ADC. Real filters need a transition band, so choose a sampling rate with enough margin; 5–10 times the frequency of interest is a useful illustrative choice, not a universal requirement.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/adc-aliasing.js %}
+</script>

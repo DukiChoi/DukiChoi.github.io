@@ -1,0 +1,45 @@
+---
+lang: ja
+translation_key: theory-race-condition
+subject: operating-systems
+title: "競合状態とクリティカルセクション"
+description: "2スレッドの加算が2ではなく1になる実行順を試します。"
+permalink: /ja/theory/race-condition/
+category: os
+order: 2
+---
+<style>{% include lessons/race-condition.css %}</style>
+<div class="circuit-lesson os rc">
+<p class="lede">countをそれぞれ1増やしても、実行順により結果が1になることがあります。ボタンで順序を決めてください。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">count++を3段階に分けた競合実験</h2>
+    <p class="sub" style="margin-top:0">例を実行</p>
+    <div class="row">
+      <button class="bt go" id="rcSeq">Aの後にB</button>
+      <button class="bt go" id="rcMix">AとBを交互に</button>
+      <button class="bt" id="rcReset">最初から</button>
+    </div>
+    <p class="sub">各スレッドのボタンで順序を選択</p>
+    <div class="grid">
+      <div class="card"><div class="tt" style="color:#0F6E56">スレッドA</div><ol id="rcAcode"></ol><div class="reg">Aのレジスタ<b id="rcAreg">-</b></div><button class="bt" id="rcAbt"></button></div>
+      <div class="mem"><small>共有メモリ</small><div class="big" id="rcCount">0</div><small>count</small></div>
+      <div class="card"><div class="tt" style="color:#534AB7">スレッドB</div><ol id="rcBcode"></ol><div class="reg">Bのレジスタ<b id="rcBreg">-</b></div><button class="bt" id="rcBbt"></button></div>
+    </div>
+    <p class="msg" id="rcMsg" aria-live="polite"></p>
+    <ol class="log" id="rcLog"></ol>
+  </div>
+  <p class="hint">黄色は次の命令です。交互実行で更新消失を確認できます。</p>
+
+  <h2>count++は必ずしも不可分ではない</h2>
+  <p>このモデルは読込み、レジスタ加算、書込みの3段階です。その間にスレッドが切り替わると競合が起こります。</p>
+  <p>両方が0を読んで1を書き戻すと、加算1回分が失われます。制御されない実行順に結果が依存するのが競合状態です。</p>
+
+  <h2>クリティカルセクション</h2>
+  <p>共有データを扱う範囲をクリティカルセクションと呼びます。1スレッドずつ全手順を行えば結果は2になります。同期には <a href="{{ '/ja/theory/mutex/' | relative_url }}">ミューテックス</a>や <a href="{{ '/ja/theory/semaphore/' | relative_url }}">セマフォ</a>です。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/race-condition.js %}
+</script>

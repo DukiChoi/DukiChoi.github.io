@@ -1,0 +1,20 @@
+{%- if page.translation_key -%}
+{%- assign language_pages = site.pages | concat: site.programs | concat: site.theory | where: "translation_key", page.translation_key | where_exp: "entry", "entry.published != false" -%}
+{%- assign language_codes = 'ko,en,ja' | split: ',' -%}
+{%- assign language_labels = '한국어,English,日本語' | split: ',' -%}
+{% if include.metadata %}
+  {% for code in language_codes %}
+    {% assign counterpart = language_pages | where: 'lang', code | first %}
+    {% if counterpart %}<link rel="alternate" hreflang="{{ code }}" href="{{ counterpart.url | absolute_url }}">{% endif %}
+  {% endfor %}
+  {% assign korean_page = language_pages | where: 'lang', 'ko' | first %}
+  {% if korean_page %}<link rel="alternate" hreflang="x-default" href="{{ korean_page.url | absolute_url }}">{% endif %}
+{% elsif language_pages.size > 1 %}
+<div class="language-switch" role="group" aria-label="{{ ui.language | escape }}">
+  {% for code in language_codes %}
+    {% assign counterpart = language_pages | where: 'lang', code | first %}
+    {% if counterpart %}<a href="{{ counterpart.url | relative_url }}" lang="{{ code }}" hreflang="{{ code }}"{% if page.lang == code %} aria-current="page"{% endif %}>{{ language_labels[forloop.index0] }}</a>{% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+{%- endif -%}

@@ -1,0 +1,43 @@
+---
+lang: en
+translation_key: theory-transaction-isolation
+subject: db
+title: "Transactions and Isolation Levels"
+description: "See whether dirty reads, non-repeatable reads, and phantom reads occur under different isolation levels."
+permalink: /en/theory/transaction-isolation/
+category: database
+order: 5
+---
+<style>{% include lessons/transaction-isolation.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">When transactions access the same data concurrently, one may see another's intermediate changes. Isolation levels define which changes are visible. Stronger isolation restricts anomalies but can impose waiting or other concurrency costs.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator showing how transaction order and isolation affect read results</h2>
+    <p class="sub" style="margin-top:0">1. Choose a scenario and isolation level</p>
+    <div class="row"><span class="lbl">Scenario</span><button class="bt sel" data-sc="dirty">Dirty Read</button><button class="bt" data-sc="nonrep">Non-repeatable Read</button><button class="bt" data-sc="phantom">Phantom Read</button></div>
+    <div class="row" style="margin-top:8px"><span class="lbl">Isolation level</span><button class="bt" data-lv="RU">READ UNCOMMITTED</button><button class="bt sel" data-lv="RC">READ COMMITTED</button><button class="bt" data-lv="RR">REPEATABLE READ</button><button class="bt" data-lv="SER">SERIALIZABLE</button></div>
+    <p class="sub">2. Execute in time order</p>
+    <div class="row"><button class="bt go" id="txNext">Next step</button><button class="bt" id="txAll">Run to end</button><button class="bt" id="txReset">Reset</button></div>
+    <div class="txw">
+      <div class="lane" id="txLane"></div>
+      <div class="db"><div class="dbt">Database</div><div id="txDb"></div></div>
+    </div>
+    <div class="msg" id="txMsg" aria-live="polite"></div>
+    <div class="tw"><table class="t" id="txM"></table></div>
+  </div>
+  <p class="hint">T1 is on the left and T2 on the right. Run the same scenario at different isolation levels to compare what T1 reads. The corresponding matrix cell is highlighted below.</p>
+<div class="facts"><div><span>A · Atomicity</span><b>All or nothing</b></div><div><span>C · Consistency</span><b>Preserve constraints</b></div><div><span>I · Isolation</span><b>Control interference</b></div><div><span>D · Durability</span><b>Committed data persists</b></div></div>
+
+  <h2>Three read anomalies</h2>
+  <p><strong>Dirty Read</strong> means reading a value that another transaction has not committed. If that transaction rolls back, the value was never part of the committed state. <strong>Non-repeatable Read</strong> occurs when a transaction rereads the same row after another transaction has changed and committed it, producing a different value. <strong>Phantom Read</strong> occurs when repeating a predicate query returns a different set of rows because another transaction has inserted matching rows.</p>
+  <h2>Defaults and implementations vary</h2>
+  <p>PostgreSQL and Oracle default to READ COMMITTED; MySQL InnoDB defaults to REPEATABLE READ. Many databases use MVCC to retain older versions and let reads proceed without waiting for writes. MySQL InnoDB's snapshot reads under REPEATABLE READ prevent the phantom in this example. The SERIALIZABLE simulation here illustrates a lock-based implementation.</p>
+<div class="tip"><p class="t">Common interview topic</p><p>Stronger isolation may reduce concurrent throughput. With locks, more transactions may wait and deadlocks can become more likely. Read-then-update tasks such as reducing inventory often use <code>SELECT ... FOR UPDATE</code> to lock the relevant rows explicitly.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/transaction-isolation.js %}
+</script>

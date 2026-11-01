@@ -1,0 +1,93 @@
+- name: "Hanyang University Electrical Engineering Capstone"
+  period: 2021.09.01 ~ 2021.12.31
+  summary: "Touchless gesture keyboard, mouse, and kiosk"
+  details:
+    - "Built camera-based hand recognition for keyboard and mouse input"
+    - "Implemented pointer movement and clicks using finger gestures"
+    - "Switched keyboard and mouse modes with an OK hand gesture"
+    - "Built and demonstrated a React and Node.js kiosk"
+  participants:
+    - name: "DukiChoi"
+      link: "https://github.com/DukiChoi"
+    - name: "WonseoC"
+      link: "https://github.com/Wonseo-C"
+    - name: "HJH"
+      link: "https://github.com/J-Shine"
+  stack: OpenCV, Mediapipe, React, Node.js
+  link: https://github.com/DukiChoi/graduation
+
+- name: "IMU Position Estimation"
+  period: 2022.01.01 ~ 2022.06.30
+  summary: "Position estimation using a WT9310 IMU"
+  details:
+    - "Filtered nine-axis IMU data and applied a Kalman filter"
+    - "Implemented STM32CubeMX C++ firmware with TinyEKF"
+    - "Visualized results in Python 3D plots"
+  role: "Embedded software development (30% contribution)"
+  stack: STM32(C++), TinyEKF, Python
+  link: https://github.com/DukiChoi/MotionTrackingWithIMU
+
+- name: "UWB Heavy Equipment Safety System"
+  period: 2022.07.01 ~ 2023.02.28
+  summary: "Real-time worker safety assistance using BLE and UWB"
+  details:
+    - "Connected UWB anchors and tags to an Android app over BLE"
+    - "Received worker positions and alerted equipment operators"
+    - "Developed an Android Java app with vibration, visual, and audio alerts"
+  role: "Android software development (50% contribution)"
+  stack: Java(Android), BLE
+  link: https://github.com/DukiChoi/bleAndroidApp
+
+- name: "UWB Indoor Vehicle Positioning"
+  period: 2023.01.01 ~ 2023.03.31
+  summary: "Real-time UWB vehicle tracking visualization over TCP"
+  details:
+    - "Received UWB tag and anchor data through TCP sockets"
+    - "Displayed vehicle positions on a 2D map in Android Java"
+  role: "Android software development (50% contribution)"
+  stack: Java(Android), TCP
+  link: https://github.com/DukiChoi/location_display_app
+
+- name: "Bluetooth Multi-node Pipeline Localization"
+  period: 2023.06.01 ~ 2023.09.30
+  summary: "Metal pipe detection using nRF52 and IMU sensors"
+  details:
+    - "Detected metal using nRF52 and two IMU magnetometers"
+    - "Built a pipe detection and warning system for excavation"
+    - "Presented at IEEE ICCE-Asia 2024 as second author"
+  role: "Embedded and Android software development (30% contribution)"
+  stack: nRF52, BLE, IMU, Android
+  link: https://github.com/DukiChoi/BLEAppForNRF52
+
+- name: "Master’s Research — Tremor Analysis with VR and CNN/RNN"
+  period: 2023.11.01 ~ 2024.12.31
+  summary: "Quantitative hand-tremor analysis using VR and deep learning"
+  details:
+    - "Collected tremor data with nRF52 and IMU controllers"
+    - "Developed VR experiment protocols in Unity C#"
+    - "Trained and evaluated CNN and RNN models in MATLAB"
+  role: "System development and analysis (100% contribution)"
+  stack: nRF52, Unity(C#), MATLAB, CNN, RNN
+  link: https://github.com/DukiChoi/VR_Project
+
+- name: "Full-body Electrical Stimulation Suit Research"
+  period: 2025.03.01 ~ 2025.06.30
+  summary: "Wearable stimulation suit with VR experimental evaluation"
+  details:
+    - "Implemented physical interaction scenarios in Unity VR"
+    - "Controlled stimulation frequency and voltage by scenario"
+    - "Evaluated effects on hand tremor in a nine-participant experiment"
+  role: "Researcher, Biosignal Processing and Neural Engineering Lab"
+  stack: Unity(C#), nRF52, Matlab
+  link: https://github.com/DukiChoi/ShotExperienceSimulator
+
+- name: "Smart Cube for Assessing Children’s Cognitive Abilities"
+  period: "2025.03.01 ~ Ongoing"
+  summary: "IMU, pressure sensor, and LED smart cube with data collection"
+  details:
+    - "Designed the hardware circuitry and firmware"
+    - "Developed BLE integration and an Android app"
+    - "Planned cognitive analysis using children’s block-play data"
+  role: "Researcher, Biosignal Processing and Neural Engineering Lab"
+  stack: nRF52, IMU, Pressure Sensor, Android
+  link: https://github.com/DukiChoi/BLESmartCube

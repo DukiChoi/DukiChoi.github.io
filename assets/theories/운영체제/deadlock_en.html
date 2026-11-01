@@ -1,0 +1,51 @@
+---
+lang: en
+translation_key: theory-deadlock
+subject: operating-systems
+title: "Deadlock"
+description: "Watch five dining philosophers deadlock while holding one fork each, then break the cycle."
+permalink: /en/theory/deadlock/
+category: os
+order: 5
+---
+<style>{% include lessons/deadlock.css %}</style>
+<div class="circuit-lesson os dl">
+<p class="lede">Five philosophers sit around a table, with one fork between each pair. Eating requires both neighboring forks. If everyone picks up the left fork at once, nobody can acquire the right one and they wait indefinitely.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A dining-philosophers simulation showing how deadlock arises</h2>
+    <p class="sub" style="margin-top:0">1. Choose the fork acquisition rule</p>
+    <div class="row">
+      <button class="bt sel" data-m="naive">Everyone starts with the left fork</button>
+      <button class="bt" data-m="fix">P4 starts with the right fork</button>
+    </div>
+    <p class="sub">2. Run the scenario</p>
+    <div class="row">
+      <button class="bt go" id="dlForce">Make all five hungry</button>
+      <button class="bt" id="dlRun">Run freely</button>
+      <button class="bt" id="dlReset">Reset</button>
+    </div>
+    <svg id="dlSvg" width="100%" viewBox="0 0 680 380" role="img" aria-label="Five philosophers and five forks around a table"></svg>
+    <div class="leg">
+      <span><i style="background:var(--surface-1)"></i>Thinking</span>
+      <span><i style="background:#FAC775"></i>Hungry (waiting for a fork)</span>
+      <span><i style="background:#5DCAA5"></i>Eating</span>
+      <span><i style="background:#F09595"></i>Deadlock</span>
+      <span style="color:#E8A317">Dashed arrows: requested forks</span>
+    </div>
+    <p class="msg" id="dlMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">Make all five hungry lets each philosopher try to take their first fork. Change the rule and repeat to compare the outcomes.</p>
+
+  <h2>Deadlock requires all four conditions</h2>
+  <p><strong>Mutual exclusion</strong>: only one philosopher can use each fork. <strong>Hold and wait</strong>: a philosopher holds one fork while waiting for another. <strong>No preemption</strong>: a held fork cannot be forcibly taken away. <strong>Circular wait</strong>: P0 waits for P1, P1 for P2, and so on, until P4 waits for P0.</p>
+  <p>Breaking any one of these conditions prevents deadlock.</p>
+
+  <h2>Break the circular wait</h2>
+  <p>A common approach numbers resources and requires every thread to acquire them in increasing order. For P0–P3 the left fork has the smaller number; for P4 it is right fork 0. Making only P4 start on the right prevents a cycle. Acquiring multiple mutexes in one consistent order uses the same principle.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/deadlock.js %}
+</script>

@@ -1,0 +1,37 @@
+---
+lang: en
+translation_key: theory-counting-sort
+subject: data-structures
+title: "Counting Sort"
+description: "Count occurrences to calculate positions without comparing values to each other."
+permalink: /en/theory/counting-sort/
+category: algorithms
+order: 17
+---
+<style>{% include lessons/counting-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">Count how many times each value occurs and calculate its output positions directly. For integers in a small range, this can outperform comparison sorting.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator showing counting, prefix sums, and placement in counting sort</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Play or step through the algorithm, or seek with the slider. The lower row is out, the output array; count is shown below on the right.</p>
+<div class="dsa-facts"><div><span>Time</span><b class="good">O(n + k)</b></div><div><span>Extra space</span><b class="">O(n + k)</b></div><div><span>Stable</span><b class="good">Yes</b></div><div><span>Value comparisons</span><b class="good">Zero</b></div><div><span>Requirement</span><b class="bad">Small-range integers</b></div></div>
+  <h2>Prefix sums determine positions</h2>
+  <p>After prefix summation, count[v] gives the number of values at most v and therefore the end of v's output region. Scanning the input backward and filling from each region's end preserves the order of equal values. This stability allows counting sort to serve as a digit-sorting stage in radix sort.</p>
+  <p>k is the value range. A very broad range, such as 0 to one billion, makes the count array impractical.</p>
+<div class="dsa-tip"><p class="t">Many values, a narrow range</p><p>For ten million integers bounded by ten thousand, accumulating frequencies and printing them in value order can save both time and memory compared with storing and sorting every item.</p><pre><code>import sys
+input = sys.stdin.readline
+cnt = [0] * 10001
+for _ in range(int(input())):
+    cnt[int(input())] += 1
+for v in range(10001):
+    if cnt[v]:
+        sys.stdout.write((str(v) + '\n') * cnt[v])</code></pre></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/counting-sort.js %}
+</script>

@@ -1,0 +1,36 @@
+---
+lang: en
+translation_key: theory-heap-sort
+subject: data-structures
+title: "Heap Sort"
+description: "Build a max heap, then repeatedly move the largest value to the end."
+permalink: /en/theory/heap-sort/
+category: algorithms
+order: 16
+---
+<style>{% include lessons/heap-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">Build a max heap, move its largest root value to the end, then restore the heap property in the remaining prefix. Parent and child positions are calculated within the array; no separate tree is stored.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A heap-sort simulator with synchronized array and tree views</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Play, step, or seek with the slider. The tree below is another view of the same array shown by the bars.</p>
+<div class="dsa-facts"><div><span>Best case</span><b class="good">O(n log n)</b></div><div><span>Average</span><b class="good">O(n log n)</b></div><div><span>Worst case</span><b class="good">O(n log n)</b></div><div><span>Extra space</span><b class="good">O(1)</b></div><div><span>Stable</span><b class="bad">No</b></div><div><span>Heap construction</span><b class="good">O(n)</b></div></div>
+  <h2>The array is the tree</h2>
+  <p>Node i has children 2i+1 and 2i+2, and parent (i−1)//2. sift_down swaps a node with its larger child until the heap property holds. A sift traverses O(log n) levels, and repeated extraction gives O(n log n) sorting time.</p>
+  <p>Initial heap construction sifts down from the last parent toward the root. Most nodes are near the bottom and move only a short distance, so construction totals O(n), not O(n log n).</p>
+<div class="dsa-tip"><p class="t">Coding exercises: heaps as priority queues</p><p>Priority queues are a more common application than manually implementing heap sort. Python's <code>heapq</code> is a min heap; negated numeric priorities can implement a max heap. Keep a size-k min heap to find the largest k values in O(n log k).</p><pre><code>import heapq
+h = []
+for x in a:
+    heapq.heappush(h, x)
+    if len(h) > k:
+        heapq.heappop(h)    # discard the heap minimum
+# h contains the largest k values</code></pre></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/heap-sort.js %}
+</script>

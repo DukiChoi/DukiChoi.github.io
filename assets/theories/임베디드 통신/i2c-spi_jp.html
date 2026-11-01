@@ -1,0 +1,49 @@
+---
+lang: ja
+translation_key: theory-i2c-spi
+subject: embedded
+title: "I2CとSPI"
+description: "クロックとデータの波形を1ビットずつ確認します。"
+permalink: /ja/theory/i2c-spi/
+category: embedded
+order: 2
+---
+<style>{% include lessons/i2c-spi.css %}</style>
+<div class="circuit-lesson lx bs">
+<p class="lede">どちらもクロックに合わせてデータを読むシリアルバスです。I2Cは2線でアドレス指定し、一般的なSPIは4線で同時送受信します。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">I2CとSPIの波形シミュレータ</h2>
+    <p class="sub" style="margin-top:0">1. バスと送信値を選択</p>
+    <div class="row">
+      <button class="bt sel" data-b="i2c">I2C</button><button class="bt" data-b="spi">SPI（モード0）</button>
+      <span id="bsI2c" class="row" style="margin-left:8px"><label class="lbl">ターゲットアドレス <input type="text" id="bsAddr" value="0x48"></label><label class="lbl">書込みデータ <input type="text" id="bsData" value="0xA5"></label></span>
+      <span id="bsSpi" class="row" style="margin-left:8px;display:none"><label class="lbl">コントローラ送信値 <input type="text" id="bsMosi" value="0xA5"></label><label class="lbl">周辺装置送信値 <input type="text" id="bsMiso" value="0x3C"></label></span>
+    </div>
+    <p class="err" id="bsErr"></p>
+    <p class="sub" style="margin-top:4px">2. 1段階ずつ進む</p>
+    <div class="row">
+      <button class="bt go" id="bsStep">次のステップ</button>
+      <button class="bt" id="bsAll">最後まで再生</button>
+      <button class="bt" id="bsReset">最初から</button>
+    </div>
+    <svg id="bsSvg" width="100%" viewBox="0 0 680 250" role="img" aria-label="バス波形"></svg>
+    <div class="leg" id="bsLeg"></div>
+    <p class="msg" id="bsMsg" aria-live="polite"></p>
+    <div class="regs" id="bsRegs"></div>
+  </div>
+  <p class="hint">オレンジの点は受信側の標本化時点です。</p>
+
+  <h2>I2C：2線とアドレス</h2>
+  <p>SCLとSDAはプルアップでhighを保ち、装置はlowへ引くだけのオープンドレインです。複数装置で共有できます。</p>
+  <p>START後に7ビットアドレスとR/Wを送り、対象がACKします。SCLがlowでデータを変え、highで安定させます。high中のSDA変化はSTART/STOPです。</p>
+
+  <h2>SPI：4線で同時送受信</h2>
+  <p>SCK、MOSI、MISO、CSを使います。CSで対象を選ぶためアドレスは不要で、標準のACKもありません。8クロックで各側のシフトレジスタを交換します。</p>
+  <p>モード0はアイドルlow、立上りで読込みです。CPOL/CPHAによる他モードもあるため、装置仕様に合わせます。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/i2c-spi.js %}
+</script>

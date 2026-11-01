@@ -1,0 +1,42 @@
+---
+lang: ja
+translation_key: theory-branch-prediction
+subject: computer-architecture
+title: "分岐予測"
+description: "常に分岐・1ビット・2ビット予測器を比較します。"
+permalink: /ja/theory/branch-prediction/
+category: architecture
+order: 5
+---
+<style>{% include lessons/branch-prediction.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">パイプラインでは分岐が確定する前に次の命令を取得します。予測が外れると誤った経路を破棄するため、予測精度が重要です。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">3つの分岐予測器の比較</h2>
+    <p class="sub" style="margin-top:0">1. パターンを選択（T=分岐、N=非分岐）</p>
+    <div class="row"><button class="bt sel" data-bp="loop">ループ（TTTN）</button><button class="bt" data-bp="alt">交互（TN）</button><button class="bt" data-bp="most">ほぼ常に分岐</button><button class="bt" data-bp="rand">ランダム</button></div>
+    <p class="sub">2. 分岐を順に実行</p>
+    <div class="row"><button class="bt go" id="bpNext">次の分岐</button><button class="bt" id="bpAll">最後まで</button><button class="bt" id="bpReset">最初から</button></div>
+    <div class="tw"><div class="bpg" id="bpG"></div></div>
+    <div class="bpw">
+      <svg id="bpSvg" viewBox="0 0 520 170" role="img" aria-label="2ビット予測器の状態図"></svg>
+      <div class="acc" id="bpAcc"></div>
+    </div>
+    <div class="msg" id="bpMsg" aria-live="polite"></div>
+  </div>
+  <p class="hint">最上段が実際の結果、下が予測です。緑は正解、赤は不正解です。右は2ビットの現在状態です。</p>
+<div class="facts"><div><span>予測失敗時</span><b>誤経路を破棄</b></div><div><span>1ビット</span><b>前回と同じ予測</b></div><div><span>2ビット</span><b>強い状態から2回で反転</b></div><div><span>現代のCPU</span><b>95%以上の場合も</b></div></div>
+
+  <h2>1ビットはループ境界で2回外す</h2>
+  <p>Tが続いて最後にNとなるループでは、終了のNと次の開始Tで予測を外します。</p>
+  <h2>2ビットは単発の例外に強い</h2>
+  <p>強い分岐からNが来ても弱い分岐になり、まだTを予測します。強い状態から方向を変えるには2回必要です。交互パターンには単純な予測器は弱い場合があります。</p>
+<div class="tip"><p class="t">コードでの影響</p><p>整列済み配列で <code>if (x &gt;= 128)</code>を繰り返すと結果がまとまり予測しやすくなります。ランダムな順では難しく、性能差はCPUやコンパイラにも依存します。誤予測では <a href="{{ '/ja/theory/pipeline/' | relative_url }}">パイプライン</a> の処理を破棄するため、深い構造では代償が増えます。</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/branch-prediction.js %}
+</script>

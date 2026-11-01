@@ -1,0 +1,72 @@
+ko:
+  navigation: 사이트 메뉴
+  language: 웹사이트 언어
+  dark: 다크 모드
+  switch_dark: 다크 모드로 전환
+  write: 글쓰기
+  privacy: 개인정보처리방침
+  previous: 이전 글
+  next: 다음 글
+  previous_next: 이전 글과 다음 글
+  browse: Tech Study 탐색
+  articles: Tech Study 글 목록
+  all_materials: 전체 자료
+  empty: 아직 등록된 자료가 없습니다.
+  open_pdf: PDF 열기
+  download: 다운로드
+  all_programs: 모든 프로그램
+  subjects:
+    db: DB
+    digital-logic: 디지털 논리
+    operating-systems: 운영체제
+    embedded: 임베디드 통신
+    data-structures: 자료구조
+    computer-architecture: 컴퓨터 구조
+en:
+  navigation: Site navigation
+  language: Website language
+  dark: Dark mode
+  switch_dark: Switch to dark mode
+  write: Edit site
+  privacy: Privacy Policy
+  previous: Previous article
+  next: Next article
+  previous_next: Previous and next articles
+  browse: Browse Tech Study
+  articles: Tech Study articles
+  all_materials: All lessons
+  empty: No lessons published yet.
+  open_pdf: Open PDF
+  download: Download
+  all_programs: All programs
+  subjects:
+    db: Databases
+    digital-logic: Digital Logic
+    operating-systems: Operating Systems
+    embedded: Embedded Systems
+    data-structures: Data Structures
+    computer-architecture: Computer Architecture
+ja:
+  navigation: サイトメニュー
+  language: サイトの言語
+  dark: ダークモード
+  switch_dark: ダークモードに切り替え
+  write: サイトの編集
+  privacy: プライバシーポリシー
+  previous: 前の教材
+  next: 次の教材
+  previous_next: 前後の教材
+  browse: Tech Studyのナビゲーション
+  articles: Tech Studyの教材一覧
+  all_materials: すべての教材
+  empty: まだ教材はありません。
+  open_pdf: PDFを開く
+  download: ダウンロード
+  all_programs: すべてのプログラム
+  subjects:
+    db: データベース
+    digital-logic: デジタル論理
+    operating-systems: オペレーティングシステム
+    embedded: 組み込み通信
+    data-structures: データ構造
+    computer-architecture: コンピューターアーキテクチャ

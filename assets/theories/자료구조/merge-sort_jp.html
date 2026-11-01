@@ -1,0 +1,32 @@
+---
+lang: ja
+translation_key: theory-merge-sort
+subject: data-structures
+title: "マージソート"
+description: "配列を再帰的に分割し、整列済みの半分同士をマージする分割統治法です。"
+permalink: /ja/theory/merge-sort/
+category: algorithms
+order: 15
+---
+<style>{% include lessons/merge-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">1要素になるまで分割し、整列済みの列の先頭を比較しながらマージします。一時配列tmpに結果を集めてから元の配列へ戻します。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">再帰的な分割と一時配列へのマージを示すシミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">再生・ステップ実行・スライダーで操作できます。下段は一時配列tmpです。</p>
+<div class="dsa-facts"><div><span>最良</span><b class="good">O(n log n)</b></div><div><span>平均</span><b class="good">O(n log n)</b></div><div><span>最悪</span><b class="good">O(n log n)</b></div><div><span>追加領域</span><b class="bad">O(n)</b></div><div><span>安定</span><b class="good">はい</b></div><div><span>入力順序の影響</span><b class="good">最悪でも性能を維持</b></div></div>
+  <h2>先頭同士を比較してマージする</h2>
+  <p>両側とも整列済みなので、先頭の小さい方が全体の次の最小値です。マージは両側の長さの合計に比例する時間で完了します。O(log n)階層の各段でO(n)の処理をするため、最悪でもO(n log n)です。</p>
+  <p>同じ値なら左を先に選ぶ（<code>a[i] &lt;= a[j]</code>）ことで安定性を保ちます。比較を <code>&lt;</code>にすると、この性質が失われます。</p>
+<div class="dsa-tip"><p class="t">演習：転倒数を数える</p><p>右の値が小さいとき、左側の残りすべてがその値より大きくなります。その時点でmid − i + 1を転倒数に加えると、全体をO(n log n)で計算できます。</p><pre><code>else:                       # 右の値が小さい
+    inv += mid - i + 1      # 左の残りはすべてa[j]より大きい
+    tmp.append(a[j]); j += 1</code></pre></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/merge-sort.js %}
+</script>

@@ -1,0 +1,39 @@
+---
+lang: ja
+translation_key: theory-instruction-cycle
+subject: computer-architecture
+title: "命令サイクル"
+description: "フェッチ・デコード・実行でのレジスタとメモリの値の移動を追います。"
+permalink: /ja/theory/instruction-cycle/
+category: architecture
+order: 1
+---
+<style>{% include lessons/instruction-cycle.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">CPUは命令の取得、解釈、実行を繰り返します。レジスタ間の移動を順に確認してください。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">簡単なCPUの命令サイクル</h2>
+    <p class="sub" style="margin-top:0">1. プログラムを選択</p>
+    <div class="row"><button class="bt sel" data-pg="add">2数の加算</button><button class="bt" data-pg="loop">3から0へ数えるループ</button></div>
+    <p class="sub">2. 順に実行</p>
+    <div class="row"><button class="bt go" id="icNext">次のステップ</button><button class="bt" id="icPlay">再生</button><button class="bt" id="icInstr">1命令を完了</button><button class="bt" id="icReset">最初から</button><span class="lbl" id="icCnt"></span></div>
+    <div class="ph" id="icPh"></div>
+    <svg id="icSvg" width="100%" viewBox="0 0 680 360" role="img" aria-label="CPUのレジスタとメモリ"></svg>
+    <div class="msg" id="icMsg" aria-live="polite"></div>
+  </div>
+  <p class="hint">矢印は値の移動、オレンジの枠は変更箇所、▶はPCの示す次の命令です。</p>
+<div class="facts"><div><span>PC</span><b>次の命令アドレス</b></div><div><span>IR</span><b>現在の命令</b></div><div><span>MAR</span><b>アクセス先</b></div><div><span>MDR</span><b>転送データ</b></div><div><span>ACC</span><b>計算結果</b></div></div>
+
+  <h2>フェッチは全命令で共通</h2>
+  <p>PC→MAR、メモリ→MDR、MDR→IRと進み、PCを増やします。実行段階は命令ごとに異なり、ジャンプはPCを書き換えて次の取得先を変えます。</p>
+  <h2>メモリアクセスのコスト</h2>
+  <p>命令取得に加え、LOAD/ADD/STOREはデータにもアクセスします。主記憶はレジスタより遅いため、 <a href="{{ '/ja/theory/cache/' | relative_url }}">キャッシュ</a>や、命令処理を重ねる <a href="{{ '/ja/theory/pipeline/' | relative_url }}">パイプライン</a>を使います。</p>
+<div class="tip"><p class="t">このCPUの命令</p><p><code>LOAD a</code> ACC ← M[a], <code>ADD a</code> ACC ← ACC + M[a], <code>SUB a</code> ACC ← ACC − M[a], <code>STORE a</code> M[a] ← ACC, <code>JZ a</code> はACC=0ならPC←a、 <code>JMP a</code> PC ← a, <code>HALT</code> は停止です。ACCを中心に計算する構造をアキュムレータ方式と呼びます。実CPUは複数の汎用レジスタを持ちます。</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/instruction-cycle.js %}
+</script>

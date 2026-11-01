@@ -1,0 +1,27 @@
+
+.os .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.os .row.c{justify-content:center}
+.os .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.os .bt:disabled{opacity:.45;cursor:default}
+.os .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.os .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:16px auto 0;min-height:26px;max-width:none}
+.os .msg.bad{color:#E24B4A}.os .msg.ok{color:#1D9E75}
+.rc .grid{display:grid;grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);gap:14px;align-items:stretch}
+@media (max-width:640px){.rc .grid{grid-template-columns:minmax(0,1fr)}}
+.rc .card{border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--panel,#fff);display:flex;flex-direction:column;gap:10px}
+.rc .tt{font-weight:600;font-size:15px}
+.rc ol{list-style:none;margin:0;padding:0;font-family:var(--font-mono);font-size:14px}
+.rc li{padding:5px 8px;border-radius:5px;color:var(--text-secondary);display:flex;gap:8px}
+.rc li .no{color:var(--text-muted);width:14px}
+.rc li .ds{margin-left:auto;font-family:var(--font-sans);font-size:12px;color:var(--text-muted)}
+.rc li.cur{background:var(--bg-warning);color:var(--text-warning)}
+.rc li.cur .ds,.rc li.cur .no{color:var(--text-warning)}
+.rc li.done{text-decoration:line-through;color:var(--text-muted)}
+.rc .reg{font-size:14px;color:var(--text-secondary)}
+.rc .reg b{font-family:var(--font-mono);font-size:18px;color:var(--text-primary);margin-left:6px}
+.rc .mem{border:2px solid var(--border-strong);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:2px}
+.rc .mem .big{font-family:var(--font-mono);font-size:52px;line-height:1.1;color:var(--text-primary);transition:transform .2s}
+.rc .mem .big.flash{transform:scale(1.25);color:#E8A317}
+.rc .mem small{font-size:13px;color:var(--text-secondary)}
+.rc .log{margin:14px 0 0;padding:0 0 0 22px;font-size:14px;color:var(--text-secondary);max-width:none}
+.rc .log li{display:list-item;font-family:var(--font-sans);padding:2px 0}

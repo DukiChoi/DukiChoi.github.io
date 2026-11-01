@@ -1,0 +1,38 @@
+---
+lang: en
+translation_key: theory-binary-search
+subject: data-structures
+title: "Binary Search"
+description: "Halve the candidates in a sorted array; explore exact search, lower and upper bounds, and parametric search."
+permalink: /en/theory/binary-search/
+category: algorithms
+order: 20
+---
+<style>{% include lessons/binary-search.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">Inspect the middle value of a sorted array to decide which half can contain the target. Each comparison discards half the candidates.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A binary-search simulator showing lo, mid, hi, and the shrinking candidate interval</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Change the target or pick an existing array value, then play. Faded cells have already been eliminated.</p>
+<div class="dsa-facts"><div><span>Time</span><b class="good">O(log n)</b></div><div><span>Requirement</span><b class="bad">Sorted array</b></div><div><span>1 million values</span><b class="">At most 20 comparisons</b></div><div><span>1 billion values</span><b class="">At most 30 comparisons</b></div></div>
+  <h2>Three forms of binary search</h2>
+  <p>Exact search stops at a matching value. Lower bound returns the first position with a value at least x; upper bound returns the first value greater than x. Their difference counts occurrences of x. Try both with Many duplicates. In Python, <code>bisect_left(a, x)</code> is lower bound and <code>bisect_right(a, x)</code> is upper bound.</p>
+  <h2>Choose one boundary convention</h2>
+  <p>Exact search here uses the closed interval [lo, hi] with <code>lo &lt;= hi</code>; lower and upper bounds use the half-open interval [lo, hi) with <code>lo &lt; hi</code>. Mixing conventions can cause infinite loops or off-by-one errors.</p>
+<div class="dsa-tip"><p class="t">Parametric search: binary-search the answer</p><p>For a largest or smallest feasible value, define a predicate that checks a proposed answer x. If feasibility changes only once as x increases, binary search locates that boundary. Typical examples include cutting cables, choosing a saw height, and placing routers.</p><pre><code>lo, hi = 1, max(a)          # possible answers
+while lo &lt;= hi:
+    mid = (lo + hi) // 2
+    if ok(mid):             # mid is feasible
+        ans = mid
+        lo = mid + 1        # try a larger answer
+    else:
+        hi = mid - 1</code></pre></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/binary-search.js %}
+</script>

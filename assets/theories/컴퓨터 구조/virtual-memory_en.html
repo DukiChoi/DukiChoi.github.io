@@ -1,0 +1,45 @@
+---
+lang: en
+translation_key: theory-virtual-memory
+subject: computer-architecture
+title: "Virtual Memory and the TLB"
+description: "Translate virtual addresses through the TLB and page table, and observe page faults."
+permalink: /en/theory/virtual-memory/
+category: architecture
+order: 4
+---
+<style>{% include lessons/virtual-memory.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">Programs use their own virtual address space. The CPU splits an address into page number and offset, finds the physical frame through translation, and forms the physical address. A TLB caches recent translations to speed up this process.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator of virtual-to-physical address translation using a TLB and page table</h2>
+    <p class="sub" style="margin-top:0">1. Choose virtual addresses (256-byte pages, 8 virtual pages, 4 physical frames)</p>
+    <div class="row"><button class="bt sel" data-vs="a">Example 1</button><button class="bt" data-vs="b">Example 2 (many page changes)</button>
+      <input type="text" id="vmIn" style="flex:1;min-width:220px;font-family:var(--font-mono)" aria-label="Virtual address sequence"></div>
+    <p class="err" id="vmErr"></p>
+    <div class="row"><button class="bt go" id="vmNext">Next step</button><button class="bt" id="vmAcc">Finish this address</button><button class="bt" id="vmAll">Run to end</button><button class="bt" id="vmReset">Reset</button><span class="lbl" id="vmCnt"></span></div>
+    <div class="va" id="vmVa"></div>
+    <div class="vmg">
+      <div><div class="vt">TLB (4 recent translations)</div><table class="t" id="vmTlb"></table></div>
+      <div><div class="vt">Page table</div><table class="t" id="vmPt"></table></div>
+      <div><div class="vt">Physical memory</div><div id="vmFr"></div></div>
+    </div>
+    <div class="msg" id="vmMsg" aria-live="polite"></div>
+    <div class="stats" id="vmSt"></div>
+  </div>
+  <p class="hint">Steps split the address, check the TLB, consult the page table if needed, and calculate the physical address. Initially only pages 0 and 3 are resident.</p>
+<div class="facts"><div><span>Page number</span><b>Address ÷ 256</b></div><div><span>Offset</span><b>Address % 256</b></div><div><span>Physical address</span><b>Frame × 256 + offset</b></div><div><span>TLB hit rate</span><b>Often very high</b></div></div>
+
+  <h2>Why use virtual memory?</h2>
+  <p>Separate address spaces isolate programs. Demand paging also lets a program run with only some of its pages resident. This model treats a nonresident page as a page fault and fetches it from disk into a frame. When memory is full, the victim is chosen by a <a href="{{ '/en/theory/page-replacement/' | relative_url }}">page replacement algorithm</a>. This example uses FIFO: evict the earliest loaded page.</p>
+  <h2>Without a TLB, translation adds memory accesses</h2>
+  <p>In this simplified single-level model, the page table is in memory, so an access needs a page-table read followed by a data access. A TLB caches translations inside the CPU and avoids the page-table read on a hit. Real multi-level tables can require additional accesses.</p>
+<div class="tip"><p class="t">Exercise: effective access time</p><p>Let TLB lookup time be t, memory access time m, and hit rate h. In this serial single-level model, a hit costs t + m and a miss t + 2m, excluding page faults. Effective access time is h(t + m) + (1 − h)(t + 2m). With t = 1 ns, m = 100 ns, h = 0.98, the result is 103 ns.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/virtual-memory.js %}
+</script>

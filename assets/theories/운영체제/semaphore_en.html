@@ -1,0 +1,63 @@
+---
+lang: en
+translation_key: theory-semaphore
+subject: operating-systems
+title: "Semaphores"
+description: "Use a resource counter to coordinate threads in a parking lot and a producer–consumer buffer."
+permalink: /en/theory/semaphore/
+category: os
+order: 4
+---
+<style>{% include lessons/semaphore.css %}</style>
+<div class="circuit-lesson os sm">
+<p class="lede">A counting semaphore tracks available resources. A thread calls wait() to acquire one and signal() to release one. When the counter is zero, wait() blocks until a resource becomes available.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A semaphore-controlled parking lot with three spaces</h2>
+    <p class="sub" style="margin-top:0">Semaphore S manages three parking spaces</p>
+    <div class="top">
+      <div class="sv"><span>S =</span><b id="spS">3</b><span>Spaces available</span></div>
+      <span style="flex:1"></span>
+      <button class="bt go" id="spIn">Car arrives (call wait)</button>
+      <button class="bt" id="spReset">Reset</button>
+    </div>
+    <div class="lot" id="spLot"></div>
+    <div class="lane" id="spLane"></div>
+    <p class="msg" id="spMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">Press Car arrives repeatedly to fill the lot. Click a parked car to make it leave and call signal().</p>
+
+  <h2>wait() and signal()</h2>
+  <p>If S is positive, wait() decrements it and proceeds. If S is zero, the caller blocks. signal() releases a resource and wakes a waiting thread, if any. The awakened thread immediately takes the released resource, so S remains zero when cars are queued.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A five-slot producer–consumer buffer coordinated by semaphores</h2>
+    <p class="sub" style="margin-top:0">Producer–consumer: empty and full track five buffer slots</p>
+    <div class="pc">
+      <div class="agent" id="pcP"><span class="nm" style="color:#185FA5">Producer</span><span class="stt" id="pcPs"></span><button class="bt" id="pcPb">Insert item</button></div>
+      <div><div class="buf" id="pcBuf"></div><div class="mk" id="pcMk"></div>
+        <div class="cnt"><span>empty <b id="pcE">5</b></span><span>full <b id="pcF">0</b></span></div></div>
+      <div class="agent" id="pcC"><span class="nm" style="color:#993C1D">Consumer</span><span class="stt" id="pcCs"></span><button class="bt" id="pcCb">Remove item</button></div>
+    </div>
+    <div class="row c" style="margin-top:14px">
+      <button class="bt go" id="pcAuto">Start automatic run</button>
+      <label style="font-size:14px;color:var(--text-secondary)">Production rate <select id="pcPv"><option value="700">Fast</option><option value="1400" selected>Normal</option><option value="2600">Slow</option></select></label>
+      <label style="font-size:14px;color:var(--text-secondary)">Consumption rate <select id="pcCv"><option value="700">Fast</option><option value="1400">Normal</option><option value="2600" selected>Slow</option></select></label>
+      <button class="bt" id="pcReset">Reset</button>
+    </div>
+    <p class="msg" id="pcMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">Insert and remove individual items, or start automatic execution. If production is faster, the full buffer blocks the producer. If consumption is faster, the empty buffer blocks the consumer.</p>
+
+  <h2>The producer–consumer problem</h2>
+  <p>A producer needs an empty slot; a consumer needs a filled slot. The empty and full semaphores enforce these conditions. A mutex also protects modifications to the buffer itself.</p>
+  <pre><code>Producer: wait(empty), lock(m), insert item, unlock(m), signal(full). Consumer: wait(full), lock(m), remove item, unlock(m), signal(empty).</code></pre>
+
+  <h2>How is this different from a mutex?</h2>
+  <p>A mutex must be unlocked by its owner. A semaphore has no owner, so another thread can signal it. Besides counting resources, semaphores can notify a task that an event occurred. For example, a FreeRTOS interrupt handler can use <code>xSemaphoreGiveFromISR()</code> to wake a task.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/semaphore.js %}
+</script>

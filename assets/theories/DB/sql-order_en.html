@@ -1,0 +1,46 @@
+---
+lang: en
+translation_key: theory-sql-order
+subject: db
+title: "SQL Execution Order"
+description: "Follow a SELECT query from FROM to LIMIT and see the table change at each logical processing step."
+permalink: /en/theory/sql-order/
+category: database
+order: 1
+---
+<style>{% include lessons/sql-order.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">SQL is written in a different order from its logical processing order. Starting with FROM, the database takes a table, filters rows, groups them, computes expressions, and sorts the result. Follow the table through each step.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator of logical SQL processing and its intermediate tables</h2>
+    <p class="sub" style="margin-top:0">1. Change the conditions</p>
+    <div class="row">
+      <label class="lbl">WHERE salary ≥ <input type="number" id="qW" value="3000" step="100" min="2500" max="5200" style="width:84px"></label>
+      <label class="lbl">HAVING COUNT(*) ≥ <select id="qH"><option>1</option><option selected>2</option><option>3</option></select></label>
+      <label class="lbl">ORDER BY average <select id="qO"><option value="DESC" selected>DESC (highest first)</option><option value="ASC">ASC (lowest first)</option></select></label>
+      <label class="lbl">LIMIT <select id="qL"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+    </div>
+    <p class="err" id="qErr"></p>
+    <p class="sub" style="margin-top:4px">2. Advance through the processing steps</p>
+    <div class="row"><button class="bt go" id="qNext">Next step</button><button class="bt" id="qPrev">Previous step</button><button class="bt" id="qReset">Reset</button></div>
+    <div class="ord" id="qOrd"></div>
+    <div class="code" id="qSql"></div>
+    <div class="msg" id="qMsg" aria-live="polite"></div>
+    <div class="tw"><table class="t" id="qT"></table></div>
+  </div>
+  <p class="hint">The two rows above show written order and logical processing order. The same clause is highlighted in both so you can compare its position.</p>
+<div class="facts"><div><span>Step 1</span><b>FROM</b></div><div><span>Step 2</span><b>WHERE</b></div><div><span>Step 3</span><b>GROUP BY</b></div><div><span>Step 4</span><b>HAVING</b></div><div><span>Step 5</span><b>SELECT</b></div><div><span>Step 6</span><b>ORDER BY</b></div><div><span>Step 7</span><b>LIMIT</b></div></div>
+
+  <h2>WHERE and HAVING filter different things</h2>
+  <p>WHERE filters individual rows before grouping; HAVING filters groups afterward. Aggregate functions such as COUNT(*) and AVG() therefore belong in HAVING, not directly in WHERE. Put row-level conditions in WHERE when possible to reduce the input to grouping.</p>
+  <h2>Aliases become available at SELECT</h2>
+  <p>The aliases average and headcount are introduced at step 5, SELECT. Earlier steps cannot generally rely on them, while the later ORDER BY can. Some databases, including MySQL, also allow aliases in GROUP BY and HAVING; check the rules for your database.</p>
+<div class="tip"><p class="t">Coding exercises and interviews</p><p>Departments with an average salary of at least 3,500 calls for GROUP BY + HAVING. Department averages for employees earning at least 3,000 calls for WHERE + GROUP BY. Identify whether each condition applies to individual rows or aggregates. In this model, SELECT uses grouped columns and aggregate expressions.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/sql-order.js %}
+</script>

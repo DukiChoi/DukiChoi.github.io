@@ -1,0 +1,39 @@
+---
+lang: ja
+translation_key: theory-dijkstra
+subject: data-structures
+title: "ダイクストラ法"
+description: "未確定の中で最も近いノードを確定し、隣接ノードへの距離を更新します。"
+permalink: /ja/theory/dijkstra/
+category: algorithms
+order: 51
+---
+<style>{% include lessons/dijkstra.css %}</style>
+<div class="circuit-lesson lx dj">
+<p class="lede">ダイクストラ法は、始点から各頂点への最短距離を求めます。未確定の中から暫定距離が最小のノードを確定し、そのノードを通る経路で隣接ノードの距離を改善します。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">ノードの確定と距離の緩和を示す重み付きグラフのシミュレーター</h2>
+    <p class="sub" style="margin-top:0">1. 始点をクリック（現在： <span id="djS">A</span>)</p>
+    <p class="sub" style="margin-top:4px">2. 1段階ずつ進む</p>
+    <div class="row">
+      <button class="bt go" id="djStep">次のステップ</button><button class="bt" id="djAll">最後まで再生</button><button class="bt" id="djReset">最初から</button>
+    </div>
+    <svg id="djSvg" width="100%" viewBox="0 0 680 360" role="img" aria-label="6ノードの重み付きグラフ"></svg>
+    <div class="leg"><span><i style="background:var(--surface-1);border:1px solid var(--border-strong)"></i>未確定</span><span><i style="background:#185FA5"></i>今回確定</span><span><i style="background:#5DCAA5"></i>確定済み</span><span><i style="background:#E8A317;border-radius:2px;height:4px;vertical-align:3px"></i>今回調べた辺</span><span><i style="background:#85B7EB;border-radius:2px;height:4px;vertical-align:3px"></i>最短経路木</span><span><i style="background:#185FA5;border-radius:2px;height:4px;vertical-align:3px"></i>選択ノードへの経路</span></div>
+    <p class="msg" id="djMsg" aria-live="polite"></p>
+    <div class="tw"><table id="djT"></table></div>
+  </div>
+  <p class="hint">表の黄色いセルは今回更新された距離です。実行後にノードをクリックすると、始点からの最短経路が強調されます。</p>
+
+  <h2>なぜ最も近いノードを先に確定するのか</h2>
+  <p>未確定の中で最小の暫定距離を持つノードをuとします。他の未確定ノードを通る経路は、その時点ですでにuの距離以上です。辺の重みが非負なら、延長しても短くなりません。負の辺がある場合はこの議論が成り立たないため、ベルマン–フォード法などを使います。</p>
+
+  <h2>実行時間</h2>
+  <p>ヒープによる優先度付きキューを使うと計算量はO((V + E) log V)です。経路探索やOSPFなどのルーティングにも利用されます。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/dijkstra.js %}
+</script>

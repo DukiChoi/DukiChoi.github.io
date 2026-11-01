@@ -1,0 +1,45 @@
+---
+lang: ja
+translation_key: theory-pwm
+subject: embedded
+title: "PWMとデューティ比"
+description: "オン・オフだけで明るさやモータ駆動を変える原理を確認します。"
+permalink: /ja/theory/pwm/
+category: embedded
+order: 4
+---
+<style>{% include lessons/pwm.css %}</style>
+<div class="circuit-lesson lx pw">
+<p class="lede">0Vと3.3Vを高速に切り替えると、負荷は平均的な駆動に反応します。1周期のうちhighの割合がデューティ比です。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">PWM波形・平均電圧・LEDの比較</h2>
+    <p class="sub" style="margin-top:0">1. デューティ比と周波数</p>
+    <div class="row"><label class="lbl" for="pwD">デューティ比</label><input type="range" id="pwD" min="0" max="100" step="1" value="30"><span class="big" id="pwDv">30%</span></div>
+    <div class="row" style="margin-top:8px">
+      <span class="lbl">PWM周波数</span>
+      <button class="bt" data-f="100">100 Hz</button><button class="bt sel" data-f="1000">1 kHz</button><button class="bt" data-f="20000">20 kHz</button>
+    </div>
+    <p class="sub">2. 表示方法</p>
+    <div class="row">
+      <button class="bt sel" data-v="avg">通常速度（見かけの明るさ）</button>
+      <button class="bt go" data-v="slow">スロー（1秒1周期）</button>
+    </div>
+    <svg id="pwSvg" width="100%" viewBox="0 0 680 220" role="img" aria-label="PWM波形とLED"></svg>
+    <p class="msg" id="pwMsg" aria-live="polite"></p>
+    <div class="info" id="pwInfo"></div>
+  </div>
+  <p class="hint">スライダーでhigh区間と平均電圧が変わります。スロー表示で点滅を観察してください。</p>
+
+  <h2>平均電圧＝デューティ比×電源電圧</h2>
+  <p>3.3Vを30%の時間オンにすると平均0.99Vです。LEDは高速点滅が明るさとして見え、モータは電気的・機械的応答で平滑化されます。可聴音低減に20kHz以上を使うこともあります。</p>
+
+  <h2>STM32タイマで生成</h2>
+  <p>0からARRまで数え、CCR未満の間highにします。ARRが周期、CCRがデューティ比を決め、PSCがタイマクロックを分周します。</p>
+  <pre><code>PWM周波数=クロック/((PSC+1)×(ARR+1))。デューティ比=CCR/(ARR+1)。</code></pre>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/pwm.js %}
+</script>

@@ -1,0 +1,31 @@
+---
+lang: en
+translation_key: theory-selection-sort
+subject: data-structures
+title: "Selection Sort"
+description: "Repeatedly select the smallest remaining value and swap it into the next position."
+permalink: /en/theory/selection-sort/
+category: algorithms
+order: 12
+---
+<style>{% include lessons/selection-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">Find the minimum in the remaining suffix and swap it with the first unfixed position. Positions become final from left to right.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A bar-chart simulator of selection sort</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Play, step, or seek with the slider. Pink marks the smallest value found so far.</p>
+<div class="dsa-facts"><div><span>Best case</span><b class="bad">O(n²)</b></div><div><span>Average</span><b class="bad">O(n²)</b></div><div><span>Worst case</span><b class="bad">O(n²)</b></div><div><span>Extra space</span><b class="good">O(1)</b></div><div><span>Stable</span><b class="bad">No</b></div><div><span>Maximum swaps</span><b class="good">n − 1</b></div></div>
+  <h2>Many comparisons, few swaps</h2>
+  <p>Finding a minimum requires checking every remaining value, even on sorted input. However, each pass performs at most one swap, which can help when moving data is much more expensive than comparing it.</p>
+  <h2>Why is it unstable?</h2>
+  <p>Run Many duplicates to completion and compare the a/b labels on equal values. A long-distance swap can move the displaced value past an equal value, reversing their original order.</p>
+<div class="dsa-tip"><p class="t">Coding exercises</p><p>Two useful ideas: stop after k passes to obtain the smallest k values in O(nk), and relate permutation sorting to cycles. For distinct elements, the minimum arbitrary swaps is the number of elements minus the number of permutation cycles.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/selection-sort.js %}
+</script>

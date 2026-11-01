@@ -2,7 +2,9 @@
 layout: default
 ---
 <main class="page-shell page-shell--reading program-detail">
-  <a class="program-back" href="{{ '/programs/' | relative_url }}">← 모든 프로그램</a>
+  {% assign program_ui = site.data.ui[page.lang] | default: site.data.ui.ko %}
+  {% assign program_prefix = '' %}{% if page.lang != 'ko' %}{% assign program_prefix = '/' | append: page.lang %}{% endif %}
+  <a class="program-back" href="{{ program_prefix | append: '/programs/' | relative_url }}">← {{ program_ui.all_programs }}</a>
   <header class="page-heading">
     {% if page.icon %}<img class="program-icon" src="{{ page.icon | relative_url }}" width="64" height="64" alt="">{% endif %}
     {% if page.platform %}<p class="page-eyebrow">{{ page.platform | escape }}</p>{% endif %}

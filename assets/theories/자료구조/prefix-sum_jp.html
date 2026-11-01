@@ -1,0 +1,33 @@
+---
+lang: ja
+translation_key: theory-prefix-sum
+subject: data-structures
+title: "累積和"
+description: "累積和を前計算し、区間和を1回の引き算で求めます。"
+permalink: /ja/theory/prefix-sum/
+category: algorithms
+order: 23
+---
+<style>{% include lessons/prefix-sum.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">先頭からの累積値をPに保存すると、任意の区間和を1回の引き算で計算できます。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">累積和の構築と区間和の問い合わせシミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">lとrを変えて計算を再生できます。下段は累積和配列Pです。</p>
+<div class="dsa-facts"><div><span>前計算</span><b class="">O(n)</b></div><div><span>区間和の問い合わせ</span><b class="good">O(1)</b></div><div><span>追加領域</span><b class="">O(n)</b></div><div><span>計算式</span><b class="">P[r+1] − P[l]</b></div></div>
+  <h2>なぜ引き算1回で求められるのか</h2>
+  <p>P[r+1]は位置0～rの和、P[l]は0～l−1の和です。共通部分を引くとl～rだけが残ります。Pを1要素長くしてP[0] = 0とすると、l = 0にも同じ式を使えます。</p>
+  <h2>2次元累積和</h2>
+<pre><code>S[i+1][j+1] = S[i][j+1] + S[i+1][j] - S[i][j] + a[i][j]
+
+# (r1, c1)から(r2, c2)までの長方形の和
+S[r2+1][c2+1] - S[r1][c2+1] - S[r2+1][c1] + S[r1][c1]</code></pre><div class="dsa-tip"><p class="t">関連するテクニック</p><p><strong>差分配列</strong>：[l, r]にvを加える操作をd[l] += v、d[r+1] −= vで記録し、最後にdの累積和を取ります。事前にまとめて処理できる場合、各区間更新はO(1)です。</p><p><strong>累積和とハッシュ</strong>：和がKになる部分配列はP[j] − P[i] = Kとなる組に対応します。出現済みの累積和を辞書で数えると、負数を含む入力でもO(n)で解けます。</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/prefix-sum.js %}
+</script>

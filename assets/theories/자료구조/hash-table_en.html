@@ -1,0 +1,47 @@
+---
+lang: en
+translation_key: theory-hash-table
+subject: data-structures
+title: "Hash Tables"
+description: "Map a key directly to a bucket and explore how collisions are handled."
+permalink: /en/theory/hash-table/
+category: algorithms
+order: 41
+---
+<style>{% include lessons/hash-table.css %}</style>
+<div class="circuit-lesson lx ht">
+<p class="lede">A hash table turns a key into a bucket index with a hash function. With a suitable hash and load factor, lookup is O(1) on average, but different keys can map to the same bucket and cause collisions.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A seven-bucket hash-table simulator for insertion, lookup, and collision handling</h2>
+    <p class="sub" style="margin-top:0">1. Choose a collision strategy</p>
+    <div class="row">
+      <button class="bt sel" data-m="chain">Chaining (list per bucket)</button>
+      <button class="bt" data-m="probe">Linear probing (next free slot)</button>
+    </div>
+    <p class="sub">2. Insert or find a key</p>
+    <div class="row">
+      <label class="lbl">Key <input type="text" id="htK" value="cat" maxlength="8"></label>
+      <button class="bt go" id="htIns">Insert</button><button class="bt go" id="htFind">Find</button>
+      <button class="bt" id="htDemo">Insert collision example</button><button class="bt" id="htClr">Clear</button>
+    </div>
+    <p class="err" id="htErr"></p>
+    <div class="calc" id="htCalc">Add the character codes and take the remainder modulo 7 to choose a bucket.</div>
+    <div class="tbl" id="htTbl"></div>
+    <p class="msg" id="htMsg" aria-live="polite"></p>
+    <div class="stats"><div><span>Stored keys</span><b id="htN">0</b></div><div><span>Load factor (keys ÷ buckets)</span><b id="htA">0.00</b></div><div><span>Slots just checked</span><b id="htP">0</b></div></div>
+  </div>
+  <p class="hint">Keys such as cat, act, and tac have the same sum of character codes and therefore collide in this example. Load the collision example to insert five such keys.</p>
+
+  <h2>Hash function</h2>
+  <p>This example sums character codes and takes the remainder modulo the bucket count. It is simple but ignores character order, causing frequent collisions. Practical hash functions mix the positions and values of characters to distribute keys more evenly.</p>
+
+  <h2>Two ways to handle collisions</h2>
+  <p><strong>Chaining</strong> stores a list at each bucket. Multiple keys can share a bucket, but a long chain requires a linear scan.</p>
+  <p><strong>Linear probing</strong> searches consecutive slots until finding an empty one. Lookup follows the same path and stops at an empty slot. Clustering degrades performance as the table fills; implementations often resize before a load factor around 0.7, depending on the design.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/hash-table.js %}
+</script>

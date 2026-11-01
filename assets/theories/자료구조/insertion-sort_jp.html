@@ -1,0 +1,30 @@
+---
+lang: ja
+translation_key: theory-insertion-sort
+subject: data-structures
+title: "挿入ソート"
+description: "値を1つずつ取り出し、整列済みの接頭部分へ挿入します。"
+permalink: /ja/theory/insertion-sort/
+category: algorithms
+order: 13
+---
+<style>{% include lessons/insertion-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">手札を並べるように、1つの値をキーとして保持し、それより大きい値を右へずらして空いた位置に挿入します。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">挿入ソートを棒グラフで示すシミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">再生・ステップ実行・スライダーで操作できます。下段に浮かぶピンク色の棒が保持中のキーです。</p>
+<div class="dsa-facts"><div><span>最良</span><b class="good">O(n)</b></div><div><span>平均</span><b class="bad">O(n²)</b></div><div><span>最悪</span><b class="bad">O(n²)</b></div><div><span>追加領域</span><b class="good">O(1)</b></div><div><span>安定</span><b class="good">はい</b></div><div><span>得意な入力</span><b class="good">ほぼ整列済み</b></div></div>
+  <h2>ほぼ整列済みの配列に強い</h2>
+  <p>キーより大きい値だけを動かすので、ほぼ整列済みなら移動が少なくO(n)に近づきます。「ほぼ整列済み」と「逆順」を比べてください。小さな区間にも効率的で、多くの実用的なソートの一部として使われています。</p>
+  <p>同じ値をキーより右へ移動させないため、元の順序が保たれます。</p>
+<div class="dsa-tip"><p class="t">演習</p><p>移動回数も転倒数と一致します。値が1つずつ到着する場合は <code>bisect.insort</code>で挿入位置を探せますが、Pythonのリストへの挿入自体はO(n)で、全体はO(n²)です。大量のデータでは別のデータ構造、例えば <a href="{{ '/ja/theory/heap-sort/' | relative_url }}">ヒープ</a>などを検討します。</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/insertion-sort.js %}
+</script>

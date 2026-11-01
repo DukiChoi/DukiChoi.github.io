@@ -1,0 +1,42 @@
+---
+lang: en
+translation_key: theory-pipeline
+subject: computer-architecture
+title: "Pipelines and Hazards"
+description: "Step through a five-stage pipeline, data and control hazards, and forwarding."
+permalink: /en/theory/pipeline/
+category: architecture
+order: 2
+---
+<style>{% include lessons/pipeline.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">A pipeline divides instruction processing into stages. As one instruction advances, another enters, overlapping their work like washing one load while drying another. Dependencies and branches can interrupt this flow.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A five-stage pipeline simulator showing overlapping instructions and hazard stalls</h2>
+    <p class="sub" style="margin-top:0">1. Choose an instruction sequence and forwarding mode</p>
+    <div class="row"><button class="bt sel" data-ps="ind">Independent</button><button class="bt" data-ps="raw">Data hazard</button><button class="bt" data-ps="lu">load-use</button><button class="bt" data-ps="br">Branch</button>
+      <span class="lbl" style="margin-left:10px">Forwarding</span><button class="bt sel" data-fw="1">On</button><button class="bt" data-fw="0">Off</button></div>
+    <p class="sub">2. Advance one clock at a time</p>
+    <div class="row"><button class="bt go" id="ppNext">Next clock</button><button class="bt" id="ppAll">Run to end</button><button class="bt" id="ppReset">Reset</button></div>
+    <div class="pw" id="ppW"><div class="pg" id="ppG"></div><svg id="ppSvg"></svg></div>
+    <div class="leg"><span><i style="background:#B5D4F4"></i>IF · Fetch</span><span><i style="background:#CECBF6"></i>ID · Decode / read registers</span><span><i style="background:#FAC775"></i>EX · Execute</span><span><i style="background:#9FE1CB"></i>MEM · Memory</span><span><i style="background:#C0DD97"></i>WB · Write back</span><span><i style="background:repeating-linear-gradient(45deg,var(--surface-1) 0 4px,var(--border-strong) 4px 6px)"></i>Stall</span><span><i style="background:#F7C1C1"></i>Flushed instruction</span><span style="color:#D85A30">→ Forwarding</span></div>
+    <div class="msg" id="ppMsg" aria-live="polite"></div>
+    <div class="stats" id="ppSt"></div>
+  </div>
+  <p class="hint">Rows are instructions and columns are clock cycles. Toggle forwarding on the same sequence and compare stalls and total clocks.</p>
+<div class="facts"><div><span>Ideal steady-state CPI</span><b>1</b></div><div><span>Data hazard</span><b>Wait for an earlier result</b></div><div><span>Control hazard</span><b>Wait for branch outcome</b></div><div><span>Structural hazard</span><b>Resource conflict</b></div></div>
+
+  <h2>Data hazards and forwarding</h2>
+  <p><code>add r1, r2, r3</code> followed immediately by <code>sub r4, r1, r5</code> creates a dependency: sub needs r1 before add reaches WB. Without forwarding, sub waits in ID for the register write. Forwarding sends add's EX result directly to sub's EX input, avoiding that wait in this model.</p>
+  <h2>A load-use dependency still needs one stall</h2>
+  <p><code>lw</code> obtains its value only in MEM. An immediately dependent instruction needs it in EX too soon, so even forwarding leaves a one-cycle stall in this pipeline. Scheduling an independent instruction between them can hide the delay.</p>
+  <h2>Branches make the next fetch uncertain</h2>
+  <p>This model resolves a branch in EX, by which time two following instructions have been fetched. If taken, they are discarded and fetching restarts at the target. CPUs use <a href="{{ '/en/theory/branch-prediction/' | relative_url }}">Branch Prediction</a> to guess the outcome early.</p>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/pipeline.js %}
+</script>

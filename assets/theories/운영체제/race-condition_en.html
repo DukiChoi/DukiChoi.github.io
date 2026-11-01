@@ -1,0 +1,45 @@
+---
+lang: en
+translation_key: theory-race-condition
+subject: operating-systems
+title: "Race Conditions and Critical Sections"
+description: "Make two threads increment the same counter and see how an expected result of two can become one."
+permalink: /en/theory/race-condition/
+category: os
+order: 2
+---
+<style>{% include lessons/race-condition.css %}</style>
+<div class="circuit-lesson os rc">
+<p class="lede">Threads A and B each increment the shared variable count. The expected result is two, but an interleaving can produce one. Use the buttons to choose their execution order.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator illustrating a lost update by splitting count++ into three steps</h2>
+    <p class="sub" style="margin-top:0">Quick examples</p>
+    <div class="row">
+      <button class="bt go" id="rcSeq">Run A, then B</button>
+      <button class="bt go" id="rcMix">Interleave A and B</button>
+      <button class="bt" id="rcReset">Reset</button>
+    </div>
+    <p class="sub">Choose the order: press either thread's button</p>
+    <div class="grid">
+      <div class="card"><div class="tt" style="color:#0F6E56">Thread A</div><ol id="rcAcode"></ol><div class="reg">A's register<b id="rcAreg">-</b></div><button class="bt" id="rcAbt"></button></div>
+      <div class="mem"><small>Shared memory</small><div class="big" id="rcCount">0</div><small>count</small></div>
+      <div class="card"><div class="tt" style="color:#534AB7">Thread B</div><ol id="rcBcode"></ol><div class="reg">B's register<b id="rcBreg">-</b></div><button class="bt" id="rcBbt"></button></div>
+    </div>
+    <p class="msg" id="rcMsg" aria-live="polite"></p>
+    <ol class="log" id="rcLog"></ol>
+  </div>
+  <p class="hint">Yellow marks each thread's next instruction. Interleave A and B demonstrates a lost update.</p>
+
+  <h2>count++ is not necessarily atomic</h2>
+  <p>Although it occupies one source-code line, this model breaks count++ into reading memory, incrementing a register, and writing back. A context switch between these steps can expose an interleaving.</p>
+  <p>If B runs just after A reads zero, B also reads zero. Each computes one, and the second write overwrites the first. One increment is lost. A result that depends on an uncontrolled execution interleaving is a race condition.</p>
+
+  <h2>Critical section</h2>
+  <p>The code that accesses shared data is a critical section. Protecting the whole sequence so only one thread enters at a time makes the result consistently two. Tools for coordinating access include <a href="{{ '/en/theory/mutex/' | relative_url }}">Mutexes</a> and <a href="{{ '/en/theory/semaphore/' | relative_url }}">Semaphores</a>.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/race-condition.js %}
+</script>

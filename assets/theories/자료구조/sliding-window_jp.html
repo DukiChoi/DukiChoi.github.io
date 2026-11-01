@@ -1,0 +1,31 @@
+---
+lang: ja
+translation_key: theory-sliding-window
+subject: data-structures
+title: "スライディングウィンドウ"
+description: "連続区間に入る値と出る値だけを更新し、区間の情報を効率よく保ちます。"
+permalink: /ja/theory/sliding-window/
+category: algorithms
+order: 22
+---
+<style>{% include lessons/sliding-window.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">連続区間をずらし、新しく入る値と出る値だけで状態を更新します。ウィンドウ全体を毎回計算し直す必要がありません。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">区間和と重複なし部分文字列を扱うスライディングウィンドウシミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">モードと入力例を変えて比較してください。オレンジは現在のウィンドウ、緑はこれまでの最良区間です。</p>
+<div class="dsa-facts"><div><span>時間計算量</span><b class="good">O(n)</b></div><div><span>固定長ウィンドウ</span><b class="">加算と減算</b></div><div><span>可変長ウィンドウ</span><b class="">lを進めて条件を復元</b></div></div>
+  <h2>固定長の場合</h2>
+  <p>長さkの和を毎回計算するとO(nk)です。スライドでは2つの値だけが変わり、1回の加算と減算で更新できるためO(n)です。演算回数を比較してください。</p>
+  <h2>可変長の場合</h2>
+  <p>rを広げ、重複なしなどの条件が崩れたら、再び満たすまでlを進めます。辞書や頻度配列で区間の状態を管理します。ここではlastに各文字の最新位置を保存し、重複の直後までlを一度に進めます。</p>
+<div class="dsa-tip"><p class="t">よくある演習</p><p>連続k個の最大和・平均、重複なし最長部分文字列、最小被覆区間、異なる値がk種類以下の最長区間などがあります。各長さkのウィンドウの最大要素には単調デックを使います。</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/sliding-window.js %}
+</script>

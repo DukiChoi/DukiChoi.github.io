@@ -1,0 +1,45 @@
+---
+lang: en
+translation_key: theory-pwm
+subject: embedded
+title: "PWM and Duty Cycle"
+description: "Explore how on/off digital output controls LED brightness and motor drive through duty cycle."
+permalink: /en/theory/pwm/
+category: embedded
+order: 4
+---
+<style>{% include lessons/pwm.css %}</style>
+<div class="circuit-lesson lx pw">
+<p class="lede">A microcontroller's digital pin outputs either 0 V or 3.3 V. Switching rapidly lets a load respond to the average drive. The fraction of each cycle spent high is the duty cycle.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator linking PWM duty cycle, waveform, average voltage, and LED brightness</h2>
+    <p class="sub" style="margin-top:0">1. Set duty cycle and frequency</p>
+    <div class="row"><label class="lbl" for="pwD">Duty cycle</label><input type="range" id="pwD" min="0" max="100" step="1" value="30"><span class="big" id="pwDv">30%</span></div>
+    <div class="row" style="margin-top:8px">
+      <span class="lbl">PWM frequency</span>
+      <button class="bt" data-f="100">100 Hz</button><button class="bt sel" data-f="1000">1 kHz</button><button class="bt" data-f="20000">20 kHz</button>
+    </div>
+    <p class="sub">2. Choose the viewing mode</p>
+    <div class="row">
+      <button class="bt sel" data-v="avg">Normal speed (apparent brightness)</button>
+      <button class="bt go" data-v="slow">Slow motion (one cycle per second)</button>
+    </div>
+    <svg id="pwSvg" width="100%" viewBox="0 0 680 220" role="img" aria-label="PWM waveform and LED"></svg>
+    <p class="msg" id="pwMsg" aria-live="polite"></p>
+    <div class="info" id="pwInfo"></div>
+  </div>
+  <p class="hint">Move the sliders to change the high interval and average-voltage line. Slow motion reveals the LED switching fully on and off.</p>
+
+  <h2>Average voltage = duty cycle × supply voltage</h2>
+  <p>A 3.3 V output high for 30% of a cycle averages 0.3 × 3.3 V = 0.99 V. Rapid LED switching appears as a steady brightness; a motor's electrical and mechanical behavior smooths the pulsed drive. Motor PWM often uses frequencies above 20 kHz to reduce audible noise.</p>
+
+  <h2>Generating PWM with an STM32 timer</h2>
+  <p>The counter repeatedly counts from 0 through ARR, with the output high while the count is below CCR. ARR sets the period and CCR the duty cycle. PSC divides the timer clock so the period fits the available counter range.</p>
+  <pre><code>PWM frequency = timer clock / ((PSC + 1) × (ARR + 1)); Duty cycle = CCR / (ARR + 1)</code></pre>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/pwm.js %}
+</script>

@@ -7,7 +7,7 @@
 {%- endif -%}
 <div class="program-slot" data-tilt-slot>
   {% if include.preview %}
-  <div class="program-link{% if include.cube %} program-link--cube{% endif %}" tabindex="0" role="group" aria-label="{{ banner_style.title | escape }} 미리보기"
+  <div class="program-link{% if include.cube %} program-link--cube{% endif %}" tabindex="0" role="group" aria-label="{{ banner_style.title | escape }} {% if page.lang == 'en' %}preview{% elsif page.lang == 'ja' %}プレビュー{% else %}미리보기{% endif %}"
   {% else %}
   <a class="program-link{% if include.cube %} program-link--cube{% endif %}{% if banner_program.featured %} program-link--featured{% endif %}" href="{{ banner_url | escape }}"
   {% endif %}

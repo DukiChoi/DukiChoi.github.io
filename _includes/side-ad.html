@@ -1,10 +1,10 @@
 {% unless page.ads == false %}
 {% if site.data.advertising.adsense.enabled and site.data.advertising.adsense.publisher_id != blank and site.data.advertising.adsense.side_slot != blank %}
 {% assign side_ad_count = include.count | default: 1 %}
-<aside class="site-side-ad site-side-ad--{{ include.side | escape }}" aria-label="{% if page.lang == 'en' %}{% if include.side == 'right' %}Right{% else %}Left{% endif %} advertisement{% else %}{% if include.side == 'right' %}오른쪽{% else %}왼쪽{% endif %} 광고{% endif %}">
+<aside class="site-side-ad site-side-ad--{{ include.side | escape }}" aria-label="{% if page.lang == 'en' %}{% if include.side == 'right' %}Right{% else %}Left{% endif %} advertisement{% elsif page.lang == 'ja' %}{% if include.side == 'right' %}右側{% else %}左側{% endif %}の広告{% else %}{% if include.side == 'right' %}오른쪽{% else %}왼쪽{% endif %} 광고{% endif %}">
   {% for ad_number in (1..side_ad_count) %}
   <div class="site-side-ad__item">
-    <span class="site-side-ad__label">{% if page.lang == 'en' %}Advertisement{% else %}광고{% endif %}</span>
+    <span class="site-side-ad__label">{% if page.lang == 'en' %}Advertisement{% elsif page.lang == 'ja' %}広告{% else %}광고{% endif %}</span>
     <div class="site-side-ad__placement">
       <ins class="adsbygoogle site-side-ad__unit"
            data-ad-client="{{ site.data.advertising.adsense.publisher_id | escape }}"

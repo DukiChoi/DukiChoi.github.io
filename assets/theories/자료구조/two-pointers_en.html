@@ -1,0 +1,31 @@
+---
+lang: en
+translation_key: theory-two-pointers
+subject: data-structures
+title: "Two Pointers"
+description: "Move two pointers monotonically to turn some quadratic searches into linear scans."
+permalink: /en/theory/two-pointers/
+category: algorithms
+order: 21
+---
+<style>{% include lessons/two-pointers.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">Two monotonic pointers can replace a nested search with a linear scan. The key is proving that discarded positions never need to be revisited.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator showing how two pointers eliminate candidates</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Choose a mode and change the target. Faded cells have been eliminated from consideration.</p>
+<div class="dsa-facts"><div><span>Time</span><b class="good">O(n)</b></div><div><span>Extra space</span><b class="good">O(1)</b></div><div><span>Converging pointers</span><b class="">Requires sorting</b></div><div><span>Same direction</span><b class="">Positive values</b></div></div>
+  <h2>Converging pointers</h2>
+  <p>If the pair sum is too small, advance l; if too large, retreat r. When even the largest remaining partner cannot help a[l], that left value is safely discarded. This argument requires a sorted array.</p>
+  <h2>Move in the same direction</h2>
+  <p>Expand with r and shrink with l when the sum condition is met. Positive values ensure that expansion increases the sum and contraction decreases it. Negative values break this monotonicity; exact-sum counting can instead combine <a href="{{ '/en/theory/prefix-sum/' | relative_url }}">Prefix sums</a> with hashing, while shortest-threshold problems may need other techniques.</p>
+<div class="dsa-tip"><p class="t">Common coding exercises</p><p>Common patterns include sorted pair sum, fixing one value then solving three-sum in O(n²), merging sorted arrays, shortest positive subarray above a threshold, and minimum pair difference meeting a lower bound.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/two-pointers.js %}
+</script>

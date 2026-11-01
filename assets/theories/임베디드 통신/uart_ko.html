@@ -1,0 +1,57 @@
+---
+lang: ko
+translation_key: theory-uart
+subject: embedded
+title: UART 프레임
+description: 한 글자를 시작 비트, 데이터 8비트, 패리티, 정지 비트로 바꿔 선 하나로 보내는 과정을 봅니다.
+permalink: /theory/uart/
+category: embedded
+order: 1
+---
+<style>{% include lessons/uart.css %}</style>
+<div class="circuit-lesson lx ua">
+<p class="lede">UART는 선 하나로 바이트를 한 비트씩 보냅니다. 송신기와 수신기는 클럭 선을 공유하지 않는 대신, 미리 약속한 속도(보레이트)와 프레임 형식에 맞춰 각자 시간을 잽니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">한 글자가 UART 프레임으로 바뀌어 전송되는 파형을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 보낼 글자와 통신 설정을 정하세요</p>
+    <div class="row">
+      <label class="lbl">보낼 글자 <input type="text" id="uaIn" value="A" maxlength="4" style="width:70px;text-align:center;font-family:var(--font-mono)"></label>
+      <label class="lbl">보레이트 <select id="uaBaud"><option>9600</option><option>19200</option><option>38400</option><option>115200</option></select></label>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="lbl">패리티</span>
+      <button class="bt sel" data-p="N">없음</button><button class="bt" data-p="E">짝수</button><button class="bt" data-p="O">홀수</button>
+      <span class="lbl" style="margin-left:12px">정지 비트</span>
+      <button class="bt sel" data-s="1">1개</button><button class="bt" data-s="2">2개</button>
+    </div>
+    <p class="err" id="uaErr"></p>
+    <p class="sub" style="margin-top:4px">2. 전송을 재생하세요</p>
+    <div class="row"><button class="bt go" id="uaPlay">전송 재생</button></div>
+    <svg id="uaSvg" width="100%" viewBox="0 0 680 180" role="img" aria-label="UART 파형"></svg>
+    <div class="leg">
+      <span><i style="background:rgba(216,90,48,.3)"></i>시작 비트</span>
+      <span><i style="background:rgba(29,158,117,.3)"></i>데이터 (D0부터)</span>
+      <span><i style="background:rgba(127,119,221,.35)"></i>패리티</span>
+      <span><i style="background:rgba(136,135,128,.35)"></i>정지 비트</span>
+      <span><i style="background:#E8A317;border-radius:50%"></i>수신기가 읽는 지점</span>
+    </div>
+    <p class="rx" id="uaRx"></p>
+    <p class="msg" id="uaMsg" aria-live="polite"></p>
+    <div class="info" id="uaInfo"></div>
+  </div>
+  <p class="hint">글자 대신 0x41처럼 16진수를 넣어도 됩니다. [전송 재생]을 누르면 송신기가 비트를 하나씩 내보내고, 수신기가 각 비트의 한가운데에서 값을 읽습니다.</p>
+
+  <h2>프레임은 시작 비트로 열고 정지 비트로 닫습니다</h2>
+  <p>아무것도 보내지 않을 때 선은 high에 머뭅니다. 송신기가 선을 low로 떨어뜨리면 이것이 시작 비트이고, 수신기는 이 순간부터 자기 클럭으로 시간을 재기 시작합니다. 이어서 데이터 8비트가 가장 낮은 비트(D0)부터 나가고, 마지막에 송신기가 선을 다시 high로 올리는 정지 비트로 프레임을 닫습니다.</p>
+  <p>패리티 비트는 1의 개수를 짝수 또는 홀수로 맞추는 비트입니다. 수신기는 1의 개수를 세어서 비트 하나가 뒤집힌 오류를 알아챌 수 있습니다.</p>
+
+  <h2>보레이트가 맞아야 하는 이유</h2>
+  <p>수신기는 시작 비트를 기준으로 "1.5비트 뒤, 2.5비트 뒤…"처럼 각 비트의 가운데를 계산해서 읽습니다. 양쪽 클럭이 조금씩 다르면 비트를 읽는 지점이 점점 밀립니다. 정지 비트에 이를 때까지 밀린 거리가 반 비트를 넘으면 잘못 읽으므로, 이론상 양쪽 오차의 합이 약 5%를 넘으면 안 되고 실무에서는 2% 이내로 맞춥니다.</p>
+  <p>RS-485는 같은 UART 프레임을 차동 신호로 멀리 보내는 물리 계층입니다. Modbus RTU는 한 글자를 11비트로 정해 두어서, 기본은 짝수 패리티와 정지 비트 1개(8E1)이고 패리티를 쓰지 않으면 정지 비트를 2개(8N2) 씁니다.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/uart.js %}
+</script>

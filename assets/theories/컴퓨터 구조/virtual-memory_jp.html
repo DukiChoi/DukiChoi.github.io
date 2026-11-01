@@ -1,0 +1,45 @@
+---
+lang: ja
+translation_key: theory-virtual-memory
+subject: computer-architecture
+title: "仮想メモリとTLB"
+description: "TLBとページテーブルによる変換とページフォルトを確認します。"
+permalink: /ja/theory/virtual-memory/
+category: architecture
+order: 4
+---
+<style>{% include lessons/virtual-memory.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">プログラムは独立した仮想アドレスを使います。ページ番号から物理フレームを調べ、オフセットと合わせて物理アドレスを作ります。TLBは変換結果をキャッシュします。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">仮想アドレス変換シミュレータ</h2>
+    <p class="sub" style="margin-top:0">1. アドレスを設定（256バイト、仮想8ページ、物理4枠）</p>
+    <div class="row"><button class="bt sel" data-vs="a">例1</button><button class="bt" data-vs="b">例2（多数のページ）</button>
+      <input type="text" id="vmIn" style="flex:1;min-width:220px;font-family:var(--font-mono)" aria-label="仮想アドレス列"></div>
+    <p class="err" id="vmErr"></p>
+    <div class="row"><button class="bt go" id="vmNext">次のステップ</button><button class="bt" id="vmAcc">このアドレスを完了</button><button class="bt" id="vmAll">最後まで</button><button class="bt" id="vmReset">最初から</button><span class="lbl" id="vmCnt"></span></div>
+    <div class="va" id="vmVa"></div>
+    <div class="vmg">
+      <div><div class="vt">TLB（最近の4変換）</div><table class="t" id="vmTlb"></table></div>
+      <div><div class="vt">ページテーブル</div><table class="t" id="vmPt"></table></div>
+      <div><div class="vt">物理メモリ</div><div id="vmFr"></div></div>
+    </div>
+    <div class="msg" id="vmMsg" aria-live="polite"></div>
+    <div class="stats" id="vmSt"></div>
+  </div>
+  <p class="hint">アドレス分解→TLB→必要ならテーブル→物理アドレスの順に進みます。最初は0と3だけが存在します。</p>
+<div class="facts"><div><span>ページ番号</span><b>アドレス÷256</b></div><div><span>オフセット</span><b>アドレス%256</b></div><div><span>物理アドレス</span><b>フレーム×256＋オフセット</b></div><div><span>TLBヒット率</span><b>高い場合が多い</b></div></div>
+
+  <h2>仮想メモリの目的</h2>
+  <p>独立した空間でプログラムを分離し、必要なページだけを物理メモリに置けます。この例では非在住ページをディスクから取得します。空きがない場合の対象は <a href="{{ '/ja/theory/page-replacement/' | relative_url }}">ページ置換アルゴリズム</a>で選び、この例はFIFOです。</p>
+  <h2>TLBは追加のメモリアクセスを減らす</h2>
+  <p>単一階層モデルでは、テーブルの読出しとデータの読出しが必要です。TLBに当たれば前者を省けます。実際の多階層テーブルではさらに多くの参照が必要な場合があります。</p>
+<div class="tip"><p class="t">実効アクセス時間</p><p>検索t、メモリm、ヒット率hなら、このモデルでh(t+m)+(1−h)(t+2m)です。ページフォルトを除き、t=1ns、m=100ns、h=0.98なら103nsです。</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/virtual-memory.js %}
+</script>

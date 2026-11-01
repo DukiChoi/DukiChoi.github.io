@@ -1,0 +1,60 @@
+---
+lang: en
+translation_key: theory-page-replacement
+subject: operating-systems
+title: "Page Replacement"
+description: "Compare FIFO, LRU, and OPT when memory is full and a page must be evicted."
+permalink: /en/theory/page-replacement/
+category: os
+order: 6
+---
+<style>{% include lessons/page-replacement.css %}</style>
+<div class="circuit-lesson os pr">
+<p class="lede">If a requested page is not in physical memory, a page fault occurs and the system must make it available. In this model it is fetched from disk. When every frame is occupied, a replacement policy chooses which page to evict, affecting the total fault count.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator showing pages entering and leaving frames along a reference string</h2>
+    <p class="sub" style="margin-top:0">1. Choose a page reference string and frame count</p>
+    <div class="row">
+      <input type="text" id="prRef" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0" aria-label="Page reference string">
+      <label style="font-size:14px;color:var(--text-secondary)">Frames <select id="prF"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label>
+      <button class="bt" id="prBel">Load Belady example</button>
+    </div>
+    <p class="err" id="prErr"></p>
+    <p class="sub" style="margin-top:8px">2. Choose a replacement policy</p>
+    <div class="row">
+      <button class="bt sel" data-a="fifo">FIFO (first loaded)</button>
+      <button class="bt" data-a="lru">LRU (least recently used)</button>
+      <button class="bt" data-a="opt">OPT (furthest future use)</button>
+    </div>
+    <p class="sub">3. Process requests one at a time</p>
+    <div class="row">
+      <button class="bt go" id="prStep">Next request</button>
+      <button class="bt" id="prAll">Play to end</button>
+      <button class="bt" id="prReset">Reset</button>
+    </div>
+    <div class="wrap"><div class="grid" id="prGrid"></div></div>
+    <div class="leg">
+      <span><i style="background:#F5C4B3"></i>Newly loaded page (fault)</span>
+      <span><i style="background:#9FE1CB"></i>Resident page (hit)</span>
+    </div>
+    <p class="msg" id="prMsg" aria-live="polite"></p>
+    <p class="stat" id="prStat"></p>
+    <p class="sub">Page faults for the same reference string</p>
+    <div class="cmp" id="prCmp"></div>
+  </div>
+  <p class="hint">Each Next request advances one column. A column shows memory immediately after processing that request.</p>
+
+  <h2>Three replacement policies</h2>
+  <p><strong>FIFO</strong> evicts the page loaded earliest. It is simple, but even a frequently used page may be removed just because it arrived long ago.</p>
+  <p><strong>LRU</strong> evicts the page unused for the longest time. It relies on temporal locality; practical systems often approximate it.</p>
+  <p><strong>OPT</strong> evicts the page whose next use is furthest in the future. It minimizes faults for a known reference string, but is a benchmark rather than an implementable online policy because future requests are unknown.</p>
+
+  <h2>Belady's anomaly</h2>
+  <p>More frames usually reduce page faults, but FIFO can produce more faults with additional frames. Load the Belady example and change from three frames to four: faults increase from 9 to 10. LRU and OPT do not exhibit this anomaly.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/page-replacement.js %}
+</script>

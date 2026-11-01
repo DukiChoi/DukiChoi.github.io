@@ -1,0 +1,31 @@
+---
+lang: ko
+translation_key: theory-two-pointers
+subject: data-structures
+title: 투 포인터
+description: 포인터 두 개를 한 방향으로만 움직여 O(n²) 탐색을 O(n)으로 줄이는 방법입니다.
+permalink: /theory/two-pointers/
+category: algorithms
+order: 21
+---
+<style>{% include lessons/two-pointers.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">포인터 두 개를 배열 위에서 움직여, 이중 반복문으로 O(n²)에 하던 탐색을 O(n)으로 줄입니다. 포인터를 이미 지나간 쪽으로 되돌리지 않는 것이 핵심입니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">두 포인터가 움직이며 후보를 줄이는 과정을 보여 주는 시뮬레이터</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">종류를 고르고 목표 값을 바꿔 보세요. 흐려진 칸은 답이 될 수 없어서 버린 칸입니다.</p>
+<div class="dsa-facts"><div><span>시간</span><b class="good">O(n)</b></div><div><span>추가 공간</span><b class="good">O(1)</b></div><div><span>양끝에서 좁히기</span><b class="">정렬 필요</b></div><div><span>같은 방향</span><b class="">양수만</b></div></div>
+  <h2>양끝에서 좁히기</h2>
+  <p>합이 모자라면 l을, 넘치면 r을 옮깁니다. 합이 모자랄 때 지금의 l은 남은 가장 큰 수 r과 더해도 모자라므로, 다른 어떤 짝과도 답이 될 수 없습니다. 그래서 버려도 안전합니다. 이 판단은 배열이 정렬되어 있어야만 성립합니다.</p>
+  <h2>같은 방향으로 이동하기</h2>
+  <p>r로 구간을 넓히고, 조건을 만족하면 l로 줄여 봅니다. 모든 값이 양수여야 "넓히면 합이 커지고, 줄이면 작아진다"가 성립합니다. 음수가 섞이면 이 방법을 쓸 수 없고, <a href="{{ '/theory/prefix-sum/' | relative_url }}">누적 합</a>과 해시를 함께 써야 합니다.</p>
+<div class="dsa-tip"><p class="t">코테에서 자주 나오는 형태</p><p>정렬 후 두 수의 합, 하나를 고정하고 나머지 둘을 투 포인터로 찾는 세 수의 합(O(n²)), 정렬된 두 배열 합치기, 합이 S 이상인 가장 짧은 구간, 서로 다른 두 수의 차이가 M 이상인 최솟값 찾기가 대표적입니다.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/two-pointers.js %}
+</script>

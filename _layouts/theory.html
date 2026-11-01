@@ -1,9 +1,12 @@
 ---
 layout: default
 ---
-{%- assign theory_pages = site.pages | where: "section", "theory" | where_exp: "entry", "entry.overview != true" | where_exp: "entry", "entry.folder_overview != true" -%}
-{%- assign theory_articles = site.theory | concat: theory_pages | where_exp: "entry", "entry.published != false" | sort: "order" -%}
-{%- assign folder_pages = site.pages | where: "section", "theory" | where: "folder_overview", true -%}
+{%- assign ui = site.data.ui[page.lang] | default: site.data.ui.ko -%}
+{%- assign theory_home = "/theory/" -%}
+{%- if page.lang != "ko" -%}{%- assign theory_home = "/" | append: page.lang | append: "/theory/" -%}{%- endif -%}
+{%- assign theory_pages = site.pages | where: "lang", page.lang | where: "section", "theory" | where_exp: "entry", "entry.overview != true" | where_exp: "entry", "entry.folder_overview != true" -%}
+{%- assign theory_articles = site.theory | concat: theory_pages | where: "lang", page.lang | where_exp: "entry", "entry.published != false" | sort: "order" -%}
+{%- assign folder_pages = site.pages | where: "lang", page.lang | where: "section", "theory" | where: "folder_overview", true -%}
 {%- assign tree_entries = theory_articles | concat: folder_pages -%}
 {%- assign current_folder = page.path | remove_first: "assets/theories/" | split: "/" | pop | last -%}
 {%- assign previous_article = nil -%}
@@ -23,7 +26,7 @@ layout: default
 
 <main class="theory-shell{% if page.overview %} theory-shell--overview{% endif %}">
   <header class="theory-masthead">
-    <a class="theory-category" href="{{ '/theory/' | relative_url }}">{% if page.path contains "assets/theories/" and current_folder %}{{ current_folder | escape }}{% else %}{{ page.topic | default: "Tech Study" | escape }}{% endif %}</a>
+    <a class="theory-category" href="{{ theory_home | relative_url }}">{% if page.subject %}{{ ui.subjects[page.subject] | escape }}{% else %}{{ page.topic | default: "Tech Study" | escape }}{% endif %}</a>
     <h1 id="theory-title">{{ page.title | escape }}</h1>
   </header>
   <div class="theory-grid">
@@ -35,15 +38,15 @@ layout: default
         {% assign index_articles = theory_articles %}
         {% if page.folder_overview %}
           {% assign folder_path = page.path | remove: "index.md" | remove: "index.html" %}
-          {% assign index_articles = theory_articles | where_exp: "entry", "entry.path contains folder_path" %}
+          {% assign index_articles = theory_articles | where: "subject", page.subject %}
         {% endif %}
         {% if page.overview %}
-          {% assign index_groups = tree_entries | group_by_exp: "entry", "entry.path | split: '/' | slice: 2, 1 | first" | sort: "name" %}
+          {% assign index_groups = tree_entries | group_by: "subject" | sort: "name" %}
           <div class="theory-subjects">
           {% for subject in index_groups %}
             {% assign subject_articles = subject.items | where_exp: "entry", "entry.folder_overview != true" | sort: "order" %}
             <section class="theory-subject">
-              <h2 class="theory-subject__title">{{ subject.name | escape }} <span class="theory-count">{{ subject_articles.size }}</span></h2>
+              <h2 class="theory-subject__title">{{ ui.subjects[subject.name] | default: subject.name | escape }} <span class="theory-count">{{ subject_articles.size }}</span></h2>
               {% include theory-index-cards.html articles=subject_articles heading="h3" %}
             </section>
           {% endfor %}
@@ -55,26 +58,26 @@ layout: default
       </article>
 
       {% unless page.overview or page.folder_overview %}
-      <nav class="theory-pagination" aria-label="이전 글과 다음 글">
+      <nav class="theory-pagination" aria-label="{{ ui.previous_next }}">
         {% if previous_article %}
         <a class="theory-pagination__previous" href="{{ previous_article.url | relative_url }}">
-          <span>이전 글</span><strong>{{ previous_article.title | escape }}</strong>
+          <span>{{ ui.previous }}</span><strong>{{ previous_article.title | escape }}</strong>
         </a>
         {% endif %}
         {% if next_article %}
         <a class="theory-pagination__next" href="{{ next_article.url | relative_url }}">
-          <span>다음 글</span><strong>{{ next_article.title | escape }}</strong>
+          <span>{{ ui.next }}</span><strong>{{ next_article.title | escape }}</strong>
         </a>
         {% endif %}
       </nav>
       {% endunless %}
     </div>
 
-    <aside class="theory-sidebar" aria-label="Tech Study 탐색">
-      <a class="theory-list__overview{% if page.overview %} is-current{% endif %}" href="{{ '/theory/' | relative_url }}"{% if page.overview %} aria-current="page"{% endif %}>Tech Study</a>
-      <nav class="theory-list theory-tree" aria-label="Tech Study 글 목록">
+    <aside class="theory-sidebar" aria-label="{{ ui.browse }}">
+      <a class="theory-list__overview{% if page.overview %} is-current{% endif %}" href="{{ theory_home | relative_url }}"{% if page.overview %} aria-current="page"{% endif %}>Tech Study</a>
+      <nav class="theory-list theory-tree" aria-label="{{ ui.articles }}">
         <details class="theory-navigation" data-tree-key="all" open>
-          <summary>전체 자료 <span class="theory-count">{{ theory_articles.size }}</span></summary>
+          <summary>{{ ui.all_materials }} <span class="theory-count">{{ theory_articles.size }}</span></summary>
           <ul class="theory-tree__children">
           {% include theory-folder-tree.html entries=tree_entries depth=2 prefix="" %}
           </ul>

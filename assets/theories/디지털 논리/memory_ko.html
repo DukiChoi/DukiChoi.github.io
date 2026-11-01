@@ -1,0 +1,60 @@
+---
+lang: ko
+translation_key: theory-memory
+subject: digital-logic
+title: DRAM과 NAND 플래시
+description: DRAM과 NAND가 데이터를 수정하는 방식과 처리 시간을 비교합니다.
+permalink: /theory/memory/
+order: 4
+---
+<div class="circuit-lesson">
+<p class="lede">‘데이터 1개 수정’ 버튼을 누르면 DRAM과 NAND에 같은 요청을 보냅니다. DRAM은 기존 셀에 새 값을 바로 쓰지만, NAND는 빈 페이지에 수정한 데이터를 기록합니다. NAND의 빈 페이지가 부족해지면 사용 중인 데이터를 다른 곳으로 옮기고 블록을 지우는 과정도 확인할 수 있습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">DRAM과 NAND 플래시의 데이터 수정 과정과 처리 시간을 비교하는 시뮬레이션</h2>
+    <div class="lat"><span>DRAM 읽기/쓰기</span><div class="tr"><div class="fl" style="width:26%;background:#378ADD"></div></div><span class="tm">~50 ns</span></div>
+    <div class="lat"><span>NAND 페이지 읽기</span><div class="tr"><div class="fl" style="width:72%;background:#5DCAA5"></div></div><span class="tm">~50 µs</span></div>
+    <div class="lat"><span>NAND 페이지 쓰기</span><div class="tr"><div class="fl" style="width:88%;background:#E8A317"></div></div><span class="tm">~500 µs</span></div>
+    <div class="lat"><span>NAND 블록 지우기</span><div class="tr"><div class="fl" style="width:97%;background:#E24B4A"></div></div><span class="tm">~2 ms</span></div>
+    <p class="lb" style="margin:6px 0 0">막대 길이는 처리 시간의 차이를 로그 눈금으로 나타냅니다.</p>
+
+    <div class="memory-controls">
+      <div class="memory-controls__writes" role="group" aria-label="메모리 쓰기">
+        <button class="bt" id="w1">데이터 1개 수정</button><button class="bt" id="w5">5개 연속 수정</button>
+      </div>
+      <div class="memory-controls__speed" role="group" aria-label="시뮬레이션 속도">
+        <button class="bt mode on" id="s1">1배속</button><button class="bt mode" id="s5">5배속</button>
+      </div>
+    </div>
+    <div class="pan">
+      <div class="ph"><b>DRAM · 커패시터 셀</b><span class="tm">누적 시간 <span id="dt">0</span> µs</span></div>
+      <div class="dg" id="dg"></div>
+      <p class="sts" id="ds">DRAM은 선택한 셀에 새 값을 바로 쓸 수 있습니다. 파란 테두리는 리프레시 중인 행을 나타냅니다.</p>
+    </div>
+    <div class="pan">
+      <div class="ph"><b>NAND 플래시 · 블록과 페이지</b><span class="tm">누적 시간 <span id="nt">0</span> µs, 대기 <span id="nq">0</span></span></div>
+      <div id="nd"></div>
+      <p class="sts" id="ns" aria-live="polite">초록색 페이지에는 현재 사용 중인 데이터가 있습니다. 취소선은 수정 전 데이터가 남은 페이지, 점선은 빈 페이지를 나타냅니다.</p>
+    </div>
+  </div>
+  <p class="hint">1배속에서는 실제 1 µs를 화면의 2 ms로 늘려 보여줍니다. DRAM의 전하 누설과 리프레시는 원리를 살펴볼 수 있도록 별도의 속도로 표시합니다.</p>
+  <p class="hint">L0, L1 등은 데이터 번호입니다. 데이터를 수정해도 번호는 같지만, NAND에서 실제로 저장되는 페이지는 달라집니다.</p>
+
+  <h2>NAND 플래시의 이름은 메모리 셀의 연결 구조에서 왔습니다</h2>
+  <p>NAND 플래시는 메모리 셀을 직렬로 연결한 구조가 NAND 게이트의 트랜지스터 배치와 닮아서 붙은 이름입니다. NAND 논리 게이트 자체에 데이터를 저장한다는 뜻은 아닙니다. NAND 플래시는 데이터를 페이지 단위로 읽고 쓰며, 지울 때는 여러 페이지가 묶인 블록을 한꺼번에 지웁니다.</p>
+
+  <h2>DRAM은 데이터를 유지하려면 주기적으로 전하를 보충해야 합니다</h2>
+  <p>DRAM은 각 셀의 작은 커패시터에 전하를 저장해 데이터를 표현합니다. 기존 셀에 새 값을 바로 쓸 수 있고, 이 예시에서는 쓰기 한 번에 약 50 ns가 걸린다고 가정합니다.</p>
+  <p>커패시터의 전하는 시간이 지나면서 조금씩 새어 나갑니다. 따라서 DRAM은 일정한 주기로 셀의 값을 읽고 다시 써 넣어야 합니다. 이 과정을 리프레시라고 합니다. 전원이 꺼져 전하를 보충할 수 없게 되면 저장된 데이터도 사라집니다.</p>
+
+  <h2>NAND는 같은 위치에 데이터를 바로 덮어쓸 수 없습니다</h2>
+  <p>NAND는 절연막에 갇힌 전하로 데이터를 저장하므로 전원이 꺼져도 데이터를 유지합니다. 하지만 데이터 수정에는 DRAM보다 많은 시간이 걸립니다. 이 예시에서는 페이지 쓰기 한 번에 약 500 µs가 걸린다고 가정합니다.</p>
+  <p>NAND의 이미 사용한 페이지는 새 데이터로 바로 덮어쓸 수 없습니다. 따라서 수정한 데이터는 빈 페이지에 기록하고, 이전 데이터가 있던 페이지는 더 이상 사용하지 않는다고 표시합니다.</p>
+  <p>빈 페이지가 부족해지면 아직 사용 중인 데이터를 다른 블록으로 옮긴 뒤, 원래 블록을 통째로 지워 공간을 확보합니다. 이 과정을 가비지 컬렉션이라고 합니다. 페이지 일부만 골라 지울 수 없기 때문에 이런 정리 과정이 필요합니다.</p>
+  <p>SSD와 eMMC의 컨트롤러는 FTL을 통해 데이터의 주소와 실제 저장 위치를 연결합니다. 컨트롤러는 가비지 컬렉션도 처리하며, 특정 블록에 쓰기가 몰리지 않도록 여러 블록에 나누어 기록합니다. 이렇게 블록의 사용량을 고르게 맞추는 동작을 웨어 레벨링이라고 합니다.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/memory.js %}
+</script>

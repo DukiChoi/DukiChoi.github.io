@@ -1,0 +1,38 @@
+---
+lang: ja
+translation_key: theory-normalization
+subject: db
+title: "正規化"
+description: "非正規形を1NF、2NF、3NFに分解し、更新・挿入・削除の異常を確認します。"
+permalink: /ja/theory/normalization/
+category: database
+order: 4
+---
+<style>{% include lessons/normalization.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">正規化は、混在した事実を主題別に分けて重複を減らす処理です。重複は更新・挿入・削除時の不整合につながります。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">正規化で異常が解消される過程のシミュレータ</h2>
+    <p class="sub" style="margin-top:0">1. 正規形を選択</p>
+    <div class="row"><button class="bt sel" data-nf="0">非正規形</button><button class="bt" data-nf="1">1NF</button><button class="bt" data-nf="2">2NF</button><button class="bt" data-nf="3">3NF</button></div>
+    <div class="fd" id="nfFd"></div>
+    <div class="nfw" id="nfW"></div>
+    <p class="sub">2. 異常を起こす操作を実行</p>
+    <div class="row"><button class="bt go" data-an="upd">更新：情報工学の事務室を工学館305へ</button><button class="bt go" data-an="ins">挿入：履修者のいないC04アルゴリズムを登録</button><button class="bt go" data-an="del">削除：イ・バダの回路履修を取消</button></div>
+    <div class="msg" id="nfMsg" aria-live="polite"></div>
+  </div>
+  <p class="hint">正規形を変え、同じ操作を繰り返してください。下線付きの列が主キーです。</p>
+<div class="facts"><div><span>1NF</span><b>1セル1値</b></div><div><span>2NF</span><b>部分関数従属を除去</b></div><div><span>3NF</span><b>推移的従属を除去</b></div><div><span>BCNF</span><b>決定項が候補キー</b></div></div>
+
+  <h2>関数従属性から分割先を考える</h2>
+  <p>学生番号で名前が決まる関係を「学生番号→名前」と書きます。色付きチップが関数従属性を示します。段階を進めると関連した事実が別テーブルにまとまります。</p>
+  <p><strong>1NF</strong>は1セルに1つの値を置きます。 <strong>2NF</strong>は複合キーの一部だけに依存する列を分離します。 <strong>3NF</strong>は非キー列を介した推移的な依存を分離します。 <strong>BCNF</strong>では、すべての決定項が候補キーであることを求めます。</p>
+<div class="tip"><p class="t">実務と面接</p><p>正規化は重複を減らしますが、検索時のJOINが増える場合があります。読込み主体の用途では意図的な非正規化も使います。3種類の異常を具体例で説明できるようにしましょう。</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/normalization.js %}
+</script>

@@ -1,0 +1,46 @@
+---
+lang: ja
+translation_key: theory-sql-order
+subject: db
+title: "SQLの実行順序"
+description: "FROMからLIMITまでの論理的な処理順序と中間結果を確認します。"
+permalink: /ja/theory/sql-order/
+category: database
+order: 1
+---
+<style>{% include lessons/sql-order.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">SQLの記述順と論理的な処理順は異なります。FROMで取得し、絞込み、グループ化、計算、整列を行います。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">SQLの論理的処理順序シミュレータ</h2>
+    <p class="sub" style="margin-top:0">1. 条件を変更</p>
+    <div class="row">
+      <label class="lbl">WHERE 給与 ≥ <input type="number" id="qW" value="3000" step="100" min="2500" max="5200" style="width:84px"></label>
+      <label class="lbl">HAVING COUNT(*) ≥ <select id="qH"><option>1</option><option selected>2</option><option>3</option></select></label>
+      <label class="lbl">ORDER BY 平均 <select id="qO"><option value="DESC" selected>DESC（降順）</option><option value="ASC">ASC（昇順）</option></select></label>
+      <label class="lbl">LIMIT <select id="qL"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+    </div>
+    <p class="err" id="qErr"></p>
+    <p class="sub" style="margin-top:4px">2. 処理を1段階ずつ進める</p>
+    <div class="row"><button class="bt go" id="qNext">次のステップ</button><button class="bt" id="qPrev">前のステップ</button><button class="bt" id="qReset">最初から</button></div>
+    <div class="ord" id="qOrd"></div>
+    <div class="code" id="qSql"></div>
+    <div class="msg" id="qMsg" aria-live="polite"></div>
+    <div class="tw"><table class="t" id="qT"></table></div>
+  </div>
+  <p class="hint">上の2行は記述順と処理順です。同じ句がどこにあるか比較してください。</p>
+<div class="facts"><div><span>処理1</span><b>FROM</b></div><div><span>処理2</span><b>WHERE</b></div><div><span>処理3</span><b>GROUP BY</b></div><div><span>処理4</span><b>HAVING</b></div><div><span>処理5</span><b>SELECT</b></div><div><span>処理6</span><b>ORDER BY</b></div><div><span>処理7</span><b>LIMIT</b></div></div>
+
+  <h2>WHEREとHAVINGの違い</h2>
+  <p>WHEREはグループ化前の行を、HAVINGはグループを絞ります。集計関数はHAVINGで使います。行単位の条件をWHEREに置けば、グループ化するデータを減らせます。</p>
+  <h2>別名はSELECTで導入される</h2>
+  <p>averageやheadcountはSELECTで作る別名です。後続のORDER BYでは使えます。MySQLなどはGROUP BYやHAVINGでも許すため、DBごとの規則を確認してください。</p>
+<div class="tip"><p class="t">コーディング試験では</p><p>部署の平均給与に条件を課すならGROUP BY＋HAVING、特定給与以上の社員だけを集計するならWHERE＋GROUP BYです。行の条件か集計の条件かを区別しましょう。</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/sql-order.js %}
+</script>

@@ -1,0 +1,23 @@
+<div class="lesson-preview lesson-preview--{{ include.kind }}" data-lesson-preview="{{ include.kind }}" aria-hidden="true">
+  {% if include.kind == 'sorting' %}
+  <div class="mini-heading"><span>SORTING RACE</span><span class="mini-status">01 / 03</span></div>
+  {% assign algorithms = 'Bubble,Insertion,Selection' | split: ',' %}
+  {% assign values = '6,2,8,4,1,7,3,5' | split: ',' %}
+  {% for algorithm in algorithms %}
+  <div class="mini-sort-row"><span>{{ algorithm }}</span><div class="mini-bars">
+    {% for value in values %}<i class="mini-bar" data-value="{{ value }}" style="left:{{ forloop.index0 | times: 12.5 }}%;height:{{ value | times: 10 | plus: 12 }}%"></i>{% endfor %}
+  </div></div>
+  {% endfor %}
+  <p class="mini-caption">{% if page.lang == 'en' %}Same input. Different paths.{% elsif page.lang == 'ja' %}同じ入力、異なる整列の過程。{% else %}같은 입력, 다른 정렬 과정{% endif %}</p>
+  {% elsif include.kind == 'cache' %}
+  <div class="mini-heading"><span>DIRECT-MAPPED CACHE</span><span class="mini-status">MISS</span></div>
+  <div class="mini-address">{% if page.lang == 'en' %}Address{% elsif page.lang == 'ja' %}アドレス{% else %}주소{% endif %} <strong>0x00</strong><span class="mini-arrow">↓</span></div>
+  <div class="mini-cache-grid">{% for i in (0..3) %}<div class="mini-cache-line"><small>{{ i }}</small><strong>—</strong></div>{% endfor %}</div>
+  <p class="mini-caption">{% if page.lang == 'en' %}Four lines. Which block stays?{% elsif page.lang == 'ja' %}4つの行に残るブロックは？{% else %}캐시 네 칸에 어떤 블록이 남을까?{% endif %}</p>
+  {% else %}
+  <div class="mini-heading"><span>READ UNCOMMITTED</span><span class="mini-status">T1 / T2</span></div>
+  <div class="mini-tx-lanes"><div><span>T1</span><strong data-tx-read>1,000</strong><small>{% if page.lang == 'en' %}read{% elsif page.lang == 'ja' %}読み取った値{% else %}읽은 값{% endif %}</small></div><div><span>T2</span><strong data-tx-write>1,000</strong><small>{% if page.lang == 'en' %}balance{% elsif page.lang == 'ja' %}残高{% else %}잔액{% endif %}</small></div></div>
+  <div class="mini-tx-event">{% if page.lang == 'en' %}BEGIN → READ → UPDATE{% elsif page.lang == 'ja' %}開始 → 読み取り → 更新{% else %}시작 → 읽기 → 값 변경{% endif %}</div>
+  <p class="mini-caption">{% if page.lang == 'en' %}What if the update rolls back?{% elsif page.lang == 'ja' %}更新が取り消されたら？{% else %}아직 확정하지 않은 값을 읽는다면?{% endif %}</p>
+  {% endif %}
+</div>

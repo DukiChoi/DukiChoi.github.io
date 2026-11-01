@@ -1,0 +1,51 @@
+---
+lang: ko
+translation_key: theory-deadlock
+subject: operating-systems
+title: 교착 상태
+description: 식사하는 철학자 다섯 명이 포크를 하나씩 쥔 채 멈추는 순간과, 그 고리를 끊는 방법을 봅니다.
+permalink: /theory/deadlock/
+category: os
+order: 5
+---
+<style>{% include lessons/deadlock.css %}</style>
+<div class="circuit-lesson os dl">
+<p class="lede">철학자 다섯 명이 원탁에 앉아 있고, 사람 사이마다 포크가 하나씩 놓여 있습니다. 식사하려면 양쪽 포크 두 개가 모두 필요합니다. 다섯 명이 동시에 왼쪽 포크를 집으면 누구도 오른쪽 포크를 얻지 못하고 영원히 기다리게 됩니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">식사하는 철학자 문제로 교착 상태가 생기는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 포크를 집는 규칙을 고르세요</p>
+    <div class="row">
+      <button class="bt sel" data-m="naive">모두 왼쪽 포크부터 집기</button>
+      <button class="bt" data-m="fix">P4만 오른쪽 포크부터 집기</button>
+    </div>
+    <p class="sub">2. 실행하세요</p>
+    <div class="row">
+      <button class="bt go" id="dlForce">다섯 명이 동시에 배고파지기</button>
+      <button class="bt" id="dlRun">자유롭게 실행</button>
+      <button class="bt" id="dlReset">처음으로</button>
+    </div>
+    <svg id="dlSvg" width="100%" viewBox="0 0 680 380" role="img" aria-label="원탁에 앉은 철학자 다섯 명과 포크 다섯 개"></svg>
+    <div class="leg">
+      <span><i style="background:var(--surface-1)"></i>생각 중</span>
+      <span><i style="background:#FAC775"></i>배고픔(포크 기다림)</span>
+      <span><i style="background:#5DCAA5"></i>식사 중</span>
+      <span><i style="background:#F09595"></i>교착 상태</span>
+      <span style="color:#E8A317">점선 화살표: 기다리는 포크</span>
+    </div>
+    <p class="msg" id="dlMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">[다섯 명이 동시에 배고파지기]를 누르면 다섯 명이 차례로 첫 번째 포크를 집습니다. 규칙을 바꿔서 한 번 더 눌러 결과를 비교해 보세요.</p>
+
+  <h2>네 가지 조건이 모두 맞을 때 교착 상태가 생깁니다</h2>
+  <p><strong>상호 배제</strong>: 포크 하나는 한 사람만 쓸 수 있습니다. <strong>점유 대기</strong>: 철학자는 포크 하나를 쥔 채로 다른 포크를 기다립니다. <strong>비선점</strong>: 남이 쥔 포크를 빼앗을 수 없습니다. <strong>순환 대기</strong>: P0은 P1의 포크를, P1은 P2의 포크를, … P4는 P0의 포크를 기다리는 고리가 생깁니다.</p>
+  <p>네 조건 중 하나만 깨도 교착 상태는 생기지 않습니다.</p>
+
+  <h2>순환 대기 끊기</h2>
+  <p>가장 흔한 방법은 자원에 번호를 매기고, 모든 스레드가 작은 번호부터 잡게 하는 것입니다. P0~P3에게는 왼쪽 포크가 작은 번호라서 규칙이 그대로지만, P4에게는 오른쪽 포크 0번이 더 작습니다. 그래서 P4만 오른쪽부터 집게 바꾸면 고리가 만들어지지 않습니다. 실제 코드에서도 여러 뮤텍스를 잡을 때 항상 같은 순서로 잡는 것이 이 원리입니다.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/deadlock.js %}
+</script>

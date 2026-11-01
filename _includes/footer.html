@@ -1,5 +1,7 @@
 <footer class="site-footer">
   {% if site.github_username %}<a href="https://github.com/{{ site.github_username }}">{{ site.github_username }}</a>{% endif %}
-  {% if page.lang == "en" %}<a href="{{ "/en/privacy/" | relative_url }}">Privacy Policy</a>{% else %}<a href="{{ "/privacy/" | relative_url }}">개인정보처리방침</a>{% endif %}
-  <a class="site-footer__editor" href="https://app.pagescms.org/DukiChoi/DukiChoi.github.io/master">글쓰기</a>
+  {% assign footer_ui = site.data.ui[page.lang] | default: site.data.ui.ko %}
+  {% assign footer_prefix = '' %}{% if page.lang != 'ko' %}{% assign footer_prefix = '/' | append: page.lang %}{% endif %}
+  <a href="{{ footer_prefix | append: '/privacy/' | relative_url }}">{{ footer_ui.privacy }}</a>
+  <a class="site-footer__editor" href="https://app.pagescms.org/DukiChoi/DukiChoi.github.io/master">{{ footer_ui.write }}</a>
 </footer>

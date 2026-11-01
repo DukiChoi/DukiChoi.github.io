@@ -1,0 +1,66 @@
+---
+lang: en
+translation_key: theory-adder-2bit
+subject: digital-logic
+title: "2-bit Ripple-Carry Adder"
+description: "Connect two full adders to add 2-bit numbers and follow the carry into the next position."
+permalink: /en/theory/adder-2bit/
+order: 2
+---
+<div class="circuit-lesson">
+<p class="lede">One full adder handles one bit position. Connect two and pass the carry from the lower position to the higher one to add two 2-bit numbers.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A 2-bit adder with two full adders connected by a carry</h2>
+    <div class="circuit-viewport" tabindex="0" role="region" aria-label="Circuit diagram — scroll horizontally on narrow screens"><svg width="100%" viewBox="0 0 680 290" role="img">
+      <title>2-bit Ripple-Carry Adder</title>
+      <desc>FA0 adds A0, B0, and Cin, passing carry C1 to FA1. FA1 adds A1, B1, and C1 to produce S1 and Cout.</desc>
+      <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <text class="th" x="195" y="44" text-anchor="middle">A1=<tspan id="vA1">0</tspan></text>
+      <text class="th" x="255" y="44" text-anchor="middle">B1=<tspan id="vB1">0</tspan></text>
+      <text class="th" x="445" y="44" text-anchor="middle">A0=<tspan id="vA0">0</tspan></text>
+      <text class="th" x="505" y="44" text-anchor="middle">B0=<tspan id="vB0">0</tspan></text>
+      <line id="wA1" x1="195" y1="58" x2="195" y2="106" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wB1" x1="255" y1="58" x2="255" y2="106" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wA0" x1="445" y1="58" x2="445" y2="106" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wB0" x1="505" y1="58" x2="505" y2="106" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <g class="c-purple"><rect x="150" y="110" width="150" height="80" rx="8" stroke-width="0.5"/>
+        <text class="th" x="225" y="140" text-anchor="middle" dominant-baseline="central">FA1</text>
+        <text class="ts" x="225" y="162" text-anchor="middle" dominant-baseline="central">Twos place</text></g>
+      <g class="c-teal"><rect x="400" y="110" width="150" height="80" rx="8" stroke-width="0.5"/>
+        <text class="th" x="475" y="140" text-anchor="middle" dominant-baseline="central">FA0</text>
+        <text class="ts" x="475" y="162" text-anchor="middle" dominant-baseline="central">Ones place</text></g>
+      <text class="ts" x="605" y="138" text-anchor="middle">Cin=<tspan id="vCin">0</tspan></text>
+      <line id="wCin" x1="640" y1="150" x2="554" y2="150" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="ts" x="350" y="138" text-anchor="middle">C1=<tspan id="vC1">0</tspan></text>
+      <line id="wC1" x1="400" y1="150" x2="304" y2="150" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="ts" x="90" y="138" text-anchor="middle">Cout=<tspan id="vCo">0</tspan></text>
+      <line id="wCo" x1="150" y1="150" x2="44" y2="150" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wS1" x1="225" y1="190" x2="225" y2="234" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wS0" x1="475" y1="190" x2="475" y2="234" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="th" x="225" y="256" text-anchor="middle">S1=<tspan id="vS1">0</tspan></text>
+      <text class="th" x="475" y="256" text-anchor="middle">S0=<tspan id="vS0">0</tspan></text>
+    </svg></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px">
+      <button class="bt" data-k="A1" aria-pressed="false">A1</button><button class="bt" data-k="A0" aria-pressed="false">A0</button>
+      <button class="bt" data-k="B1" aria-pressed="false">B1</button><button class="bt" data-k="B0" aria-pressed="false">B0</button>
+      <button class="bt" data-k="Cin" aria-pressed="false">Cin</button>
+    </div>
+    <p id="res" style="text-align:center;font-family:var(--font-mono);font-size:15px;color:var(--text-primary);margin:14px auto 0"></p>
+  </div>
+  <p class="hint">Toggle the input bits using the buttons. Wires carrying 1 turn orange. The result below the circuit is shown in binary and decimal.</p>
+
+  <h2>A and B are operands; Cin is the carry-in</h2>
+  <p>A and B are each 2-bit numbers. A1 is the twos place and A0 the ones place, so A1=1 and A0=0 represent <code>10₂</code>, or decimal 2. A0 and B0 feed FA0 for the ones place; A1 and B1 feed FA1 for the twos place.</p>
+  <p>Cin is a carry supplied from outside this circuit. It is normally 0 when this circuit alone adds two numbers. It can accept a carry from another adder or supply the +1 required for two's-complement subtraction.</p>
+  <pre><code>A=11(3), B=01(1), Cin=0; Ones: 1 + 1 + 0 = 10₂ → S0=0, C1=1; Twos: 1 + 0 + 1 = 10₂ → S1=0, Cout=1; Result: Cout S1 S0 = 100₂ = 4</code></pre>
+
+  <h2>Connect more full adders for wider numbers</h2>
+  <p>Each full adder adds A, B, and the carry at its bit position, passing any carry to the next position. A chain of n full adders adds two n-bit numbers. For example, three bits plus carry-in can produce at most 7 + 7 + 1 = 15, requiring four output bits.</p>
+  <p>The higher-position adder must wait for the lower-position carry. Increasing the bit width therefore increases the delay. Carry-lookahead (CLA) circuits reduce this delay by computing carries in advance.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/adder-2bit.js %}
+</script>

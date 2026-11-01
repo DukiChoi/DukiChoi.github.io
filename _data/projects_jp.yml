@@ -1,0 +1,93 @@
+- name: "漢陽大学 電気工学 卒業制作"
+  period: 2021.09.01 ~ 2021.12.31
+  summary: "非接触ジェスチャーによるキーボード・マウス・キオスク"
+  details:
+    - "カメラによる手の認識でキーボードとマウス入力を実装"
+    - "指の動きでポインター移動とクリックを実装"
+    - "OKジェスチャーでキーボードとマウスを切り替え"
+    - "ReactとNode.jsでキオスクを開発・展示"
+  participants:
+    - name: "DukiChoi"
+      link: "https://github.com/DukiChoi"
+    - name: "WonseoC"
+      link: "https://github.com/Wonseo-C"
+    - name: "HJH"
+      link: "https://github.com/J-Shine"
+  stack: OpenCV, Mediapipe, React, Node.js
+  link: https://github.com/DukiChoi/graduation
+
+- name: "IMUによる位置推定"
+  period: 2022.01.01 ~ 2022.06.30
+  summary: "WT9310 IMUを用いた位置推定"
+  details:
+    - "9軸IMUデータのフィルタリングとカルマンフィルターの適用"
+    - "TinyEKFを用いてSTM32CubeMXのC++ファームウェアを実装"
+    - "Pythonの3Dグラフで結果を可視化"
+  role: "組み込みソフトウェア開発（貢献度30%）"
+  stack: STM32(C++), TinyEKF, Python
+  link: https://github.com/DukiChoi/MotionTrackingWithIMU
+
+- name: "UWBを用いた重機安全支援システム"
+  period: 2022.07.01 ~ 2023.02.28
+  summary: "BLEとUWBによる作業員のリアルタイム安全支援"
+  details:
+    - "UWBアンカーとタグをBLEでAndroidアプリに接続"
+    - "作業員の位置を受信し、重機の操作者へ警告"
+    - "振動・画面・音声で警告するAndroid Javaアプリを開発"
+  role: "Androidソフトウェア開発（貢献度50%）"
+  stack: Java(Android), BLE
+  link: https://github.com/DukiChoi/bleAndroidApp
+
+- name: "UWBによる屋内車両位置測位"
+  period: 2023.01.01 ~ 2023.03.31
+  summary: "TCPで受け取るUWB車両位置のリアルタイム可視化"
+  details:
+    - "TCPソケットでUWBタグとアンカーのデータを受信"
+    - "Android Javaで2D地図上に車両位置を表示"
+  role: "Androidソフトウェア開発（貢献度50%）"
+  stack: Java(Android), TCP
+  link: https://github.com/DukiChoi/location_display_app
+
+- name: "Bluetoothマルチノードによる配管位置検出"
+  period: 2023.06.01 ~ 2023.09.30
+  summary: "nRF52とIMUセンサーによる金属配管の検出"
+  details:
+    - "nRF52と2つのIMU磁力計で金属を検出"
+    - "掘削作業のための配管検出・警告システムを構築"
+    - "IEEE ICCE-Asia 2024で第2著者として発表"
+  role: "組み込み・Android開発（貢献度30%）"
+  stack: nRF52, BLE, IMU, Android
+  link: https://github.com/DukiChoi/BLEAppForNRF52
+
+- name: "修士研究：VRとCNN/RNNによる振戦解析"
+  period: 2023.11.01 ~ 2024.12.31
+  summary: "VRと深層学習を用いた手の振戦の定量解析"
+  details:
+    - "nRF52とIMUコントローラーで振戦データを収集"
+    - "Unity C#でVR実験プロトコルを開発"
+    - "MATLABでCNN・RNNモデルを学習・評価"
+  role: "システム開発と解析（貢献度100%）"
+  stack: nRF52, Unity(C#), MATLAB, CNN, RNN
+  link: https://github.com/DukiChoi/VR_Project
+
+- name: "全身電気刺激スーツの研究"
+  period: 2025.03.01 ~ 2025.06.30
+  summary: "ウェアラブル刺激スーツとVRによる実験評価"
+  details:
+    - "Unity VRで身体的インタラクションのシナリオを実装"
+    - "シナリオに応じて刺激周波数と電圧を制御"
+    - "参加者9名の実験で手の振戦への影響を評価"
+  role: "生体信号処理・神経工学研究室 研究員"
+  stack: Unity(C#), nRF52, Matlab
+  link: https://github.com/DukiChoi/ShotExperienceSimulator
+
+- name: "子どもの認知能力を評価するスマートキューブ"
+  period: "2025.03.01 ～ 継続中"
+  summary: "IMU・圧力センサー・LEDを備えたキューブとデータ収集"
+  details:
+    - "ハードウェア回路とファームウェアを設計"
+    - "BLE連携とAndroidアプリを開発"
+    - "子どものブロック遊びデータによる認知分析を計画"
+  role: "生体信号処理・神経工学研究室 研究員"
+  stack: nRF52, IMU, Pressure Sensor, Android
+  link: https://github.com/DukiChoi/BLESmartCube

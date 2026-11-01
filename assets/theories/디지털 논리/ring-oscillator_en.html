@@ -1,0 +1,38 @@
+---
+lang: en
+translation_key: theory-ring-oscillator
+subject: digital-logic
+title: "Ring Oscillator"
+description: "Change the number of NOT gates to compare continuous oscillation with a stable state."
+permalink: /en/theory/ring-oscillator/
+order: 3
+---
+<div class="circuit-lesson">
+<p class="lede">Connect NOT gates in a chain and feed the final output back to the first input to form a ring. In this simulation, an odd number keeps switching while an even number settles to a stable state.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulation comparing signal changes with different numbers of NOT gates</h2>
+    <div class="circuit-viewport" tabindex="0" role="region" aria-label="Circuit diagram — scroll horizontally on narrow screens"><svg id="sv" width="100%" viewBox="0 0 680 270" role="img"><title>Inverter ring simulation</title><desc>Inverters are connected in a ring, with the last output feeding the first input.</desc></svg></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px">
+      <button class="bt mode on" id="m3">Odd (3 gates)</button><button class="bt mode" id="m2">Even (2 gates)</button>
+      <button class="bt" id="st">Step</button><button class="bt" id="pl" data-stop-label="■ Stop" aria-pressed="false">▶ Play</button><button class="bt" id="rs">Restart</button>
+    </div>
+    <p id="msg" style="text-align:center;font-size:15px;color:var(--text-secondary);margin:12px auto 0" aria-live="polite"></p>
+  </div>
+  <p class="hint">A red outline marks the gate that will switch next. The waveform below shows the signal at n0.</p>
+
+  <h2>An odd number of NOT gates keeps the signal changing</h2>
+  <p>A NOT gate outputs 1 for an input of 0 and 0 for an input of 1. After an odd number of inversions, the returning signal is the opposite of its starting value. Each gate responds in turn, and the change travels around the loop repeatedly, producing oscillation.</p>
+  <p>After an even number of inversions, the signal returns with its original value. Once every gate's output is the inverse of its input, the circuit can hold that state. Two cross-coupled inverters can store one bit, which is the basic storage principle of an SRAM cell.</p>
+
+  <h2>Gate count and propagation delay determine frequency</h2>
+  <p>Real gates do not switch instantly. The time from an input change to its output response is propagation delay. Assuming identical gate delays, a full 0→1→0 period takes two trips around the loop. Here N is the gate count and t_pd is the delay of one gate.</p>
+  <pre><code>f = 1 / (2 · N · t_pd); Example: t_pd = 10 ns, N = 5 → 10 MHz</code></pre>
+  <p>More gates or greater load capacitance increases the period and lowers the frequency. Limiting inverter current also slows transitions. Controlling this delay with a voltage produces a voltage-controlled oscillator (VCO), a component used in PLLs.</p>
+  <p>Ring-oscillator delay varies with temperature and supply voltage. For a more stable reference frequency, crystal oscillators use the mechanical resonance of a quartz crystal.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/ring-oscillator.js %}
+</script>

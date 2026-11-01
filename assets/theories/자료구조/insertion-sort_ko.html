@@ -1,0 +1,30 @@
+---
+lang: ko
+translation_key: theory-insertion-sort
+subject: data-structures
+title: 삽입 정렬
+description: 값을 하나씩 꺼내 왼쪽의 정렬된 구간에 알맞게 끼워 넣는 정렬입니다.
+permalink: /theory/insertion-sort/
+category: algorithms
+order: 13
+---
+<style>{% include lessons/insertion-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">카드를 손에 쥐고 한 장씩 알맞은 자리에 끼워 넣는 방식입니다. 꺼낸 값(key)보다 큰 값을 한 칸씩 오른쪽으로 밀어 빈자리를 만들고, 그 자리에 key를 넣습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">삽입 정렬 과정을 막대로 보여 주는 시뮬레이터</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">[자동 재생]을 누르거나 [다음 단계]로 한 단계씩 넘겨 보세요. 슬라이더를 끌면 원하는 단계로 바로 이동합니다. 아래 줄에 떠 있는 분홍색 막대가 꺼내 둔 key입니다.</p>
+<div class="dsa-facts"><div><span>최선</span><b class="good">O(n)</b></div><div><span>평균</span><b class="bad">O(n²)</b></div><div><span>최악</span><b class="bad">O(n²)</b></div><div><span>추가 공간</span><b class="good">O(1)</b></div><div><span>안정 정렬</span><b class="good">예</b></div><div><span>강점</span><b class="good">거의 정렬된 입력</b></div></div>
+  <h2>거의 정렬된 배열에 강합니다</h2>
+  <p>key보다 큰 값만 밀기 때문에, 이미 거의 정렬된 배열에서는 밀 일이 거의 없어 O(n)에 가깝게 끝납니다. [거의 정렬됨]과 [역순]을 번갈아 재생해 비교 횟수를 견줘 보세요. 원소 수가 적을 때도 빨라서, 파이썬의 Timsort와 C++의 std::sort는 작은 구간을 삽입 정렬로 처리합니다.</p>
+  <p>key와 같은 값은 밀지 않고 그 뒤에 넣으므로 같은 값의 순서가 유지됩니다.</p>
+<div class="dsa-tip"><p class="t">코테에서는</p><p>밀어낸 횟수도 역순 쌍의 수와 같습니다. 값이 하나씩 들어올 때마다 정렬 상태를 유지해야 한다면 <code>bisect.insort</code>로 자리를 찾을 수 있지만, 리스트 중간에 넣는 데 O(n)이 들어 전체는 O(n²)입니다. 데이터가 많으면 <a href="{{ '/theory/heap-sort/' | relative_url }}">힙</a>처럼 다른 자료구조를 고려하세요.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/insertion-sort.js %}
+</script>

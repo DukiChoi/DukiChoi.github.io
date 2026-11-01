@@ -1,0 +1,42 @@
+---
+lang: en
+translation_key: theory-branch-prediction
+subject: computer-architecture
+title: "Branch Prediction"
+description: "Compare always-taken, one-bit, and two-bit predictors on branch patterns such as loops."
+permalink: /en/theory/branch-prediction/
+category: architecture
+order: 5
+---
+<style>{% include lessons/branch-prediction.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">A pipelined CPU must fetch instructions before a branch outcome is known. It predicts a direction and discards wrong-path work if the guess is incorrect. Better predictions reduce this wasted work.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator comparing three predictors on identical branch outcomes</h2>
+    <p class="sub" style="margin-top:0">1. Choose an outcome pattern (T = taken, N = not taken)</p>
+    <div class="row"><button class="bt sel" data-bp="loop">Loop (repeat TTTN)</button><button class="bt" data-bp="alt">Alternating (repeat TN)</button><button class="bt" data-bp="most">Almost always taken</button><button class="bt" data-bp="rand">Random</button></div>
+    <p class="sub">2. Process branches one at a time</p>
+    <div class="row"><button class="bt go" id="bpNext">Next branch</button><button class="bt" id="bpAll">Run to end</button><button class="bt" id="bpReset">Reset</button></div>
+    <div class="tw"><div class="bpg" id="bpG"></div></div>
+    <div class="bpw">
+      <svg id="bpSvg" viewBox="0 0 520 170" role="img" aria-label="Two-bit predictor state diagram"></svg>
+      <div class="acc" id="bpAcc"></div>
+    </div>
+    <div class="msg" id="bpMsg" aria-live="polite"></div>
+  </div>
+  <p class="hint">The top row shows actual outcomes; the next three show prior predictions. Green is correct and red is incorrect. The diagram shows the two-bit predictor's current state.</p>
+<div class="facts"><div><span>On a misprediction</span><b>Flush wrong-path work</b></div><div><span>1-bit</span><b>Repeat previous outcome</b></div><div><span>2-bit</span><b>Hysteresis from strong states</b></div><div><span>Modern CPUs</span><b>Often above 95% accuracy</b></div></div>
+
+  <h2>A one-bit predictor misses twice around a loop boundary</h2>
+  <p>A one-bit predictor repeats the previous outcome. A loop is mostly T followed by one N: it misses that N, then predicts N and misses the first T of the next run.</p>
+  <h2>A two-bit predictor tolerates a single exception</h2>
+  <p>A two-bit saturating counter has four states. From strongly taken, one N moves it only to weakly taken, which still predicts T. Two consecutive N outcomes are needed to reverse a strongly taken prediction. This reduces loop-boundary misses, though simple predictors can still struggle with alternating patterns.</p>
+<div class="tip"><p class="t">Branch prediction in code</p><p>On a sorted array, repeatedly evaluating <code>if (x &gt;= 128)</code> produces long runs of N and T that are easy to predict. Random order can be much harder and may slow branch-heavy code. The effect depends on the CPU and compiler; branchless transformations or data layout can help. Mispredictions discard work in the <a href="{{ '/en/theory/pipeline/' | relative_url }}">Pipeline</a> , so deeper pipelines can have a greater penalty.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/branch-prediction.js %}
+</script>

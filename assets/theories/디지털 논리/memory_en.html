@@ -1,0 +1,60 @@
+---
+lang: en
+translation_key: theory-memory
+subject: digital-logic
+title: "DRAM and NAND Flash"
+description: "Compare how DRAM and NAND update data and how long the operations take."
+permalink: /en/theory/memory/
+order: 4
+---
+<div class="circuit-lesson">
+<p class="lede">Update one item sends the same request to DRAM and NAND. DRAM overwrites the existing cell; NAND writes a new copy into a free page. When NAND runs low on free pages, observe valid data being moved and the old block being erased.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulation comparing DRAM and NAND updates and their latencies</h2>
+    <div class="lat"><span>DRAM read/write</span><div class="tr"><div class="fl" style="width:26%;background:#378ADD"></div></div><span class="tm">~50 ns</span></div>
+    <div class="lat"><span>NAND page read</span><div class="tr"><div class="fl" style="width:72%;background:#5DCAA5"></div></div><span class="tm">~50 µs</span></div>
+    <div class="lat"><span>NAND page program</span><div class="tr"><div class="fl" style="width:88%;background:#E8A317"></div></div><span class="tm">~500 µs</span></div>
+    <div class="lat"><span>NAND block erase</span><div class="tr"><div class="fl" style="width:97%;background:#E24B4A"></div></div><span class="tm">~2 ms</span></div>
+    <p class="lb" style="margin:6px 0 0">Bar lengths show latency differences on a logarithmic scale.</p>
+
+    <div class="memory-controls">
+      <div class="memory-controls__writes" role="group" aria-label="Memory writes">
+        <button class="bt" id="w1">Update one item</button><button class="bt" id="w5">Update five items</button>
+      </div>
+      <div class="memory-controls__speed" role="group" aria-label="Simulation speed">
+        <button class="bt mode on" id="s1">1× speed</button><button class="bt mode" id="s5">5× speed</button>
+      </div>
+    </div>
+    <div class="pan">
+      <div class="ph"><b>DRAM · capacitor cells</b><span class="tm">Elapsed time <span id="dt">0</span> µs</span></div>
+      <div class="dg" id="dg"></div>
+      <p class="sts" id="ds">DRAM can write a new value directly into the selected cell. A blue outline marks the row being refreshed.</p>
+    </div>
+    <div class="pan">
+      <div class="ph"><b>NAND flash · blocks and pages</b><span class="tm">Elapsed time <span id="nt">0</span> µs, pending <span id="nq">0</span></span></div>
+      <div id="nd"></div>
+      <p class="sts" id="ns" aria-live="polite">Green pages hold current data. A crossed-out page holds an obsolete copy; a dashed outline marks a free page.</p>
+    </div>
+  </div>
+  <p class="hint">At 1× speed, each real microsecond is expanded to 2 ms on screen. DRAM charge leakage and refresh use a separate illustrative timescale.</p>
+  <p class="hint">L0, L1, and so on identify logical data items. Updating an item preserves its ID but changes its physical NAND page.</p>
+
+  <h2>NAND flash is named after its cell arrangement</h2>
+  <p>NAND flash connects cells in series, resembling the transistor arrangement in a NAND gate. It does not store data in a NAND logic gate itself. NAND reads and programs pages, but erases an entire block containing multiple pages.</p>
+
+  <h2>DRAM needs periodic charge refresh</h2>
+  <p>DRAM represents bits as charge in tiny capacitors. It can overwrite a cell directly; this example assumes approximately 50 ns per write.</p>
+  <p>Capacitor charge leaks over time, so DRAM periodically reads and restores cell values. This is refresh. When power is removed and charge cannot be replenished, the stored data is lost.</p>
+
+  <h2>NAND cannot directly overwrite an occupied page</h2>
+  <p>NAND stores charge in an insulated structure and retains data without power. Updating it is slower than DRAM: this example assumes about 500 µs per page program.</p>
+  <p>An occupied NAND page cannot simply be overwritten. Updated data is written to a free page, and the old copy is marked invalid.</p>
+  <p>When free pages run low, valid data is moved to another block and the original block is erased. This is garbage collection. It is necessary because individual pages cannot be erased independently.</p>
+  <p>SSD and eMMC controllers use a flash translation layer (FTL) to map logical addresses to physical locations. They also manage garbage collection and spread writes across blocks to distribute wear, a technique called wear leveling.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/memory.js %}
+</script>

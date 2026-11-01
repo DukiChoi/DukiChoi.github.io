@@ -1,0 +1,42 @@
+---
+lang: ja
+translation_key: theory-pipeline
+subject: computer-architecture
+title: "パイプラインとハザード"
+description: "5段階パイプラインの重複実行、依存、分岐、フォワーディングを確認します。"
+permalink: /ja/theory/pipeline/
+category: architecture
+order: 2
+---
+<style>{% include lessons/pipeline.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">命令を5段階に分け、前の命令が進むと次を入れて並行処理します。ただし依存関係や分岐により停止する場合があります。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">5段階パイプラインのシミュレータ</h2>
+    <p class="sub" style="margin-top:0">1. 命令列と転送設定</p>
+    <div class="row"><button class="bt sel" data-ps="ind">独立した命令</button><button class="bt" data-ps="raw">データハザード</button><button class="bt" data-ps="lu">load-use</button><button class="bt" data-ps="br">分岐</button>
+      <span class="lbl" style="margin-left:10px">フォワーディング</span><button class="bt sel" data-fw="1">有効</button><button class="bt" data-fw="0">無効</button></div>
+    <p class="sub">2. クロックを進める</p>
+    <div class="row"><button class="bt go" id="ppNext">次のクロック</button><button class="bt" id="ppAll">最後まで</button><button class="bt" id="ppReset">最初から</button></div>
+    <div class="pw" id="ppW"><div class="pg" id="ppG"></div><svg id="ppSvg"></svg></div>
+    <div class="leg"><span><i style="background:#B5D4F4"></i>IF 取得</span><span><i style="background:#CECBF6"></i>ID 解釈・読出し</span><span><i style="background:#FAC775"></i>EX 実行</span><span><i style="background:#9FE1CB"></i>MEM メモリ</span><span><i style="background:#C0DD97"></i>WB 書戻し</span><span><i style="background:repeating-linear-gradient(45deg,var(--surface-1) 0 4px,var(--border-strong) 4px 6px)"></i>ストール</span><span><i style="background:#F7C1C1"></i>破棄された命令</span><span style="color:#D85A30">→ フォワーディング</span></div>
+    <div class="msg" id="ppMsg" aria-live="polite"></div>
+    <div class="stats" id="ppSt"></div>
+  </div>
+  <p class="hint">行が命令、列がクロックです。転送の有無で待機とクロック数を比べます。</p>
+<div class="facts"><div><span>理想的な定常CPI</span><b>1</b></div><div><span>データハザード</span><b>前の結果待ち</b></div><div><span>制御ハザード</span><b>分岐結果待ち</b></div><div><span>構造ハザード</span><b>資源の競合</b></div></div>
+
+  <h2>データハザードと転送</h2>
+  <p><code>add r1, r2, r3</code> の直後に <code>sub r4, r1, r5</code>があると、subはaddのr1を必要とします。転送なしではWBを待ちますが、EXの結果を次のEXへ直接渡すと待機を減らせます。</p>
+  <h2>load-useには1クロック待機が残る</h2>
+  <p><code>lw</code>はMEMで値を取得します。直後のEXに間に合わないため、転送しても1クロック待ちます。無関係な命令を間に置けば隠せる場合があります。</p>
+  <h2>分岐では次の取得先が未確定</h2>
+  <p>このモデルではEXで分岐が決まり、取得済みの後続2命令を破棄する場合があります。その損失を減らすため <a href="{{ '/ja/theory/branch-prediction/' | relative_url }}">分岐予測</a>を利用します。</p>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/pipeline.js %}
+</script>

@@ -1,0 +1,32 @@
+---
+lang: ko
+translation_key: theory-merge-sort
+subject: data-structures
+title: 병합 정렬
+description: 배열을 반씩 쪼갠 뒤 정렬된 두 조각을 합치며 정렬하는 분할 정복 정렬입니다.
+permalink: /theory/merge-sort/
+category: algorithms
+order: 15
+---
+<style>{% include lessons/merge-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">배열을 반으로 계속 쪼개 원소 하나짜리 조각으로 만든 뒤, 정렬된 두 조각을 앞에서부터 비교하며 합칩니다. 합치는 동안 값을 임시 배열 tmp에 모았다가 원래 자리로 옮겨 적습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">병합 정렬의 분할과 합치기 과정을 임시 배열과 함께 보여 주는 시뮬레이터</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">[자동 재생]을 누르거나 [다음 단계]로 한 단계씩 넘겨 보세요. 슬라이더를 끌면 원하는 단계로 바로 이동합니다. 아래 줄이 임시 배열 tmp입니다.</p>
+<div class="dsa-facts"><div><span>최선</span><b class="good">O(n log n)</b></div><div><span>평균</span><b class="good">O(n log n)</b></div><div><span>최악</span><b class="good">O(n log n)</b></div><div><span>추가 공간</span><b class="bad">O(n)</b></div><div><span>안정 정렬</span><b class="good">예</b></div><div><span>입력 상태</span><b class="good">영향 없음</b></div></div>
+  <h2>합치기는 맨 앞끼리만 비교합니다</h2>
+  <p>두 조각은 이미 정렬되어 있으므로, 각 조각의 맨 앞 값 중 더 작은 쪽이 남은 값 전체에서 가장 작습니다. 그래서 합치기는 두 조각 길이의 합만큼만 걸립니다. 쪼개는 깊이가 log n이고 깊이마다 합치기에 n번이 들므로, 입력이 어떻든 항상 O(n log n)입니다. 입력에 따라 느려지지 않는다는 점이 퀵 정렬과의 가장 큰 차이입니다.</p>
+  <p>왼쪽과 오른쪽 값이 같을 때 왼쪽을 먼저 넣으므로(<code>a[i] &lt;= a[j]</code>) 같은 값의 순서가 유지됩니다. <code>&lt;</code>로 바꾸면 안정성이 깨집니다.</p>
+<div class="dsa-tip"><p class="t">코테에서는: 역순 쌍 세기</p><p>합치는 도중 오른쪽 값을 먼저 tmp에 넣는 순간, 왼쪽 조각에 남은 값 mid − i + 1개는 모두 그 값보다 큽니다. 이 개수를 더해 가면 역순 쌍을 O(n log n)에 셀 수 있습니다.</p><pre><code>else:                       # 오른쪽 값이 더 작을 때
+    inv += mid - i + 1      # 왼쪽에 남은 값은 모두 a[j]보다 큼
+    tmp.append(a[j]); j += 1</code></pre></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/merge-sort.js %}
+</script>

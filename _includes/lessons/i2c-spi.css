@@ -1,0 +1,16 @@
+
+.lx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lx .bt.sel{background:var(--bg-accent);color:var(--text-accent);border-color:var(--border-accent)}
+.lx .bt.go{background:#185FA5;color:#fff;border-color:#185FA5}
+.lx .bt:disabled{opacity:.45;cursor:default}
+.lx .sub{font-size:14px;font-weight:500;color:var(--text-primary);margin:20px 0 8px}
+.lx .msg{font-size:15px;line-height:1.6;color:var(--text-primary);text-align:center;margin:12px auto 0;min-height:50px;max-width:none}
+.lx .err{font-size:13px;color:#E24B4A;margin:6px 0 0;min-height:18px}
+.lx input[type=text]{font-family:var(--font-mono);font-size:14px;padding:5px 8px;width:70px;text-align:center;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel,#fff);color:var(--text-primary)}
+.lx .lbl{font-size:14px;color:var(--text-secondary)}
+.bs .regs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
+.bs .reg{background:var(--surface-1);border-radius:8px;padding:8px 12px}
+.bs .reg span{display:block;font-size:12px;color:var(--text-secondary)}
+.bs .reg b{font-family:var(--font-mono);font-size:17px;font-weight:500;color:var(--text-primary);letter-spacing:.08em}
+.bs .leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--text-secondary);justify-content:center;margin-top:4px}
+.bs .leg i{display:inline-block;width:18px;height:3px;vertical-align:3px;margin-right:5px}

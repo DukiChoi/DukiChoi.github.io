@@ -1,0 +1,38 @@
+---
+lang: en
+translation_key: theory-normalization
+subject: db
+title: "Normalization"
+description: "Split an unnormalized table into 1NF, 2NF, and 3NF and observe update, insertion, and deletion anomalies."
+permalink: /en/theory/normalization/
+category: database
+order: 4
+---
+<style>{% include lessons/normalization.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">Normalization separates facts by subject so that the same information is not stored repeatedly. Redundancy can cause inconsistent data when updating, inserting, or deleting rows.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator showing how 1NF, 2NF, and 3NF resolve data anomalies</h2>
+    <p class="sub" style="margin-top:0">1. Choose a normal form</p>
+    <div class="row"><button class="bt sel" data-nf="0">Unnormalized</button><button class="bt" data-nf="1">1NF</button><button class="bt" data-nf="2">2NF</button><button class="bt" data-nf="3">3NF</button></div>
+    <div class="fd" id="nfFd"></div>
+    <div class="nfw" id="nfW"></div>
+    <p class="sub">2. Try an operation that exposes an anomaly</p>
+    <div class="row"><button class="bt go" data-an="upd">Update: move the CS office to Engineering 305</button><button class="bt go" data-an="ins">Insert: add C04 Algorithms with no students</button><button class="bt go" data-an="del">Delete: cancel Bada Lee's Circuits enrollment</button></div>
+    <div class="msg" id="nfMsg" aria-live="polite"></div>
+  </div>
+  <p class="hint">Change the normal form, then repeat the same operation. An operation that affects many rows or cannot be performed in 1NF may require only one change after decomposition. Underlined columns form the primary key.</p>
+<div class="facts"><div><span>1NF</span><b>One value per cell</b></div><div><span>2NF</span><b>No partial dependencies</b></div><div><span>3NF</span><b>No transitive dependencies</b></div><div><span>BCNF</span><b>Every determinant is a candidate key</b></div></div>
+
+  <h2>Use functional dependencies to choose decompositions</h2>
+  <p>Student ID → Name means that a student ID determines one name. The colored chips show functional dependencies. Normalization moves related facts into separate tables; as you advance, chips of the same color gather in the same table.</p>
+  <p><strong>1NF</strong> keeps one value in each cell. <strong>2NF</strong> removes dependencies on part of a composite key: a name depends only on student_id, while a course name depends only on course_code. <strong>3NF</strong> removes dependencies through another non-key column, such as Student ID → Department → Office. <strong>BCNF</strong> goes further: every determinant must be a candidate key.</p>
+<div class="tip"><p class="t">Practice and interviews</p><p>Further normalization reduces redundancy but can require more JOINs when reading data. Read-heavy systems sometimes deliberately denormalize selected facts. Be ready to explain update, insertion, and deletion anomalies with examples and show how decomposition prevents them.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/normalization.js %}
+</script>

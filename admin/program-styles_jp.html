@@ -1,0 +1,65 @@
+---
+lang: ja
+translation_key: styles
+layout: default
+title: デザインの仕組み
+permalink: /ja/admin/program-styles/
+css_file: /assets/css/program-style-gallery.css
+js_file: /assets/js/card-tilt.js
+js_files:
+  - /assets/js/hover-sparkles.js
+sitemap: false
+noindex: true
+---
+<main class="page-shell page-shell--reading program-style-gallery">
+  <a class="program-back" href="{{ '/ja/programs/' | relative_url }}">← プログラム</a>
+  <header class="page-heading">
+    <p class="page-eyebrow">スタイルのプレビュー</p>
+    <h1>デザインの仕組み</h1>
+    <p class="page-description">金属の質感、ホログラムの反射、立体的な動きを確認できます。</p>
+  </header>
+  <nav class="style-gallery-nav" aria-label="プレビューの一覧">
+    <a href="#metal-nameplate">金属のネームプレート</a>
+    <a href="#cube-and-sparkles">キューブときらめき</a>
+    <a href="#hologram-finishes">10種類のホログラム仕上げ</a>
+  </nav>
+
+  <section class="style-gallery-section" id="metal-nameplate" aria-labelledby="metal-nameplate-title">
+    <header class="style-gallery-section__heading">
+      <p class="style-gallery-update">2026年10月23日追加</p>
+      <h2 id="metal-nameplate-title">銀色のネームプレート</h2>
+      <p>細い横筋と縦方向の光で金属面を表現し、文字は暗い銀色に彫り込んだように見せています。</p>
+    </header>
+    {% include metal-banner.html preview=true %}
+    <p class="style-gallery-caption">ポインターをゆっくり動かすと、虹色の反射と小さなきらめきが移動します。</p>
+  </section>
+
+  <section class="style-gallery-section" id="cube-and-sparkles" aria-labelledby="cube-and-sparkles-title">
+    <header class="style-gallery-section__heading">
+      <p class="style-gallery-update">2026年10月23日追加</p>
+      <h2 id="cube-and-sparkles-title">浮かび上がるアイコンキューブ</h2>
+      <p>6面すべてにアイコンを表示します。ホバーするとカードが拡大し、キューブが浮いて回転し、バナーに合う色のきらめきが現れます。</p>
+    </header>
+    {% assign cube_program = site.data.programs_jp | where: "title", "Market Peek" | first %}
+    {% assign cube_style = site.data.program_styles_jp | where: "id", "sapphire-holo" | first %}
+    {% include program-banner.html program=cube_program style=cube_style preview=true cube=true %}
+    <p class="style-gallery-caption">ポインターが離れると回転が止まり、きらめきが消えます。プログラム一覧と同じ効果です。</p>
+  </section>
+
+  <section class="style-gallery-section" id="hologram-finishes" aria-labelledby="hologram-finishes-title">
+    <header class="style-gallery-section__heading">
+      <h2 id="hologram-finishes-title">10種類のホログラムバナー</h2>
+      <p>ポインターを動かすか指でドラッグしてください。CMSのバナースタイル項目、または下の設定で仕上げを選べます。</p>
+    </header>
+  <div class="program-style-samples">
+    {% for style in site.data.program_styles_jp %}
+    <section class="program-style-sample" id="{{ style.id }}" aria-label="{{ style.title | escape }}">
+      {% include program-banner.html program=style style=style preview=true %}
+      <p class="program-style-code"><code>banner_style: {{ style.id }}</code></p>
+    </section>
+    {% endfor %}
+  </div>
+  <p class="program-style-note"><code>banner_style: auto</code>では、設定を省略した場合と同じく、一覧を開くとランダムに選択します。10種類を使い切るまでは重複せず、同じタブを更新すると前回とは異なるものを選びます。明示したスタイルは固定です。</p>
+  </section>
+  <p class="style-gallery-caption">きらめきはホバー中だけ表示します。動きを減らす設定では、回転ときらめきを無効にします。</p>
+</main>

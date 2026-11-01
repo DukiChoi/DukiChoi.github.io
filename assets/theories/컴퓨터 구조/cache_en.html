@@ -1,0 +1,43 @@
+---
+lang: en
+translation_key: theory-cache
+subject: computer-architecture
+title: "Cache Mapping"
+description: "Split addresses into tag, index, and offset; compare direct-mapped, set-associative, and fully associative caches."
+permalink: /en/theory/cache/
+category: architecture
+order: 3
+---
+<style>{% include lessons/cache.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">A cache is small, fast memory near the CPU. Address bits select a set, identify a block with a tag, and locate a byte with an offset. A resident block can be accessed without going to main memory.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator showing cache placement, hits, and misses for memory accesses</h2>
+    <p class="sub" style="margin-top:0">1. Choose mapping and accesses (4 lines, 4-byte blocks, 8-bit addresses)</p>
+    <div class="row"><button class="bt sel" data-mp="1">Direct-mapped</button><button class="bt" data-mp="2">2-way set associative</button><button class="bt" data-mp="4">Fully associative (LRU)</button></div>
+    <div class="row" style="margin-top:8px"><span class="lbl">Access sequence</span><button class="bt sel" data-cs="seq">Sequential</button><button class="bt" data-cs="conf">Two conflicting addresses</button><button class="bt" data-cs="loop">Cycle through 5 blocks</button>
+      <input type="text" id="caIn" style="flex:1;min-width:200px;font-family:var(--font-mono)" aria-label="Address sequence"></div>
+    <p class="err" id="caErr"></p>
+    <div class="row"><button class="bt go" id="caNext">Next access</button><button class="bt" id="caAll">Run to end</button><button class="bt" id="caReset">Reset</button></div>
+    <div class="abits" id="caBits"></div>
+    <div class="tw"><table class="t" id="caT"></table></div>
+    <div class="msg" id="caMsg" aria-live="polite"></div>
+    <div class="hist" id="caH"></div>
+    <div class="stats" id="caSt"></div>
+  </div>
+  <p class="hint">Run the same access sequence under different mappings. Two conflicting addresses repeatedly misses with direct mapping. Cycling through five blocks defeats this four-line LRU cache even when fully associative.</p>
+<div class="facts"><div><span>Offset</span><b>Position in block</b></div><div><span>Index</span><b>Selects a set</b></div><div><span>Tag</span><b>Identifies a block</b></div><div><span>Average access time</span><b>Hit time + miss rate × miss penalty</b></div></div>
+
+  <h2>Split an address into three fields</h2>
+  <p>Four-byte blocks require two offset bits to select a byte. Some bits above them form the set index; the remaining bits are stored as the tag. With a fixed total line count, increasing associativity reduces index bits and increases tag bits.</p>
+  <h2>Three mapping strategies</h2>
+  <p><strong>Direct-mapped</strong> assigns each block one line. Lookup is simple, but alternating two blocks mapped to the same line causes repeated evictions. <strong>Fully associative</strong> permits placement in any line, avoiding mapping conflicts but requiring more tag comparisons. Many real CPU caches use the compromise of <strong>set associativity</strong>, for example 4–16 ways depending on the cache.</p>
+<div class="tip"><p class="t">Locality in code</p><p>Temporal locality reuses recently accessed data; spatial locality accesses nearby addresses. Both improve cache behavior. Traversing a row-major 2D array in <code>a[i][j]</code>  order reads neighboring values, while <code>a[j][i]</code>  order can jump between distant addresses. Contiguous arrays often benefit from locality more than linked structures.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/cache.js %}
+</script>

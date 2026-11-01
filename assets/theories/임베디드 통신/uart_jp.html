@@ -1,0 +1,57 @@
+---
+lang: ja
+translation_key: theory-uart
+subject: embedded
+title: "UARTフレーム"
+description: "1文字を開始・データ・パリティ・停止ビットに変換します。"
+permalink: /ja/theory/uart/
+category: embedded
+order: 1
+---
+<style>{% include lessons/uart.css %}</style>
+<div class="circuit-lesson lx ua">
+<p class="lede">UARTはクロック線を共有せず、合意したボーレートとフレーム形式で各側が計時します。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">UART送信波形のシミュレータ</h2>
+    <p class="sub" style="margin-top:0">1. 文字と設定</p>
+    <div class="row">
+      <label class="lbl">送信文字 <input type="text" id="uaIn" value="A" maxlength="4" style="width:70px;text-align:center;font-family:var(--font-mono)"></label>
+      <label class="lbl">ボーレート <select id="uaBaud"><option>9600</option><option>19200</option><option>38400</option><option>115200</option></select></label>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="lbl">パリティ</span>
+      <button class="bt sel" data-p="N">なし</button><button class="bt" data-p="E">偶数</button><button class="bt" data-p="O">奇数</button>
+      <span class="lbl" style="margin-left:12px">停止ビット</span>
+      <button class="bt sel" data-s="1">1ビット</button><button class="bt" data-s="2">2ビット</button>
+    </div>
+    <p class="err" id="uaErr"></p>
+    <p class="sub" style="margin-top:4px">2. 送信を再生</p>
+    <div class="row"><button class="bt go" id="uaPlay">送信再生</button></div>
+    <svg id="uaSvg" width="100%" viewBox="0 0 680 180" role="img" aria-label="UART波形"></svg>
+    <div class="leg">
+      <span><i style="background:rgba(216,90,48,.3)"></i>開始ビット</span>
+      <span><i style="background:rgba(29,158,117,.3)"></i>データ（D0から）</span>
+      <span><i style="background:rgba(127,119,221,.35)"></i>パリティ</span>
+      <span><i style="background:rgba(136,135,128,.35)"></i>停止ビット</span>
+      <span><i style="background:#E8A317;border-radius:50%"></i>受信側の読取り位置</span>
+    </div>
+    <p class="rx" id="uaRx"></p>
+    <p class="msg" id="uaMsg" aria-live="polite"></p>
+    <div class="info" id="uaInfo"></div>
+  </div>
+  <p class="hint">16進数も入力できます。受信側は各ビットの中央付近で値を読みます。</p>
+
+  <h2>開始ビットで始まり停止ビットで終わる</h2>
+  <p>アイドルはhighです。開始の立下りで計時し、D0から8ビットを送り、最後にhighの停止ビットを置きます。</p>
+  <p>パリティは1の総数を偶数または奇数にします。1ビットの反転は検出できますが、すべての誤りを検出できるわけではありません。</p>
+
+  <h2>ボーレートを合わせる理由</h2>
+  <p>開始から1.5、2.5ビット時間後などに標本化します。クロック差はフレーム内で蓄積します。概算の半ビット限界は約5%ですが、実機では形式や回路に応じてより小さな誤差に抑えます。</p>
+  <p>RS-485は差動伝送の物理層です。Modbus RTUは通常11ビットの文字形式で、8E1またはパリティなしの8N2を使います。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/uart.js %}
+</script>

@@ -1,0 +1,47 @@
+---
+lang: ko
+translation_key: theory-adc-aliasing
+subject: embedded
+title: ADC 샘플링과 에일리어싱
+description: 샘플링 주파수가 신호 주파수의 두 배보다 낮을 때 전혀 다른 주파수의 신호로 보이는 현상을 확인합니다.
+permalink: /theory/adc-aliasing/
+category: embedded
+order: 5
+---
+<style>{% include lessons/adc-aliasing.css %}</style>
+<div class="circuit-lesson lx ad">
+<p class="lede">ADC는 연속으로 변하는 전압을 일정한 간격으로 찍어서 숫자로 바꿉니다. 찍는 간격이 신호가 변하는 속도에 비해 너무 길면, 샘플을 이은 모양이 원래 신호와 전혀 다른 느린 신호가 됩니다. 이것이 에일리어싱입니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">신호 주파수와 샘플링 주파수를 바꾸며 에일리어싱을 확인하는 그래프</h2>
+    <p class="sub" style="margin-top:0">1. 예시를 고르거나 슬라이더로 직접 바꿔 보세요</p>
+    <div class="row">
+      <button class="bt go" data-pre="5,50">충분히 빠른 샘플링</button>
+      <button class="bt go" data-pre="23,50">한계에 가까운 샘플링</button>
+      <button class="bt go" data-pre="45,50">너무 느린 샘플링</button>
+    </div>
+    <div class="row" style="margin-top:12px"><label class="lbl" for="adF">신호 주파수</label><input type="range" id="adF" min="1" max="60" step="1" value="5"><span class="big" id="adFv"></span></div>
+    <div class="row" style="margin-top:6px"><label class="lbl" for="adS">샘플링 주파수</label><input type="range" id="adS" min="5" max="100" step="1" value="50"><span class="big" id="adSv"></span></div>
+    <svg id="adSvg" width="100%" viewBox="0 0 680 240" role="img" aria-label="원래 신호, 샘플, 샘플로 복원한 신호"></svg>
+    <div class="leg">
+      <span><i style="background:var(--text-muted)"></i>실제 신호</span>
+      <span><i style="background:#E8A317;height:8px;width:8px;border-radius:50%;vertical-align:0"></i>ADC가 찍은 샘플</span>
+      <span><i style="background:#D85A30"></i>샘플만 보고 복원한 신호</span>
+    </div>
+    <div class="info" id="adInfo"></div>
+    <p class="msg" id="adMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">그래프는 0.5초 구간입니다. 신호 주파수를 샘플링 주파수의 절반보다 높게 올리면, 빨간 복원 신호가 회색 실제 신호와 어긋나기 시작합니다.</p>
+
+  <h2>나이퀴스트 주파수</h2>
+  <p>샘플링 주파수의 절반을 나이퀴스트 주파수라고 합니다. 신호에 이보다 높은 주파수가 섞여 있으면, 그 성분은 샘플 위에서 더 낮은 주파수로 둔갑합니다. 둔갑한 주파수는 신호 주파수에서 가장 가까운 샘플링 주파수의 정수배를 뺀 값입니다. 예를 들어 50 Hz로 샘플링하면 45 Hz 신호는 |45 − 50| = 5 Hz로 보입니다.</p>
+  <pre><code>원래 신호를 복원하려면:  샘플링 주파수 > 2 × 신호의 최고 주파수</code></pre>
+
+  <h2>실무에서는</h2>
+  <p>한 번 둔갑한 성분은 샘플만 보고 원래 신호와 구별할 수 없습니다. 그래서 ADC 앞에 나이퀴스트 주파수보다 높은 성분을 미리 깎아 내는 저역 통과 필터(안티에일리어싱 필터)를 둡니다. 필터가 완벽하게 자르지 못하므로, 샘플링 주파수는 관심 있는 최고 주파수의 2배가 아니라 5~10배 정도로 넉넉하게 잡습니다.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/adc-aliasing.js %}
+</script>

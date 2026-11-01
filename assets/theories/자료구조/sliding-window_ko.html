@@ -1,0 +1,31 @@
+---
+lang: ko
+translation_key: theory-sliding-window
+subject: data-structures
+title: 슬라이딩 윈도우
+description: 연속 구간을 한 칸씩 밀며 들어오고 나가는 값만 반영해 O(n)에 구간 정보를 구하는 방법입니다.
+permalink: /theory/sliding-window/
+category: algorithms
+order: 22
+---
+<style>{% include lessons/sliding-window.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">연속된 구간(창)을 한 칸씩 밀면서, 새로 들어온 값과 빠져나간 값만 반영해 구간의 정보를 고칩니다. 구간을 매번 처음부터 다시 계산하지 않습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">슬라이딩 윈도우가 움직이며 구간 합과 중복 문자를 처리하는 과정을 보여 주는 시뮬레이터</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">종류를 고른 뒤 예시를 바꿔 가며 재생하세요. 주황색 띠가 현재 창, 초록색 띠가 지금까지 가장 좋은 창입니다.</p>
+<div class="dsa-facts"><div><span>시간</span><b class="good">O(n)</b></div><div><span>고정 창</span><b class="">더하고 빼기</b></div><div><span>가변 창</span><b class="">조건이 깨지면 l 이동</b></div></div>
+  <h2>고정 크기 창</h2>
+  <p>크기 k인 구간의 합을 매번 새로 더하면 O(nk)입니다. 창을 한 칸 밀 때 바뀌는 값은 들어온 값과 나간 값 두 개뿐이므로, 하나 더하고 하나 빼면 O(n)에 끝납니다. 통계 칸의 두 계산 횟수를 비교해 보세요.</p>
+  <h2>가변 크기 창</h2>
+  <p>r을 늘리다가 조건(중복 없음, 합 제한 등)이 깨지면 l을 당겨 조건을 회복합니다. 창 안의 상태는 사전이나 개수 배열로 관리합니다. 예제에서는 last 사전에 문자의 마지막 위치를 적어 두었기 때문에, l을 한 칸씩 당기지 않고 중복 문자 바로 다음 자리로 한 번에 옮깁니다.</p>
+<div class="dsa-tip"><p class="t">코테에서 자주 나오는 형태</p><p>크기 k 구간의 최대 합과 평균, 중복 없는 가장 긴 부분 문자열, 모든 문자를 포함하는 가장 짧은 창, 서로 다른 값이 k개 이하인 가장 긴 구간이 대표적입니다. 크기 k 창의 최댓값을 구하려면 덱을 단조롭게 유지하는 방법을 씁니다.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/sliding-window.js %}
+</script>

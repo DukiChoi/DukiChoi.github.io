@@ -1,0 +1,33 @@
+---
+lang: ko
+translation_key: theory-prefix-sum
+subject: data-structures
+title: 누적 합
+description: 앞에서부터 더한 값을 미리 저장해 두고 구간 합을 뺄셈 한 번으로 구하는 방법입니다.
+permalink: /theory/prefix-sum/
+category: algorithms
+order: 23
+---
+<style>{% include lessons/prefix-sum.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">앞에서부터 더한 값을 배열 P에 미리 저장해 두면, 어떤 구간의 합이든 뺄셈 한 번으로 구할 수 있습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">누적 합 배열을 만들고 구간 합을 구하는 과정을 보여 주는 시뮬레이터</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">l과 r을 바꾸면 그 구간의 합을 구하는 과정이 다시 재생됩니다. 아래 줄이 누적 합 배열 P입니다.</p>
+<div class="dsa-facts"><div><span>전처리</span><b class="">O(n)</b></div><div><span>구간 합 질의</span><b class="good">O(1)</b></div><div><span>추가 공간</span><b class="">O(n)</b></div><div><span>공식</span><b class="">P[r+1] − P[l]</b></div></div>
+  <h2>왜 빼기 한 번이면 될까요</h2>
+  <p>P[r+1]에는 0~r번의 합이, P[l]에는 0~(l−1)번의 합이 들어 있습니다. 앞부분이 똑같이 겹치므로 빼면 l~r번만 남습니다. P를 a보다 한 칸 길게 만들고 P[0] = 0으로 두면, l = 0일 때도 같은 식을 그대로 씁니다.</p>
+  <h2>2차원 누적 합</h2>
+<pre><code>S[i+1][j+1] = S[i][j+1] + S[i+1][j] - S[i][j] + a[i][j]
+
+# (r1, c1) ~ (r2, c2) 직사각형의 합
+S[r2+1][c2+1] - S[r1][c2+1] - S[r2+1][c1] + S[r1][c1]</code></pre><div class="dsa-tip"><p class="t">코테에서 함께 쓰는 기법</p><p><strong>차분 배열</strong>: 구간 [l, r]에 v를 더하는 작업이 여러 번이면 d[l] += v, d[r+1] −= v만 해 두고, 마지막에 d의 누적 합을 한 번 구합니다. 업데이트 하나가 O(1)이 됩니다.</p><p><strong>누적 합 + 해시</strong>: 합이 정확히 K인 연속 구간의 개수는 P[j] − P[i] = K인 쌍의 개수입니다. P를 만들면서 지금까지 나온 P 값의 개수를 사전에 세어 두면 O(n)에 셉니다. 음수가 섞여 투 포인터를 쓸 수 없을 때 쓰는 방법입니다.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/prefix-sum.js %}
+</script>

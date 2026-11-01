@@ -1,0 +1,47 @@
+---
+lang: ko
+translation_key: theory-sorting
+subject: data-structures
+title: 정렬 한눈에 비교
+description: 일곱 가지 정렬이 같은 배열을 동시에 정렬하는 경주로 속도 차이를 비교하고, 복잡도와 쓰임새를 정리합니다.
+permalink: /theory/sorting/
+category: algorithms
+order: 10
+---
+<style>{% include lessons/sorting.css %}</style>
+<div class="circuit-lesson rc">
+<p class="lede">일곱 가지 정렬이 같은 배열을 동시에 정렬합니다. 모든 알고리즘이 한 번에 한 단계(비교나 이동 한 번)씩 진행하므로, 먼저 끝나는 쪽이 할 일이 적은 알고리즘입니다. 입력 종류를 바꾸면 순위가 달라집니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">일곱 가지 정렬 알고리즘이 같은 배열을 동시에 정렬하는 경주</h2>
+    <div class="ctl"><span class="l">입력</span><button class="bt sel" data-rp="random">무작위</button><button class="bt" data-rp="nearly">거의 정렬됨</button><button class="bt" data-rp="reversed">역순</button><button class="bt" data-rp="dups">같은 값 많음</button></div>
+    <div class="ctl"><button class="bt go" id="rcGo">동시에 시작</button><button class="bt" id="rcReset">새 배열로 다시</button><label class="l">속도 <select id="rcSpd"><option value="120">느리게</option><option value="45" selected>보통</option><option value="12">빠르게</option></select></label></div>
+    <div class="grid" id="rcGrid"></div>
+    <p class="msg" id="rcMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">[거의 정렬됨]에서는 삽입 정렬과 버블 정렬이 빠르게 끝나고, [역순]에서는 둘 다 가장 느려집니다. 병합 정렬과 힙 정렬은 입력이 바뀌어도 단계 수가 거의 같습니다. 각 정렬의 자세한 과정은 표의 이름을 눌러 확인하세요.</p>
+
+  <h2>복잡도 한눈에 보기</h2>
+<div class="cx"><table><thead><tr><th>정렬</th><th>최선</th><th>평균</th><th>최악</th><th>추가 공간</th><th>안정</th></tr></thead><tbody><tr><td><a href="{{ '/theory/bubble-sort/' | relative_url }}">버블</a></td><td class="g">O(n)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="g">예</td></tr><tr><td><a href="{{ '/theory/selection-sort/' | relative_url }}">선택</a></td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="b">아니요</td></tr><tr><td><a href="{{ '/theory/insertion-sort/' | relative_url }}">삽입</a></td><td class="g">O(n)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="g">예</td></tr><tr><td><a href="{{ '/theory/quick-sort/' | relative_url }}">퀵</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="b">O(n²)</td><td class="">O(log n)</td><td class="b">아니요</td></tr><tr><td><a href="{{ '/theory/merge-sort/' | relative_url }}">병합</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="b">O(n)</td><td class="g">예</td></tr><tr><td><a href="{{ '/theory/heap-sort/' | relative_url }}">힙</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(1)</td><td class="b">아니요</td></tr><tr><td><a href="{{ '/theory/counting-sort/' | relative_url }}">계수</a></td><td class="g">O(n + k)</td><td class="g">O(n + k)</td><td class="g">O(n + k)</td><td class="">O(n + k)</td><td class="g">예</td></tr></tbody></table></div>
+  <p>k는 계수 정렬에서 값의 범위입니다. 안정 정렬은 같은 값끼리의 원래 순서를 유지하는 정렬입니다. 여러 기준으로 차례로 정렬할 때(예: 이름순으로 정렬한 뒤 점수순으로 다시 정렬) 안정성이 필요합니다.</p>
+
+  <h2>언제 무엇을 쓰나요</h2>
+  <div class="use">
+    <div><b>보통은 언어의 기본 정렬</b><p>파이썬 sort()는 Timsort로 O(n log n)이고 안정 정렬입니다. 직접 짜는 것보다 빠르고 틀릴 일이 없습니다.</p></div>
+    <div><b>최악에도 O(n log n)이 필요할 때</b><p>병합 정렬이나 힙 정렬. 메모리가 넉넉하고 안정성이 필요하면 병합, 추가 메모리가 없어야 하면 힙입니다.</p></div>
+    <div><b>거의 정렬된 데이터, 작은 n</b><p>삽입 정렬이 가장 빠릅니다. 기본 정렬들도 작은 구간은 삽입 정렬로 처리합니다.</p></div>
+    <div><b>범위가 좁은 정수가 아주 많을 때</b><p>계수 정렬. 비교 없이 O(n + k)에 끝나고, 개수만 세면 메모리도 아낄 수 있습니다.</p></div>
+  </div>
+
+  <div class="dsa-tip"><p class="t">코테에서는: 정렬 기준 다루기</p>
+  <p>문제의 대부분은 정렬을 직접 구현하기보다 "무엇을 기준으로 정렬하느냐"를 묻습니다. key에 튜플을 주면 앞 원소부터 차례로 비교하고, 내림차순으로 하고 싶은 숫자 기준에는 −를 붙입니다.</p>
+<pre><code>a.sort()                                   # 제자리 정렬, 안정
+b = sorted(a, reverse=True)                # 새 리스트, 내림차순
+people.sort(key=lambda p: (-p[1], p[0]))   # 점수 내림차순, 같으면 이름 오름차순</code></pre>
+  <p>시간 제한 1초 기준으로 n이 수천 이하면 O(n²)도 통과하지만, n이 10만을 넘으면 O(n log n)이 필요합니다. 파이썬은 C++보다 느리므로 더 보수적으로 잡으세요.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/sorting.js %}
+</script>

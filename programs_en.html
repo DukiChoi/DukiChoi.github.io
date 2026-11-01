@@ -1,0 +1,51 @@
+---
+lang: en
+translation_key: programs
+layout: default
+title: Programs
+nav_title: Programs
+section: programs
+permalink: /en/programs/
+permalink_name: /Programs
+css_file: /assets/css/programs.css
+js_files:
+  - /assets/js/hover-sparkles.js
+  - /assets/js/program-banners.js
+  - /assets/js/card-tilt.js
+description: Programs by DukiChoi, with usage guides and downloads.
+---
+<main class="page-shell page-shell--reading programs-hub">
+  <header class="page-heading">
+    <p class="page-eyebrow">DukiChoi</p>
+    <h1>Programs</h1>
+    <p class="page-description">Explore my programs, usage guides, and downloads.</p>
+  </header>
+  {% assign programs = site.data.programs_en | where_exp: "entry", "entry.published != false" | sort: "order" %}
+  <section class="program-links" aria-label="Published programs">
+    {% for program in programs %}
+    {% assign banner_mode = "fixed" %}
+    {% assign banner_style = nil %}
+    {% if program.banner_style and program.banner_style != "auto" %}
+      {% assign banner_style = site.data.program_styles | where: "id", program.banner_style | first %}
+    {% endif %}
+    {% unless banner_style %}
+      {% assign banner_mode = "auto" %}
+      {% assign style_index = forloop.index0 | modulo: site.data.program_styles.size %}
+      {% assign banner_style = site.data.program_styles[style_index] %}
+    {% endunless %}
+    {% include program-banner.html program=program style=banner_style mode=banner_mode cube=true %}
+    {% else %}
+    <div class="program-empty">
+      <h2>No programs have been published yet.</h2>
+      <p>Program information and links will appear here when available.</p>
+    </div>
+    {% endfor %}
+  </section>
+  <template id="program-card-template">
+    {% assign template_program = site.data.programs_en | first %}
+    {% assign template_style = site.data.program_styles | first %}
+    {% include program-banner.html program=template_program style=template_style mode='auto' cube=true %}
+  </template>
+  <p class="program-style-note"><a href="{{ '/en/admin/program-styles/' | relative_url }}">Behind the styles <span aria-hidden="true">→</span></a></p>
+  <script type="application/json" id="program-banner-styles">{{ site.data.program_styles | jsonify }}</script>
+</main>

@@ -1,9 +1,9 @@
 {%- assign metal_tag = 'a' -%}
 {%- if include.preview -%}{%- assign metal_tag = 'div' -%}{%- endif -%}
-<{{ metal_tag }} class="home-program-banner" data-holo-shine{% if include.preview %} tabindex="0" role="group" aria-label="은색 금속 명패 미리보기"{% else %} href="{{ '/programs/' | relative_url }}"{% endif %}>
+<{{ metal_tag }} class="home-program-banner" data-holo-shine{% if include.preview %} tabindex="0" role="group" aria-label="{% if page.lang == 'en' %}Silver nameplate preview{% elsif page.lang == 'ja' %}銀色のネームプレートのプレビュー{% else %}은색 금속 명패 미리보기{% endif %}"{% else %} href="{% if page.lang == 'en' %}{{ '/en/programs/' | relative_url }}{% elsif page.lang == 'ja' %}{{ '/ja/programs/' | relative_url }}{% else %}{{ '/programs/' | relative_url }}{% endif %}"{% endif %}>
   <span class="home-program-banner__text">
-    <strong>개발자의 삶</strong>
-    <span class="home-program-banner__description">직접 만든 프로그램과 사용 방법을 소개하는 공간입니다.</span>
+    <strong>{% if page.lang == 'en' %}Programs{% elsif page.lang == 'ja' %}プログラム{% else %}개발자의 삶{% endif %}</strong>
+    <span class="home-program-banner__description">{% if page.lang == 'en' %}Explore my programs and how to use them.{% elsif page.lang == 'ja' %}自作プログラムと使い方を紹介します。{% else %}직접 만든 프로그램과 사용 방법을 소개하는 공간입니다.{% endif %}</span>
   </span>
-  <span class="home-program-banner__action">{% if include.preview %}마우스를 올려보세요{% else %}모아보기 <span aria-hidden="true">→</span>{% endif %}</span>
+  <span class="home-program-banner__action">{% if include.preview %}{% if page.lang == 'en' %}Hover to explore{% elsif page.lang == 'ja' %}ポインターを重ねてください{% else %}마우스를 올려보세요{% endif %}{% else %}{% if page.lang == 'en' %}Browse{% elsif page.lang == 'ja' %}一覧を見る{% else %}모아보기{% endif %} <span aria-hidden="true">→</span>{% endif %}</span>
 </{{ metal_tag }}>

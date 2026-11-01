@@ -1,0 +1,43 @@
+---
+lang: ko
+translation_key: theory-cache
+subject: computer-architecture
+title: 캐시 매핑
+description: 메모리 주소를 태그, 인덱스, 오프셋으로 나눠 캐시에 넣는 직접 사상, 집합 연관, 완전 연관 방식을 비교합니다.
+permalink: /theory/cache/
+category: architecture
+order: 3
+---
+<style>{% include lessons/cache.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">캐시는 CPU 가까이에 둔 작고 빠른 메모리입니다. 메모리 주소를 태그, 인덱스, 오프셋으로 쪼개서 어느 칸에 들어갈지 정하고, 같은 블록을 다시 찾으면 메인 메모리까지 가지 않고 바로 꺼냅니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">메모리 주소가 캐시의 어느 칸에 들어가고 적중하거나 실패하는지 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 매핑 방식과 접근 순서를 고르세요 (캐시 4칸, 블록 4바이트, 주소 8비트)</p>
+    <div class="row"><button class="bt sel" data-mp="1">직접 사상</button><button class="bt" data-mp="2">2-way 집합 연관</button><button class="bt" data-mp="4">완전 연관 (LRU)</button></div>
+    <div class="row" style="margin-top:8px"><span class="lbl">접근 순서</span><button class="bt sel" data-cs="seq">순차 접근</button><button class="bt" data-cs="conf">충돌하는 두 주소</button><button class="bt" data-cs="loop">블록 5개 반복</button>
+      <input type="text" id="caIn" style="flex:1;min-width:200px;font-family:var(--font-mono)" aria-label="접근할 주소 목록"></div>
+    <p class="err" id="caErr"></p>
+    <div class="row"><button class="bt go" id="caNext">다음 접근</button><button class="bt" id="caAll">끝까지</button><button class="bt" id="caReset">처음으로</button></div>
+    <div class="abits" id="caBits"></div>
+    <div class="tw"><table class="t" id="caT"></table></div>
+    <div class="msg" id="caMsg" aria-live="polite"></div>
+    <div class="hist" id="caH"></div>
+    <div class="stats" id="caSt"></div>
+  </div>
+  <p class="hint">같은 접근 순서를 매핑 방식만 바꿔 실행해 보세요. [충돌하는 두 주소]는 직접 사상에서 계속 실패하고, [블록 5개 반복]은 완전 연관에서도 LRU 때문에 모두 실패합니다.</p>
+<div class="facts"><div><span>오프셋</span><b>블록 안 위치</b></div><div><span>인덱스</span><b>어느 집합인지</b></div><div><span>태그</span><b>어느 블록인지</b></div><div><span>평균 접근 시간</span><b>적중 시간 + 실패율 × 실패 비용</b></div></div>
+
+  <h2>주소를 세 조각으로 나눕니다</h2>
+  <p>블록이 4바이트이므로 주소의 아래 2비트(오프셋)는 블록 안의 몇 번째 바이트인지를 뜻합니다. 그 위 비트 중 일부(인덱스)로 캐시의 어느 집합에 넣을지 정하고, 나머지(태그)는 그 칸에 지금 어느 블록이 들어 있는지 구별하는 이름표로 저장합니다. 집합당 칸 수(way)가 늘어날수록 인덱스 비트는 줄고 태그 비트는 늘어납니다.</p>
+  <h2>세 가지 매핑 방식</h2>
+  <p><strong>직접 사상</strong>은 블록마다 들어갈 칸이 하나로 정해져 있어 찾기는 빠르지만, 같은 칸을 쓰는 두 블록을 번갈아 쓰면 서로 계속 쫓아냅니다. <strong>완전 연관</strong>은 아무 칸에나 넣을 수 있어 충돌이 없지만, 찾을 때 모든 칸의 태그를 동시에 비교해야 해서 하드웨어가 비쌉니다. 실제 CPU는 그 중간인 <strong>집합 연관</strong>(보통 4~16-way)을 씁니다.</p>
+<div class="tip"><p class="t">코드에서 체감하는 캐시: 지역성</p><p>방금 쓴 데이터를 곧 다시 쓰는 시간 지역성과, 근처 주소를 이어서 쓰는 공간 지역성이 좋을수록 적중률이 오릅니다. 2차원 배열을 <code>a[i][j]</code> 순서(행 우선)로 돌면 메모리에 붙어 있는 값을 차례로 읽어 빠르고, <code>a[j][i]</code> 순서로 돌면 매번 멀리 떨어진 주소를 읽어 느려집니다. 연결 리스트보다 배열이 빠른 이유도 같습니다.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/cache.js %}
+</script>

@@ -1,0 +1,42 @@
+---
+lang: ko
+translation_key: theory-pipeline
+subject: computer-architecture
+title: 파이프라인과 해저드
+description: 5단계 파이프라인에서 명령어가 겹쳐 실행되는 모습과 데이터·제어 해저드, 포워딩을 클럭 단위로 봅니다.
+permalink: /theory/pipeline/
+category: architecture
+order: 2
+---
+<style>{% include lessons/pipeline.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">파이프라인은 명령어 처리를 다섯 단계로 나누고, 앞 명령어가 다음 단계로 넘어가면 바로 다음 명령어를 들여보내 여러 명령어를 겹쳐 처리합니다. 세탁기가 돌아가는 동안 건조기도 돌리는 것과 같습니다. 다만 앞 명령어의 결과가 필요하거나 분기가 있으면 흐름이 막힙니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">5단계 파이프라인에서 명령어가 겹쳐 실행되고 해저드로 멈추는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 명령어 묶음과 포워딩 여부를 고르세요</p>
+    <div class="row"><button class="bt sel" data-ps="ind">서로 독립</button><button class="bt" data-ps="raw">데이터 해저드</button><button class="bt" data-ps="lu">load-use</button><button class="bt" data-ps="br">분기</button>
+      <span class="lbl" style="margin-left:10px">포워딩</span><button class="bt sel" data-fw="1">켜기</button><button class="bt" data-fw="0">끄기</button></div>
+    <p class="sub">2. 클럭을 한 번씩 진행하세요</p>
+    <div class="row"><button class="bt go" id="ppNext">다음 클럭</button><button class="bt" id="ppAll">끝까지</button><button class="bt" id="ppReset">처음으로</button></div>
+    <div class="pw" id="ppW"><div class="pg" id="ppG"></div><svg id="ppSvg"></svg></div>
+    <div class="leg"><span><i style="background:#B5D4F4"></i>IF 인출</span><span><i style="background:#CECBF6"></i>ID 해석·레지스터 읽기</span><span><i style="background:#FAC775"></i>EX 실행</span><span><i style="background:#9FE1CB"></i>MEM 메모리</span><span><i style="background:#C0DD97"></i>WB 레지스터 쓰기</span><span><i style="background:repeating-linear-gradient(45deg,var(--surface-1) 0 4px,var(--border-strong) 4px 6px)"></i>스톨(대기)</span><span><i style="background:#F7C1C1"></i>버려진 명령어</span><span style="color:#D85A30">→ 포워딩</span></div>
+    <div class="msg" id="ppMsg" aria-live="polite"></div>
+    <div class="stats" id="ppSt"></div>
+  </div>
+  <p class="hint">각 행이 명령어, 각 열이 클럭입니다. 포워딩을 껐다 켜며 같은 묶음을 실행해 스톨 칸 수와 총 클럭을 비교해 보세요.</p>
+<div class="facts"><div><span>이상적인 CPI</span><b>1</b></div><div><span>데이터 해저드</span><b>앞 결과를 기다림</b></div><div><span>제어 해저드</span><b>분기 결과를 기다림</b></div><div><span>구조 해저드</span><b>자원 충돌</b></div></div>
+
+  <h2>데이터 해저드와 포워딩</h2>
+  <p><code>add r1, r2, r3</code> 바로 다음에 <code>sub r4, r1, r5</code>가 오면, sub는 r1이 필요한데 add는 아직 WB 단계에 이르지 않았습니다. 포워딩이 없으면 sub는 add가 r1을 레지스터에 쓸 때까지 ID에서 기다립니다. 포워딩은 add의 EX 결과를 레지스터를 거치지 않고 바로 sub의 EX 입력으로 넘겨 대기를 없앱니다.</p>
+  <h2>load-use는 포워딩으로도 한 칸 남습니다</h2>
+  <p><code>lw</code>는 값을 MEM 단계에서야 메모리에서 가져옵니다. 바로 다음 명령어가 그 값을 EX에서 쓰려면, 포워딩을 해도 한 클럭은 기다려야 합니다. 컴파일러는 이 빈칸에 관계없는 명령어를 끼워 넣어 스톨을 숨깁니다.</p>
+  <h2>분기는 다음에 가져올 명령어를 모르게 만듭니다</h2>
+  <p>분기 명령어의 결과는 EX 단계에서 정해지는데, 그동안 CPU는 이미 다음 명령어 두 개를 가져왔습니다. 분기가 일어나면 그 둘을 버리고 목표 주소에서 다시 가져와야 합니다. 그래서 CPU는 <a href="{{ '/theory/branch-prediction/' | relative_url }}">분기 예측</a>으로 결과를 미리 짐작합니다.</p>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/pipeline.js %}
+</script>

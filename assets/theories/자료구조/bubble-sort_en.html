@@ -1,0 +1,29 @@
+---
+lang: en
+translation_key: theory-bubble-sort
+subject: data-structures
+title: "Bubble Sort"
+description: "Repeatedly compare adjacent values and swap them to move the largest remaining value to the end."
+permalink: /en/theory/bubble-sort/
+category: algorithms
+order: 11
+---
+<style>{% include lessons/bubble-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">Compare neighboring values and swap them if out of order. Large values bubble rightward until they settle at the end.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A bar-chart simulator of bubble sort</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Press Play or advance one step at a time. Drag the slider to seek. Nearly sorted demonstrates early termination.</p>
+<div class="dsa-facts"><div><span>Best case</span><b class="good">O(n)</b></div><div><span>Average</span><b class="bad">O(n²)</b></div><div><span>Worst case</span><b class="bad">O(n²)</b></div><div><span>Extra space</span><b class="good">O(1)</b></div><div><span>Stable</span><b class="good">Yes</b></div><div><span>Maximum comparisons</span><b class="">n(n−1)/2</b></div></div>
+  <h2>Each pass fixes one maximum value</h2>
+  <p>During a pass, the larger value in each comparison moves right, leaving the interval's maximum at the end. The next pass excludes that final position. If a whole pass makes no swaps, the array is sorted and the algorithm stops. This gives O(n) time on already sorted input.</p>
+<div class="dsa-tip"><p class="t">Coding exercises: swaps equal inversions</p><p>An inversion is a pair i &lt; j with a[i] &gt; a[j]. Each bubble-sort swap removes exactly one inversion, so the swap count equals the inversion count. For large n, count inversions using <a href="{{ '/en/theory/merge-sort/' | relative_url }}">Merge Sort</a> in O(n log n), rather than simulating every swap.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/bubble-sort.js %}
+</script>

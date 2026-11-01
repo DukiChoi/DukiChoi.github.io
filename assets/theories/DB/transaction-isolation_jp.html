@@ -1,0 +1,43 @@
+---
+lang: ja
+translation_key: theory-transaction-isolation
+subject: db
+title: "トランザクションと分離レベル"
+description: "分離レベルによるダーティリード、非再現読取り、ファントムの違いを調べます。"
+permalink: /ja/theory/transaction-isolation/
+category: database
+order: 5
+---
+<style>{% include lessons/transaction-isolation.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">同じデータを並行して操作すると、他の処理の途中状態が見える場合があります。分離レベルは可視性と干渉を制御します。強い分離には待機などのコストもあります。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">実行順序と分離レベルによる読取り値の比較</h2>
+    <p class="sub" style="margin-top:0">1. 状況と分離レベルを選択</p>
+    <div class="row"><span class="lbl">状況</span><button class="bt sel" data-sc="dirty">Dirty Read</button><button class="bt" data-sc="nonrep">Non-repeatable Read</button><button class="bt" data-sc="phantom">Phantom Read</button></div>
+    <div class="row" style="margin-top:8px"><span class="lbl">分離レベル</span><button class="bt" data-lv="RU">READ UNCOMMITTED</button><button class="bt sel" data-lv="RC">READ COMMITTED</button><button class="bt" data-lv="RR">REPEATABLE READ</button><button class="bt" data-lv="SER">SERIALIZABLE</button></div>
+    <p class="sub">2. 時間順に実行</p>
+    <div class="row"><button class="bt go" id="txNext">次のステップ</button><button class="bt" id="txAll">最後まで</button><button class="bt" id="txReset">最初から</button></div>
+    <div class="txw">
+      <div class="lane" id="txLane"></div>
+      <div class="db"><div class="dbt">データベース</div><div id="txDb"></div></div>
+    </div>
+    <div class="msg" id="txMsg" aria-live="polite"></div>
+    <div class="tw"><table class="t" id="txM"></table></div>
+  </div>
+  <p class="hint">左がT1、右がT2です。同じ状況で分離レベルを変え、読取り結果を比較してください。</p>
+<div class="facts"><div><span>A 原子性</span><b>全部実行か全部取消</b></div><div><span>C 一貫性</span><b>制約を維持</b></div><div><span>I 分離性</span><b>干渉を制御</b></div><div><span>D 永続性</span><b>確定結果を保持</b></div></div>
+
+  <h2>3種類の読取り異常</h2>
+  <p><strong>Dirty Read</strong>は他のトランザクションの未コミット値を読む現象です。ロールバックされると未確定の値を読んだことになります。 <strong>Non-repeatable Read</strong>は同じ行を再読した際、別トランザクションの更新により値が変わる現象です。 <strong>Phantom Read</strong>は同じ条件の再検索で、他の挿入により一致する行の集合が変わる現象です。</p>
+  <h2>DBごとの実装の違い</h2>
+  <p>PostgreSQLとOracleの既定はREAD COMMITTED、MySQL InnoDBはREPEATABLE READです。MVCCは過去の版を使い、読取りと書込みの待機を減らします。このシミュレータのSERIALIZABLEはロック方式を表します。</p>
+<div class="tip"><p class="t">面接でよく聞かれる点</p><p>強い分離は同時処理性能を下げる場合があります。ロックの待機やデッドロックにも注意します。在庫更新のような処理では、 <code>SELECT ... FOR UPDATE</code>で対象行を明示的にロックすることもあります。</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/transaction-isolation.js %}
+</script>

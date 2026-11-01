@@ -1,0 +1,65 @@
+---
+lang: en
+translation_key: styles
+layout: default
+title: Behind the Styles
+permalink: /en/admin/program-styles/
+css_file: /assets/css/program-style-gallery.css
+js_file: /assets/js/card-tilt.js
+js_files:
+  - /assets/js/hover-sparkles.js
+sitemap: false
+noindex: true
+---
+<main class="page-shell page-shell--reading program-style-gallery">
+  <a class="program-back" href="{{ '/en/programs/' | relative_url }}">← Programs</a>
+  <header class="page-heading">
+    <p class="page-eyebrow">Style previews</p>
+    <h1>Behind the Styles</h1>
+    <p class="page-description">Explore brushed metal, holographic reflections, and three-dimensional motion.</p>
+  </header>
+  <nav class="style-gallery-nav" aria-label="Style preview sections">
+    <a href="#metal-nameplate">Metal nameplate</a>
+    <a href="#cube-and-sparkles">Cubes and sparkles</a>
+    <a href="#hologram-finishes">10 holographic finishes</a>
+  </nav>
+
+  <section class="style-gallery-section" id="metal-nameplate" aria-labelledby="metal-nameplate-title">
+    <header class="style-gallery-section__heading">
+      <p class="style-gallery-update">Added October 23, 2026</p>
+      <h2 id="metal-nameplate-title">Silver metal nameplate</h2>
+      <p>Fine horizontal brushing and vertical highlights create a metal surface, with lettering that looks engraved into darker silver.</p>
+    </header>
+    {% include metal-banner.html preview=true %}
+    <p class="style-gallery-caption">Move the pointer slowly across the surface to reveal shifting rainbow reflections and subtle sparkles.</p>
+  </section>
+
+  <section class="style-gallery-section" id="cube-and-sparkles" aria-labelledby="cube-and-sparkles-title">
+    <header class="style-gallery-section__heading">
+      <p class="style-gallery-update">Added October 23, 2026</p>
+      <h2 id="cube-and-sparkles-title">A floating icon cube</h2>
+      <p>The icon appears on all six cube faces. Hover to enlarge the card, lift the cube, and rotate it slowly with sparkles matching the banner color.</p>
+    </header>
+    {% assign cube_program = site.data.programs_en | where: "title", "Market Peek" | first %}
+    {% assign cube_style = site.data.program_styles_en | where: "id", "sapphire-holo" | first %}
+    {% include program-banner.html program=cube_program style=cube_style preview=true cube=true %}
+    <p class="style-gallery-caption">When the pointer leaves, rotation stops and sparkles fade. This is the same effect used in the program catalog.</p>
+  </section>
+
+  <section class="style-gallery-section" id="hologram-finishes" aria-labelledby="hologram-finishes-title">
+    <header class="style-gallery-section__heading">
+      <h2 id="hologram-finishes-title">10 holographic banner finishes</h2>
+      <p>Move the pointer or drag with a finger. Choose a finish in the CMS banner-style field or use the configuration shown below.</p>
+    </header>
+  <div class="program-style-samples">
+    {% for style in site.data.program_styles_en %}
+    <section class="program-style-sample" id="{{ style.id }}" aria-label="{{ style.title | escape }}">
+      {% include program-banner.html program=style style=style preview=true %}
+      <p class="program-style-code"><code>banner_style: {{ style.id }}</code></p>
+    </section>
+    {% endfor %}
+  </div>
+  <p class="program-style-note"><code>banner_style: auto</code> selects a random finish when the catalog opens, as does omitting the setting. Finishes are not repeated until all ten have been used, and refreshing the same tab changes the previous choice. Explicitly assigned styles stay fixed.</p>
+  </section>
+  <p class="style-gallery-caption">Sparkles appear only while hovering. Reduced-motion preferences disable rotation and sparkles.</p>
+</main>

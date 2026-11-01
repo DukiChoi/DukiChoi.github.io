@@ -1,0 +1,66 @@
+---
+lang: en
+translation_key: theory-mutex
+subject: operating-systems
+title: "Mutexes"
+description: "Protect a critical section with a single-owner lock and explore priority inversion."
+permalink: /en/theory/mutex/
+category: os
+order: 3
+---
+<style>{% include lessons/mutex.css %}</style>
+<div class="circuit-lesson os mx">
+<p class="lede">A mutex is like a lock with one key. Only its owner may enter the protected critical section; other threads wait until the key becomes available.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator showing three threads acquiring a mutex and waiting in a queue</h2>
+    <p class="sub" style="margin-top:0">Use each thread's button to call lock() or unlock()</p>
+    <div class="ths" id="mxThs"></div>
+    <div class="room" id="mxRoom">
+      <div><div class="nm">Critical section</div><div class="who" id="mxWho"></div></div>
+      <div class="lock" id="mxLock"></div>
+    </div>
+    <div class="queue" id="mxQ"></div>
+    <div class="row c" style="margin-top:12px">
+      <button class="bt" id="mxSteal">Try unlock() from another thread</button>
+      <button class="bt" id="mxReset">Reset</button>
+    </div>
+    <p class="msg" id="mxMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">When one thread holds the mutex, another thread's lock() joins the queue. Once the owner unlocks, the first waiting thread acquires it in this simulation.</p>
+
+  <h2>A mutex has an owner</h2>
+  <p>Only the thread that locks a mutex should unlock it. Unlocking from another thread violates the mutex's ownership rules; behavior depends on the implementation. A binary semaphore also has two states, but has no owner and can be signaled by another thread.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A timeline comparing priority inversion and priority inheritance</h2>
+    <p class="sub" style="margin-top:0">Priority inversion: high-priority H waits for low-priority L's mutex</p>
+    <div class="row">
+      <button class="bt sel" data-pi="off">Without priority inheritance</button>
+      <button class="bt" data-pi="on">With priority inheritance</button>
+      <button class="bt go" id="piPlay">Play timeline</button>
+    </div>
+    <div class="tl" id="piGrid"></div>
+    <div class="leg">
+      <span><i style="background:#993C1D"></i><i style="background:#534AB7"></i><i style="background:#0F6E56"></i>Running (H, M, L)</span>
+      <span><i style="background:repeating-linear-gradient(45deg,#E24B4A 0 4px,transparent 4px 8px)"></i>Blocked on mutex</span>
+      <span><i style="background:var(--surface-1);border:1px solid var(--border)"></i>Ready (waiting for CPU)</span>
+      <span><i style="background:#0F6E56;box-shadow:inset 0 0 0 3px #E8A317"></i>Running at inherited priority</span>
+    </div>
+    <p class="msg" id="piMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">Play the timeline one time unit at a time. Compare when H finishes with and without priority inheritance.</p>
+
+  <h2>Priority inversion</h2>
+  <p>Low-priority L holds a mutex that high-priority H needs, so H must wait. The problem becomes worse when unrelated medium-priority M preempts L. L cannot release the mutex while M runs, so H is delayed by M despite having a higher priority.</p>
+  <p>Priority inversion caused repeated resets on the Mars Pathfinder mission in 1997.</p>
+
+  <h2>Priority inheritance</h2>
+  <p>When H blocks on L's mutex, the operating system temporarily raises L to H's priority. M can no longer preempt L, which can finish the critical section and release the mutex. L then returns to its original priority.</p>
+  <p>In FreeRTOS, <code>xSemaphoreCreateMutex()</code> creates a mutex with priority inheritance, whereas <code>xSemaphoreCreateBinary()</code> creates a binary semaphore without it. This distinction matters when protecting shared resources.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/mutex.js %}
+</script>

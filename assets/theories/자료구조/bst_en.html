@@ -1,0 +1,46 @@
+---
+lang: en
+translation_key: theory-bst
+subject: data-structures
+title: "Binary Search Tree"
+description: "Insert, find, and delete values; see how tree shape changes and why a skewed tree is slow."
+permalink: /en/theory/bst/
+category: algorithms
+order: 40
+---
+<style>{% include lessons/bst.css %}</style>
+<div class="circuit-lesson lx bst">
+<p class="lede">In a binary search tree, every left-subtree value is smaller than its node and every right-subtree value is larger. A search chooses left or right at each comparison, making a well-balanced tree efficient.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator for insertion, lookup, and deletion in a binary search tree</h2>
+    <p class="sub" style="margin-top:0">1. Load an example or clear the tree</p>
+    <div class="row">
+      <button class="bt" id="bsRand">Build from 7 random values</button>
+      <button class="bt" id="bsSort">Build from 7 sorted values</button>
+      <button class="bt" id="bsClr">Clear tree</button>
+    </div>
+    <p class="sub">2. Enter a value and choose an operation</p>
+    <div class="row">
+      <label class="lbl">Value (1–99) <input type="number" id="bsV" min="1" max="99" value="42"></label>
+      <button class="bt go" id="bsIns">Insert</button><button class="bt go" id="bsFind">Find</button><button class="bt go" id="bsDel">Delete</button>
+    </div>
+    <p class="err" id="bsErr"></p>
+    <svg id="bsSvg" width="100%" viewBox="0 0 680 320" role="img" aria-label="Binary Search Tree"></svg>
+    <p class="msg" id="bsMsg" aria-live="polite"></p>
+    <div class="stats"><div><span>Nodes</span><b id="bsN">0</b></div><div><span>Height (nodes on longest path)</span><b id="bsH">0</b></div><div><span>Maximum lookup comparisons</span><b id="bsW">0</b></div></div>
+  </div>
+  <p class="hint">Insertion and lookup highlight the path from the root in orange. Build from sorted values to see the tree become skewed.</p>
+
+  <h2>Find, insert, and delete</h2>
+  <p>Start a search at the root, following the left child for a smaller value and the right for a larger one. Insertion follows the same path and adds a node at the first empty position.</p>
+  <p>Deletion depends on the number of children. Remove a leaf directly; replace a node with its only child; or, for two children, replace it with the minimum in its right subtree. This successor preserves the ordering property.</p>
+
+  <h2>Tree shape determines performance</h2>
+  <p>Worst-case search comparisons equal the tree height. A balanced tree with n nodes has height O(log n), but sorted insertion into an unbalanced tree creates a chain of height n. AVL and red-black trees use rotations and balancing rules to keep height O(log n).</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/bst.js %}
+</script>

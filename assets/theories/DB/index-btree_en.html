@@ -1,0 +1,46 @@
+---
+lang: en
+translation_key: theory-index-btree
+subject: db
+title: "Indexes and B+ Trees"
+description: "Compare B+ tree lookups with full table scans by counting the pages read."
+permalink: /en/theory/index-btree/
+category: database
+order: 3
+---
+<style>{% include lessons/index-btree.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">An index is a separate data structure that keeps values and row locations in order, much like the index at the back of a book. Many databases use B+ trees to find rows among millions of records by reading only a few pages.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator comparing B+ tree lookups and full table scans</h2>
+    <p class="sub" style="margin-top:0">1. Choose a value and a lookup method</p>
+    <div class="row">
+      <label class="lbl">id = <input type="number" id="bxK" value="44" style="width:70px"></label>
+      <button class="bt go" data-op="idx">Find using index</button>
+      <button class="bt go" data-op="scan">Find using full scan</button>
+      <span class="lbl" style="margin-left:8px">Range</span><input type="number" id="bxA" value="20" style="width:62px"><span class="lbl">~</span><input type="number" id="bxB" value="45" style="width:62px">
+      <button class="bt go" data-op="range">Find range using index</button>
+    </div>
+    <p class="err" id="bxErr"></p>
+    <div class="row"><button class="bt" id="bxNext">Next step</button><button class="bt" id="bxAll">Run to end</button><span class="lbl" id="bxSt"></span></div>
+    <svg id="bxSvg" width="100%" viewBox="0 0 680 330" role="img" aria-label="B+ tree index and table pages"></svg>
+    <div class="leg"><span><i style="background:#FAC775"></i>Current page</span><span><i style="background:#9FE1CB"></i>Previously read page</span><span><i style="background:#639922"></i>Matching value</span></div>
+    <div class="msg" id="bxMsg" aria-live="polite"></div>
+    <div class="stats" id="bxStats"></div>
+  </div>
+  <p class="hint">The tree above is an index on the id column. The five boxes below are table pages containing the actual rows. Notice that the table pages are not sorted.</p>
+<div class="facts"><div><span>Lookup</span><b>O(log n)</b></div><div><span>Range lookup</span><b>Follow linked leaves</b></div><div><span>Height for 1M rows</span><b>About 3–4</b></div><div><span>Trade-off</span><b>Slower writes</b></div></div>
+
+  <h2>Three properties of a B+ tree</h2>
+  <p>First, each node contains several sorted keys and pointers to children between them. A node represents a disk page, so one read can compare hundreds of keys, keeping the tree shallow. Second, row locations appear only in the leaves. Third, leaves are linked horizontally: for a range condition (BETWEEN, &gt;, &lt;), find the first leaf and then follow the links.</p>
+  <h2>An index is not always faster</h2>
+  <p>Fetching each indexed row may require a separate table-page read. If many rows match, a full scan can be faster. Widen the range to see the table-page count approach that of a full scan. The query optimizer estimates this cost when deciding whether to use an index.</p>
+<div class="tip"><p class="t">Interview topic: when an index cannot help</p><p>Applying a function or arithmetic to a column (<code>WHERE YEAR(joined_at) = 2024</code>, <code>WHERE price * 2 &gt; 100</code>) can prevent an ordinary index on that column from being used for a lookup. <code>LIKE '%term'</code>A leading wildcard has a similar effect. A composite index on (a, b) is sorted by a first, so filtering only by b may not give an efficient lookup (the leftmost-prefix rule). More indexes also mean more work on INSERT, UPDATE, and DELETE, slowing down writes.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/index-btree.js %}
+</script>

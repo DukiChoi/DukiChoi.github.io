@@ -1,0 +1,31 @@
+---
+lang: en
+translation_key: theory-quick-sort
+subject: data-structures
+title: "Quick Sort"
+description: "Partition around a pivot, then recursively sort both sides."
+permalink: /en/theory/quick-sort/
+category: algorithms
+order: 14
+---
+<style>{% include lessons/quick-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">Choose a pivot, place smaller values to its left and greater-or-equal values to its right, then recursively sort both sides. Partitioning puts the pivot in its final position.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A quick-sort simulator showing partitioning and the call stack</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Play, step, or seek with the slider. Already sorted exposes the worst case for this rightmost-pivot implementation.</p>
+<div class="dsa-facts"><div><span>Best case</span><b class="good">O(n log n)</b></div><div><span>Average</span><b class="good">O(n log n)</b></div><div><span>Worst case</span><b class="bad">O(n²)</b></div><div><span>Extra space</span><b class="">O(log n)</b></div><div><span>Stable</span><b class="bad">No</b></div><div><span>Typical performance</span><b class="good">Very fast</b></div></div>
+  <h2>Partitioning with i and j</h2>
+  <p>j scans unprocessed values; i marks the next position for a value smaller than the pivot. The green interval lo…i−1 holds smaller values, and the red interval i…j−1 holds greater-or-equal values. Finally, move the pivot to i between these groups.</p>
+  <h2>Worst case</h2>
+  <p>On sorted input, a rightmost pivot is always the largest value, leaving one recursive side almost unchanged. Depth grows to n and comparisons to n(n−1)/2. Practical implementations use strategies such as randomized pivots, median-of-three selection, or fallback algorithms.</p>
+<div class="dsa-tip"><p class="t">Coding exercises: quickselect</p><p>After partitioning, the pivot is fixed at index i. If i equals k, it is the requested order statistic; otherwise, recurse only on the side containing k. This gives expected O(n) selection with suitable pivots. For ordinary sorting, prefer <code>sort()</code>; for a few largest values, consider <code>heapq.nsmallest</code>, <code>heapq.nlargest</code>.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/quick-sort.js %}
+</script>

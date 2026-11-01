@@ -2,13 +2,14 @@
 layout: default
 ---
 <main class="page-shell page-shell--document">
+  {% assign document_ui = site.data.ui[page.lang] | default: site.data.ui.ko %}
   <header class="page-heading">
     <p class="page-eyebrow">DukiChoi</p>
     <h1>{{ page.title | escape }}</h1>
     {% if page.description %}<p class="page-description">{{ page.description | escape }}</p>{% endif %}
     <div class="document-actions">
-      <a href="{{ page.pdf_file | relative_url }}" target="_blank" rel="noopener">PDF 열기</a>
-      <a href="{{ page.pdf_file | relative_url }}" download>다운로드</a>
+      <a href="{{ page.pdf_file | relative_url }}" target="_blank" rel="noopener">{{ document_ui.open_pdf }}</a>
+      <a href="{{ page.pdf_file | relative_url }}" download>{{ document_ui.download }}</a>
     </div>
   </header>
   <iframe class="pdf-viewer" src="{{ page.pdf_file | relative_url }}#view=FitH" title="{{ page.title | escape }} PDF"></iframe>

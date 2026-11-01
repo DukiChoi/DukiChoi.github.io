@@ -1,0 +1,49 @@
+---
+lang: ko
+translation_key: theory-i2c-spi
+subject: embedded
+title: I2C와 SPI
+description: 클럭 선을 함께 쓰는 두 직렬 버스가 한 바이트를 주고받는 파형을 클럭 단위로 따라갑니다.
+permalink: /theory/i2c-spi/
+category: embedded
+order: 2
+---
+<style>{% include lessons/i2c-spi.css %}</style>
+<div class="circuit-lesson lx bs">
+<p class="lede">I2C와 SPI는 둘 다 마스터가 클럭을 만들고, 데이터 선의 값을 클럭에 맞춰 읽는 직렬 버스입니다. I2C는 선 두 개로 여러 장치를 주소로 구분하고, SPI는 선 네 개로 더 빠르게 양방향 데이터를 동시에 주고받습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">I2C와 SPI 버스의 클럭과 데이터 파형을 한 단계씩 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 버스를 고르고 보낼 값을 정하세요</p>
+    <div class="row">
+      <button class="bt sel" data-b="i2c">I2C</button><button class="bt" data-b="spi">SPI (모드 0)</button>
+      <span id="bsI2c" class="row" style="margin-left:8px"><label class="lbl">슬레이브 주소 <input type="text" id="bsAddr" value="0x48"></label><label class="lbl">쓸 데이터 <input type="text" id="bsData" value="0xA5"></label></span>
+      <span id="bsSpi" class="row" style="margin-left:8px;display:none"><label class="lbl">마스터가 보낼 값 <input type="text" id="bsMosi" value="0xA5"></label><label class="lbl">슬레이브가 보낼 값 <input type="text" id="bsMiso" value="0x3C"></label></span>
+    </div>
+    <p class="err" id="bsErr"></p>
+    <p class="sub" style="margin-top:4px">2. 한 단계씩 진행하세요</p>
+    <div class="row">
+      <button class="bt go" id="bsStep">다음 단계</button>
+      <button class="bt" id="bsAll">끝까지 재생</button>
+      <button class="bt" id="bsReset">처음으로</button>
+    </div>
+    <svg id="bsSvg" width="100%" viewBox="0 0 680 250" role="img" aria-label="버스 파형"></svg>
+    <div class="leg" id="bsLeg"></div>
+    <p class="msg" id="bsMsg" aria-live="polite"></p>
+    <div class="regs" id="bsRegs"></div>
+  </div>
+  <p class="hint">[다음 단계]를 누를 때마다 파형이 한 비트씩 진하게 그려집니다. 주황색 점은 받는 쪽이 데이터 선을 읽는 순간입니다.</p>
+
+  <h2>I2C: 선 두 개, 주소로 상대를 고릅니다</h2>
+  <p>I2C는 클럭 SCL과 데이터 SDA 두 선만 씁니다. 두 선은 풀업 저항으로 평소에 high를 유지하고, 장치들은 선을 low로 당기기만 합니다. 그래서 여러 장치가 같은 선에 붙어 있어도 충돌하지 않습니다.</p>
+  <p>마스터는 SCL이 high인 동안 SDA를 내려 시작을 알리고, 7비트 주소와 읽기/쓰기 비트를 보냅니다. 주소가 맞는 슬레이브만 SDA를 low로 당겨 ACK로 대답합니다. 데이터는 SCL이 low일 때 바뀌고, SCL이 high일 때 읽힙니다. SCL이 high인 동안 SDA가 바뀌는 경우는 시작과 정지 조건뿐입니다.</p>
+
+  <h2>SPI: 선 네 개, 보내면서 동시에 받습니다</h2>
+  <p>SPI는 클럭 SCK, 마스터 출력 MOSI, 슬레이브 출력 MISO, 칩 선택 CS를 씁니다. 마스터가 CS를 low로 내려 상대를 고르므로 주소가 필요 없고, ACK도 없습니다. 클럭 8번이 지나는 동안 마스터와 슬레이브가 각자의 시프트 레지스터를 맞바꾸듯 한 바이트씩 주고받습니다.</p>
+  <p>모드 0은 클럭이 평소 low이고 상승 에지에서 데이터를 읽는 방식입니다. 클럭 극성(CPOL)과 위상(CPHA)을 바꾼 모드 1~3도 있어서, 데이터시트에서 장치의 모드를 꼭 확인해야 합니다.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/i2c-spi.js %}
+</script>

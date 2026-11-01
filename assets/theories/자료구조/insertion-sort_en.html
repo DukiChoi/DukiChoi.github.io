@@ -1,0 +1,30 @@
+---
+lang: en
+translation_key: theory-insertion-sort
+subject: data-structures
+title: "Insertion Sort"
+description: "Take values one at a time and insert them into the sorted prefix."
+permalink: /en/theory/insertion-sort/
+category: algorithms
+order: 13
+---
+<style>{% include lessons/insertion-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">Like sorting playing cards in your hand, hold one value as key, shift larger values to the right, and insert key into the resulting hole.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A bar-chart simulator of insertion sort</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Play, step, or seek with the slider. The pink floating bar in the lower row is the held key.</p>
+<div class="dsa-facts"><div><span>Best case</span><b class="good">O(n)</b></div><div><span>Average</span><b class="bad">O(n²)</b></div><div><span>Worst case</span><b class="bad">O(n²)</b></div><div><span>Extra space</span><b class="good">O(1)</b></div><div><span>Stable</span><b class="good">Yes</b></div><div><span>Strength</span><b class="good">Nearly sorted input</b></div></div>
+  <h2>Efficient on nearly sorted arrays</h2>
+  <p>Only values larger than key are shifted, so nearly sorted input needs little movement and approaches O(n) time. Compare Nearly sorted with Reversed. Insertion sort is also efficient on small ranges and is used within many production sorting implementations.</p>
+  <p>Equal values are not shifted past the key, preserving their original order.</p>
+<div class="dsa-tip"><p class="t">Coding exercises</p><p>The shift count also equals the inversion count. If values arrive one at a time, use <code>bisect.insort</code> to find an insertion position, but inserting into a Python list still takes O(n), giving O(n²) overall. For larger workloads, consider a different data structure such as <a href="{{ '/en/theory/heap-sort/' | relative_url }}">Heap</a>.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/insertion-sort.js %}
+</script>

@@ -1,0 +1,63 @@
+---
+lang: ja
+translation_key: theory-semaphore
+subject: operating-systems
+title: "セマフォ"
+description: "資源数のカウンタで、駐車場と生産者・消費者を制御します。"
+permalink: /ja/theory/semaphore/
+category: os
+order: 4
+---
+<style>{% include lessons/semaphore.css %}</style>
+<div class="circuit-lesson os sm">
+<p class="lede">セマフォは使用可能な資源数を管理します。wait()で取得し、signal()で返します。0なら資源が戻るまで待ちます。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">3台分の駐車場シミュレータ</h2>
+    <p class="sub" style="margin-top:0">Sで3台分の空きを管理</p>
+    <div class="top">
+      <div class="sv"><span>S =</span><b id="spS">3</b><span>空き台数</span></div>
+      <span style="flex:1"></span>
+      <button class="bt go" id="spIn">車が到着（wait）</button>
+      <button class="bt" id="spReset">最初から</button>
+    </div>
+    <div class="lot" id="spLot"></div>
+    <div class="lane" id="spLane"></div>
+    <p class="msg" id="spMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">到着を繰り返して満車にし、駐車中の車を押して退出させてください。</p>
+
+  <h2>wait()とsignal()</h2>
+  <p>S>0なら減らして進み、0なら待ちます。signal()は資源を返して待機者を起こします。起きた車が直ちに使う場合、Sは0のままです。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">5枠の生産者・消費者バッファ</h2>
+    <p class="sub" style="margin-top:0">emptyとfullで5枠を管理</p>
+    <div class="pc">
+      <div class="agent" id="pcP"><span class="nm" style="color:#185FA5">生産者</span><span class="stt" id="pcPs"></span><button class="bt" id="pcPb">データ投入</button></div>
+      <div><div class="buf" id="pcBuf"></div><div class="mk" id="pcMk"></div>
+        <div class="cnt"><span>empty <b id="pcE">5</b></span><span>full <b id="pcF">0</b></span></div></div>
+      <div class="agent" id="pcC"><span class="nm" style="color:#993C1D">消費者</span><span class="stt" id="pcCs"></span><button class="bt" id="pcCb">データ取出し</button></div>
+    </div>
+    <div class="row c" style="margin-top:14px">
+      <button class="bt go" id="pcAuto">自動実行を開始</button>
+      <label style="font-size:14px;color:var(--text-secondary)">生産速度 <select id="pcPv"><option value="700">速い</option><option value="1400" selected>普通</option><option value="2600">遅い</option></select></label>
+      <label style="font-size:14px;color:var(--text-secondary)">消費速度 <select id="pcCv"><option value="700">速い</option><option value="1400">普通</option><option value="2600" selected>遅い</option></select></label>
+      <button class="bt" id="pcReset">最初から</button>
+    </div>
+    <p class="msg" id="pcMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">生産が速いと満杯になって生産者が停止し、消費が速いと消費者が待機します。</p>
+
+  <h2>生産者・消費者問題</h2>
+  <p>投入には空き、取出しにはデータが必要です。emptyとfullで条件を守り、バッファ自体の同時操作はミューテックスで保護します。</p>
+  <pre><code>生産者：wait(empty)→lock(m)→投入→unlock(m)→signal(full)。消費者：wait(full)→lock(m)→取出し→unlock(m)→signal(empty)。</code></pre>
+
+  <h2>ミューテックスとの違い</h2>
+  <p>セマフォには所有者がなく、別スレッドからsignal()できます。資源数だけでなくイベント通知にも使います。FreeRTOSの割込みから <code>xSemaphoreGiveFromISR()</code>でタスクを起こすのが一例です。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/semaphore.js %}
+</script>

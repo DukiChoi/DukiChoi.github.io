@@ -1,0 +1,46 @@
+---
+lang: ko
+translation_key: theory-index-btree
+subject: db
+title: 인덱스와 B+트리
+description: B+트리 인덱스로 값을 찾는 과정과 전체 테이블 스캔을 읽는 페이지 수로 비교합니다.
+permalink: /theory/index-btree/
+category: database
+order: 3
+---
+<style>{% include lessons/index-btree.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">인덱스는 책 뒤의 찾아보기처럼, 값과 그 값이 있는 행의 위치를 정렬해 둔 별도의 자료구조입니다. 대부분의 DB는 B+트리로 인덱스를 만들어, 수백만 행에서도 페이지 몇 개만 읽고 원하는 행을 찾습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">B+트리 인덱스 탐색과 전체 테이블 스캔을 비교하는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 찾을 값과 방법을 고르세요</p>
+    <div class="row">
+      <label class="lbl">id = <input type="number" id="bxK" value="44" style="width:70px"></label>
+      <button class="bt go" data-op="idx">인덱스로 찾기</button>
+      <button class="bt go" data-op="scan">전체 스캔으로 찾기</button>
+      <span class="lbl" style="margin-left:8px">범위</span><input type="number" id="bxA" value="20" style="width:62px"><span class="lbl">~</span><input type="number" id="bxB" value="45" style="width:62px">
+      <button class="bt go" data-op="range">인덱스로 범위 찾기</button>
+    </div>
+    <p class="err" id="bxErr"></p>
+    <div class="row"><button class="bt" id="bxNext">다음 단계</button><button class="bt" id="bxAll">끝까지</button><span class="lbl" id="bxSt"></span></div>
+    <svg id="bxSvg" width="100%" viewBox="0 0 680 330" role="img" aria-label="B+트리 인덱스와 테이블 페이지"></svg>
+    <div class="leg"><span><i style="background:#FAC775"></i>지금 읽는 페이지</span><span><i style="background:#9FE1CB"></i>이미 읽은 페이지</span><span><i style="background:#639922"></i>찾은 값</span></div>
+    <div class="msg" id="bxMsg" aria-live="polite"></div>
+    <div class="stats" id="bxStats"></div>
+  </div>
+  <p class="hint">위쪽 트리가 id 열에 만든 인덱스이고, 아래쪽 다섯 칸이 실제 행이 저장된 테이블 페이지입니다. 테이블 페이지는 정렬되어 있지 않다는 점을 눈여겨보세요.</p>
+<div class="facts"><div><span>탐색</span><b>O(log n)</b></div><div><span>범위 탐색</span><b>리프 연결 따라감</b></div><div><span>100만 행 높이</span><b>약 3~4</b></div><div><span>대가</span><b>쓰기 느려짐</b></div></div>
+
+  <h2>B+트리의 세 가지 성질</h2>
+  <p>첫째, 모든 노드가 정렬된 키를 여러 개 갖고, 키 사이사이에 자식 포인터가 있습니다. 노드 하나가 디스크 페이지 하나라서 한 번 읽을 때 수백 개의 키를 비교하므로, 트리가 아주 낮습니다. 둘째, 실제 행의 위치는 맨 아래 리프에만 있습니다. 셋째, 리프끼리 옆으로 연결되어 있어서 범위 조건(BETWEEN, &gt;, &lt;)은 시작 리프만 찾은 뒤 옆으로 따라가면 됩니다.</p>
+  <h2>인덱스가 항상 빠르지는 않습니다</h2>
+  <p>인덱스로 찾은 행마다 테이블 페이지를 따로 읽어야 하므로, 조건에 맞는 행이 테이블의 큰 비율을 차지하면 차라리 전체 스캔이 빠릅니다. 범위를 넓혀 실행해 보면 읽는 테이블 페이지 수가 전체 스캔과 비슷해지는 것을 볼 수 있습니다. DB의 옵티마이저는 이 비용을 계산해 인덱스를 쓸지 정합니다.</p>
+<div class="tip"><p class="t">면접에서 자주 묻는 것: 인덱스를 못 타는 경우</p><p>열에 함수나 연산을 씌우면(<code>WHERE YEAR(가입일) = 2024</code>, <code>WHERE 가격 * 2 &gt; 100</code>) 정렬된 값을 쓸 수 없어 인덱스를 못 탑니다. <code>LIKE '%검색어'</code>처럼 앞에 와일드카드가 오면 마찬가지입니다. (a, b) 복합 인덱스는 a로 먼저 정렬되어 있으므로 a 조건 없이 b만으로는 효율적으로 찾지 못합니다(왼쪽 접두사 규칙). 인덱스가 많을수록 INSERT, UPDATE, DELETE 때 모든 인덱스를 함께 고쳐야 해서 쓰기가 느려집니다.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/index-btree.js %}
+</script>

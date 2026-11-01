@@ -1,0 +1,47 @@
+---
+lang: en
+translation_key: theory-sorting
+subject: data-structures
+title: "Sorting at a Glance"
+description: "Race seven sorting algorithms on the same array and compare their work, complexity, and use cases."
+permalink: /en/theory/sorting/
+category: algorithms
+order: 10
+---
+<style>{% include lessons/sorting.css %}</style>
+<div class="circuit-lesson rc">
+<p class="lede">Seven algorithms sort the same input simultaneously. Each advances one logical comparison or movement per tick, so an earlier finish means fewer counted steps, not necessarily less wall-clock CPU time. Different inputs can change the ranking.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A race between seven sorting algorithms on the same array</h2>
+    <div class="ctl"><span class="l">Input</span><button class="bt sel" data-rp="random">Random</button><button class="bt" data-rp="nearly">Nearly sorted</button><button class="bt" data-rp="reversed">Reversed</button><button class="bt" data-rp="dups">Many duplicates</button></div>
+    <div class="ctl"><button class="bt go" id="rcGo">Start together</button><button class="bt" id="rcReset">New array</button><label class="l">Speed <select id="rcSpd"><option value="120">Slow</option><option value="45" selected>Normal</option><option value="12">Fast</option></select></label></div>
+    <div class="grid" id="rcGrid"></div>
+    <p class="msg" id="rcMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">Nearly sorted favors insertion sort and bubble sort, while reversed input makes both do much more work. Merge sort and heap sort are less sensitive to input order. Click an algorithm name in the table for its detailed simulation.</p>
+
+  <h2>Complexity overview</h2>
+<div class="cx"><table><thead><tr><th>Algorithm</th><th>Best case</th><th>Average</th><th>Worst case</th><th>Extra space</th><th>Stable</th></tr></thead><tbody><tr><td><a href="{{ '/en/theory/bubble-sort/' | relative_url }}">Bubble</a></td><td class="g">O(n)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="g">Yes</td></tr><tr><td><a href="{{ '/en/theory/selection-sort/' | relative_url }}">Select</a></td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="b">No</td></tr><tr><td><a href="{{ '/en/theory/insertion-sort/' | relative_url }}">Insertion</a></td><td class="g">O(n)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="g">Yes</td></tr><tr><td><a href="{{ '/en/theory/quick-sort/' | relative_url }}">Quick</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="b">O(n²)</td><td class="">O(log n)</td><td class="b">No</td></tr><tr><td><a href="{{ '/en/theory/merge-sort/' | relative_url }}">Merge</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="b">O(n)</td><td class="g">Yes</td></tr><tr><td><a href="{{ '/en/theory/heap-sort/' | relative_url }}">Heap</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(1)</td><td class="b">No</td></tr><tr><td><a href="{{ '/en/theory/counting-sort/' | relative_url }}">Counting</a></td><td class="g">O(n + k)</td><td class="g">O(n + k)</td><td class="g">O(n + k)</td><td class="">O(n + k)</td><td class="g">Yes</td></tr></tbody></table></div>
+  <p>k is the range of values for counting sort. A stable sort preserves the order of equal values. Stability matters when applying successive sorting criteria, such as sorting by name and then by score.</p>
+
+  <h2>Which algorithm should you use?</h2>
+  <div class="use">
+    <div><b>Usually, the language's built-in sort</b><p>Python's sort() is stable and has O(n log n) worst-case time. Prefer a well-tested built-in implementation for ordinary sorting tasks.</p></div>
+    <div><b>Need O(n log n) worst-case time?</b><p>Use merge sort when stability matters and extra memory is available, or heap sort when constant extra array space is important.</p></div>
+    <div><b>Nearly sorted data or small inputs</b><p>Insertion sort works well here. Many general-purpose implementations use insertion sorting for small subranges.</p></div>
+    <div><b>Many integers within a narrow range</b><p>Counting sort takes O(n + k) without value comparisons. If only frequencies are needed, it can also reduce storage.</p></div>
+  </div>
+
+  <div class="dsa-tip"><p class="t">Coding exercises: choosing a sort key</p>
+  <p>Most tasks ask how to choose a key, rather than how to implement sorting. Tuple keys compare fields in order; negating a numeric field requests descending order for that field.</p>
+<pre><code>a.sort()                                   # stable, in-place
+b = sorted(a, reverse=True)                # new list, descending
+people.sort(key=lambda p: (-p[1], p[0]))   # score descending, name ascending</code></pre>
+  <p>As a rough guide, quadratic algorithms may be viable for a few thousand items but become expensive around 100,000. Actual limits depend on language, hardware, and per-step work; measure rather than relying on a fixed one-second rule.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/sorting.js %}
+</script>

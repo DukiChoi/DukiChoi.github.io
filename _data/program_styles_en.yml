@@ -1,0 +1,51 @@
+# Colors and foil finishes for program banners. Order is the no-JavaScript fallback.
+- id: emerald-cosmos
+  title: Emerald Cosmos
+  description: "Small stars and circular foil shimmer on emerald."
+  palette: emerald
+  foil: cosmos
+- id: sapphire-holo
+  title: Sapphire Holo
+  description: "Crisp vertical highlights flow across sapphire blue."
+  palette: sapphire
+  foil: holo
+- id: amethyst-amazing
+  title: Amethyst Amazing
+  description: "Fine teal and pink grains shine on violet metal."
+  palette: amethyst
+  foil: amazing
+- id: ruby-radiant
+  title: Ruby Radiant
+  description: "Light crosses diamond facets on a ruby background."
+  palette: ruby
+  foil: radiant
+- id: bronze-reverse
+  title: Bronze Reverse
+  description: "Copper edges and repeating patterns catch the light."
+  palette: bronze
+  foil: reverse
+- id: arctic-vstar
+  title: Arctic VStar
+  description: "Icy diagonal facets shine on cool teal metal."
+  palette: arctic
+  foil: vstar
+- id: rose-full-art
+  title: Rose Full Art
+  description: "Reflections trace engraved waves on a rose surface."
+  palette: rose
+  foil: full-art
+- id: aurora-rainbow
+  title: Aurora Rainbow
+  description: "Rainbow reflections and fine pearlescence overlap on deep blue."
+  palette: aurora
+  foil: rainbow
+- id: gold-secret
+  title: Gold Secret
+  description: "Layered grains give gold metal a deep shimmer."
+  palette: gold
+  foil: secret
+- id: graphite-shiny
+  title: Graphite Shiny
+  description: "Silver stars and bright reflections appear on graphite."
+  palette: graphite
+  foil: shiny

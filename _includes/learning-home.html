@@ -1,0 +1,52 @@
+{% assign copy = site.data.learning_home[page.lang] | default: site.data.learning_home.ko %}
+{% assign prefix = '' %}{% if page.lang != 'ko' %}{% assign prefix = '/' | append: page.lang %}{% endif %}
+<header class="page-heading learning-hero">
+  <p class="page-eyebrow">{{ copy.eyebrow }}</p>
+  <h1>{{ copy.title }}</h1>
+  <p class="page-description">{{ copy.intro }}</p>
+  <a class="learning-home-link" href="{{ prefix | append: '/theory/' | relative_url }}">{{ copy.all }} <span aria-hidden="true">→</span></a>
+</header>
+<section class="learning-section" aria-labelledby="featured-title">
+  <div class="learning-section-heading">
+    <h2 id="featured-title">{{ copy.featured }}</h2>
+    <button class="preview-toggle" type="button" data-play-label="{{ copy.play }}" data-pause-label="{{ copy.pause }}" aria-pressed="false" hidden>{{ copy.pause }}</button>
+  </div>
+  <div class="learning-grid learning-grid--featured">
+    {% for card in copy.cards %}
+    <article class="learning-card learning-card--featured">
+      <a class="learning-preview-link" href="{{ card.url | relative_url }}" aria-label="{{ card.action }}">
+        {% include lesson-preview.html kind=card.kind %}
+        <span class="preview-open" aria-hidden="true">↗</span>
+      </a>
+      <div class="learning-card-copy">
+        <p class="learning-label">{{ card.subject }}</p>
+        <h3><a href="{{ card.url | relative_url }}">{{ card.title }}</a></h3>
+        <p>{{ card.description }}</p>
+        <a class="learning-card-action" href="{{ card.url | relative_url }}">{{ card.action }} <span aria-hidden="true">→</span></a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+<section class="learning-section" aria-labelledby="subjects-title">
+  <h2 id="subjects-title">{{ copy.subjects }}</h2>
+  <div class="learning-grid learning-grid--subjects">
+    {% assign subjects = site.pages | where: "lang", page.lang | where: "folder_overview", true | where_exp: "entry", "entry.published != false" | sort: "title" %}
+    {% for subject in subjects %}
+    <article class="learning-card">
+      <h3><a href="{{ subject.url | relative_url }}">{{ subject.title | escape }}</a></h3>
+      <p>{{ subject.description | escape }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+<section class="learning-section" aria-labelledby="guide-title">
+  <h2 id="guide-title">{{ copy.guide }}</h2>
+  <ol class="learning-steps">{% for step in copy.steps %}<li>{{ step }}</li>{% endfor %}</ol>
+  <p>{{ copy.note }}</p>
+</section>
+<section class="learning-section" aria-labelledby="author-title">
+  <h2 id="author-title">{{ copy.author_title }}</h2>
+  <p>{{ copy.author }}</p>
+  <p><a href="{{ prefix | append: '/profile/' | relative_url }}">Profile</a> · <a href="{{ prefix | append: '/programs/' | relative_url }}">{{ copy.programs }}</a></p>
+</section>

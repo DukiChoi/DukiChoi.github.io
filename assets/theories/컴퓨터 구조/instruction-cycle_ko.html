@@ -1,0 +1,39 @@
+---
+lang: ko
+translation_key: theory-instruction-cycle
+subject: computer-architecture
+title: 명령어 사이클
+description: CPU가 명령어를 인출, 해석, 실행하는 동안 레지스터와 메모리 사이로 값이 오가는 과정을 봅니다.
+permalink: /theory/instruction-cycle/
+category: architecture
+order: 1
+---
+<style>{% include lessons/instruction-cycle.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">CPU는 메모리에서 명령어를 하나 가져오고(인출), 무슨 일을 할지 해석하고(해석), 그 일을 실행하는 과정을 끝없이 반복합니다. 레지스터 사이로 값이 어떻게 오가는지 한 단계씩 따라가 보세요.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">간단한 CPU가 명령어를 인출, 해석, 실행하는 과정을 레지스터와 메모리로 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 실행할 프로그램을 고르세요</p>
+    <div class="row"><button class="bt sel" data-pg="add">두 수 더하기</button><button class="bt" data-pg="loop">3부터 0까지 세기 (반복문)</button></div>
+    <p class="sub">2. 한 단계씩 실행하세요</p>
+    <div class="row"><button class="bt go" id="icNext">다음 단계</button><button class="bt" id="icPlay">자동 재생</button><button class="bt" id="icInstr">명령어 하나 끝까지</button><button class="bt" id="icReset">처음으로</button><span class="lbl" id="icCnt"></span></div>
+    <div class="ph" id="icPh"></div>
+    <svg id="icSvg" width="100%" viewBox="0 0 680 360" role="img" aria-label="CPU 레지스터와 메모리"></svg>
+    <div class="msg" id="icMsg" aria-live="polite"></div>
+  </div>
+  <p class="hint">주황색 화살표가 이번 단계에서 값이 이동한 길이고, 주황색 상자가 값이 바뀐 곳입니다. 메모리 옆 ▶ 표시는 PC가 가리키는 다음 명령어 위치입니다.</p>
+<div class="facts"><div><span>PC</span><b>다음 명령어 주소</b></div><div><span>IR</span><b>지금 명령어</b></div><div><span>MAR</span><b>읽고 쓸 주소</b></div><div><span>MDR</span><b>오가는 데이터</b></div><div><span>ACC</span><b>계산 결과</b></div></div>
+
+  <h2>인출은 모든 명령어가 똑같습니다</h2>
+  <p>PC가 가리키는 주소를 MAR에 옮기고, 메모리가 그 주소의 내용을 MDR에 실어 보내면, 그것을 IR에 넣고 PC를 1 늘립니다. 어떤 명령어든 이 세 단계는 같습니다. 실행 단계만 명령어마다 다르고, 점프 명령어는 실행 단계에서 PC를 새 주소로 덮어써서 다음에 인출할 위치를 바꿉니다. 반복문이 바로 이 원리로 동작합니다.</p>
+  <h2>메모리 접근이 느린 이유</h2>
+  <p>명령어 하나를 처리하는 데 메모리를 최소 한 번(인출), 많게는 두 번(LOAD, ADD, STORE의 실행) 읽고 씁니다. CPU 안의 레지스터는 1클럭이면 읽지만 메인 메모리는 수십~수백 클럭이 걸립니다. 그래서 CPU와 메모리 사이에 <a href="{{ '/theory/cache/' | relative_url }}">캐시</a>를 두고, 여러 명령어를 겹쳐 처리하는 <a href="{{ '/theory/pipeline/' | relative_url }}">파이프라인</a>을 씁니다.</p>
+<div class="tip"><p class="t">이 CPU의 명령어</p><p><code>LOAD a</code> ACC ← M[a], <code>ADD a</code> ACC ← ACC + M[a], <code>SUB a</code> ACC ← ACC − M[a], <code>STORE a</code> M[a] ← ACC, <code>JZ a</code> ACC가 0이면 PC ← a, <code>JMP a</code> PC ← a, <code>HALT</code> 정지. 계산 결과를 ACC 하나에 모으는 이런 구조를 누산기 구조라고 합니다. 실제 CPU는 범용 레지스터를 수십 개 둡니다.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/instruction-cycle.js %}
+</script>

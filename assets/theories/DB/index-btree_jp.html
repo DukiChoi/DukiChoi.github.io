@@ -1,0 +1,46 @@
+---
+lang: ja
+translation_key: theory-index-btree
+subject: db
+title: "インデックスとB+木"
+description: "B+木による検索と全件走査を、読み込むページ数で比較します。"
+permalink: /ja/theory/index-btree/
+category: database
+order: 3
+---
+<style>{% include lessons/index-btree.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">インデックスは、値と行の保存先を整理した検索用のデータ構造です。B+木を使うと、多数の行から少数のページを読んで目的の行を探せます。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">B+木検索とテーブル全件走査の比較</h2>
+    <p class="sub" style="margin-top:0">1. 検索値と方法を選択</p>
+    <div class="row">
+      <label class="lbl">id = <input type="number" id="bxK" value="44" style="width:70px"></label>
+      <button class="bt go" data-op="idx">インデックス検索</button>
+      <button class="bt go" data-op="scan">全件走査</button>
+      <span class="lbl" style="margin-left:8px">範囲</span><input type="number" id="bxA" value="20" style="width:62px"><span class="lbl">~</span><input type="number" id="bxB" value="45" style="width:62px">
+      <button class="bt go" data-op="range">インデックスで範囲検索</button>
+    </div>
+    <p class="err" id="bxErr"></p>
+    <div class="row"><button class="bt" id="bxNext">次のステップ</button><button class="bt" id="bxAll">最後まで</button><span class="lbl" id="bxSt"></span></div>
+    <svg id="bxSvg" width="100%" viewBox="0 0 680 330" role="img" aria-label="B+木とテーブルページ"></svg>
+    <div class="leg"><span><i style="background:#FAC775"></i>今回読むページ</span><span><i style="background:#9FE1CB"></i>読込済みページ</span><span><i style="background:#639922"></i>一致した値</span></div>
+    <div class="msg" id="bxMsg" aria-live="polite"></div>
+    <div class="stats" id="bxStats"></div>
+  </div>
+  <p class="hint">上の木はid列のインデックス、下の5枠は実際の行が入るテーブルページです。テーブルの行は整列していません。</p>
+<div class="facts"><div><span>検索</span><b>O(log n)</b></div><div><span>範囲検索</span><b>リーフのリンクをたどる</b></div><div><span>100万行の高さ</span><b>約3～4</b></div><div><span>代償</span><b>書込みコスト増加</b></div></div>
+
+  <h2>B+木の3つの特徴</h2>
+  <p>各ノードは整列済みキーと子ポインタを持ち、1ページで多数のキーを扱うため木が浅くなります。行の保存先はリーフにあり、リーフ同士のリンクをたどれば範囲検索できます。</p>
+  <h2>インデックスが常に速いとは限りません</h2>
+  <p>一致する行の取得に多数のテーブルページを読むなら、全件走査の方が速い場合があります。範囲を広げて読込数を比較してください。オプティマイザはこうしたコストを見積もります。</p>
+<div class="tip"><p class="t">インデックスが効きにくい条件</p><p>列に関数や演算を適用すると（<code>WHERE YEAR(joined_at) = 2024</code>, <code>WHERE price * 2 &gt; 100</code>）、通常の列インデックスを検索に使えない場合があります。 <code>LIKE '%term'</code>のような先頭ワイルドカードも同様です。(a,b)の複合インデックスはaから整列するため、bだけでは効率的に検索できないことがあります。インデックスが増えるほど更新時の保守コストも増えます。</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/index-btree.js %}
+</script>

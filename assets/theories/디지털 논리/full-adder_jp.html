@@ -1,0 +1,79 @@
+---
+lang: ja
+translation_key: theory-full-adder
+subject: digital-logic
+title: "半加算器と全加算器"
+description: "3つの入力を切り替え、和と桁上がりを求める過程を確認します。"
+permalink: /ja/theory/full-adder/
+order: 1
+---
+<div class="circuit-lesson">
+<p class="lede">半加算器は2ビットを加算します。全加算器は入力キャリーCinも加えます。下図は半加算器2個とORゲートによる構成です。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">半加算器2個とORによる全加算器</h2>
+    <div class="circuit-viewport" tabindex="0" role="region" aria-label="回路図：狭い画面では横スクロール"><svg width="100%" viewBox="0 0 680 250" role="img">
+      <title>半加算器2個による全加算器</title>
+      <desc>半加算器1がAとBからS1/C1を求め、半加算器2がS1とCinからSum/C2を求めます。C1 OR C2がCoutです。</desc>
+      <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <text class="th" x="20" y="74">Cin=<tspan id="vCin">0</tspan></text>
+      <text class="th" x="20" y="154">A=<tspan id="vA">0</tspan></text>
+      <text class="th" x="20" y="204">B=<tspan id="vB">0</tspan></text>
+      <line id="wCin" x1="80" y1="70" x2="328" y2="70" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wA" x1="62" y1="150" x2="128" y2="150" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line id="wB" x1="62" y1="200" x2="128" y2="200" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <g class="c-teal"><rect x="130" y="125" width="130" height="100" rx="8" stroke-width="0.5"/>
+        <text class="ts" x="138" y="150" dominant-baseline="central">A</text>
+        <text class="ts" x="138" y="200" dominant-baseline="central">B</text>
+        <text class="ts" x="252" y="150" text-anchor="end" dominant-baseline="central">S</text>
+        <text class="ts" x="252" y="200" text-anchor="end" dominant-baseline="central">CO</text>
+        <text class="th" x="195" y="164" text-anchor="middle" dominant-baseline="central">半加算器1</text>
+        <text class="ts" x="195" y="184" text-anchor="middle" dominant-baseline="central" id="ha1eq">0 + 0 = 0</text></g>
+      <g class="c-purple"><rect x="330" y="45" width="130" height="130" rx="8" stroke-width="0.5"/>
+        <text class="ts" x="338" y="70" dominant-baseline="central">A</text>
+        <text class="ts" x="338" y="150" dominant-baseline="central">B</text>
+        <text class="ts" x="452" y="70" text-anchor="end" dominant-baseline="central">S</text>
+        <text class="ts" x="452" y="150" text-anchor="end" dominant-baseline="central">CO</text>
+        <text class="th" x="395" y="100" text-anchor="middle" dominant-baseline="central">半加算器2</text>
+        <text class="ts" x="395" y="120" text-anchor="middle" dominant-baseline="central" id="ha2eq">0 + 0 = 0</text></g>
+      <line id="wS1" x1="260" y1="150" x2="328" y2="150" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="ts" x="294" y="140" text-anchor="middle">S1=<tspan id="vS1">0</tspan></text>
+      <line id="wC1" x1="260" y1="200" x2="503" y2="200" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="ts" x="380" y="192" text-anchor="middle">C1=<tspan id="vC1">0</tspan></text>
+      <line id="wC2" x1="460" y1="150" x2="503" y2="150" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="ts" x="482" y="140" text-anchor="middle">C2=<tspan id="vC2">0</tspan></text>
+      <line id="wSum" x1="460" y1="70" x2="580" y2="70" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="th" x="588" y="74">Sum=<tspan id="vSum">0</tspan></text>
+      <path d="M500 135 Q530 135 560 175 Q530 215 500 215 Q515 175 500 135 Z" fill="var(--bg2)" stroke="var(--t)" stroke-width="0.8"/>
+      <text class="ts" x="527" y="175" text-anchor="middle" dominant-baseline="central">OR</text>
+      <line id="wCo" x1="560" y1="175" x2="590" y2="175" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text class="th" x="596" y="179">Cout=<tspan id="vCo">0</tspan></text>
+    </svg></div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+      <button class="bt" data-k="A" aria-pressed="false">A</button><button class="bt" data-k="B" aria-pressed="false">B</button><button class="bt" data-k="Cin" aria-pressed="false">Cin</button>
+    </div>
+    <div class="steps">
+      <div class="st"><div class="h">段階1：A＋B</div><div class="eq" id="e1"></div><div class="sub" id="s1"></div></div>
+      <div class="st"><div class="h">段階2：S1＋Cin</div><div class="eq" id="e2"></div><div class="sub" id="s2"></div></div>
+      <div class="st"><div class="h">結果：Cout Sum</div><div class="eq" id="e3"></div><div class="sub" id="s3"></div></div>
+    </div>
+    <div class="tw" tabindex="0" role="region" aria-label="全加算器の真理値表"><table><thead><tr><th>A</th><th>B</th><th>Cin</th><th>S1</th><th>C1</th><th>C2</th><th>Sum</th><th>Cout</th><th>10進数</th></tr></thead><tbody id="tb"></tbody></table></div>
+  </div>
+  <p class="hint">A、B、Cinを押すと0/1が切り替わります。1の配線はオレンジになり、真理値表の対応行が強調されます。</p>
+
+  <h2>半加算器は和と桁上がりを求める</h2>
+  <p>2入力の結果は00、01、10のいずれかです。和Sは入力が異なると1なのでXOR、キャリーCは両方1のときだけ1なのでANDです。</p>
+  <pre><code>S = A ⊕ B
+C = A · B</code></pre>
+  <p>半加算器には入力キャリーがありません。多桁回路ではキャリーを必要としない最下位桁に使えます。</p>
+
+  <h2>全加算器は入力キャリーも加える</h2>
+  <p>A、B、Cinは同じ桁の値です。半加算器1でS1/C1を求め、半加算器2でS1とCinを加えてSum/C2を求めます。</p>
+  <p>どちらかの段階で桁上がりがあれば次へ1を渡すため、Cout=C1 OR C2です。C1=1ならS1=0なので、C1とC2が同時に1にはなりません。</p>
+  <p>図の各ブロック内のA/Bは端子名です。半加算器2のAにはCin、BにはS1を接続しています。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/full-adder.js %}
+</script>

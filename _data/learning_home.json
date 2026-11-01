@@ -1,0 +1,140 @@
+{
+  "ko": {
+    "eyebrow": "컴퓨터 · 전자공학 학습 도구",
+    "title": "눈으로 보고, 직접 바꿔보세요.",
+    "intro": "정렬이 끝나는 순간부터 캐시가 적중하는 이유까지. 움직이는 실험으로 동작 원리를 알아보세요.",
+    "all": "전체 학습 자료 보기",
+    "featured": "어떤 실험부터 해볼까요?",
+    "pause": "미리보기 일시정지",
+    "play": "미리보기 재생",
+    "subjects": "분야별로 공부하기",
+    "guide": "직접 해보면 더 잘 이해됩니다",
+    "steps": [
+      "실행하기 전에 결과를 예상해 보세요.",
+      "한 단계씩 진행하며 변화를 살펴보세요.",
+      "조건을 바꿔 반복하고 결과를 비교해 보세요."
+    ],
+    "note": "시뮬레이터는 개념을 이해하기 위한 모델입니다. 각 페이지의 조건과 설명을 함께 확인하세요.",
+    "author_title": "만든 사람과 개발 프로젝트",
+    "author": "임베디드 시스템과 IoT 개발·연구 경험, 그리고 직접 만든 프로그램을 소개합니다.",
+    "programs": "개발자의 삶",
+    "cards": [
+      {
+        "kind": "sorting",
+        "subject": "자료구조",
+        "title": "누가 먼저 정렬할까요?",
+        "description": "같은 배열을 놓고 일곱 가지 정렬을 경주시켜 보세요.",
+        "action": "정렬 비교 실험하기",
+        "url": "/theory/sorting/"
+      },
+      {
+        "kind": "cache",
+        "subject": "컴퓨터 구조",
+        "title": "이번 주소는 캐시에 있을까?",
+        "description": "매핑 방식을 바꾸며 적중과 실패가 생기는 이유를 확인하세요.",
+        "action": "캐시 매핑 실험하기",
+        "url": "/theory/cache/"
+      },
+      {
+        "kind": "transaction",
+        "subject": "데이터베이스",
+        "title": "같은 데이터를 다르게 읽는다면?",
+        "description": "트랜잭션을 번갈아 실행하고 격리 수준에 따른 차이를 보세요.",
+        "action": "트랜잭션 실험하기",
+        "url": "/theory/transaction-isolation/"
+      }
+    ]
+  },
+  "en": {
+    "eyebrow": "Computer science & electronics",
+    "title": "See it move. Try it yourself.",
+    "intro": "From sorting races to cache hits, explore how things work through interactive experiments.",
+    "all": "Browse all lessons",
+    "featured": "Pick your first experiment",
+    "pause": "Pause previews",
+    "play": "Play previews",
+    "subjects": "Explore by subject",
+    "guide": "Learn by experimenting",
+    "steps": [
+      "Predict the result before running.",
+      "Step through and watch what changes.",
+      "Change a condition, repeat, and compare."
+    ],
+    "note": "These simulations model concepts for learning. Check the conditions and explanations on each page.",
+    "author_title": "The person behind the projects",
+    "author": "Explore my embedded systems and IoT research, development experience, and programs.",
+    "programs": "Programs",
+    "cards": [
+      {
+        "kind": "sorting",
+        "subject": "Data structures",
+        "title": "Which sort finishes first?",
+        "description": "Race seven algorithms on the same array and compare their work.",
+        "action": "Try the sorting race",
+        "url": "/en/theory/sorting/"
+      },
+      {
+        "kind": "cache",
+        "subject": "Computer architecture",
+        "title": "Will this address hit the cache?",
+        "description": "Switch mappings to see why some accesses hit and others miss.",
+        "action": "Explore cache mapping",
+        "url": "/en/theory/cache/"
+      },
+      {
+        "kind": "transaction",
+        "subject": "Databases",
+        "title": "Same data. Different reads?",
+        "description": "Interleave transactions and compare what each isolation level reveals.",
+        "action": "Explore transactions",
+        "url": "/en/theory/transaction-isolation/"
+      }
+    ]
+  },
+  "ja": {
+    "eyebrow": "コンピューター科学・電子工学の学習ツール",
+    "title": "動きを見て、自分で試そう。",
+    "intro": "整列レースからキャッシュヒットまで。動く実験で仕組みを確かめましょう。",
+    "all": "すべての教材を見る",
+    "featured": "最初はどの実験にしますか？",
+    "pause": "プレビューを一時停止",
+    "play": "プレビューを再生",
+    "subjects": "分野から学ぶ",
+    "guide": "試すことで理解を深める",
+    "steps": [
+      "実行する前に結果を予想しましょう。",
+      "1ステップずつ進めて変化を見ましょう。",
+      "条件を変えて繰り返し、結果を比べましょう。"
+    ],
+    "note": "シミュレーターは概念を学ぶためのモデルです。各ページの条件と説明も確認してください。",
+    "author_title": "作者と開発プロジェクト",
+    "author": "組み込みシステムとIoTの研究・開発経験、自作プログラムを紹介します。",
+    "programs": "プログラム",
+    "cards": [
+      {
+        "kind": "sorting",
+        "subject": "データ構造",
+        "title": "どのソートが先に終わる？",
+        "description": "同じ配列で7種類のアルゴリズムを競わせてみましょう。",
+        "action": "整列の比較実験へ",
+        "url": "/ja/theory/sorting/"
+      },
+      {
+        "kind": "cache",
+        "subject": "コンピューターアーキテクチャ",
+        "title": "このアドレスはキャッシュにある？",
+        "description": "マッピングを変えて、ヒットとミスが起こる理由を確認しましょう。",
+        "action": "キャッシュの実験へ",
+        "url": "/ja/theory/cache/"
+      },
+      {
+        "kind": "transaction",
+        "subject": "データベース",
+        "title": "同じデータなのに読み取りが違う？",
+        "description": "トランザクションを交互に実行し、分離レベルの違いを比べましょう。",
+        "action": "トランザクションの実験へ",
+        "url": "/ja/theory/transaction-isolation/"
+      }
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+---
+lang: ko
+translation_key: theory-mutex
+subject: operating-systems
+title: 뮤텍스
+description: 열쇠가 하나뿐인 자물쇠로 임계 구역을 지키는 방법과, 우선순위 역전이 생기는 과정을 봅니다.
+permalink: /theory/mutex/
+category: os
+order: 3
+---
+<style>{% include lessons/mutex.css %}</style>
+<div class="circuit-lesson os mx">
+<p class="lede">뮤텍스는 열쇠가 하나뿐인 자물쇠입니다. 열쇠를 가진 스레드만 임계 구역에 들어갈 수 있고, 나머지 스레드는 열쇠가 돌아올 때까지 줄을 서서 기다립니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">스레드 세 개가 뮤텍스를 잠그고 푸는 과정과 대기열을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">각 스레드의 버튼을 눌러 lock()과 unlock()을 호출해 보세요</p>
+    <div class="ths" id="mxThs"></div>
+    <div class="room" id="mxRoom">
+      <div><div class="nm">임계 구역</div><div class="who" id="mxWho"></div></div>
+      <div class="lock" id="mxLock"></div>
+    </div>
+    <div class="queue" id="mxQ"></div>
+    <div class="row c" style="margin-top:12px">
+      <button class="bt" id="mxSteal">다른 스레드가 unlock() 호출해 보기</button>
+      <button class="bt" id="mxReset">처음으로</button>
+    </div>
+    <p class="msg" id="mxMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">한 스레드가 들어가 있을 때 다른 스레드의 lock()을 누르면 그 스레드는 대기열로 갑니다. 들어가 있는 스레드가 unlock()을 호출하면 대기열 맨 앞 스레드가 바로 들어갑니다.</p>
+
+  <h2>뮤텍스에는 주인이 있습니다</h2>
+  <p>뮤텍스를 잠근 스레드만 그 뮤텍스를 풀 수 있습니다. 다른 스레드가 unlock()을 호출하면 오류가 나거나 무시됩니다. 값이 0과 1만 오가는 이진 세마포어는 겉보기에 뮤텍스와 같지만, 주인이 없어서 어느 스레드든 풀 수 있다는 점이 다릅니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">우선순위 역전과 우선순위 상속을 비교하는 타임라인</h2>
+    <p class="sub" style="margin-top:0">우선순위 역전: 우선순위가 높은 H가 낮은 L의 뮤텍스를 기다리는 상황</p>
+    <div class="row">
+      <button class="bt sel" data-pi="off">우선순위 상속 없음</button>
+      <button class="bt" data-pi="on">우선순위 상속 있음</button>
+      <button class="bt go" id="piPlay">시간 흐름 재생</button>
+    </div>
+    <div class="tl" id="piGrid"></div>
+    <div class="leg">
+      <span><i style="background:#993C1D"></i><i style="background:#534AB7"></i><i style="background:#0F6E56"></i>실행 중 (H, M, L)</span>
+      <span><i style="background:repeating-linear-gradient(45deg,#E24B4A 0 4px,transparent 4px 8px)"></i>뮤텍스를 기다리며 멈춤</span>
+      <span><i style="background:var(--surface-1);border:1px solid var(--border)"></i>준비됨(차례를 기다림)</span>
+      <span><i style="background:#0F6E56;box-shadow:inset 0 0 0 3px #E8A317"></i>상속받은 우선순위로 실행</span>
+    </div>
+    <p class="msg" id="piMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">[시간 흐름 재생]을 누르면 한 칸씩 시간이 흐릅니다. 상속 없음과 있음을 번갈아 재생해 H가 끝나는 시각을 비교해 보세요.</p>
+
+  <h2>우선순위 역전</h2>
+  <p>우선순위가 낮은 L이 뮤텍스를 잠근 상태에서 우선순위가 높은 H가 같은 뮤텍스를 요청하면, H는 L이 풀어 줄 때까지 기다려야 합니다. 여기까지는 정상입니다. 문제는 이때 뮤텍스와 상관없는 중간 우선순위의 M이 끼어드는 경우입니다. M이 L을 밀어내고 실행되는 동안 L은 뮤텍스를 풀지 못하고, H는 M보다 우선순위가 높은데도 M이 끝날 때까지 기다리게 됩니다.</p>
+  <p>1997년 화성 탐사선 패스파인더가 반복해서 재부팅된 원인이 바로 이 현상이었습니다.</p>
+
+  <h2>우선순위 상속</h2>
+  <p>H가 L의 뮤텍스를 기다리기 시작하면, 운영체제는 L의 우선순위를 잠시 H만큼 올립니다. 그러면 M이 L을 밀어낼 수 없으므로 L이 임계 구역을 빨리 끝내고 뮤텍스를 풉니다. 뮤텍스를 푸는 순간 L의 우선순위는 원래대로 돌아갑니다.</p>
+  <p>FreeRTOS에서는 <code>xSemaphoreCreateMutex()</code>로 만든 뮤텍스에 우선순위 상속이 들어 있고, <code>xSemaphoreCreateBinary()</code>로 만든 이진 세마포어에는 없습니다. 공유 자원을 보호할 때는 뮤텍스를 써야 하는 이유입니다.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/mutex.js %}
+</script>

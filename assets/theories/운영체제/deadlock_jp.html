@@ -1,0 +1,51 @@
+---
+lang: ja
+translation_key: theory-deadlock
+subject: operating-systems
+title: "デッドロック"
+description: "食事する哲学者の例で循環待ちとその防止を確認します。"
+permalink: /ja/theory/deadlock/
+category: os
+order: 5
+---
+<style>{% include lessons/deadlock.css %}</style>
+<div class="circuit-lesson os dl">
+<p class="lede">5人の間にフォークが1本ずつあり、食事には両隣の2本が必要です。全員が左を取ると、右を取得できず待ち続けます。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">食事する哲学者によるデッドロック実験</h2>
+    <p class="sub" style="margin-top:0">1. 取得順を選択</p>
+    <div class="row">
+      <button class="bt sel" data-m="naive">全員が左から</button>
+      <button class="bt" data-m="fix">P4だけ右から</button>
+    </div>
+    <p class="sub">2. 実行</p>
+    <div class="row">
+      <button class="bt go" id="dlForce">全員を同時に空腹にする</button>
+      <button class="bt" id="dlRun">自由に実行</button>
+      <button class="bt" id="dlReset">最初から</button>
+    </div>
+    <svg id="dlSvg" width="100%" viewBox="0 0 680 380" role="img" aria-label="哲学者5人とフォーク5本"></svg>
+    <div class="leg">
+      <span><i style="background:var(--surface-1)"></i>思考中</span>
+      <span><i style="background:#FAC775"></i>空腹（フォーク待ち）</span>
+      <span><i style="background:#5DCAA5"></i>食事中</span>
+      <span><i style="background:#F09595"></i>デッドロック</span>
+      <span style="color:#E8A317">点線：待っているフォーク</span>
+    </div>
+    <p class="msg" id="dlMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">規則を変えて同じ操作を繰り返し、結果を比較してください。</p>
+
+  <h2>成立には4条件すべてが必要</h2>
+  <p><strong>相互排除</strong>：1本を使えるのは1人だけです。 <strong>保持して待機</strong>：1本を持ちながら次を待ちます。 <strong>横取り不可</strong>：他人のフォークを強制回収できません。 <strong>循環待ち</strong>：P0→P1→…→P4→P0の待機の輪ができます。</p>
+  <p>どれか1条件を破れば防止できます。</p>
+
+  <h2>循環待ちを断つ</h2>
+  <p>資源に番号を付け、全員が小さい番号から取得します。P4だけは右の0番が先になるため輪ができません。複数ミューテックスを一定順序で取得するのも同じ考えです。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/deadlock.js %}
+</script>

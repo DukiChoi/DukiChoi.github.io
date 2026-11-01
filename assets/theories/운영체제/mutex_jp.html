@@ -1,0 +1,66 @@
+---
+lang: ja
+translation_key: theory-mutex
+subject: operating-systems
+title: "ミューテックス"
+description: "所有者を持つロックと、優先度逆転・優先度継承を確認します。"
+permalink: /ja/theory/mutex/
+category: os
+order: 3
+---
+<style>{% include lessons/mutex.css %}</style>
+<div class="circuit-lesson os mx">
+<p class="lede">ミューテックスは鍵が1つのロックです。所有者だけが保護対象に入り、他のスレッドは解放を待ちます。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">3スレッドのロックと待機列</h2>
+    <p class="sub" style="margin-top:0">各スレッドでlock()とunlock()を実行</p>
+    <div class="ths" id="mxThs"></div>
+    <div class="room" id="mxRoom">
+      <div><div class="nm">クリティカルセクション</div><div class="who" id="mxWho"></div></div>
+      <div class="lock" id="mxLock"></div>
+    </div>
+    <div class="queue" id="mxQ"></div>
+    <div class="row c" style="margin-top:12px">
+      <button class="bt" id="mxSteal">他スレッドからunlock()を試す</button>
+      <button class="bt" id="mxReset">最初から</button>
+    </div>
+    <p class="msg" id="mxMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">所有者がいると他は待機します。この例では解放すると列の先頭が取得します。</p>
+
+  <h2>ミューテックスには所有者がある</h2>
+  <p>取得したスレッドが解放する規則です。他スレッドからの解放は実装によってエラーなどになります。二値セマフォには所有者がなく、別スレッドから通知できます。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">優先度逆転と継承の時間軸</h2>
+    <p class="sub" style="margin-top:0">HがLのミューテックスを待つ例</p>
+    <div class="row">
+      <button class="bt sel" data-pi="off">優先度継承なし</button>
+      <button class="bt" data-pi="on">優先度継承あり</button>
+      <button class="bt go" id="piPlay">時間軸を再生</button>
+    </div>
+    <div class="tl" id="piGrid"></div>
+    <div class="leg">
+      <span><i style="background:#993C1D"></i><i style="background:#534AB7"></i><i style="background:#0F6E56"></i>実行中（H、M、L）</span>
+      <span><i style="background:repeating-linear-gradient(45deg,#E24B4A 0 4px,transparent 4px 8px)"></i>ロック待ち</span>
+      <span><i style="background:var(--surface-1);border:1px solid var(--border)"></i>実行可能</span>
+      <span><i style="background:#0F6E56;box-shadow:inset 0 0 0 3px #E8A317"></i>継承優先度で実行</span>
+    </div>
+    <p class="msg" id="piMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">継承の有無でHの終了時刻を比較してください。</p>
+
+  <h2>優先度逆転</h2>
+  <p>LのロックをHが待っている間にMがLを中断すると、Lは解放できません。その結果、高優先度HもMの終了を待たされます。</p>
+  <p>1997年の火星探査機Pathfinderの繰返しリセットも、この現象が原因でした。</p>
+
+  <h2>優先度継承</h2>
+  <p>HがLを待つとLの優先度を一時的に上げます。Mの割込みを防いで解放を早め、解放後は元に戻します。</p>
+  <p>FreeRTOSでは <code>xSemaphoreCreateMutex()</code>によるミューテックスに継承があり、 <code>xSemaphoreCreateBinary()</code>による二値セマフォにはありません。共有資源保護ではこの違いが重要です。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/mutex.js %}
+</script>

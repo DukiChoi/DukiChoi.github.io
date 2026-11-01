@@ -127,7 +127,9 @@ GitHub 저장소의 쓰기 권한을 가진 계정만 편집할 수 있습니다
 `order`는 목록 순서, `platform`은 실행 환경, `links`는 다운로드·실행·소스 코드 버튼입니다.
 `featured: true`를 넣으면 해당 항목의 테두리를 강조합니다. `icon`, `cover`, `cover_alt`로 아이콘과 실행 화면을 추가할 수 있습니다.
 사용하지 않는 항목은 생략하세요. `_templates/`의 예시는 사이트에 공개되지 않습니다.
-Home 배너는 `home.md`, 목록 화면은 `programs.html`, 개별 소개 화면은 `_layouts/program.html`에서 수정합니다.
+프로필 배너는 `profile_ko.md`, 프로그램 목록은 `programs_ko.html`, 개별 소개 화면은 `_layouts/program.html`에서 수정합니다. 홈은 `home_ko.md`와 `_data/learning_home.json`에서 관리합니다.
+
+한국어·영어·일본어 페이지는 `_ko`, `_en`, `_jp` 파일로 관리합니다. 실험 JS/CSS는 세 언어에서 공유합니다. 번역 파일, 공개 주소, 새 학습 도구 추가 방법은 [다국어 관리 안내](docs/LOCALIZATION.md)를 참고하세요.
 
 이미 소개 페이지가 있다면 YAML 머리말에 `external_url: https://github.com/DukiChoi/BLESmartCube`처럼 적습니다. 목록에서 배너를 누르면 그 주소로 바로 이동합니다. CMS에서는 **바로 연결할 주소**에 입력하며, 비워두면 이 사이트의 프로그램 소개 페이지로 연결됩니다.
 

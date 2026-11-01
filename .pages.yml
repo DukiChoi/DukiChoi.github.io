@@ -18,12 +18,32 @@ content:
     exclude: [.gitkeep]
     view:
       primary: title
-      fields: [title, published, order]
+      fields: [title, lang, published, order]
       sort: [order, title]
       default:
         sort: order
         order: asc
     fields:
+      - name: lang
+        label: 언어
+        type: select
+        required: true
+        default: ko
+        options:
+          values: [ko, en, ja]
+      - name: translation_key
+        label: 번역 연결 키
+        type: string
+        description: 세 언어 페이지에 같은 값을 사용합니다. 예) theory-cache
+      - name: permalink
+        label: 공개 주소
+        type: string
+        description: 파일명을 바꿔도 유지할 주소입니다. 예) /en/theory/cache/
+      - name: subject
+        label: 학습 분야
+        type: select
+        options:
+          values: [db, digital-logic, operating-systems, embedded, data-structures, computer-architecture]
       - name: title
         label: 제목
         type: string
@@ -59,7 +79,7 @@ content:
       template: "{primary}.md"
       field: create
     subfolders: false
-    exclude: [.gitkeep, market-peek.html]
+    exclude: [.gitkeep, market-peek_ko.html, market-peek_en.html, market-peek_jp.html]
     view:
       primary: title
       fields: [title, platform, published, order]

@@ -1,0 +1,60 @@
+---
+lang: ja
+translation_key: theory-page-replacement
+subject: operating-systems
+title: "ページ置換"
+description: "FIFO、LRU、OPTで追い出すページとフォルト回数を比較します。"
+permalink: /ja/theory/page-replacement/
+category: os
+order: 6
+---
+<style>{% include lessons/page-replacement.css %}</style>
+<div class="circuit-lesson os pr">
+<p class="lede">要求ページがメモリにないとページフォルトが起こります。このモデルではディスクから読みます。枠が埋まっていれば置換規則で追い出すページを選びます。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">参照列とフレームの変化</h2>
+    <p class="sub" style="margin-top:0">1. 参照列と枠数を設定</p>
+    <div class="row">
+      <input type="text" id="prRef" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0" aria-label="ページ参照列">
+      <label style="font-size:14px;color:var(--text-secondary)">フレーム数 <select id="prF"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label>
+      <button class="bt" id="prBel">Beladyの例</button>
+    </div>
+    <p class="err" id="prErr"></p>
+    <p class="sub" style="margin-top:8px">2. 置換規則</p>
+    <div class="row">
+      <button class="bt sel" data-a="fifo">FIFO（最初に入った順）</button>
+      <button class="bt" data-a="lru">LRU（最も長く未使用）</button>
+      <button class="bt" data-a="opt">OPT（最も遠い将来）</button>
+    </div>
+    <p class="sub">3. 順に処理</p>
+    <div class="row">
+      <button class="bt go" id="prStep">次の要求</button>
+      <button class="bt" id="prAll">最後まで再生</button>
+      <button class="bt" id="prReset">最初から</button>
+    </div>
+    <div class="wrap"><div class="grid" id="prGrid"></div></div>
+    <div class="leg">
+      <span><i style="background:#F5C4B3"></i>新規読込み（フォルト）</span>
+      <span><i style="background:#9FE1CB"></i>既存ページ（ヒット）</span>
+    </div>
+    <p class="msg" id="prMsg" aria-live="polite"></p>
+    <p class="stat" id="prStat"></p>
+    <p class="sub">同じ参照列でのフォルト回数</p>
+    <div class="cmp" id="prCmp"></div>
+  </div>
+  <p class="hint">各列は、その要求を処理した直後の状態です。</p>
+
+  <h2>3つの置換規則</h2>
+  <p><strong>FIFO</strong>は最初に入ったページを出します。頻繁に使うページでも古ければ追い出されます。</p>
+  <p><strong>LRU</strong>は最も長く使っていないページを出します。時間的局所性を利用し、実際のOSでは近似方式も使います。</p>
+  <p><strong>OPT</strong>は次の使用が最も遠いページを出します。未来の要求は分からないため、主に比較用の理想値です。</p>
+
+  <h2>Beladyの異常</h2>
+  <p>FIFOでは枠を増やすと逆にフォルトが増える場合があります。例で3枠から4枠へ変えると9回から10回になります。LRUとOPTにはこの異常がありません。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/page-replacement.js %}
+</script>

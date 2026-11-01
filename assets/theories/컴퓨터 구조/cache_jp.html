@@ -1,0 +1,43 @@
+---
+lang: ja
+translation_key: theory-cache
+subject: computer-architecture
+title: "キャッシュマッピング"
+description: "アドレスのタグ・インデックス・オフセットと3つの配置方式を比較します。"
+permalink: /ja/theory/cache/
+category: architecture
+order: 3
+---
+<style>{% include lessons/cache.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">キャッシュはCPU近くの小さく高速な記憶です。インデックスで集合、タグでブロック、オフセットでバイトを選びます。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">配置とヒット・ミスのシミュレータ</h2>
+    <p class="sub" style="margin-top:0">1. 方式とアクセス列（4枠、4バイト、8ビット）</p>
+    <div class="row"><button class="bt sel" data-mp="1">直接マップ</button><button class="bt" data-mp="2">2ウェイ集合相連</button><button class="bt" data-mp="4">全相連（LRU）</button></div>
+    <div class="row" style="margin-top:8px"><span class="lbl">アクセス順</span><button class="bt sel" data-cs="seq">順次アクセス</button><button class="bt" data-cs="conf">衝突する2アドレス</button><button class="bt" data-cs="loop">5ブロックを循環</button>
+      <input type="text" id="caIn" style="flex:1;min-width:200px;font-family:var(--font-mono)" aria-label="アクセスするアドレス列"></div>
+    <p class="err" id="caErr"></p>
+    <div class="row"><button class="bt go" id="caNext">次のアクセス</button><button class="bt" id="caAll">最後まで</button><button class="bt" id="caReset">最初から</button></div>
+    <div class="abits" id="caBits"></div>
+    <div class="tw"><table class="t" id="caT"></table></div>
+    <div class="msg" id="caMsg" aria-live="polite"></div>
+    <div class="hist" id="caH"></div>
+    <div class="stats" id="caSt"></div>
+  </div>
+  <p class="hint">同じ入力で方式を比べてください。衝突する2アドレスは直接マップで、5ブロック循環は4枠のLRUでもミスを繰り返します。</p>
+<div class="facts"><div><span>オフセット</span><b>ブロック内の位置</b></div><div><span>インデックス</span><b>集合を選択</b></div><div><span>タグ</span><b>ブロックを識別</b></div><div><span>平均アクセス時間</span><b>ヒット時間＋ミス率×ペナルティ</b></div></div>
+
+  <h2>アドレスを3つに分ける</h2>
+  <p>4バイトなら下位2ビットがオフセットです。その上の一部が集合インデックス、残りがタグです。総枠数一定でウェイ数を増やすとインデックスが減り、タグが増えます。</p>
+  <h2>3つの配置方式</h2>
+  <p><strong>直接マップ</strong>は各ブロックの置き場所が1か所です。同じ場所を使うブロックは互いに追い出します。 <strong>全相連</strong>はどの枠でも使えますが、タグ比較の回路が増えます。多くのCPUは中間の <strong>集合相連</strong>方式を使います。</p>
+<div class="tip"><p class="t">局所性とコード</p><p>最近使った値を再利用する時間的局所性と、近いアドレスを使う空間的局所性が重要です。行優先の配列を <code>a[i][j]</code> 順に走査すると連続アクセスになり、 <code>a[j][i]</code> 順では離れた場所へ飛びます。配列が連結構造よりキャッシュに有利な理由の1つです。</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/cache.js %}
+</script>

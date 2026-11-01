@@ -1,0 +1,47 @@
+---
+lang: ja
+translation_key: theory-adc-aliasing
+subject: embedded
+title: "ADCサンプリングとエイリアシング"
+description: "標本化が遅いと、別の周波数に見える現象を確認します。"
+permalink: /ja/theory/adc-aliasing/
+category: embedded
+order: 5
+---
+<style>{% include lessons/adc-aliasing.css %}</style>
+<div class="circuit-lesson lx ad">
+<p class="lede">ADCは電圧を一定間隔で標本化します。間隔が長すぎると、元と異なる遅い信号に見えることがあります。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">周波数変更によるエイリアシング実験</h2>
+    <p class="sub" style="margin-top:0">1. 例を選ぶかスライダーを変更</p>
+    <div class="row">
+      <button class="bt go" data-pre="5,50">十分に速い</button>
+      <button class="bt go" data-pre="23,50">限界に近い</button>
+      <button class="bt go" data-pre="45,50">遅すぎる</button>
+    </div>
+    <div class="row" style="margin-top:12px"><label class="lbl" for="adF">信号周波数</label><input type="range" id="adF" min="1" max="60" step="1" value="5"><span class="big" id="adFv"></span></div>
+    <div class="row" style="margin-top:6px"><label class="lbl" for="adS">標本化周波数</label><input type="range" id="adS" min="5" max="100" step="1" value="50"><span class="big" id="adSv"></span></div>
+    <svg id="adSvg" width="100%" viewBox="0 0 680 240" role="img" aria-label="元信号・標本・復元信号"></svg>
+    <div class="leg">
+      <span><i style="background:var(--text-muted)"></i>元の信号</span>
+      <span><i style="background:#E8A317;height:8px;width:8px;border-radius:50%;vertical-align:0"></i>ADC標本</span>
+      <span><i style="background:#D85A30"></i>標本から推定した信号</span>
+    </div>
+    <div class="info" id="adInfo"></div>
+    <p class="msg" id="adMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">グラフは0.5秒です。信号を標本化周波数の半分より高くすると、赤い信号が元の灰色信号と異なります。</p>
+
+  <h2>ナイキスト周波数</h2>
+  <p>標本化周波数の半分です。それより高い成分は低周波に折り返します。例えば50Hzで45Hzを標本化すると、|45−50|=5Hzに見えます。</p>
+  <pre><code>元の信号を復元するには：サンプリング周波数 > 2×信号の最高周波数</code></pre>
+
+  <h2>実務では</h2>
+  <p>折返し後の標本だけでは元の成分を区別できません。ADC前の低域通過フィルタで不要成分を抑え、フィルタの遷移帯域を考慮して標本化速度に余裕を持たせます。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/adc-aliasing.js %}
+</script>

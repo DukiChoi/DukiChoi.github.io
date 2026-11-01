@@ -1,0 +1,39 @@
+---
+lang: en
+translation_key: theory-instruction-cycle
+subject: computer-architecture
+title: "Instruction Cycle"
+description: "Follow register and memory transfers as a simple CPU fetches, decodes, and executes instructions."
+permalink: /en/theory/instruction-cycle/
+category: architecture
+order: 1
+---
+<style>{% include lessons/instruction-cycle.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">A CPU repeatedly fetches an instruction from memory, decodes its operation, and executes it. Follow the transfers between registers and memory one step at a time.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simple-CPU simulator for fetch, decode, and execute cycles</h2>
+    <p class="sub" style="margin-top:0">1. Choose a program</p>
+    <div class="row"><button class="bt sel" data-pg="add">Add two numbers</button><button class="bt" data-pg="loop">Count down from 3 (loop)</button></div>
+    <p class="sub">2. Execute step by step</p>
+    <div class="row"><button class="bt go" id="icNext">Next step</button><button class="bt" id="icPlay">Play</button><button class="bt" id="icInstr">Finish instruction</button><button class="bt" id="icReset">Reset</button><span class="lbl" id="icCnt"></span></div>
+    <div class="ph" id="icPh"></div>
+    <svg id="icSvg" width="100%" viewBox="0 0 680 360" role="img" aria-label="CPU registers and memory"></svg>
+    <div class="msg" id="icMsg" aria-live="polite"></div>
+  </div>
+  <p class="hint">Orange arrows show the transfer performed in this step; orange boxes show changed values. The ▶ marker in memory indicates the next instruction selected by PC.</p>
+<div class="facts"><div><span>PC</span><b>Next instruction address</b></div><div><span>IR</span><b>Current instruction</b></div><div><span>MAR</span><b>Memory access address</b></div><div><span>MDR</span><b>Data in transit</b></div><div><span>ACC</span><b>Calculation result</b></div></div>
+
+  <h2>Every instruction begins with fetch</h2>
+  <p>Copy PC into MAR, read that address into MDR, then copy the instruction to IR and increment PC. In this model those fetch steps are shared by every instruction. Execution differs by opcode. A jump changes PC during execution, altering the next fetch address and enabling loops.</p>
+  <h2>Why memory access is expensive</h2>
+  <p>Each instruction needs a fetch; LOAD, ADD, and STORE also access operand memory in this model. Registers are fast, while main-memory access can take many CPU cycles. A <a href="{{ '/en/theory/cache/' | relative_url }}">cache</a> reduces repeated memory access, and a <a href="{{ '/en/theory/pipeline/' | relative_url }}">Pipeline</a> overlaps the work of multiple instructions.</p>
+<div class="tip"><p class="t">Instructions in this CPU</p><p><code>LOAD a</code> ACC ← M[a], <code>ADD a</code> ACC ← ACC + M[a], <code>SUB a</code> ACC ← ACC − M[a], <code>STORE a</code> M[a] ← ACC, <code>JZ a</code> sets PC ← a if ACC is zero; <code>JMP a</code> PC ← a, <code>HALT</code> stops execution. Keeping arithmetic results in ACC makes this an accumulator architecture. General-purpose CPUs typically provide multiple general-purpose registers.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/instruction-cycle.js %}
+</script>

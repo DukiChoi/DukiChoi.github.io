@@ -1,0 +1,52 @@
+---
+lang: ja
+translation_key: theory-crc
+subject: embedded
+title: "CRC計算（Modbus CRC-16）"
+description: "XORとシフトによるCRC-16計算をビット単位で追います。"
+permalink: /ja/theory/crc/
+category: embedded
+order: 3
+---
+<style>{% include lessons/crc.css %}</style>
+<div class="circuit-lesson lx cr">
+<p class="lede">Modbus RTUは末尾にCRCの2バイトを付けます。受信側も同じ計算を行い、一致しないフレームを破棄します。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">Modbus CRC-16の計算器</h2>
+    <p class="sub" style="margin-top:0">1. 16進数のバイト列を入力</p>
+    <div class="row"><input type="text" id="crIn" value="01 03 00 00 00 0A" aria-label="入力バイト"></div>
+    <p class="err" id="crErr"></p>
+    <p class="sub" style="margin-top:4px">2. 計算を進める</p>
+    <div class="row">
+      <button class="bt go" id="crStep">次のステップ</button>
+      <button class="bt" id="crByte">このバイトを完了</button>
+      <button class="bt" id="crAll">全部計算</button>
+      <button class="bt" id="crReset">最初から</button>
+    </div>
+    <div class="bytes" id="crBytes"></div>
+    <div class="ops"><div class="opg" id="crOps"></div></div>
+    <p class="prog" id="crProg"></p>
+    <p class="msg" id="crMsg" aria-live="polite"></p>
+    <div class="res" id="crRes"></div>
+  </div>
+  <p class="hint">バイトのXORと8回のシフトを順に進めます。赤枠は次に押し出すビットです。</p>
+
+  <h2>計算規則</h2>
+  <p>0xFFFFで初期化し、各バイトを下位8ビットへXORします。8回右シフトし、押し出したビットが1なら0xA001とXORします。</p>
+  <pre><code>crc = 0xFFFF
+for 各バイトb:
+    crc ^= b
+    8回繰り返す:
+        if crc & 1:  crc = (crc >> 1) ^ 0xA001
+        else:        crc = crc >> 1</code></pre>
+  <p>0xA001は多項式0x8005のビット反転表現です。下位ビットから処理するため反転形を使います。</p>
+
+  <h2>送信は下位バイトから</h2>
+  <p>CRC値が0xCDC5ならC5 CDの順で送ります。不一致の調査ではバイト順も確認してください。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/crc.js %}
+</script>

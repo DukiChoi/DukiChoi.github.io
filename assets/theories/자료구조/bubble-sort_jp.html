@@ -1,0 +1,29 @@
+---
+lang: ja
+translation_key: theory-bubble-sort
+subject: data-structures
+title: "バブルソート"
+description: "隣接する値を比較・交換し、未確定の最大値を末尾へ移動させます。"
+permalink: /ja/theory/bubble-sort/
+category: algorithms
+order: 11
+---
+<style>{% include lessons/bubble-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">隣同士の値を比較し、順序が逆なら交換します。大きい値が右へ移動し、末尾で確定します。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">バブルソートを棒グラフで示すシミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">再生するか、1ステップずつ進めてください。スライダーで位置を移動できます。「ほぼ整列済み」では早期終了を確認できます。</p>
+<div class="dsa-facts"><div><span>最良</span><b class="good">O(n)</b></div><div><span>平均</span><b class="bad">O(n²)</b></div><div><span>最悪</span><b class="bad">O(n²)</b></div><div><span>追加領域</span><b class="good">O(1)</b></div><div><span>安定</span><b class="good">はい</b></div><div><span>最大比較回数</span><b class="">n(n−1)/2</b></div></div>
+  <h2>1周ごとに最大値が1つ確定する</h2>
+  <p>各比較で大きい方が右へ移るため、1周すると区間の最大値が末尾に到達します。次の周では確定位置を除外します。1周の間に交換がなければ整列済みなので終了します。整列済みの入力ではO(n)です。</p>
+<div class="dsa-tip"><p class="t">演習：交換回数と転倒数</p><p>転倒とはi &lt; jかつa[i] &gt; a[j]となる組です。バブルソートの1回の交換は転倒をちょうど1つ解消するため、交換回数は転倒数と等しくなります。大きなnでは <a href="{{ '/ja/theory/merge-sort/' | relative_url }}">マージソート</a>を用いてO(n log n)で数える方法が適しています。</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/bubble-sort.js %}
+</script>

@@ -1,0 +1,31 @@
+---
+lang: en
+translation_key: theory-sliding-window
+subject: data-structures
+title: "Sliding Window"
+description: "Maintain information about a contiguous range by updating only values entering and leaving it."
+permalink: /en/theory/sliding-window/
+category: algorithms
+order: 22
+---
+<style>{% include lessons/sliding-window.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">Slide a contiguous window and update its state using only the value entering and the value leaving. Avoid recomputing the entire window from scratch.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A sliding-window simulator for range sums and duplicate-free substrings</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Choose a mode and compare examples. Orange marks the current window; green marks the best window found so far.</p>
+<div class="dsa-facts"><div><span>Time</span><b class="good">O(n)</b></div><div><span>Fixed window</span><b class="">Add and subtract</b></div><div><span>Variable window</span><b class="">Advance l to restore validity</b></div></div>
+  <h2>Fixed-size windows</h2>
+  <p>Recomputing every length-k sum takes O(nk). Sliding changes only two values, so one addition and one subtraction per step gives O(n). Compare the operation counters.</p>
+  <h2>Variable-size windows</h2>
+  <p>Expand r; when a condition such as uniqueness is violated, advance l until it holds again. A dictionary or frequency array tracks the window. Here last records the most recent index of each character, allowing l to jump past a duplicate directly.</p>
+<div class="dsa-tip"><p class="t">Common coding exercises</p><p>Examples include maximum sum or average over k values, longest unique substring, minimum covering window, and longest interval with at most k distinct values. For the maximum element in each length-k window, use a monotonic deque.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/sliding-window.js %}
+</script>

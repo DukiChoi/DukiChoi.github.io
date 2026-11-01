@@ -1,0 +1,57 @@
+---
+lang: en
+translation_key: theory-uart
+subject: embedded
+title: "UART Frames"
+description: "Turn one character into a start bit, eight data bits, optional parity, and stop bits."
+permalink: /en/theory/uart/
+category: embedded
+order: 1
+---
+<style>{% include lessons/uart.css %}</style>
+<div class="circuit-lesson lx ua">
+<p class="lede">UART sends bytes one bit at a time over a data line. Instead of sharing a clock wire, the transmitter and receiver independently time an agreed baud rate and frame format.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator showing a character encoded and transmitted as a UART frame</h2>
+    <p class="sub" style="margin-top:0">1. Choose a character and communication settings</p>
+    <div class="row">
+      <label class="lbl">Character <input type="text" id="uaIn" value="A" maxlength="4" style="width:70px;text-align:center;font-family:var(--font-mono)"></label>
+      <label class="lbl">Baud rate <select id="uaBaud"><option>9600</option><option>19200</option><option>38400</option><option>115200</option></select></label>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="lbl">Parity</span>
+      <button class="bt sel" data-p="N">None</button><button class="bt" data-p="E">even</button><button class="bt" data-p="O">odd</button>
+      <span class="lbl" style="margin-left:12px">Stop bits</span>
+      <button class="bt sel" data-s="1">1 bit</button><button class="bt" data-s="2">2 bits</button>
+    </div>
+    <p class="err" id="uaErr"></p>
+    <p class="sub" style="margin-top:4px">2. Play the transfer</p>
+    <div class="row"><button class="bt go" id="uaPlay">Play transmission</button></div>
+    <svg id="uaSvg" width="100%" viewBox="0 0 680 180" role="img" aria-label="UART waveform"></svg>
+    <div class="leg">
+      <span><i style="background:rgba(216,90,48,.3)"></i>Start bit</span>
+      <span><i style="background:rgba(29,158,117,.3)"></i>Data (D0 first)</span>
+      <span><i style="background:rgba(127,119,221,.35)"></i>Parity</span>
+      <span><i style="background:rgba(136,135,128,.35)"></i>Stop bits</span>
+      <span><i style="background:#E8A317;border-radius:50%"></i>Receiver sampling point</span>
+    </div>
+    <p class="rx" id="uaRx"></p>
+    <p class="msg" id="uaMsg" aria-live="polite"></p>
+    <div class="info" id="uaInfo"></div>
+  </div>
+  <p class="hint">You can enter hexadecimal such as 0x41 instead of a character. During playback, the transmitter sends one bit at a time and the receiver samples near the center of each bit.</p>
+
+  <h2>A frame starts low and ends high</h2>
+  <p>The idle line is high. A falling edge begins the start bit and starts the receiver's timing. Eight data bits follow from D0 upward. Finally, the stop bit returns the line high.</p>
+  <p>Parity makes the total number of one bits even or odd. A receiver can detect a single flipped bit by checking this count, although parity does not detect every possible error.</p>
+
+  <h2>Why baud rates must agree</h2>
+  <p>The receiver estimates bit centers from the start edge: 1.5 bit periods later, 2.5 periods later, and so on. Clock mismatch accumulates across a frame. A rough half-bit drift limit gives an approximately 5% total tolerance for a simple frame, but practical designs use tighter margins, commonly around 2%, depending on the hardware and format.</p>
+  <p>RS-485 is a differential physical layer that can carry UART frames over longer distances. Modbus RTU conventionally uses 11-bit character framing: 8E1 by default, or 8N2 when parity is disabled.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/uart.js %}
+</script>

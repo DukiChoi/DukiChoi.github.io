@@ -1,0 +1,37 @@
+---
+lang: ja
+translation_key: theory-counting-sort
+subject: data-structures
+title: "計数ソート"
+description: "値同士を比較せず、出現回数から出力位置を計算します。"
+permalink: /ja/theory/counting-sort/
+category: algorithms
+order: 17
+---
+<style>{% include lessons/counting-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">各値の出現回数を数え、出力位置を直接求めます。狭い範囲の整数なら、比較ソートより効率的になる場合があります。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">計数ソートの集計・累積和・配置を示すシミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">再生、ステップ実行、スライダーで操作できます。下段は出力配列out、右下はcount配列です。</p>
+<div class="dsa-facts"><div><span>時間計算量</span><b class="good">O(n + k)</b></div><div><span>追加領域</span><b class="">O(n + k)</b></div><div><span>安定</span><b class="good">はい</b></div><div><span>値同士の比較</span><b class="good">ゼロ</b></div><div><span>前提条件</span><b class="bad">狭い範囲の整数</b></div></div>
+  <h2>累積和で位置を決める</h2>
+  <p>累積和を取るとcount[v]はv以下の要素数、つまりvの出力区間の終端になります。入力を後ろから走査して区間の末尾から配置すると、同じ値の順序が保たれます。この安定性により、基数ソートの各桁の整列にも利用できます。</p>
+  <p>kは値域の大きさです。0～10億のような広い値域ではcount配列が大きくなりすぎます。</p>
+<div class="dsa-tip"><p class="t">大量のデータと狭い値域</p><p>1000万個の整数が1万以下に収まる場合、全要素を保存して整列する代わりに出現回数を集計し、値の順に出力すると時間とメモリを節約できます。</p><pre><code>import sys
+input = sys.stdin.readline
+cnt = [0] * 10001
+for _ in range(int(input())):
+    cnt[int(input())] += 1
+for v in range(10001):
+    if cnt[v]:
+        sys.stdout.write((str(v) + '\n') * cnt[v])</code></pre></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/counting-sort.js %}
+</script>

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "market-peek",
+    "title": "Market Peek",
+    "description": "暗号資産と韓国・米国の株価を表示する小型デスクトップウィジェット。",
+    "platform": "Windows · macOS",
+    "icon": "/assets/programs/market-peek/icon.png",
+    "external_url": "https://duki-programming.github.io/market-peek/en/",
+    "featured": true,
+    "order": 1
+  },
+  {
+    "id": "doro-modbus",
+    "title": "Doro Modbus",
+    "description": "CSVアドレス管理、テスト値、通信グラフを備えたModbus RTUマスター・スレーブシミュレーター。",
+    "platform": "Windows · ベータ",
+    "icon": "https://duki-programming.github.io/assets/programs/doro-modbus/icon.png",
+    "external_url": "https://duki-programming.github.io/doro-modbus/en/",
+    "order": 2
+  },
+  {
+    "id": "bitbox",
+    "title": "BitBox",
+    "description": "iPhoneとApple WatchでBitgetの口座とポジションを確認するアプリ。開発中のため、まだダウンロードできません。",
+    "platform": "iPhone · Apple Watch · 開発中",
+    "icon": "https://duki-programming.github.io/assets/programs/bitbox/icon.png",
+    "external_url": "https://duki-programming.github.io/bitbox/en/",
+    "order": 3
+  },
+  {
+    "id": "ble-smart-cube",
+    "title": "BLE Smart Cube",
+    "description": "BLEスマートキューブの動きと圧力データを確認・記録します。",
+    "platform": "Android · BLE",
+    "icon": "/assets/programs/ble-smart-cube/icon.svg",
+    "external_url": "/ja/programs/ble-smart-cube/",
+    "order": 4
+  }
+]

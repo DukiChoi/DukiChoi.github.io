@@ -1,0 +1,39 @@
+---
+lang: en
+translation_key: theory-dijkstra
+subject: data-structures
+title: "Dijkstra's Shortest Paths"
+description: "Finalize the closest unsettled node and relax distances to its neighbors."
+permalink: /en/theory/dijkstra/
+category: algorithms
+order: 51
+---
+<style>{% include lessons/dijkstra.css %}</style>
+<div class="circuit-lesson lx dj">
+<p class="lede">Dijkstra's algorithm finds shortest distances from a source to other vertices. Repeatedly finalize the unsettled node with the smallest tentative distance, then improve neighbors' distances through it.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A weighted-graph simulator showing finalized nodes and distance relaxations</h2>
+    <p class="sub" style="margin-top:0">1. Click a source node (currently <span id="djS">A</span>)</p>
+    <p class="sub" style="margin-top:4px">2. Step through the transfer</p>
+    <div class="row">
+      <button class="bt go" id="djStep">Next step</button><button class="bt" id="djAll">Play to end</button><button class="bt" id="djReset">Reset</button>
+    </div>
+    <svg id="djSvg" width="100%" viewBox="0 0 680 360" role="img" aria-label="A weighted graph with six nodes"></svg>
+    <div class="leg"><span><i style="background:var(--surface-1);border:1px solid var(--border-strong)"></i>Unsettled</span><span><i style="background:#185FA5"></i>Newly finalized</span><span><i style="background:#5DCAA5"></i>Finalized</span><span><i style="background:#E8A317;border-radius:2px;height:4px;vertical-align:3px"></i>Edges checked this step</span><span><i style="background:#85B7EB;border-radius:2px;height:4px;vertical-align:3px"></i>Shortest-path tree</span><span><i style="background:#185FA5;border-radius:2px;height:4px;vertical-align:3px"></i>Path to selected node</span></div>
+    <p class="msg" id="djMsg" aria-live="polite"></p>
+    <div class="tw"><table id="djT"></table></div>
+  </div>
+  <p class="hint">Yellow table cells mark distances improved in this step. After the run, click a node to highlight its shortest path from the source.</p>
+
+  <h2>Why finalize the closest node first?</h2>
+  <p>Let u be the unsettled node with the smallest tentative distance. Any alternative path through another unsettled node already costs at least that much. With nonnegative edge weights, extending it cannot make it cheaper. This argument fails for negative edges; use an algorithm such as Bellman–Ford in that case.</p>
+
+  <h2>Burst time</h2>
+  <p>A heap-based priority queue gives O((V + E) log V) time. Dijkstra's algorithm underlies routing and shortest-path applications, including OSPF.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/dijkstra.js %}
+</script>

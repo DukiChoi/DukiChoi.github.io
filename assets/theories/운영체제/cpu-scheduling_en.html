@@ -1,0 +1,55 @@
+---
+lang: en
+translation_key: theory-cpu-scheduling
+subject: operating-systems
+title: "CPU Scheduling"
+description: "Run the same four processes with FCFS, SJF, and round robin, then compare waiting times."
+permalink: /en/theory/cpu-scheduling/
+category: os
+order: 1
+---
+<style>{% include lessons/cpu-scheduling.css %}</style>
+<div class="circuit-lesson os sch">
+<p class="lede">When several processes are ready, the operating system must choose which runs first. Try three policies on the same four processes and compare their waiting times.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A CPU scheduling simulator showing four processes on a Gantt chart</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Process</th><th>Arrival time</th><th>Burst time</th><th>Waiting time</th></tr></thead>
+      <tbody id="schBody"></tbody>
+    </table></div>
+
+    <p class="sub">1. Choose a scheduling policy</p>
+    <div class="row">
+      <button class="bt sel" data-alg="fcfs">FCFS (arrival order)</button>
+      <button class="bt" data-alg="sjf">SJF (shortest job first)</button>
+      <button class="bt" data-alg="rr">Round robin (take turns)</button>
+      <label style="font-size:14px;color:var(--text-secondary)">Round-robin time quantum
+        <select id="schQ"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+    </div>
+
+    <p class="sub">2. Play the execution order</p>
+    <div class="row" style="margin-bottom:10px"><button class="bt go" id="schPlay">Play schedule</button></div>
+    <div class="gantt" id="schG" aria-label="Gantt chart"></div>
+    <div class="axis" id="schAx"></div>
+    <p class="msg" id="schMsg" aria-live="polite"></p>
+
+    <p class="sub">Average waiting time by policy (lower is better)</p>
+    <div class="cmp" id="schCmp"></div>
+  </div>
+  <p class="hint">Editing arrival or burst times recalculates the results. Choose a policy and press Play schedule to reveal CPU execution from left to right.</p>
+
+  <h2>Three ways to choose the next process</h2>
+  <p><strong>FCFS</strong> runs processes to completion in arrival order. It is simple, but a long process at the front makes short processes wait.</p>
+  <p><strong>SJF</strong> chooses the shortest burst among processes that have arrived. It can reduce average waiting time, but burst lengths are difficult to predict and long jobs may starve if short jobs keep arriving.</p>
+  <p><strong>Round robin</strong> gives each process a fixed time slice and then moves it to the back of the queue. Processes take turns, but a very small quantum increases context-switch overhead.</p>
+
+  <h2>Calculating waiting time</h2>
+  <p>Add all time spent ready but waiting for the CPU.</p>
+  <pre><code>Waiting time = completion time − arrival time − burst time</code></pre>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/cpu-scheduling.js %}
+</script>

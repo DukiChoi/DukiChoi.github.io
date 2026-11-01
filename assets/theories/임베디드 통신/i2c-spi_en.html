@@ -1,0 +1,49 @@
+---
+lang: en
+translation_key: theory-i2c-spi
+subject: embedded
+title: "I2C and SPI"
+description: "Step through the clock and data waveforms of two synchronous serial buses."
+permalink: /en/theory/i2c-spi/
+category: embedded
+order: 2
+---
+<style>{% include lessons/i2c-spi.css %}</style>
+<div class="circuit-lesson lx bs">
+<p class="lede">Both I2C and SPI use a controller-generated clock to time serial data. I2C addresses multiple devices over two wires. A typical four-wire SPI link selects a peripheral and can send and receive simultaneously.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator showing I2C and SPI clock and data signals step by step</h2>
+    <p class="sub" style="margin-top:0">1. Choose the bus and values to transmit</p>
+    <div class="row">
+      <button class="bt sel" data-b="i2c">I2C</button><button class="bt" data-b="spi">SPI (mode 0)</button>
+      <span id="bsI2c" class="row" style="margin-left:8px"><label class="lbl">Target address <input type="text" id="bsAddr" value="0x48"></label><label class="lbl">Write data <input type="text" id="bsData" value="0xA5"></label></span>
+      <span id="bsSpi" class="row" style="margin-left:8px;display:none"><label class="lbl">Controller transmit value <input type="text" id="bsMosi" value="0xA5"></label><label class="lbl">Peripheral transmit value <input type="text" id="bsMiso" value="0x3C"></label></span>
+    </div>
+    <p class="err" id="bsErr"></p>
+    <p class="sub" style="margin-top:4px">2. Step through the transfer</p>
+    <div class="row">
+      <button class="bt go" id="bsStep">Next step</button>
+      <button class="bt" id="bsAll">Play to end</button>
+      <button class="bt" id="bsReset">Reset</button>
+    </div>
+    <svg id="bsSvg" width="100%" viewBox="0 0 680 250" role="img" aria-label="Bus waveforms"></svg>
+    <div class="leg" id="bsLeg"></div>
+    <p class="msg" id="bsMsg" aria-live="polite"></p>
+    <div class="regs" id="bsRegs"></div>
+  </div>
+  <p class="hint">Each step reveals another part of the waveform. Orange dots mark sampling instants.</p>
+
+  <h2>I2C: two wires, address-based selection</h2>
+  <p>I2C uses SCL for clock and SDA for data. Pull-up resistors hold the lines high; devices drive them low using open-drain outputs. This allows devices to share the lines without actively driving opposite logic levels.</p>
+  <p>START is SDA falling while SCL is high, followed by a 7-bit address and read/write bit. The addressed target acknowledges by pulling SDA low. Data changes while SCL is low and is stable while SCL is high; SDA transitions during SCL high indicate START or STOP.</p>
+
+  <h2>SPI: four wires and simultaneous exchange</h2>
+  <p>SPI uses SCK, controller output MOSI, peripheral output MISO, and chip select CS. Selecting a peripheral with CS avoids an address field, and SPI has no standard ACK bit. Over eight clocks, each side shifts out and receives one byte.</p>
+  <p>Mode 0 keeps the clock low when idle and samples on rising edges. Modes 1–3 use other clock polarity (CPOL) and phase (CPHA) combinations. Always match the peripheral's datasheet settings.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/i2c-spi.js %}
+</script>

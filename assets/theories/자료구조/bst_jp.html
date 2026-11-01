@@ -1,0 +1,46 @@
+---
+lang: ja
+translation_key: theory-bst
+subject: data-structures
+title: "二分探索木"
+description: "値の挿入・検索・削除を試し、木の形が変わる様子と偏った木が遅くなる理由を確認します。"
+permalink: /ja/theory/bst/
+category: algorithms
+order: 40
+---
+<style>{% include lessons/bst.css %}</style>
+<div class="circuit-lesson lx bst">
+<p class="lede">二分探索木では、左部分木の値はそのノードより小さく、右部分木の値は大きくなります。比較のたびに左右どちらかへ進むため、バランスの良い木では効率よく検索できます。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">二分探索木の挿入・検索・削除シミュレーター</h2>
+    <p class="sub" style="margin-top:0">1. 例を読み込むか木をクリア</p>
+    <div class="row">
+      <button class="bt" id="bsRand">ランダムな7値で作成</button>
+      <button class="bt" id="bsSort">整列済みの7値で作成</button>
+      <button class="bt" id="bsClr">木をクリア</button>
+    </div>
+    <p class="sub">2. 値を入力して操作を選択</p>
+    <div class="row">
+      <label class="lbl">値（1～99） <input type="number" id="bsV" min="1" max="99" value="42"></label>
+      <button class="bt go" id="bsIns">挿入</button><button class="bt go" id="bsFind">検索</button><button class="bt go" id="bsDel">削除</button>
+    </div>
+    <p class="err" id="bsErr"></p>
+    <svg id="bsSvg" width="100%" viewBox="0 0 680 320" role="img" aria-label="二分探索木"></svg>
+    <p class="msg" id="bsMsg" aria-live="polite"></p>
+    <div class="stats"><div><span>ノード数</span><b id="bsN">0</b></div><div><span>高さ（最長経路のノード数）</span><b id="bsH">0</b></div><div><span>検索の最大比較回数</span><b id="bsW">0</b></div></div>
+  </div>
+  <p class="hint">挿入と検索では根からの経路がオレンジ色になります。整列済みの値で作成すると木が偏る様子を確認できます。</p>
+
+  <h2>検索・挿入・削除</h2>
+  <p>根から検索を始め、小さい値なら左、大きい値なら右の子へ進みます。挿入も同じ経路をたどり、最初の空き位置にノードを追加します。</p>
+  <p>削除方法は子の数によって異なります。葉はそのまま削除し、子が1つならその子で置き換えます。子が2つなら右部分木の最小値で置き換え、大小関係を維持します。</p>
+
+  <h2>木の形が性能を決める</h2>
+  <p>最悪時の比較回数は木の高さと同じです。平衡な木の高さはO(log n)ですが、通常の二分探索木に整列済みデータを挿入すると高さnの鎖になります。AVL木や赤黒木は回転や平衡条件により高さをO(log n)に保ちます。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/bst.js %}
+</script>

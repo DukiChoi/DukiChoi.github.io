@@ -1,0 +1,55 @@
+---
+lang: ja
+translation_key: theory-memory-allocation
+subject: operating-systems
+title: "メモリ割当てと断片化"
+description: "First-fit、Best-fit、Worst-fitで空き領域の変化を比べます。"
+permalink: /ja/theory/memory-allocation/
+category: os
+order: 7
+---
+<style>{% include lessons/memory-allocation.css %}</style>
+<div class="circuit-lesson os ma">
+<p class="lede">連続領域の割当てと解放を繰り返すと、空きが散在します。合計は十分でも、大きな連続領域を確保できなくなる場合があります。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">100KBメモリの外部断片化シミュレータ</h2>
+    <p class="sub" style="margin-top:0">1. 空き領域の選び方</p>
+    <div class="row">
+      <button class="bt sel" data-s="first">First-fit（最初に入る所）</button>
+      <button class="bt" data-s="best">Best-fit（最小の適合領域）</button>
+      <button class="bt" data-s="worst">Worst-fit（最大領域）</button>
+    </div>
+    <p class="sub">2. サイズ指定または例を再生</p>
+    <div class="row">
+      <label style="font-size:14px;color:var(--text-secondary)">要求サイズ <input type="number" id="maSize" min="1" max="100" value="20"> KB</label>
+      <button class="bt go" id="maReq">メモリ要求</button>
+      <button class="bt go" id="maDemo">例を再生</button>
+      <button class="bt" id="maReset">最初から</button>
+    </div>
+    <p class="err" id="maErr"></p>
+    <div class="bar" id="maBar"></div>
+    <div class="axis"><span style="left:0">0</span><span style="left:25%">25</span><span style="left:50%">50</span><span style="left:75%">75</span><span style="left:100%">100 KB</span></div>
+    <div class="stats">
+      <div><span>空き合計</span><b id="maTot">100</b> KB</div>
+      <div><span>最大空き領域</span><b id="maBig">100</b> KB</div>
+      <div><span>空き領域数</span><b id="maCnt">1</b>個</div>
+    </div>
+    <p class="msg" id="maMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">色付きは使用中、斜線は空きです。使用中のブロックを押すと解放できます。</p>
+
+  <h2>3つの割当て方式</h2>
+  <p><strong>First-fit</strong>は先頭から調べ、最初に収まる領域を使います。</p>
+  <p><strong>Best-fit</strong>は収まる最小領域を使いますが、小さな使えない断片を生むことがあります。</p>
+  <p><strong>Worst-fit</strong>は最大領域を使います。残りを大きく保つ一方、後の大きな要求に必要な領域を失う場合があります。</p>
+
+  <h2>外部断片化</h2>
+  <p>空きの合計は十分でも、連続していないため要求を満たせない状態です。空き合計と最大空き領域を比較してください。</p>
+  <p>コンパクションは使用中の領域を寄せて空きをまとめます。ページングは固定長単位を使い、連続配置を不要にします。現代のOSは主にページングを使います。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/memory-allocation.js %}
+</script>

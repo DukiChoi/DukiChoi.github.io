@@ -32,9 +32,12 @@
   {% capture seo_metadata %}{% seo title=false %}{% endcapture %}
   {% if page.lang == 'en' %}
     {{ seo_metadata | replace: site.description, site.description_en }}
+  {% elsif page.lang == 'ja' %}
+    {{ seo_metadata | replace: site.description, site.description_ja }}
   {% else %}
     {{ seo_metadata }}
   {% endif %}
 
+  {% include language-links.html metadata=true %}
   {% include advertising-head.html %}
 </head>

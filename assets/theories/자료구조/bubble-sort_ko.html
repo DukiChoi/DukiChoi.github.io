@@ -1,0 +1,29 @@
+---
+lang: ko
+translation_key: theory-bubble-sort
+subject: data-structures
+title: 버블 정렬
+description: 이웃한 두 값을 비교해 바꾸는 일을 반복하며 큰 값을 끝으로 밀어내는 정렬입니다.
+permalink: /theory/bubble-sort/
+category: algorithms
+order: 11
+---
+<style>{% include lessons/bubble-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">이웃한 두 값을 비교해서 순서가 틀리면 바꾸는 일을 반복합니다. 큰 값이 거품처럼 한 칸씩 떠올라 오른쪽 끝에 쌓입니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">버블 정렬 과정을 막대로 보여 주는 시뮬레이터</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">[자동 재생]을 누르거나 [다음 단계]로 한 단계씩 넘겨 보세요. 슬라이더를 끌면 원하는 단계로 바로 이동합니다. [거의 정렬됨]을 고르면 일찍 끝나는 모습을 볼 수 있습니다.</p>
+<div class="dsa-facts"><div><span>최선</span><b class="good">O(n)</b></div><div><span>평균</span><b class="bad">O(n²)</b></div><div><span>최악</span><b class="bad">O(n²)</b></div><div><span>추가 공간</span><b class="good">O(1)</b></div><div><span>안정 정렬</span><b class="good">예</b></div><div><span>최대 비교</span><b class="">n(n−1)/2</b></div></div>
+  <h2>한 바퀴마다 가장 큰 값 하나가 확정됩니다</h2>
+  <p>한 바퀴를 도는 동안 큰 값은 비교할 때마다 오른쪽으로 끌려가므로, 바퀴가 끝나면 남은 구간에서 가장 큰 값이 맨 끝에 놓입니다. 다음 바퀴는 그 자리를 빼고 한 칸 짧은 구간만 보면 됩니다. 한 바퀴 동안 교환이 한 번도 없으면 이미 정렬된 것이므로 바로 멈춥니다. 이 조기 종료 덕분에 정렬된 입력에서는 O(n)에 끝납니다.</p>
+<div class="dsa-tip"><p class="t">코테에서는: 교환 횟수 = 역순 쌍의 수</p><p>i &lt; j인데 a[i] &gt; a[j]인 쌍을 역순 쌍이라고 합니다. 버블 정렬은 한 번 바꿀 때마다 역순 쌍을 정확히 하나씩 없애므로, 교환 횟수는 역순 쌍의 수와 같습니다. "버블 정렬로 몇 번 바꾸는가"를 묻는 문제에서 n이 크면 직접 시뮬레이션하지 말고, <a href="{{ '/theory/merge-sort/' | relative_url }}">병합 정렬</a>로 역순 쌍을 O(n log n)에 세야 합니다.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/bubble-sort.js %}
+</script>

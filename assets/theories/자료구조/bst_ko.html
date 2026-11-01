@@ -1,0 +1,46 @@
+---
+lang: ko
+translation_key: theory-bst
+subject: data-structures
+title: 이진 탐색 트리
+description: 값을 넣고 찾고 지우면서 트리 모양이 바뀌는 과정과, 한쪽으로 치우친 트리가 느린 이유를 봅니다.
+permalink: /theory/bst/
+category: algorithms
+order: 40
+---
+<style>{% include lessons/bst.css %}</style>
+<div class="circuit-lesson lx bst">
+<p class="lede">이진 탐색 트리는 모든 노드에서 왼쪽에는 더 작은 값, 오른쪽에는 더 큰 값만 오도록 정리한 트리입니다. 값을 찾을 때 노드마다 "작으면 왼쪽, 크면 오른쪽"만 고르면 되므로, 트리가 고르게 퍼져 있으면 아주 빠르게 찾습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">이진 탐색 트리에 값을 넣고 찾고 지우는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 예시 트리를 만들거나 비우세요</p>
+    <div class="row">
+      <button class="bt" id="bsRand">무작위 값 7개로 만들기</button>
+      <button class="bt" id="bsSort">정렬된 값 7개로 만들기</button>
+      <button class="bt" id="bsClr">트리 비우기</button>
+    </div>
+    <p class="sub">2. 값을 입력하고 동작을 고르세요</p>
+    <div class="row">
+      <label class="lbl">값 (1~99) <input type="number" id="bsV" min="1" max="99" value="42"></label>
+      <button class="bt go" id="bsIns">넣기</button><button class="bt go" id="bsFind">찾기</button><button class="bt go" id="bsDel">지우기</button>
+    </div>
+    <p class="err" id="bsErr"></p>
+    <svg id="bsSvg" width="100%" viewBox="0 0 680 320" role="img" aria-label="이진 탐색 트리"></svg>
+    <p class="msg" id="bsMsg" aria-live="polite"></p>
+    <div class="stats"><div><span>노드 수</span><b id="bsN">0</b></div><div><span>높이 (가장 긴 경로의 노드 수)</span><b id="bsH">0</b></div><div><span>찾을 때 최대 비교 횟수</span><b id="bsW">0</b></div></div>
+  </div>
+  <p class="hint">넣기와 찾기를 누르면 루트부터 비교하며 내려가는 길이 주황색으로 표시됩니다. [정렬된 값 7개로 만들기]를 누르면 트리가 한쪽으로 기울어지는 모습을 볼 수 있습니다.</p>
+
+  <h2>찾기, 넣기, 지우기</h2>
+  <p>찾을 때는 루트에서 시작해 찾는 값이 노드보다 작으면 왼쪽, 크면 오른쪽 자식으로 내려갑니다. 넣을 때도 같은 길을 따라 내려가다가 빈자리를 만나면 그곳에 새 노드를 붙입니다.</p>
+  <p>지울 때는 자식 수에 따라 방법이 다릅니다. 자식이 없으면 그냥 떼어 내고, 자식이 하나면 그 자식을 지운 자리로 끌어올립니다. 자식이 둘이면 오른쪽 서브트리에서 가장 작은 값을 가져와 지운 자리를 채웁니다. 이 값은 지운 값 바로 다음으로 큰 값이라서 크기 순서가 깨지지 않습니다.</p>
+
+  <h2>트리 모양이 속도를 정합니다</h2>
+  <p>찾는 데 드는 비교 횟수는 트리의 높이와 같습니다. 노드가 n개일 때 고르게 퍼진 트리의 높이는 약 log₂n이지만, 값을 크기 순서대로 넣으면 노드가 한쪽으로만 이어져 높이가 n이 됩니다. 사실상 연결 리스트가 되는 셈입니다. AVL 트리나 레드-블랙 트리는 넣고 지울 때마다 노드를 회전시켜 높이를 log n 수준으로 유지합니다.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/bst.js %}
+</script>

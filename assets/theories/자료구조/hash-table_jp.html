@@ -1,0 +1,47 @@
+---
+lang: ja
+translation_key: theory-hash-table
+subject: data-structures
+title: "ハッシュテーブル"
+description: "キーをバケットに対応付け、衝突の処理方法を体験します。"
+permalink: /ja/theory/hash-table/
+category: algorithms
+order: 41
+---
+<style>{% include lessons/hash-table.css %}</style>
+<div class="circuit-lesson lx ht">
+<p class="lede">ハッシュテーブルは、ハッシュ関数でキーをバケット番号に変換します。適切な関数と負荷率なら検索は平均O(1)ですが、異なるキーが同じバケットに対応して衝突することがあります。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">7バケットで挿入・検索・衝突処理を体験するハッシュテーブルシミュレーター</h2>
+    <p class="sub" style="margin-top:0">1. 衝突の処理方法を選択</p>
+    <div class="row">
+      <button class="bt sel" data-m="chain">チェイン法（バケットごとのリスト）</button>
+      <button class="bt" data-m="probe">線形探索法（次の空きスロット）</button>
+    </div>
+    <p class="sub">2. キーの挿入・検索</p>
+    <div class="row">
+      <label class="lbl">キー <input type="text" id="htK" value="cat" maxlength="8"></label>
+      <button class="bt go" id="htIns">挿入</button><button class="bt go" id="htFind">検索</button>
+      <button class="bt" id="htDemo">衝突の例を挿入</button><button class="bt" id="htClr">クリア</button>
+    </div>
+    <p class="err" id="htErr"></p>
+    <div class="calc" id="htCalc">文字コードの合計を7で割った余りをバケット番号にします。</div>
+    <div class="tbl" id="htTbl"></div>
+    <p class="msg" id="htMsg" aria-live="polite"></p>
+    <div class="stats"><div><span>保存したキー数</span><b id="htN">0</b></div><div><span>負荷率（キー数÷バケット数）</span><b id="htA">0.00</b></div><div><span>今回調べたスロット数</span><b id="htP">0</b></div></div>
+  </div>
+  <p class="hint">cat、act、tacは文字コードの合計が同じなので、この例では衝突します。「衝突の例を挿入」で同様の5キーを追加できます。</p>
+
+  <h2>ハッシュ関数</h2>
+  <p>この例は文字コードを合計し、バケット数で割った余りを使います。簡単ですが文字の順序を無視するため、衝突しやすい関数です。実用的な関数は文字の値と位置を混ぜ、キーを均等に分散させます。</p>
+
+  <h2>衝突への2つの対処法</h2>
+  <p><strong>チェイン法</strong>は各バケットにリストを持たせます。複数のキーを保存できますが、チェーンが長くなると線形探索が必要です。</p>
+  <p><strong>線形探索法</strong>は連続するスロットを調べ、空きを探します。検索も同じ経路をたどり、空きで終了します。テーブルが埋まるとクラスタリングで性能が低下するため、設計に応じて負荷率0.7前後などで拡張します。</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/hash-table.js %}
+</script>

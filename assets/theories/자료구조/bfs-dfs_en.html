@@ -1,0 +1,42 @@
+---
+lang: en
+translation_key: theory-bfs-dfs
+subject: data-structures
+title: "BFS and DFS"
+description: "Explore the same graph breadth-first and depth-first to see how queues and stacks change the visiting order."
+permalink: /en/theory/bfs-dfs/
+category: algorithms
+order: 50
+---
+<style>{% include lessons/bfs-dfs.css %}</style>
+<div class="circuit-lesson lx gs">
+<p class="lede">Two common graph traversals visit every reachable node. BFS expands outward by distance; DFS follows a path deeply before backtracking. Here their frontier is maintained with a queue or a stack.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator showing BFS and DFS visiting order and frontier contents</h2>
+    <p class="sub" style="margin-top:0">1. Choose a method, then click a start node (currently <span id="gsStart">A</span>)</p>
+    <div class="row">
+      <button class="bt sel" data-a="bfs">BFS (breadth-first, queue)</button>
+      <button class="bt" data-a="dfs">DFS (depth-first, stack)</button>
+    </div>
+    <p class="sub">2. Run the traversal</p>
+    <div class="row">
+      <button class="bt go" id="gsStep">Next step</button><button class="bt" id="gsAll">Play to end</button><button class="bt" id="gsReset">Reset</button>
+    </div>
+    <svg id="gsSvg" width="100%" viewBox="0 0 680 350" role="img" aria-label="A graph with eight nodes"></svg>
+    <div class="leg"><span><i style="background:var(--surface-1);border:1px solid var(--border-strong)"></i>Undiscovered</span><span><i style="background:#FAC775"></i>Discovered, waiting</span><span><i style="background:#185FA5"></i>Current node</span><span><i style="background:#5DCAA5"></i>Visited</span><span><i style="background:#185FA5;border-radius:2px;height:4px;vertical-align:3px"></i>Traversal-tree edge</span></div>
+    <p class="msg" id="gsMsg" aria-live="polite"></p>
+    <div class="ds"><div class="box"><span class="t" id="gsCt"></span><div class="items" id="gsC"></div></div><div class="box"><span class="t">Visiting order</span><div class="items" id="gsV"></div></div></div>
+  </div>
+  <p class="hint">Each step removes a frontier node and visits it, or skips it if already visited. Click a graph node before starting to change the start node.</p>
+
+  <h2>Queue for BFS, stack for DFS</h2>
+  <p>BFS appends newly discovered neighbors to the queue and removes from its front. Nodes one edge away are processed before nodes two edges away, which makes BFS useful for shortest paths in unweighted graphs.</p>
+  <p>DFS pushes neighbors onto a stack and removes the newest first. It follows a path deeply before backtracking, which is useful for mazes, cycle detection, and topological sorting. Recursive implementations use the call stack instead of an explicit stack.</p>
+  <p>With adjacency lists, both traversals take O(V + E) time for V vertices and E edges.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/bfs-dfs.js %}
+</script>

@@ -2,6 +2,11 @@
   const key = 'dukichoi-theme';
   const root = document.documentElement;
   const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+  const labels = {
+    ko: ['다크 모드로 전환', '라이트 모드로 전환'],
+    en: ['Switch to dark mode', 'Switch to light mode'],
+    ja: ['ダークモードに切り替え', 'ライトモードに切り替え']
+  }[root.lang] || ['Switch to dark mode', 'Switch to light mode'];
   let preferred = null;
   let toggle;
 
@@ -15,7 +20,7 @@
     if (toggle) {
       const dark = theme === 'dark';
       toggle.setAttribute('aria-checked', String(dark));
-      toggle.title = dark ? '라이트 모드로 전환' : '다크 모드로 전환';
+      toggle.title = labels[dark ? 1 : 0];
     }
   }
 

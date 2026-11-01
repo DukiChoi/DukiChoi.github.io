@@ -1,0 +1,47 @@
+---
+lang: ja
+translation_key: theory-sorting
+subject: data-structures
+title: "整列アルゴリズム比較"
+description: "同じ配列を7種類のアルゴリズムで整列し、処理量・計算量・用途を比べます。"
+permalink: /ja/theory/sorting/
+category: algorithms
+order: 10
+---
+<style>{% include lessons/sorting.css %}</style>
+<div class="circuit-lesson rc">
+<p class="lede">7種類が同じ入力を同時に整列します。1回の更新で比較や移動を1ステップ進めるため、早く終わるほど集計したステップ数が少ないことを示します。実際のCPU実行時間の比較ではありません。入力によって順位は変わります。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">同じ配列で7種類の整列アルゴリズムを比較するシミュレーター</h2>
+    <div class="ctl"><span class="l">入力</span><button class="bt sel" data-rp="random">ランダム</button><button class="bt" data-rp="nearly">ほぼ整列済み</button><button class="bt" data-rp="reversed">逆順</button><button class="bt" data-rp="dups">重複が多い</button></div>
+    <div class="ctl"><button class="bt go" id="rcGo">一斉スタート</button><button class="bt" id="rcReset">新しい配列</button><label class="l">速度 <select id="rcSpd"><option value="120">遅い</option><option value="45" selected>普通</option><option value="12">速い</option></select></label></div>
+    <div class="grid" id="rcGrid"></div>
+    <p class="msg" id="rcMsg" aria-live="polite"></p>
+  </div>
+  <p class="hint">ほぼ整列済みなら挿入ソートとバブルソートが有利ですが、逆順では処理が増えます。マージソートとヒープソートは入力順序の影響が小さめです。表のアルゴリズム名から詳細な実験へ進めます。</p>
+
+  <h2>計算量の一覧</h2>
+<div class="cx"><table><thead><tr><th>アルゴリズム</th><th>最良</th><th>平均</th><th>最悪</th><th>追加領域</th><th>安定性</th></tr></thead><tbody><tr><td><a href="{{ '/ja/theory/bubble-sort/' | relative_url }}">バブル</a></td><td class="g">O(n)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="g">はい</td></tr><tr><td><a href="{{ '/ja/theory/selection-sort/' | relative_url }}">選択</a></td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="b">いいえ</td></tr><tr><td><a href="{{ '/ja/theory/insertion-sort/' | relative_url }}">挿入</a></td><td class="g">O(n)</td><td class="b">O(n²)</td><td class="b">O(n²)</td><td class="g">O(1)</td><td class="g">はい</td></tr><tr><td><a href="{{ '/ja/theory/quick-sort/' | relative_url }}">クイック</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="b">O(n²)</td><td class="">O(log n)</td><td class="b">いいえ</td></tr><tr><td><a href="{{ '/ja/theory/merge-sort/' | relative_url }}">マージ</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="b">O(n)</td><td class="g">はい</td></tr><tr><td><a href="{{ '/ja/theory/heap-sort/' | relative_url }}">ヒープ</a></td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">O(1)</td><td class="b">いいえ</td></tr><tr><td><a href="{{ '/ja/theory/counting-sort/' | relative_url }}">計数</a></td><td class="g">O(n + k)</td><td class="g">O(n + k)</td><td class="g">O(n + k)</td><td class="">O(n + k)</td><td class="g">はい</td></tr></tbody></table></div>
+  <p>kは計数ソートの値域です。安定ソートは同じ値の元の順序を保ちます。名前で整列した後に点数で整列するなど、複数の基準を順に適用するときに役立ちます。</p>
+
+  <h2>どのアルゴリズムを使うか</h2>
+  <div class="use">
+    <div><b>通常は言語の組み込みソート</b><p>Pythonのsort()は安定で、最悪時間計算量はO(n log n)です。一般的な整列には、十分に検証された組み込み実装を使いましょう。</p></div>
+    <div><b>最悪でもO(n log n)が必要な場合</b><p>安定性が必要で追加メモリを使えるならマージソート、配列の追加領域を一定に抑えたいならヒープソートが候補です。</p></div>
+    <div><b>ほぼ整列済み・小さな入力</b><p>挿入ソートが得意な条件です。多くの汎用ソートでも小区間の処理に使われます。</p></div>
+    <div><b>狭い値域に大量の整数</b><p>計数ソートは値同士を比較せずO(n + k)で処理します。頻度だけが必要なら保存領域も減らせます。</p></div>
+  </div>
+
+  <div class="dsa-tip"><p class="t">演習：ソートキーを選ぶ</p>
+  <p>多くの問題ではソートの自作よりキーの選択が重要です。タプルのキーは順に比較され、数値に負号を付けるとその項目を降順にできます。</p>
+<pre><code>a.sort()                                   # 安定・リストを直接更新
+b = sorted(a, reverse=True)                # 降順の新しいリスト
+people.sort(key=lambda p: (-p[1], p[0]))   # 点数は降順、名前は昇順</code></pre>
+  <p>おおまかな目安では、二乗時間のアルゴリズムは数千要素なら使える場合がありますが、10万要素ほどでは高コストです。限界は言語・機器・処理内容に依存するため、固定の時間目安ではなく計測で判断してください。</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/sorting.js %}
+</script>

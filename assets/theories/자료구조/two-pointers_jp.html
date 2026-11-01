@@ -1,0 +1,31 @@
+---
+lang: ja
+translation_key: theory-two-pointers
+subject: data-structures
+title: "2ポインタ法"
+description: "2つのポインタを一方向に進め、一部の二乗時間の探索を線形走査に変えます。"
+permalink: /ja/theory/two-pointers/
+category: algorithms
+order: 21
+---
+<style>{% include lessons/two-pointers.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">2つのポインタを一方向に動かすことで、二重探索を線形走査に置き換えられる場合があります。除外した位置を再び調べる必要がないことの証明が重要です。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">2つのポインタで候補を除外する過程を示すシミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">モードと目標値を変更して試してください。薄いセルは候補から除外済みです。</p>
+<div class="dsa-facts"><div><span>時間計算量</span><b class="good">O(n)</b></div><div><span>追加領域</span><b class="good">O(1)</b></div><div><span>両端から近づく</span><b class="">整列が必要</b></div><div><span>同じ方向に進む</span><b class="">正の値が前提</b></div></div>
+  <h2>両端から近づく</h2>
+  <p>2要素の和が小さければlを進め、大きければrを戻します。残りの最大値と組んでも足りないa[l]は安全に除外できます。この議論には整列済みの配列が必要です。</p>
+  <h2>同じ方向に動かす</h2>
+  <p>rで広げ、和の条件を満たしたらlで縮めます。正の値なら拡張で和が増え、縮小で減ります。負数があると単調性が崩れます。和が指定値になる区間の個数には <a href="{{ '/ja/theory/prefix-sum/' | relative_url }}">累積和</a>とハッシュを組み合わせる方法があり、しきい値以上の最短区間には別の技法が必要なことがあります。</p>
+<div class="dsa-tip"><p class="t">よくある演習</p><p>典型例には整列済み配列の2要素の和、1つを固定するO(n²)の3要素の和、整列済み配列のマージ、正数列の最短区間、下限を満たす最小の差などがあります。</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/two-pointers.js %}
+</script>

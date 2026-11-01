@@ -1,0 +1,33 @@
+---
+lang: en
+translation_key: theory-prefix-sum
+subject: data-structures
+title: "Prefix sums"
+description: "Precompute prefix totals to answer a range-sum query with one subtraction."
+permalink: /en/theory/prefix-sum/
+category: algorithms
+order: 23
+---
+<style>{% include lessons/prefix-sum.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">Store cumulative totals in P, then answer any range-sum query with a single subtraction.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A simulator of prefix-sum construction and range queries</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Change l and r to replay the range-sum calculation. The lower row is the prefix-sum array P.</p>
+<div class="dsa-facts"><div><span>Preprocessing</span><b class="">O(n)</b></div><div><span>Range-sum query</span><b class="good">O(1)</b></div><div><span>Extra space</span><b class="">O(n)</b></div><div><span>Formula</span><b class="">P[r+1] − P[l]</b></div></div>
+  <h2>Why does one subtraction work?</h2>
+  <p>P[r+1] includes indices 0 through r, while P[l] includes 0 through l−1. Subtract the shared prefix to leave l through r. Giving P one extra entry with P[0] = 0 lets the same formula handle l = 0.</p>
+  <h2>Two-dimensional prefix sums</h2>
+<pre><code>S[i+1][j+1] = S[i][j+1] + S[i+1][j] - S[i][j] + a[i][j]
+
+# Sum over rectangle (r1, c1) through (r2, c2)
+S[r2+1][c2+1] - S[r1][c2+1] - S[r2+1][c1] + S[r1][c1]</code></pre><div class="dsa-tip"><p class="t">Related coding techniques</p><p><strong>Difference arrays</strong>: to add v over [l, r], record d[l] += v and d[r+1] −= v. After all updates, prefix-sum d once. Each offline range update costs O(1).</p><p><strong>Prefix sums + hashing</strong>: subarrays summing to K correspond to pairs with P[j] − P[i] = K. Count previously seen prefix totals in a dictionary for an O(n) solution, including inputs with negative values.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/prefix-sum.js %}
+</script>

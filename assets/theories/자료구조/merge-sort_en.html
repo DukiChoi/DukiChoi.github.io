@@ -1,0 +1,32 @@
+---
+lang: en
+translation_key: theory-merge-sort
+subject: data-structures
+title: "Merge Sort"
+description: "Recursively split the array, then merge sorted halves in a divide-and-conquer algorithm."
+permalink: /en/theory/merge-sort/
+category: algorithms
+order: 15
+---
+<style>{% include lessons/merge-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">Split until each run has one element, then merge pairs of sorted runs by comparing their front values. Accumulate a merged run in tmp before copying it back.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A merge-sort simulator showing recursive splits and a temporary merge array</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">Play, step, or seek with the slider. The lower row is the temporary array tmp.</p>
+<div class="dsa-facts"><div><span>Best case</span><b class="good">O(n log n)</b></div><div><span>Average</span><b class="good">O(n log n)</b></div><div><span>Worst case</span><b class="good">O(n log n)</b></div><div><span>Extra space</span><b class="bad">O(n)</b></div><div><span>Stable</span><b class="good">Yes</b></div><div><span>Input order</span><b class="good">No worst-case degradation</b></div></div>
+  <h2>Merging compares the front values</h2>
+  <p>Both runs are sorted, so the smaller front value is the next overall minimum. Merging takes time proportional to their combined lengths. There are O(log n) levels with O(n) merging work per level, for O(n log n) time even in the worst case.</p>
+  <p>When equal, the left value is chosen first (<code>a[i] &lt;= a[j]</code>), preserving stability. Changing the comparison to <code>&lt;</code> breaks this property.</p>
+<div class="dsa-tip"><p class="t">Coding exercises: count inversions</p><p>When the next right-hand value is smaller, every remaining value in the left run is larger. Add mid − i + 1 to the inversion count at that step. The total is computed in O(n log n).</p><pre><code>else:                       # right value is smaller
+    inv += mid - i + 1      # remaining left values exceed a[j]
+    tmp.append(a[j]); j += 1</code></pre></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/merge-sort.js %}
+</script>

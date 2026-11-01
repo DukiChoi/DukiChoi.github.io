@@ -1,0 +1,38 @@
+---
+lang: ja
+translation_key: theory-binary-search
+subject: data-structures
+title: "二分探索"
+description: "整列済み配列の候補を半分ずつ絞り込み、値の検索、下限・上限探索、答えの二分探索を体験します。"
+permalink: /ja/theory/binary-search/
+category: algorithms
+order: 20
+---
+<style>{% include lessons/binary-search.css %}</style>
+<div class="circuit-lesson lx vz cells">
+<p class="lede">整列済み配列の中央の値を調べ、対象があり得る側だけを残します。比較のたびに候補が半分になります。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">lo・mid・hiと候補区間の縮小を表示する二分探索シミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">対象値を変更するか、配列の値を選んで再生してください。薄くなったセルは候補から除外済みです。</p>
+<div class="dsa-facts"><div><span>時間計算量</span><b class="good">O(log n)</b></div><div><span>前提条件</span><b class="bad">整列済み配列</b></div><div><span>100万個</span><b class="">最大20回の比較</b></div><div><span>10億個</span><b class="">最大30回の比較</b></div></div>
+  <h2>二分探索の3つの形</h2>
+  <p>値の検索は一致した位置で停止します。lower boundはx以上となる最初の位置、upper boundはxより大きい最初の位置を返します。両者の差はxの個数です。「重複が多い」で試してください。Pythonでは <code>bisect_left(a, x)</code>がlower bound、 <code>bisect_right(a, x)</code>がupper boundです。</p>
+  <h2>区間の定義を統一する</h2>
+  <p>この値の検索では閉区間[lo, hi]を使い、条件は <code>lo &lt;= hi</code>です。lower/upper boundでは半開区間[lo, hi)を使い、条件は <code>lo &lt; hi</code>です。定義を混ぜると無限ループや境界のずれが起こります。</p>
+<div class="dsa-tip"><p class="t">パラメトリックサーチ：答えを二分探索する</p><p>実現可能な最大値・最小値を探すときは、候補xが実現可能かを判定する関数を用意します。xの増加に対し真偽が一度だけ切り替わるなら、その境界を二分探索できます。ケーブルの切断、木材の切断高さ、ルーターの配置などが例です。</p><pre><code>lo, hi = 1, max(a)          # 答えの候補範囲
+while lo &lt;= hi:
+    mid = (lo + hi) // 2
+    if ok(mid):             # midは実現可能
+        ans = mid
+        lo = mid + 1        # さらに大きい答えを試す
+    else:
+        hi = mid - 1</code></pre></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/binary-search.js %}
+</script>

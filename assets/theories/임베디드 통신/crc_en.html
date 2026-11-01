@@ -1,0 +1,52 @@
+---
+lang: en
+translation_key: theory-crc
+subject: embedded
+title: "CRC Calculation (Modbus CRC-16)"
+description: "Follow the shifts and XORs that calculate the CRC-16 appended to a Modbus RTU frame."
+permalink: /en/theory/crc/
+category: embedded
+order: 3
+---
+<style>{% include lessons/crc.css %}</style>
+<div class="circuit-lesson lx cr">
+<p class="lede">Modbus RTU appends two CRC bytes to a frame. The receiver repeats the calculation and rejects a frame if the values differ. The computation uses one register, XOR operations, and right shifts.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">A calculator showing Modbus CRC-16 register changes one bit at a time</h2>
+    <p class="sub" style="margin-top:0">1. Enter bytes in hexadecimal, separated by spaces</p>
+    <div class="row"><input type="text" id="crIn" value="01 03 00 00 00 0A" aria-label="Input bytes"></div>
+    <p class="err" id="crErr"></p>
+    <p class="sub" style="margin-top:4px">2. Run the calculation</p>
+    <div class="row">
+      <button class="bt go" id="crStep">Next step</button>
+      <button class="bt" id="crByte">Finish this byte</button>
+      <button class="bt" id="crAll">Calculate all</button>
+      <button class="bt" id="crReset">Reset</button>
+    </div>
+    <div class="bytes" id="crBytes"></div>
+    <div class="ops"><div class="opg" id="crOps"></div></div>
+    <p class="prog" id="crProg"></p>
+    <p class="msg" id="crMsg" aria-live="polite"></p>
+    <div class="res" id="crRes"></div>
+  </div>
+  <p class="hint">Next step performs the byte XOR or one of eight shifts. The red outline marks the bit that will shift out next.</p>
+
+  <h2>Calculation rules</h2>
+  <p>Start with 0xFFFF. For each byte, XOR it into the register's low eight bits, then shift right eight times. After each shift, XOR with 0xA001 only if the bit shifted out was 1.</p>
+  <pre><code>crc = 0xFFFF
+for each byte b:
+    crc ^= b
+    repeat 8 times:
+        if crc & 1:  crc = (crc >> 1) ^ 0xA001
+        else:        crc = crc >> 1</code></pre>
+  <p>0xA001 is the bit-reflected form of polynomial 0x8005. This implementation processes data least-significant-bit first and uses the reflected polynomial accordingly.</p>
+
+  <h2>Send the low byte first</h2>
+  <p>Modbus appends the low CRC byte before the high byte. A register value of 0xCDC5 is transmitted as C5 CD. Check byte order when diagnosing firmware CRC mismatches.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/crc.js %}
+</script>

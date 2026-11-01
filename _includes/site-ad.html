@@ -1,7 +1,7 @@
 {% unless page.ads == false %}
 {% if site.data.advertising.show_placeholder %}
-<aside class="site-ad" aria-label="광고 영역">
-  <div class="site-ad__slot"><span class="site-ad__label">광고</span></div>
+<aside class="site-ad" aria-label="{% if page.lang == 'en' %}Advertisement{% elsif page.lang == 'ja' %}広告{% else %}광고 영역{% endif %}">
+  <div class="site-ad__slot"><span class="site-ad__label">{% if page.lang == 'en' %}Advertisement{% elsif page.lang == 'ja' %}広告{% else %}광고{% endif %}</span></div>
 </aside>
 {% endif %}
 

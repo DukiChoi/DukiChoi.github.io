@@ -1,0 +1,47 @@
+---
+lang: ko
+translation_key: theory-join
+subject: db
+title: JOIN
+description: INNER, LEFT, RIGHT, FULL OUTER JOIN이 두 테이블의 행을 잇는 방식을 행 단위로 봅니다.
+permalink: /theory/join/
+category: database
+order: 2
+---
+<style>{% include lessons/join.css %}</style>
+<div class="circuit-lesson lx">
+<p class="lede">JOIN은 두 테이블에서 조건이 맞는 행끼리 이어 붙여 한 줄로 만듭니다. 짝이 없는 행을 버리느냐 NULL로 채워 남기느냐에 따라 INNER, LEFT, RIGHT, FULL OUTER로 나뉩니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">두 테이블의 행이 JOIN 조건으로 연결되어 결과 테이블이 만들어지는 과정을 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. JOIN 종류를 고르세요</p>
+    <div class="row">
+      <button class="bt sel" data-j="INNER">INNER JOIN</button><button class="bt" data-j="LEFT">LEFT JOIN</button><button class="bt" data-j="RIGHT">RIGHT JOIN</button><button class="bt" data-j="FULL">FULL OUTER JOIN</button>
+    </div>
+    <p class="sub">2. 행을 하나씩 맞춰 보세요</p>
+    <div class="row"><button class="bt go" id="jNext">다음 단계</button><button class="bt" id="jAll">끝까지</button><button class="bt" id="jReset">처음으로</button></div>
+    <div class="code" id="jSql"></div>
+    <div class="jw" id="jW">
+      <div><div class="jt">학생 s</div><table class="t" id="jL"></table></div>
+      <svg id="jSvg"></svg>
+      <div><div class="jt">수강 e</div><table class="t" id="jR"></table></div>
+      <svg class="venn" id="jV" viewBox="0 0 160 100" aria-label="벤 다이어그램"></svg>
+    </div>
+    <div class="msg" id="jMsg" aria-live="polite"></div>
+    <div class="sub">결과 <span id="jCnt" class="lbl"></span></div>
+    <div class="tw" style="margin-top:0"><table class="t" id="jRes"></table></div>
+  </div>
+  <p class="hint">[다음 단계]를 누르면 학생 테이블의 행을 하나씩 꺼내 수강 테이블에서 학번이 같은 행을 찾습니다. 오른쪽 벤 다이어그램의 색칠된 부분이 결과에 남는 범위입니다.</p>
+<div class="facts"><div><span>INNER</span><b>짝 있는 행만</b></div><div><span>LEFT</span><b>왼쪽 전부 + 짝</b></div><div><span>RIGHT</span><b>오른쪽 전부 + 짝</b></div><div><span>FULL OUTER</span><b>양쪽 전부</b></div><div><span>짝 없는 칸</span><b>NULL</b></div></div>
+
+  <h2>OUTER JOIN은 짝이 없는 행을 NULL로 채워 남깁니다</h2>
+  <p>LEFT JOIN은 왼쪽 테이블의 모든 행을 결과에 남깁니다. 오른쪽에 짝이 없으면 오른쪽 열을 NULL로 채웁니다. 학생이 한 과목도 듣지 않아도 결과에 나오므로, "수강 신청을 하지 않은 학생 찾기"는 LEFT JOIN 뒤에 <code>WHERE e.학번 IS NULL</code>을 붙여 풉니다.</p>
+  <p>짝이 여러 개면 왼쪽 행이 그 수만큼 복제됩니다. 김하늘이 두 과목을 들으면 결과에 김하늘이 두 줄 나옵니다. JOIN 뒤에 COUNT를 할 때 행 수가 예상보다 많다면 이 복제를 의심하세요.</p>
+<div class="tip"><p class="t">면접에서 자주 묻는 것</p><p>LEFT JOIN에서 오른쪽 테이블 조건을 WHERE에 쓰면 NULL인 행이 걸러져 사실상 INNER JOIN이 됩니다. 오른쪽 테이블을 거르면서 왼쪽 행은 모두 남기려면 그 조건을 ON에 써야 합니다. 조건 없이 모든 조합을 만드는 CROSS JOIN은 행 수가 m × n이 됩니다.</p></div>
+
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/join.js %}
+</script>

@@ -1,0 +1,51 @@
+# Colors and foil finishes for program banners. Order is the no-JavaScript fallback.
+- id: emerald-cosmos
+  title: Emerald Cosmos
+  description: "エメラルドに小さな星と円形の箔が輝きます。"
+  palette: emerald
+  foil: cosmos
+- id: sapphire-holo
+  title: Sapphire Holo
+  description: "サファイアブルーに鮮明な縦の光が流れます。"
+  palette: sapphire
+  foil: holo
+- id: amethyst-amazing
+  title: Amethyst Amazing
+  description: "紫の金属に青緑とピンクの細かな粒が輝きます。"
+  palette: amethyst
+  foil: amazing
+- id: ruby-radiant
+  title: Ruby Radiant
+  description: "ルビー色の面をダイヤモンド形の光が横切ります。"
+  palette: ruby
+  foil: radiant
+- id: bronze-reverse
+  title: Bronze Reverse
+  description: "銅色の縁と繰り返し模様が光を反射します。"
+  palette: bronze
+  foil: reverse
+- id: arctic-vstar
+  title: Arctic VStar
+  description: "冷たい青緑の金属に氷のような斜めの面が輝きます。"
+  palette: arctic
+  foil: vstar
+- id: rose-full-art
+  title: Rose Full Art
+  description: "ローズ色の表面に彫られた波を反射光がなぞります。"
+  palette: rose
+  foil: full-art
+- id: aurora-rainbow
+  title: Aurora Rainbow
+  description: "深い青に虹色の反射と細かなパールが重なります。"
+  palette: aurora
+  foil: rainbow
+- id: gold-secret
+  title: Gold Secret
+  description: "層状の粒が金色の金属に奥行きのある輝きを与えます。"
+  palette: gold
+  foil: secret
+- id: graphite-shiny
+  title: Graphite Shiny
+  description: "グラファイト色に銀の星と明るい反射が現れます。"
+  palette: graphite
+  foil: shiny

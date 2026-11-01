@@ -1,0 +1,31 @@
+---
+lang: ko
+translation_key: theory-selection-sort
+subject: data-structures
+title: 선택 정렬
+description: 남은 값 중 최솟값을 골라 앞자리와 바꾸는 일을 반복하는 정렬입니다.
+permalink: /theory/selection-sort/
+category: algorithms
+order: 12
+---
+<style>{% include lessons/selection-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">남은 값 중 가장 작은 값을 찾아 맨 앞자리와 바꾸는 일을 반복합니다. 앞자리부터 하나씩 확정됩니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">선택 정렬 과정을 막대로 보여 주는 시뮬레이터</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">[자동 재생]을 누르거나 [다음 단계]로 한 단계씩 넘겨 보세요. 슬라이더를 끌면 원하는 단계로 바로 이동합니다. 분홍색 막대가 지금까지 찾은 최솟값입니다.</p>
+<div class="dsa-facts"><div><span>최선</span><b class="bad">O(n²)</b></div><div><span>평균</span><b class="bad">O(n²)</b></div><div><span>최악</span><b class="bad">O(n²)</b></div><div><span>추가 공간</span><b class="good">O(1)</b></div><div><span>안정 정렬</span><b class="bad">아니요</b></div><div><span>최대 교환</span><b class="good">n − 1번</b></div></div>
+  <h2>비교는 많고 교환은 적습니다</h2>
+  <p>최솟값을 확신하려면 남은 값을 전부 봐야 하므로, 입력이 이미 정렬되어 있어도 비교 횟수가 줄지 않습니다. 대신 바퀴마다 교환은 많아야 한 번이라서, 값을 옮기는 비용이 비교보다 훨씬 비쌀 때는 유리합니다.</p>
+  <h2>왜 안정 정렬이 아닐까요</h2>
+  <p>[같은 값 많음]을 고르고 끝까지 재생해 보세요. 같은 값에 붙은 a, b의 순서가 뒤바뀌는 경우가 생깁니다. 최솟값을 앞자리와 맞바꿀 때 앞자리의 값이 멀리 뒤로 날아가면서, 그 사이에 있던 같은 값을 건너뛰기 때문입니다.</p>
+<div class="dsa-tip"><p class="t">코테에서는</p><p>직접 구현할 일은 드물지만 두 가지는 알아 두세요. 가장 작은 k개만 필요하면 k바퀴만 돌고 멈출 수 있어 O(nk)입니다. 또, 순열을 정렬하는 데 필요한 최소 교환 횟수는 "원소 수 − 사이클 수"이며, 각 자리에 올바른 값을 하나씩 가져다 놓는 선택 정렬의 사고방식에서 출발합니다.</p></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/selection-sort.js %}
+</script>

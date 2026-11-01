@@ -2,6 +2,7 @@ title: "DukiChoi | Tech Study"
 tagline: "직접 조작하며 배우는 컴퓨터·전자공학"
 description: "삶의 편의를 추구하는 DukiChoi의 블로그 입니다."
 description_en: "DukiChoi’s blog, pursuing convenience in everyday life."
+description_ja: "暮らしの便利さを追求するDukiChoiのブログです。"
 github_username: DukiChoi
 baseurl: ""
 url: "https://DukiChoi.github.io"
@@ -24,6 +25,24 @@ collections:
     permalink: /theory/:name/
 
 defaults:
+  - scope:
+      path: ""
+    values:
+      lang: ko
+  - scope:
+      path: en
+    values:
+      lang: en
+  - scope:
+      path: en/theory
+    values:
+      layout: theory
+      section: theory
+      nav_title: Tech Study
+      css_file: /assets/css/theory.css
+      js_file: /assets/js/theory.js
+      lab_css: /assets/theories/style.css
+      order: 1000
   - scope:
       path: ""
       type: programs
@@ -60,13 +79,15 @@ defaults:
       order: 1000
 
 header_pages:
-  - home.md
-  - programs.html
-  - assets/theories/index.html
-  - profile.md
+  - home_ko.md
+  - programs_ko.html
+  - assets/theories/index_ko.html
+  - profile_ko.md
 # set the size of the text to 'large' or 'small', default is small
 font-size: small
 
 # Internal advertising implementation notes are not public content.
 exclude:
   - ADVERTISEMENT.md
+  - docs/
+  - tests/

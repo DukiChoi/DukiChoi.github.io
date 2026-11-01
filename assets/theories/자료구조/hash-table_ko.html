@@ -1,0 +1,47 @@
+---
+lang: ko
+translation_key: theory-hash-table
+subject: data-structures
+title: 해시 테이블
+description: 키를 숫자로 바꿔 바로 칸을 찾아가는 원리와, 두 키가 같은 칸을 원할 때 생기는 충돌을 처리하는 방법을 봅니다.
+permalink: /theory/hash-table/
+category: algorithms
+order: 41
+---
+<style>{% include lessons/hash-table.css %}</style>
+<div class="circuit-lesson lx ht">
+<p class="lede">해시 테이블은 키를 해시 함수로 숫자로 바꾼 뒤, 그 숫자를 칸 번호로 써서 값을 바로 꺼냅니다. 처음부터 하나씩 훑지 않으므로 키가 아무리 많아도 거의 한 번에 찾습니다. 다만 서로 다른 키가 같은 칸 번호를 받는 충돌은 피할 수 없습니다.</p>
+
+  <div class="stage">
+    <h2 class="sr-only">칸이 7개인 해시 테이블에 키를 넣고 찾으며 충돌 처리를 보여 주는 시뮬레이터</h2>
+    <p class="sub" style="margin-top:0">1. 충돌 처리 방법을 고르세요</p>
+    <div class="row">
+      <button class="bt sel" data-m="chain">체이닝 (같은 칸에 줄줄이 연결)</button>
+      <button class="bt" data-m="probe">선형 탐사 (옆 빈칸으로 이동)</button>
+    </div>
+    <p class="sub">2. 키를 넣거나 찾으세요</p>
+    <div class="row">
+      <label class="lbl">키 <input type="text" id="htK" value="cat" maxlength="8"></label>
+      <button class="bt go" id="htIns">넣기</button><button class="bt go" id="htFind">찾기</button>
+      <button class="bt" id="htDemo">충돌 예시 넣기</button><button class="bt" id="htClr">비우기</button>
+    </div>
+    <p class="err" id="htErr"></p>
+    <div class="calc" id="htCalc">키의 글자 코드를 모두 더한 뒤 7로 나눈 나머지가 칸 번호입니다.</div>
+    <div class="tbl" id="htTbl"></div>
+    <p class="msg" id="htMsg" aria-live="polite"></p>
+    <div class="stats"><div><span>저장된 키</span><b id="htN">0</b></div><div><span>부하율 (키 수 ÷ 칸 수)</span><b id="htA">0.00</b></div><div><span>방금 확인한 칸 수</span><b id="htP">0</b></div></div>
+  </div>
+  <p class="hint">cat, act, tac처럼 글자 구성이 같은 키는 글자 코드의 합이 같아서 항상 같은 칸 번호를 받습니다. [충돌 예시 넣기]를 누르면 이런 키 다섯 개를 차례로 넣습니다.</p>
+
+  <h2>해시 함수</h2>
+  <p>이 예제의 해시 함수는 키의 글자 코드를 모두 더해 칸 수로 나눈 나머지를 씁니다. 이해하기는 쉽지만 글자 순서를 무시하기 때문에 충돌이 잦습니다. 실제로는 글자 위치마다 다른 수를 곱하는 등의 방법으로 키를 칸 전체에 고르게 흩어 놓는 해시 함수를 씁니다.</p>
+
+  <h2>충돌을 처리하는 두 가지 방법</h2>
+  <p><strong>체이닝</strong>은 칸마다 연결 리스트를 두고, 같은 칸 번호를 받은 키를 줄줄이 이어 붙입니다. 칸이 모자라도 계속 넣을 수 있지만, 한 칸에 키가 몰리면 그 줄을 처음부터 훑어야 합니다.</p>
+  <p><strong>선형 탐사</strong>는 원하는 칸이 차 있으면 바로 다음 칸, 그다음 칸을 차례로 확인해 첫 빈칸에 넣습니다. 찾을 때도 같은 순서로 따라가다가 빈칸을 만나면 "없다"고 판단합니다. 키가 한 구역에 뭉치기 쉬워서, 부하율이 0.7을 넘기 전에 테이블을 키워 다시 배치하는 것이 일반적입니다.</p>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/hash-table.js %}
+</script>

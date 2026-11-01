@@ -1,0 +1,36 @@
+---
+lang: ja
+translation_key: theory-heap-sort
+subject: data-structures
+title: "ヒープソート"
+description: "最大ヒープを作り、最大値を繰り返し末尾へ移動させます。"
+permalink: /ja/theory/heap-sort/
+category: algorithms
+order: 16
+---
+<style>{% include lessons/heap-sort.css %}</style>
+<div class="circuit-lesson lx vz">
+<p class="lede">最大ヒープを作り、根の最大値を末尾へ移した後、残りの範囲でヒープ条件を復元します。親子の位置は配列内で計算できるため、別の木は保存しません。</p>
+
+  <div class="stage">
+    <h2 class="sr-only">配列と木を同期して表示するヒープソートシミュレーター</h2>
+    <div id="vzStage"></div>
+  </div>
+  <p class="hint">再生・ステップ実行・スライダーで操作できます。下の木は、棒グラフと同じ配列の別の見方です。</p>
+<div class="dsa-facts"><div><span>最良</span><b class="good">O(n log n)</b></div><div><span>平均</span><b class="good">O(n log n)</b></div><div><span>最悪</span><b class="good">O(n log n)</b></div><div><span>追加領域</span><b class="good">O(1)</b></div><div><span>安定</span><b class="bad">いいえ</b></div><div><span>ヒープ構築</span><b class="good">O(n)</b></div></div>
+  <h2>配列そのものが木になる</h2>
+  <p>位置iの子は2i+1と2i+2、親は(i−1)//2です。sift_downは大きい方の子と交換し、ヒープ条件を満たすまで下がります。1回の移動はO(log n)段なので、繰り返し取り出すとO(n log n)になります。</p>
+  <p>初期構築では最後の親から根へ向かってsift_downします。大半のノードは下層にあり移動距離が短いため、構築全体はO(n)です。</p>
+<div class="dsa-tip"><p class="t">演習：優先度付きキューとしてのヒープ</p><p>ヒープソートを自作するより、優先度付きキューを使う場面が一般的です。Pythonの <code>heapq</code>は最小ヒープです。数値の符号を反転すると最大ヒープとして使えます。大きい方からk個を求めるには、サイズkの最小ヒープでO(n log k)にできます。</p><pre><code>import heapq
+h = []
+for x in a:
+    heapq.heappush(h, x)
+    if len(h) > k:
+        heapq.heappop(h)    # ヒープの最小値を除く
+# hには大きい方からk個が残る</code></pre></div>
+</div>
+<script>
+{% assign lesson_strings = site.data.lesson_strings[page.lang] %}
+{% assign lesson_prefix = '' %}{% if page.lang != 'ko' %}{% assign lesson_prefix = '/' | append: page.lang %}{% endif %}
+{% include lessons/heap-sort.js %}
+</script>
