@@ -6,9 +6,9 @@ nav_section: "coding-tests"
 nav_title: "Coding Tests"
 permalink_name: "/Coding Tests"
 title: "Coding Tests"
-description: "Start with connected components, continue to shortest paths, then combine distances and scheduling. Each guide includes the original problem link, an interactive experiment, and solution code."
+description: "Applications covers connected components and shortest paths. Advanced combines distances and scheduling in an evacuation problem. Each guide includes the original problem link, an interactive experiment, and solution code."
 permalink: "/en/coding-tests/"
 folder_overview: true
 lab_css: "/assets/css/coding-tests.css"
 ---
-<p class="ct-learning-route">Start with connected components, continue to shortest paths, then combine distances and scheduling. Each guide includes the original problem link, an interactive experiment, and solution code.</p>
+<p class="ct-learning-route">Applications covers connected components and shortest paths. Advanced combines distances and scheduling in an evacuation problem. Each guide includes the original problem link, an interactive experiment, and solution code.</p>

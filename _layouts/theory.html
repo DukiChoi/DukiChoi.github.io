@@ -17,10 +17,9 @@ layout: default
 {%- assign next_article = nil -%}
 {%- assign navigation_articles = theory_articles | where: 'subject', page.subject -%}
 {%- if page.subject == 'data-structures' or page.subject == 'coding-tests' -%}
-  {%- assign basic_articles = navigation_articles | where: 'study_level', 'basic' -%}
   {%- assign applied_articles = navigation_articles | where: 'study_level', 'applied' -%}
   {%- assign advanced_articles = navigation_articles | where: 'study_level', 'advanced' -%}
-  {%- assign navigation_articles = basic_articles | concat: applied_articles | concat: advanced_articles -%}
+  {%- assign navigation_articles = applied_articles | concat: advanced_articles -%}
 {%- endif -%}
 {%- for entry in navigation_articles -%}
   {%- if entry.url == page.url -%}

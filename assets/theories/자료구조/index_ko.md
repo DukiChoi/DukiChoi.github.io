@@ -4,7 +4,7 @@ lang: ko
 translation_key: subject-data-structures
 subject: data-structures
 title: 자료구조
-description: 기본 탐색과 정렬 → 구간·트리·해시 응용 → 고급 정렬과 최단 경로 순서로 공부합니다.
+description: "응용에서는 정렬·탐색·구간·트리·해시를, 고급에서는 분할 정복·힙·최단 경로를 공부합니다."
 folder_overview: true
 ---
-기본 탐색과 정렬 → 구간·트리·해시 응용 → 고급 정렬과 최단 경로 순서로 공부합니다.
+응용에서는 정렬·탐색·구간·트리·해시를, 고급에서는 분할 정복·힙·최단 경로를 공부합니다.

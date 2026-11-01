@@ -44,7 +44,7 @@ content:
         type: select
         description: 자료구조와 코딩 테스트 글에 지정합니다.
         options:
-          values: [basic, applied, advanced]
+          values: [applied, advanced]
       - name: subject
         label: 학습 분야
         type: select

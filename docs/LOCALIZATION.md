@@ -29,7 +29,7 @@
 3. `lang`은 각각 `ko`, `en`, `ja`, `permalink`는 각각 `/theory/이름/`, `/en/theory/이름/`, `/ja/theory/이름/`로 지정합니다.
 4. 공통 JS/CSS와 필요한 문구 키를 추가합니다.
 
-자료구조와 코딩 테스트에는 `study_level: basic`, `applied`, `advanced` 중 하나를 지정합니다. 단계 이름과 설명은 `_data/learning_levels.yml`에서 관리합니다. 기존 자료의 공개 주소는 바뀌지 않으며, 목록과 이전/다음 링크만 단계 순서로 정렬됩니다.
+자료구조와 코딩 테스트는 응용(`study_level: applied`)과 고급(`study_level: advanced`) 두 단계로 분류합니다. 기초 학습 자료도 응용에 포함합니다. 단계 이름과 설명은 `_data/learning_levels.yml`에서 관리합니다. 기존 자료의 공개 주소는 바뀌지 않으며, 목록과 이전/다음 링크만 단계 순서로 정렬됩니다.
 
 코딩 테스트 자료는 `assets/theories/코딩테스트/`에 세 언어 파일로 둡니다. `subject: coding-tests`, `nav_section: coding-tests`를 지정하고, `problem_label`, `problem_url`에 실제 문제 번호와 원문 링크를 적습니다. 번역마다 문제 번호와 알고리즘을 바꾸지 않습니다. 직접 작성한 공통 풀이 코드는 `_includes/solutions/`, 실험 알고리즘은 `assets/js/coding-test-models.js`, 조작 UI는 `assets/js/coding-test-labs.js`, 실험 번역은 `_data/coding_tests_ui.json`에서 관리합니다. 본문에 실린 코드와 실행 검증에 사용하는 코드는 같은 파일입니다.
 

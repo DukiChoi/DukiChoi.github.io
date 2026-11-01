@@ -1,26 +1,17 @@
-- id: basic
-  title:
-    ko: 기본
-    en: Fundamentals
-    ja: 基礎
-  description:
-    ko: 정렬과 탐색의 동작부터 한 단계씩 익힙니다.
-    en: Start with the mechanics of sorting and traversal.
-    ja: 整列と探索の動きを1ステップずつ学びます。
 - id: applied
   title:
     ko: 응용
     en: Applications
     ja: 応用
   description:
-    ko: 자료를 저장하고 탐색 범위를 줄이는 기법을 문제에 연결합니다.
-    en: Apply data organization and search techniques to concrete problems.
-    ja: データの管理や探索範囲を絞る技法を問題に応用します。
+    ko: 정렬과 탐색부터 구간, 트리, 해시까지 익히고 문제에 적용합니다.
+    en: Practice sorting, searching, range techniques, trees, and hashing.
+    ja: 整列、探索、区間処理、木、ハッシュを学び、問題に応用します。
 - id: advanced
   title:
-    ko: 고급 개념
-    en: Advanced concepts
-    ja: 発展
+    ko: 고급
+    en: Advanced
+    ja: 上級
   description:
     ko: 분할 정복, 힙, 최단 경로와 여러 알고리즘의 결합을 다룹니다.
     en: Explore divide and conquer, heaps, shortest paths, and combined algorithms.
