@@ -1,0 +1,11 @@
+.learning-section { margin-top: 40px; }
+.learning-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.learning-grid--subjects { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.learning-card { min-width: 0; padding: 22px; border: 1px solid var(--line); border-radius: 12px; overflow-wrap: anywhere; }
+.learning-card h3 { margin: 0 0 12px; }
+.learning-card p { line-height: 1.8; }
+.learning-label { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
+.learning-home-link { display: inline-block; margin-top: 8px; font-weight: 600; }
+.learning-steps { padding-left: 24px; }
+.learning-steps li { margin-bottom: 12px; }
+@media (max-width: 800px) { .learning-grid { grid-template-columns: 1fr; } }

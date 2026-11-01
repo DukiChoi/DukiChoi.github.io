@@ -1,3 +1,4 @@
+{% unless page.ads == false %}
 {% assign adsense = site.data.advertising.adsense %}
 {% if adsense.enabled and adsense.publisher_id != blank %}
 <meta name="google-adsense-account" content="{{ adsense.publisher_id | escape }}">
@@ -10,4 +11,5 @@
 <script defer src="{{ '/assets/js/adsense.js' | relative_url }}"></script>
 {% endif %}
 {% endif %}
+{% endunless %}
 <link rel="stylesheet" href="{{ '/assets/css/site-ad.css' | relative_url }}">

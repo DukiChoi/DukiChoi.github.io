@@ -1,6 +1,6 @@
 ---
 title: 임베디드 통신
-description: 임베디드 통신 관련 자료를 모아 둡니다.
+description: UART, I2C·SPI, PWM과 ADC를 통해 신호 전달과 측정의 기본 원리를 살펴봅니다.
 folder_overview: true
 ---
-임베디드 통신 관련 자료를 정리하는 공간입니다.
+UART, I2C·SPI, PWM과 ADC를 통해 신호 전달과 측정의 기본 원리를 살펴봅니다.

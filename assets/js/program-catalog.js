@@ -19,12 +19,16 @@
       if (data.version !== 1 || !Array.isArray(data.programs)) throw new Error('Invalid catalog');
       // Validate and render off-DOM first; failures leave the original local list intact.
       const seen = new Set();
+      const seenTitles = new Set();
+      const titleKey = value => value.trim().normalize("NFKC").toLocaleLowerCase().replace(/\s+/g, " ");
       const imported = document.createDocumentFragment();
       for (const item of data.programs) {
         if (!item || typeof item.title !== 'string' || !item.title.trim()) throw new Error('Missing title');
         const href = safeUrl(item.external_url || item.url);
-        if (seen.has(href)) continue;
+        const key = titleKey(item.title);
+        if (seen.has(href) || seenTitles.has(key)) continue;
         seen.add(href);
+        seenTitles.add(key);
         const icon = item.icon ? safeUrl(item.icon) : null;
         const slot = template.content.firstElementChild.cloneNode(true);
         const card = slot.querySelector('.program-link');
@@ -56,7 +60,11 @@
       // Source-owned cards are refreshed; independent local programs (e.g. BLE Smart Cube) remain.
       const local = Array.from(list.querySelectorAll('.program-slot')).filter(slot => {
         const href = slot.querySelector('a.program-link')?.href;
-        return href && new URL(href).origin !== source && !seen.has(href);
+        const title = slot.querySelector(".program-link__text strong")?.textContent || "";
+        if (!href || new URL(href).origin === source || seen.has(href) || seenTitles.has(titleKey(title))) return false;
+        seen.add(href);
+        seenTitles.add(titleKey(title));
+        return true;
       });
       list.replaceChildren(imported, ...local);
       if (!list.children.length) {

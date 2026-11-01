@@ -1,6 +1,7 @@
-title: ""
-tagline: "A jekyll theme that looks like a shell/terminal"
-description: "This is a preview of jekyll-shell-theme."
+title: "DukiChoi | Tech Study"
+tagline: "직접 조작하며 배우는 컴퓨터·전자공학"
+description: "삶의 편의를 추구하는 DukiChoi의 블로그 입니다."
+description_en: "DukiChoi’s blog, pursuing convenience in everyday life."
 github_username: DukiChoi
 baseurl: ""
 url: "https://DukiChoi.github.io"
@@ -62,7 +63,10 @@ header_pages:
   - home.md
   - programs.html
   - assets/theories/index.html
-  - cv.md
-  - resume.md
+  - profile.md
 # set the size of the text to 'large' or 'small', default is small
 font-size: small
+
+# Internal advertising implementation notes are not public content.
+exclude:
+  - ADVERTISEMENT.md

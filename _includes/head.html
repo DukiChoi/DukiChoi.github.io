@@ -7,7 +7,7 @@
   <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
   <link rel="preload" href="{{ '/assets/fonts/PretendardVariable.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/13.0.1/twemoji.min.js"></script>
-  <title>{{ page.tab_title | default: page.title | default: site.title | escape }}</title>
+  <title>{{ page.title | default: site.title | escape }} | DukiChoi</title>
   <!-- 기본 스타일 -->
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
   {% if page.css_file %}
@@ -29,7 +29,12 @@
   <script defer src="{{ script | relative_url }}"></script>
   {% endfor %}
 
-  {% seo title=false %}
+  {% capture seo_metadata %}{% seo title=false %}{% endcapture %}
+  {% if page.lang == 'en' %}
+    {{ seo_metadata | replace: site.description, site.description_en }}
+  {% else %}
+    {{ seo_metadata }}
+  {% endif %}
 
   {% include advertising-head.html %}
 </head>
