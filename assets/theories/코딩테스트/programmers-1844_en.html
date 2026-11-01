@@ -1,0 +1,30 @@
+---
+lang: "en"
+translation_key: "theory-programmers-1844"
+subject: "coding-tests"
+study_level: "applied"
+nav_section: "coding-tests"
+nav_title: "Coding Tests"
+title: "Game Map Shortest Path"
+description: "Watch BFS distances and the queue to see why the first route to the goal is shortest."
+permalink: "/en/theory/programmers-1844/"
+order: 202
+problem_label: "Programmers 1844"
+problem_url: "https://school.programmers.co.kr/learn/courses/30/lessons/1844"
+problem_topics: "BFS · Queue · Shortest path"
+lab_css: "/assets/css/coding-tests.css"
+js_files: ["/assets/js/coding-test-models.js", "/assets/js/coding-test-labs.js"]
+---
+{% include coding-problem-source.html %}
+<p>In Programmers “게임 맵 최단거리,” move in four directions through cells marked 1, from the top-left corner to the bottom-right. Return the <strong>number of cells, including both endpoints</strong>, rather than the number of moves. Return -1 if the goal is unreachable.</p><p>This experiment uses a small map created for the guide. Play it to the end, then click cells to block a route. Numbers on discovered cells are shortest distances from the start.</p>
+{% include coding-test-lab.html kind="shortest" %}
+<h2>How the solution works</h2>
+<ol><li>Set the starting distance to 1 and enqueue the start. Other distances begin at -1.</li><li>Remove the front cell. Give each walkable, undiscovered neighbor a distance of current distance + 1.</li><li>Append those neighbors to the queue. When the goal is removed, return its distance.</li><li>If the queue empties without reaching the goal, return -1.</li></ol><p>Every move has equal cost, so BFS discovers cells in increasing distance: 1, 2, 3 and so on. All shorter-distance cells are processed before a cell at distance d, making its first recorded distance optimal. The first path found by DFS has no such guarantee.</p><p>The custom example needs <strong>9 cells</strong>: eight moves plus the starting cell. Green cells show one shortest path reconstructed from parent pointers.</p>
+<h2>Complexity and pitfalls</h2>
+<p>Each cell in an R × C map enters the queue once. Time and extra space are both <strong>O(RC)</strong>. Python’s <code>deque.popleft()</code> avoids the repeated element shifting caused by <code>list.pop(0)</code>.</p><p>Rows and columns may have different lengths. A separate distance array preserves the input map. This BFS cannot be used unchanged when moves have different costs. Playback history is extra work performed by the visualizer, not by the solution.</p>
+<h2>Solution code written for this guide</h2>
+<details><summary>Python 3</summary>
+{% highlight python %}{% include solutions/programmers-1844.py %}{% endhighlight %}
+</details>
+<h2>References and further experiments</h2>
+<ul><li><a href="https://school.programmers.co.kr/learn/courses/30/lessons/1844" target="_blank" rel="noopener">Programmers 1844 · 게임 맵 최단거리</a></li><li><a href="https://cp-algorithms.com/graph/breadth-first-search.html" target="_blank" rel="noopener">Breadth-first search · CP-Algorithms</a></li><li><a href="https://docs.python.org/3/library/collections.html#collections.deque" target="_blank" rel="noopener">collections.deque · Python documentation</a></li><li><a href="/en/theory/bfs-dfs/">Explore the BFS / DFS lab</a></li></ul>

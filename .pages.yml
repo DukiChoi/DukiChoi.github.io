@@ -39,11 +39,17 @@ content:
         label: 공개 주소
         type: string
         description: 파일명을 바꿔도 유지할 주소입니다. 예) /en/theory/cache/
+      - name: study_level
+        label: 학습 단계
+        type: select
+        description: 자료구조와 코딩 테스트 글에 지정합니다.
+        options:
+          values: [basic, applied, advanced]
       - name: subject
         label: 학습 분야
         type: select
         options:
-          values: [db, digital-logic, operating-systems, embedded, data-structures, computer-architecture]
+          values: [db, digital-logic, operating-systems, embedded, data-structures, computer-architecture, coding-tests]
       - name: title
         label: 제목
         type: string

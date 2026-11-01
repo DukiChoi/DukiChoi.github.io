@@ -1,0 +1,30 @@
+---
+lang: "en"
+translation_key: "theory-poj-3057"
+subject: "coding-tests"
+study_level: "advanced"
+nav_section: "coding-tests"
+nav_title: "Coding Tests"
+title: "Minimum time to evacuate a room"
+description: "Combine BFS distances with DFS bipartite matching when each door admits one person per second."
+permalink: "/en/theory/poj-3057/"
+order: 203
+problem_label: "#POJ 3057"
+problem_url: "http://poj.org/problem?id=3057"
+problem_topics: "BFS · Bipartite matching · DFS · Binary search"
+lab_css: "/assets/css/coding-tests.css"
+js_files: ["/assets/js/coding-test-models.js", "/assets/js/coding-test-labs.js"]
+---
+{% include coding-problem-source.html %}
+<p>POJ 3057 “Evacuation” places people in a room divided by walls. <code>X</code> is a wall, <code>.</code> a cell initially occupied by one person, and <code>D</code> a door. People move one orthogonal cell per second, and each door lets one person leave per second. Find the earliest time everyone can leave.</p><p><strong>The original problem allows multiple people in an interior cell.</strong> Capacity is restricted at doors. Reaching a door means exiting; a door cannot serve as a passage into another region. The playback below shows exit appointments, not walking trajectories.</p>
+{% include coding-test-lab.html kind="evacuation" %}
+<h2>How the solution works</h2>
+<ol><li><strong>Measure distances with BFS:</strong> search from each door through interior cells to get dist[d][p], the earliest arrival of person p at door d.</li><li><strong>Ask about a deadline T:</strong> create right-side vertices for (door, second 1), (door, second 2), up to second T.</li><li><strong>Build a bipartite graph:</strong> connect person p to slot (d, t) when dist[d][p] ≤ t. Unreachable doors get no edge.</li><li><strong>Reassign with DFS:</strong> if a slot is occupied, recursively try moving its current owner elsewhere. A matching covering every person makes T feasible.</li><li><strong>Search for the earliest T:</strong> feasibility is monotone, so use binary search.</li></ol><p>DFS explores the <strong>assignment graph, not the room’s walking paths</strong>. Suppose P1 can reach D1 or D2 at second 1, while P2 can reach only D1. Even if P1 initially takes D1, an augmenting path can move P1 to D2 and give D1 to P2.</p><p>The one-door preset has eight people. The farthest shortest distance is five seconds, but the door needs <strong>eight seconds</strong> to admit everyone. Show the minimum time, then reduce T by one to inspect the lost assignment.</p><p>A matching gives each person a reachable exit time without duplicate door-time slots. Waiting and shared interior cells make that schedule realizable. Conversely, any valid evacuation defines such a matching, so covering everyone is equivalent to meeting the deadline.</p>
+<h2>Complexity and pitfalls</h2>
+<p>Let P be the number of people, D the doors, R × C the grid, and L the largest distance to a nearest reachable door. If someone has no reachable door, return <code>impossible</code>. Otherwise search from <code>max(L, ceil(P/D))</code> to <code>U = L + P - 1</code>. Everyone can reach a nearest door by L; processing at most P people sequentially then finishes by U.</p><p>Distances cost O(DRC). With E<sub>T</sub> edges at deadline T, DFS matching costs O(P E<sub>T</sub>), where E<sub>T</sub> ≤ PDT. A total time bound is <strong>O(DRC + P E<sub>U</sub> log(U+1))</strong>, with O(RC + DP + E<sub>U</sub> + DU) extra space.</p><p>Always choosing the nearest door or returning only the largest shortest distance misses door congestion. This model does not apply to variants allowing only one person per interior cell. The C++ solution below follows the stated model; the browser experiment uses small examples.</p>
+<h2>Solution code written for this guide</h2>
+<details><summary>C++ (C++98)</summary>
+{% highlight cpp %}{% include solutions/poj-3057.cpp %}{% endhighlight %}
+</details>
+<h2>References and further experiments</h2>
+<ul><li><a href="http://poj.org/problem?id=3057" target="_blank" rel="noopener">POJ 3057 · Evacuation</a></li><li><a href="https://ipc.susu.ru/4131-6.html" target="_blank" rel="noopener">Evacuation · SUSU university judge mirror</a></li><li><a href="https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html" target="_blank" rel="noopener">Kuhn’s maximum bipartite matching · CP-Algorithms</a></li><li><a href="/en/theory/bfs-dfs/">Explore the BFS / DFS lab</a></li></ul>

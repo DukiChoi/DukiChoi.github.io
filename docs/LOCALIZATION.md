@@ -29,6 +29,10 @@
 3. `lang`은 각각 `ko`, `en`, `ja`, `permalink`는 각각 `/theory/이름/`, `/en/theory/이름/`, `/ja/theory/이름/`로 지정합니다.
 4. 공통 JS/CSS와 필요한 문구 키를 추가합니다.
 
+자료구조와 코딩 테스트에는 `study_level: basic`, `applied`, `advanced` 중 하나를 지정합니다. 단계 이름과 설명은 `_data/learning_levels.yml`에서 관리합니다. 기존 자료의 공개 주소는 바뀌지 않으며, 목록과 이전/다음 링크만 단계 순서로 정렬됩니다.
+
+코딩 테스트 자료는 `assets/theories/코딩테스트/`에 세 언어 파일로 둡니다. `subject: coding-tests`, `nav_section: coding-tests`를 지정하고, `problem_label`, `problem_url`에 실제 문제 번호와 원문 링크를 적습니다. 번역마다 문제 번호와 알고리즘을 바꾸지 않습니다. 직접 작성한 공통 풀이 코드는 `_includes/solutions/`, 실험 알고리즘은 `assets/js/coding-test-models.js`, 조작 UI는 `assets/js/coding-test-labs.js`, 실험 번역은 `_data/coding_tests_ui.json`에서 관리합니다. 본문에 실린 코드와 실행 검증에 사용하는 코드는 같은 파일입니다.
+
 오른쪽 위 언어 전환과 `hreflang`은 `translation_key`로 같은 페이지를 찾습니다. 목록과 이전/다음 링크는 현재 언어로 제한됩니다. 프로그램 컬렉션도 `lang`을 지정해야 하며, 한국어 목록은 `ko` 문서만 사용합니다.
 
 일본어 프로그램 소개의 외부 링크는 실제로 제공되는 영어 제품 사이트로 연결합니다. CV/이력서의 페이지 안내는 번역되어 있으며, 원본 PDF 파일은 공통으로 사용합니다.
@@ -38,6 +42,9 @@
 ```sh
 bundle exec jekyll build
 node --test tests/localization.test.mjs
+node --test tests/coding-test-models.test.mjs
 ```
 
 별도 빌드 폴더를 사용하면 `JEKYLL_DESTINATION=/빌드/경로`를 지정합니다. 테스트는 언어별 연결, 렌더링된 실험 스크립트 문법, 개인정보처리방침과 404의 광고 제외를 확인합니다. 실험 로직을 수정할 때는 브라우저에서 재생·스텝·초기화도 확인합니다. `master`에 푸시하면 기존 GitHub Pages 배포가 실행됩니다.
+
+코딩 테스트 검증에는 Python 3과 C++ 컴파일러가 필요합니다. `CXX`로 컴파일러를 지정할 수 있습니다. 샘플 결과, 막힌 지도, 문 처리량, 완전 탐색과의 매칭 비교, 실제 풀이 코드 실행을 확인합니다. 온라인 저지의 채점 결과를 대신하는 검사는 아닙니다.

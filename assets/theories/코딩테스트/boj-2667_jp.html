@@ -1,0 +1,30 @@
+---
+lang: "ja"
+translation_key: "theory-boj-2667"
+subject: "coding-tests"
+study_level: "basic"
+nav_section: "coding-tests"
+nav_title: "コーディングテスト"
+title: "製氷皿と連結成分"
+description: "0を埋める製氷皿から1の住宅をまとめる問題へ。BFSとDFSの訪問順を比較します。"
+permalink: "/ja/theory/boj-2667/"
+order: 201
+problem_label: "#BOJ 2667"
+problem_url: "https://www.acmicpc.net/problem/2667"
+problem_topics: "Flood fill · BFS / DFS · Connected components"
+lab_css: "/assets/css/coding-tests.css"
+js_files: ["/assets/js/coding-test-models.js", "/assets/js/coding-test-labs.js"]
+---
+{% include coding-problem-source.html %}
+<p>製氷皿に水を注ぐと、上下左右につながる空きマスがひとまとまりになります。これがグラフの<strong>連結成分</strong>です。BOJ 2667「단지번호붙이기」は、つながった住宅をまとめ、団地の数と各団地の住宅数を求める問題です。</p><p>下のマップはこの解説用に作成した例です。成分の数を予想してから再生してください。「住宅・1をまとめる」に切り替えると、探索対象が0から1になります。</p>
+{% include coding-test-lab.html kind="flood" %}
+<h2>解法の考え方</h2>
+<ol><li>全マスを順に調べます。対象のマスが未発見なら、新しい成分の探索を始めます。</li><li>DFSのスタックやBFSのキューに入れる時点で訪問を記録します。複数の隣接マスから重複して追加されるのを防げます。</li><li>上下左右につながるマスをすべて処理し、大きさを数えます。探索待ちが空になったら走査を再開します。</li><li>成分の大きさを昇順に整列します。</li></ol><p>最初の例は<strong>4成分、大きさ [2, 4, 4, 4]</strong>です。1回の探索は始点につながるすべてのマスに到達し、壁を越えることはありません。そのため、ちょうど1つの連結成分を求められます。BFSとDFSで異なるのは訪問順だけです。</p>
+<h2>計算量と注意点</h2>
+<p>N × NのマップとK個の成分に対し、探索はO(N²)、整列はO(K log K)です。全体の時間計算量は<strong>O(N² + K log K)</strong>、追加空間はO(N²)です。下の反復型DFSは再帰の深さ制限に依存しません。</p><p>斜めに接するだけでは同じ成分になりません。斜めの例では13成分になります。製氷皿では0、BOJのコードでは1を探索する違いにも注意してください。実験は再生用の履歴を保存しますが、解答コードには不要です。</p>
+<h2>この解説のために作成したコード</h2>
+<details><summary>Python 3</summary>
+{% highlight python %}{% include solutions/boj-2667.py %}{% endhighlight %}
+</details>
+<h2>参考資料と次の実験</h2>
+<ul><li><a href="https://www.acmicpc.net/problem/2667" target="_blank" rel="noopener">BOJ 2667 · 단지번호붙이기</a></li><li><a href="https://cp-algorithms.com/graph/search-for-connected-components.html" target="_blank" rel="noopener">Connected components · CP-Algorithms</a></li><li><a href="/ja/theory/bfs-dfs/">BFS / DFSの実験へ</a></li></ul>

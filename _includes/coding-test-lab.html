@@ -1,0 +1,29 @@
+{% assign lab_ui = site.data.coding_tests_ui[page.lang] %}
+<section class="ct-lab" data-coding-lab="{{ include.kind }}" aria-label="{{ lab_ui.lab_label }}">
+  <header class="ct-lab__heading"><span>INTERACTIVE LAB</span><strong>{{ lab_ui[include.kind] }}</strong></header>
+  <div class="ct-controls">
+    <label>{{ lab_ui.example }} <select data-lab-preset></select></label>
+    {% if include.kind == 'flood' %}<label>{{ lab_ui.method }} <select data-lab-method><option value="dfs">DFS · Stack</option><option value="bfs">BFS · Queue</option></select></label>{% endif %}
+  </div>
+  <p class="ct-hint" data-lab-hint></p>
+  <div class="ct-workspace">
+    <div class="ct-grid" data-lab-grid></div>
+    <div class="ct-inspector"><h3>{{ lab_ui.state }}</h3><div class="ct-metrics" data-lab-metrics></div><p class="ct-frontier" data-lab-frontier></p></div>
+  </div>
+  <div class="ct-controls">
+    <button type="button" data-lab-play>{{ lab_ui.play }}</button>
+    <button type="button" data-lab-prev>{{ lab_ui.previous }}</button>
+    <button type="button" data-lab-next>{{ lab_ui.next }}</button>
+    <button type="button" data-lab-reset>{{ lab_ui.reset }}</button>
+    {% if include.kind == 'evacuation' %}<button type="button" data-lab-minimum>{{ lab_ui.find_minimum }}</button>{% endif %}
+  </div>
+  {% if include.kind == 'evacuation' %}
+  <label class="ct-slider">{{ lab_ui.deadline }} <input type="range" min="1" max="20" value="1" data-lab-deadline><output data-lab-deadline-value></output></label>
+  <div class="ct-timetable" data-lab-timetable tabindex="0" role="region" aria-label="{{ lab_ui.timetable }}"></div>
+  {% else %}
+  <label class="ct-slider">{{ lab_ui.step }} <input type="range" min="0" max="0" value="0" data-lab-seek><output data-lab-step></output></label>
+  {% endif %}
+  <p class="ct-message" data-lab-message role="status" aria-live="polite"></p>
+  <noscript><p>{{ lab_ui.no_script }}</p></noscript>
+</section>
+<script type="application/json" id="coding-lab-strings">{{ lab_ui | jsonify }}</script>

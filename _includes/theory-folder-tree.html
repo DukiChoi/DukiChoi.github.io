@@ -4,11 +4,21 @@
   <li>
     <details class="theory-tree__group" data-tree-key="folder:{{ folder.name | escape }}"{% if page.subject == folder.name %} data-tree-current{% endif %}{% if page.overview or page.subject == folder.name %} open{% endif %}>
       <summary>{{ ui.subjects[folder.name] | default: folder.name | escape }} <span class="theory-count">{{ articles.size }}</span></summary>
-      <ol class="theory-tree__children">
-        {% for entry in articles %}
-        <li><a class="theory-list__entry{% if entry.url == page.url %} is-current{% endif %}" href="{{ entry.url | relative_url }}"{% if entry.url == page.url %} aria-current="page"{% endif %}>{{ entry.title | escape }}</a></li>
-        {% else %}<li class="theory-folder-empty">{{ ui.empty }}</li>{% endfor %}
-      </ol>
+      {% if folder.name == 'data-structures' or folder.name == 'coding-tests' %}
+      <ul class="theory-tree__children">
+        {% for level in site.data.learning_levels %}
+        {% assign level_articles = articles | where: 'study_level', level.id %}
+        {% if level_articles.size > 0 %}
+        <li><details class="theory-tree__group theory-tree__level" data-tree-key="{{ folder.name }}:{{ level.id }}"{% if page.subject == folder.name %}{% if page.study_level == level.id or page.folder_overview %} data-tree-current{% endif %}{% endif %}>
+          <summary>{{ level.title[page.lang] }} <span class="theory-count">{{ level_articles.size }}</span></summary>
+          {% include theory-tree-articles.html articles=level_articles %}
+        </details></li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+      {% else %}
+        {% include theory-tree-articles.html articles=articles %}
+      {% endif %}
     </details>
   </li>
 {% endfor %}

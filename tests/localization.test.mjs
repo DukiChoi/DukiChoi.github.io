@@ -19,8 +19,8 @@ test('each lesson has three language files, reciprocal links and valid rendered 
     const slug = path.basename(source, '_ko.html');
     for (const [lang, suffix, prefix] of locales) {
       const localizedSource = read(source.replace('_ko.html', `_${suffix}.html`));
-      assert.match(localizedSource, new RegExp(`^lang: ${lang}$`, 'm'), source);
-      assert.match(localizedSource, new RegExp(`^translation_key: theory-${slug}$`, 'm'), source);
+      assert.match(localizedSource, new RegExp(`^lang: "?${lang}"?$`, 'm'), source);
+      assert.match(localizedSource, new RegExp(`^translation_key: "?theory-${slug}"?$`, 'm'), source);
       const url = `${prefix}/theory/${slug}/`;
       const html = read(routeFile(url));
       assert.ok(html.includes(`<html lang="${lang}">`), url);
@@ -30,6 +30,11 @@ test('each lesson has three language files, reciprocal links and valid rendered 
       }
       let scripts = 0;
       for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
+        const external = match[1].match(/src="(\/assets\/js\/coding-test-(?:models|labs)\.js)"/);
+        if (external) {
+          new vm.Script(read(path.join(build, external[1])), { filename: external[1] });
+          scripts++;
+        }
         if (/\bsrc=|application\/(?:ld\+)?json/.test(match[1])) continue;
         new vm.Script(match[2], { filename: url });
         scripts++;

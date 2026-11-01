@@ -1,0 +1,30 @@
+---
+lang: "ko"
+translation_key: "theory-poj-3057"
+subject: "coding-tests"
+study_level: "advanced"
+nav_section: "coding-tests"
+nav_title: "코딩 테스트"
+title: "방 탈출의 최소 시간"
+description: "벽과 여러 문이 있는 방에서 한 명씩 탈출하기: BFS 거리와 DFS 이분 매칭을 연결합니다."
+permalink: "/theory/poj-3057/"
+order: 203
+problem_label: "#POJ 3057"
+problem_url: "http://poj.org/problem?id=3057"
+problem_topics: "BFS · Bipartite matching · DFS · Binary search"
+lab_css: "/assets/css/coding-tests.css"
+js_files: ["/assets/js/coding-test-models.js", "/assets/js/coding-test-labs.js"]
+---
+{% include coding-problem-source.html %}
+<p>POJ 3057 「Evacuation」은 벽으로 구분된 방의 사람들이 문마다 1초에 한 명씩 빠져나가는 문제입니다. <code>X</code>는 벽, <code>.</code>은 사람이 있는 빈칸, <code>D</code>는 문입니다. 매초 상하좌우로 한 칸 이동할 수 있고, 모두 나가는 최소 시간을 구합니다.</p><p><strong>원문에서는 내부 한 칸에 여러 사람이 있을 수 있습니다.</strong> 제한은 문 통과에 적용됩니다. 문에 닿으면 이미 탈출했으므로 다른 구역으로 가는 통로로 쓰지 않습니다. 아래 재생은 사람의 이동 애니메이션이 아니라 문을 통과하는 시간표입니다.</p>
+{% include coding-test-lab.html kind="evacuation" %}
+<h2>풀이의 핵심</h2>
+<ol><li><strong>BFS로 거리 구하기:</strong> 각 문에서 빈칸으로 탐색해 사람 p가 문 d에 도착하는 최소 시간 dist[d][p]를 구합니다.</li><li><strong>시간 T로 질문 바꾸기:</strong> T초 안에 모두 탈출할 수 있는지 확인합니다. 오른쪽 정점은 (문, 1초), (문, 2초)…(문, T초)입니다.</li><li><strong>이분 그래프 만들기:</strong> 사람 p는 dist[d][p] ≤ t인 (문 d, 시각 t) 슬롯에 연결됩니다. 도달 불가능한 문에는 연결하지 않습니다.</li><li><strong>DFS로 배정 조정하기:</strong> 슬롯이 이미 사용 중이면 기존 사람을 다른 슬롯으로 옮길 수 있는지 재귀적으로 찾습니다. 모든 사람이 서로 다른 슬롯을 얻으면 T초에 가능합니다.</li><li><strong>최소 T 찾기:</strong> 가능한 T보다 큰 시간도 가능하므로 이분 탐색합니다.</li></ol><p>여기서 DFS는 <strong>방 안의 이동 경로가 아니라 배정 그래프</strong>를 탐색합니다. 예를 들어 P1은 1초에 D1·D2 모두 가능하고 P2는 D1만 가능하다면, P1을 D1에 먼저 넣었어도 DFS로 P1→D2, P2→D1로 재배정할 수 있습니다.</p><p>문 1개 예제는 사람이 8명입니다. 가장 먼 사람의 최단거리는 5초지만, 문이 초당 한 명만 처리하므로 정답은 <strong>8초</strong>입니다. 「최소 시간 찾기」를 누른 뒤 T를 1 줄여 배정 인원이 어떻게 바뀌는지 확인하세요.</p><p>매칭 하나는 각 사람에게 도달 가능한 시각을 주고 문·시각의 중복을 막습니다. 내부에서 기다릴 수 있으므로 이 배정대로 탈출할 수 있습니다. 반대로 실제 탈출 일정도 이런 매칭이 되므로, 전원 매칭 여부와 T초 내 탈출 가능 여부가 일치합니다.</p>
+<h2>복잡도와 주의점</h2>
+<p>사람 수 P, 문 수 D, 지도 R × C, 가장 먼 사람의 가까운 문까지 거리를 L이라 합시다. 아무 문에도 도달하지 못하는 사람이 있으면 <code>impossible</code>입니다. 그 외에는 <code>max(L, ceil(P/D))</code>부터 <code>U = L + P - 1</code>까지 탐색합니다. 모두 L초 안에 가까운 문 앞에 도달한 뒤 최대 P명이 순서대로 나가면 U초면 충분합니다.</p><p>거리 계산은 O(DRC)입니다. T초 그래프의 간선 수를 E<sub>T</sub>라 하면 DFS 매칭 한 번은 O(P E<sub>T</sub>)이고 E<sub>T</sub> ≤ PDT입니다. 따라서 전체 시간 상한은 <strong>O(DRC + P E<sub>U</sub> log(U+1))</strong>, 추가 공간은 O(RC + DP + E<sub>U</sub> + DU)입니다.</p><p>가장 가까운 문으로만 보내거나 최장 최단거리만 답으로 쓰면 병목을 놓칩니다. 내부 칸에도 한 명 제한이 있는 다른 문제라면 이 모델은 적용되지 않습니다. 아래는 이 조건에 맞춰 작성한 C++ 풀이이며, 브라우저 실험은 작은 예제에 맞췄습니다.</p>
+<h2>직접 작성한 풀이 코드</h2>
+<details><summary>C++ (C++98)</summary>
+{% highlight cpp %}{% include solutions/poj-3057.cpp %}{% endhighlight %}
+</details>
+<h2>참고 자료와 다음 실험</h2>
+<ul><li><a href="http://poj.org/problem?id=3057" target="_blank" rel="noopener">POJ 3057 · Evacuation</a></li><li><a href="https://ipc.susu.ru/4131-6.html" target="_blank" rel="noopener">Evacuation · SUSU university judge mirror</a></li><li><a href="https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html" target="_blank" rel="noopener">Kuhn’s maximum bipartite matching · CP-Algorithms</a></li><li><a href="/theory/bfs-dfs/">BFS / DFS 실험으로 돌아가기</a></li></ul>

@@ -1,0 +1,5 @@
+{% assign source_ui = site.data.coding_tests_ui[page.lang] %}
+<div class="ct-problem-source">
+  <a href="{{ page.problem_url | escape }}" target="_blank" rel="noopener">{{ page.problem_label | escape }} · {{ source_ui.original }} ↗</a>
+  <span>{{ page.problem_topics | escape }}</span>
+</div>

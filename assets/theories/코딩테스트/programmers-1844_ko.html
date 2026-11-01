@@ -1,0 +1,30 @@
+---
+lang: "ko"
+translation_key: "theory-programmers-1844"
+subject: "coding-tests"
+study_level: "applied"
+nav_section: "coding-tests"
+nav_title: "코딩 테스트"
+title: "게임 맵 최단거리"
+description: "가장 먼저 도착한 BFS 경로가 왜 최단인지, 거리 숫자와 큐의 변화를 보며 확인합니다."
+permalink: "/theory/programmers-1844/"
+order: 202
+problem_label: "Programmers 1844"
+problem_url: "https://school.programmers.co.kr/learn/courses/30/lessons/1844"
+problem_topics: "BFS · Queue · Shortest path"
+lab_css: "/assets/css/coding-tests.css"
+js_files: ["/assets/js/coding-test-models.js", "/assets/js/coding-test-labs.js"]
+---
+{% include coding-problem-source.html %}
+<p>프로그래머스 「게임 맵 최단거리」에서는 1인 칸만 상하좌우로 이동하며 왼쪽 위에서 오른쪽 아래까지 갑니다. 답은 이동 횟수가 아니라 <strong>시작과 도착을 포함한 칸 수</strong>입니다. 도달할 수 없으면 -1을 반환합니다.</p><p>아래는 원문과 별도로 만든 작은 지도입니다. 도착 가능한 지도를 끝까지 재생한 뒤, 칸을 눌러 길을 막아 보세요. 방문한 칸의 숫자는 시작점부터의 최단거리입니다.</p>
+{% include coding-test-lab.html kind="shortest" %}
+<h2>풀이의 핵심</h2>
+<ol><li>시작 칸의 거리를 1로 두고 큐에 넣습니다. 나머지는 -1로 둡니다.</li><li>큐의 앞에서 칸을 꺼냅니다. 이동 가능한 미방문 이웃의 거리를 현재 거리 + 1로 확정합니다.</li><li>거리를 기록한 이웃을 큐 뒤에 넣습니다. 도착점을 꺼냈다면 그 거리가 답입니다.</li><li>큐가 빌 때까지 도착하지 못했다면 -1입니다.</li></ol><p>모든 이동 비용이 같으므로 BFS는 거리 1, 2, 3… 순서대로 칸을 발견합니다. 거리 d인 칸을 처리하기 전에 더 짧은 거리가 모두 처리되어, 처음 기록한 거리가 최단입니다. DFS에서 처음 찾은 경로에는 이런 보장이 없습니다.</p><p>자체 예제의 정답은 <strong>9칸</strong>입니다. 도착점까지 8번 이동하지만 시작 칸도 세므로 9입니다. 초록색은 부모 정보를 거슬러 복원한 최단 경로 하나입니다.</p>
+<h2>복잡도와 주의점</h2>
+<p>R × C 지도에서 각 칸은 큐에 한 번 들어갑니다. 시간과 추가 공간은 모두 <strong>O(RC)</strong>입니다. Python에서는 <code>deque.popleft()</code>로 큐 앞을 꺼내고, <code>list.pop(0)</code>의 반복적인 원소 이동을 피합니다.</p><p>행과 열 길이는 다를 수 있습니다. 거리 배열을 따로 두면 입력 지도를 바꾸지 않아도 됩니다. 이동 비용이 서로 다르면 이 BFS를 그대로 사용할 수 없습니다. 실험의 재생 기록은 제출 코드의 공간 복잡도에 포함되지 않습니다.</p>
+<h2>직접 작성한 풀이 코드</h2>
+<details><summary>Python 3</summary>
+{% highlight python %}{% include solutions/programmers-1844.py %}{% endhighlight %}
+</details>
+<h2>참고 자료와 다음 실험</h2>
+<ul><li><a href="https://school.programmers.co.kr/learn/courses/30/lessons/1844" target="_blank" rel="noopener">Programmers 1844 · 게임 맵 최단거리</a></li><li><a href="https://cp-algorithms.com/graph/breadth-first-search.html" target="_blank" rel="noopener">Breadth-first search · CP-Algorithms</a></li><li><a href="https://docs.python.org/3/library/collections.html#collections.deque" target="_blank" rel="noopener">collections.deque · Python documentation</a></li><li><a href="/theory/bfs-dfs/">BFS / DFS 실험으로 돌아가기</a></li></ul>

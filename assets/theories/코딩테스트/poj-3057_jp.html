@@ -1,0 +1,30 @@
+---
+lang: "ja"
+translation_key: "theory-poj-3057"
+subject: "coding-tests"
+study_level: "advanced"
+nav_section: "coding-tests"
+nav_title: "コーディングテスト"
+title: "全員が部屋を出る最小時間"
+description: "出口ごとに1秒に1人。BFSの距離とDFSによる二部マッチングを組み合わせます。"
+permalink: "/ja/theory/poj-3057/"
+order: 203
+problem_label: "#POJ 3057"
+problem_url: "http://poj.org/problem?id=3057"
+problem_topics: "BFS · Bipartite matching · DFS · Binary search"
+lab_css: "/assets/css/coding-tests.css"
+js_files: ["/assets/js/coding-test-models.js", "/assets/js/coding-test-labs.js"]
+---
+{% include coding-problem-source.html %}
+<p>POJ 3057「Evacuation」は、壁で区切られた部屋から各出口につき1秒に1人ずつ脱出する問題です。<code>X</code>は壁、<code>.</code>は最初に1人がいるマス、<code>D</code>は出口です。毎秒、上下左右に1マス移動でき、全員が出る最小時間を求めます。</p><p><strong>原題では内部の1マスに複数人がいても構いません。</strong>人数制限は出口に適用されます。出口に着けば脱出完了なので、別の領域への通路としては使えません。下の再生は歩行経路ではなく、出口を通過する時刻表を示します。</p>
+{% include coding-test-lab.html kind="evacuation" %}
+<h2>解法の考え方</h2>
+<ol><li><strong>BFSで距離を求める：</strong>各出口から内部のマスを探索し、人pが出口dに到着できる最短時間dist[d][p]を求めます。</li><li><strong>制限時間Tを決める：</strong>右側の頂点を（出口、1秒）、（出口、2秒）…（出口、T秒）とします。</li><li><strong>二部グラフを作る：</strong>dist[d][p] ≤ tなら、人pを（出口d、時刻t）の枠につなぎます。到達できない出口にはつなぎません。</li><li><strong>DFSで割り当て直す：</strong>使用済みの枠なら、その人を別の枠へ移せるか再帰的に調べます。全員に異なる枠があればT秒で可能です。</li><li><strong>最小のTを探す：</strong>可能な時間より長ければ引き続き可能なので、二分探索を使えます。</li></ol><p>ここでDFSが探索するのは<strong>部屋の移動経路ではなく割り当てのグラフ</strong>です。P1が1秒でD1とD2に着けて、P2はD1だけに着ける場合を考えます。P1を先にD1へ入れても、DFSでP1をD2へ移し、P2にD1を割り当てられます。</p><p>出口1つの例には8人います。最も遠い人の最短距離は5秒ですが、出口の処理に<strong>8秒</strong>かかります。最小時間を表示した後、Tを1減らして割り当て人数の変化を確かめてください。</p><p>マッチングは、各人に到達可能な時刻を与え、同じ出口・同じ秒の重複を防ぎます。内部で待機し同じマスを共有できるので、この予定は実現できます。逆に実際の脱出予定もマッチングになるため、全員の割り当てとT秒以内の脱出は同値です。</p>
+<h2>計算量と注意点</h2>
+<p>人数をP、出口数をD、マップをR × C、各人の最寄りの到達可能な出口までの距離の最大値をLとします。どの出口にも着けない人がいれば<code>impossible</code>です。それ以外は<code>max(L, ceil(P/D))</code>から<code>U = L + P - 1</code>まで探索します。L秒までに各自が最寄りの出口付近へ進み、最大P人を順に通せばU秒で十分です。</p><p>距離計算はO(DRC)です。T秒のグラフの辺数をE<sub>T</sub>とすると、DFSマッチングはO(P E<sub>T</sub>)で、E<sub>T</sub> ≤ PDTです。全体の時間計算量の上限は<strong>O(DRC + P E<sub>U</sub> log(U+1))</strong>、追加空間はO(RC + DP + E<sub>U</sub> + DU)です。</p><p>最寄りの出口だけに向かわせたり、最短距離の最大値だけを答えにしたりすると出口の混雑を見落とします。内部のマスも1人に制限する別問題には、このモデルは使えません。下はこの条件に合わせたC++コードで、ブラウザーの実験は小さな例を使っています。</p>
+<h2>この解説のために作成したコード</h2>
+<details><summary>C++ (C++98)</summary>
+{% highlight cpp %}{% include solutions/poj-3057.cpp %}{% endhighlight %}
+</details>
+<h2>参考資料と次の実験</h2>
+<ul><li><a href="http://poj.org/problem?id=3057" target="_blank" rel="noopener">POJ 3057 · Evacuation</a></li><li><a href="https://ipc.susu.ru/4131-6.html" target="_blank" rel="noopener">Evacuation · SUSU university judge mirror</a></li><li><a href="https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html" target="_blank" rel="noopener">Kuhn’s maximum bipartite matching · CP-Algorithms</a></li><li><a href="/ja/theory/bfs-dfs/">BFS / DFSの実験へ</a></li></ul>

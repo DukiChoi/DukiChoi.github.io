@@ -1,0 +1,30 @@
+---
+lang: "ja"
+translation_key: "theory-programmers-1844"
+subject: "coding-tests"
+study_level: "applied"
+nav_section: "coding-tests"
+nav_title: "コーディングテスト"
+title: "ゲームマップの最短経路"
+description: "距離とキューの変化を見ながら、BFSで最初に到達した経路が最短になる理由を確認します。"
+permalink: "/ja/theory/programmers-1844/"
+order: 202
+problem_label: "Programmers 1844"
+problem_url: "https://school.programmers.co.kr/learn/courses/30/lessons/1844"
+problem_topics: "BFS · Queue · Shortest path"
+lab_css: "/assets/css/coding-tests.css"
+js_files: ["/assets/js/coding-test-models.js", "/assets/js/coding-test-labs.js"]
+---
+{% include coding-problem-source.html %}
+<p>Programmers「게임 맵 최단거리」では、1のマスを上下左右に移動し、左上から右下へ進みます。求めるのは移動回数ではなく、<strong>始点と終点を含むマスの数</strong>です。到達できない場合は-1を返します。</p><p>実験にはこの解説用に作成した小さなマップを使っています。最後まで再生してからマスを押し、道を塞いでみてください。発見済みのマスの数字は始点からの最短距離です。</p>
+{% include coding-test-lab.html kind="shortest" %}
+<h2>解法の考え方</h2>
+<ol><li>始点の距離を1にしてキューに入れます。他の距離は-1にします。</li><li>キューの先頭からマスを取り出します。通行可能で未発見の隣接マスの距離を、現在の距離 + 1に確定します。</li><li>それらをキューの末尾に入れます。ゴールを取り出したら、その距離が答えです。</li><li>到達前にキューが空になったら-1を返します。</li></ol><p>すべての移動コストが等しいため、BFSは距離1、2、3…の順に発見します。距離dのマスを処理する前に、それより短い距離のマスは処理済みなので、最初に記録した距離が最短です。DFSで最初に見つかる経路にはこの保証がありません。</p><p>独自の例の答えは<strong>9マス</strong>です。移動は8回ですが、始点も数えます。緑色は親の情報をたどって復元した最短経路の1つです。</p>
+<h2>計算量と注意点</h2>
+<p>R × Cのマップで各マスがキューに入るのは1回です。時間と追加空間はどちらも<strong>O(RC)</strong>です。Pythonでは<code>deque.popleft()</code>を使うと、<code>list.pop(0)</code>で生じる要素の移動を避けられます。</p><p>行数と列数が同じとは限りません。距離配列を別に持てば入力を変更せずに済みます。移動コストが異なる場合、このBFSはそのまま使えません。再生用の履歴は実験のための追加処理です。</p>
+<h2>この解説のために作成したコード</h2>
+<details><summary>Python 3</summary>
+{% highlight python %}{% include solutions/programmers-1844.py %}{% endhighlight %}
+</details>
+<h2>参考資料と次の実験</h2>
+<ul><li><a href="https://school.programmers.co.kr/learn/courses/30/lessons/1844" target="_blank" rel="noopener">Programmers 1844 · 게임 맵 최단거리</a></li><li><a href="https://cp-algorithms.com/graph/breadth-first-search.html" target="_blank" rel="noopener">Breadth-first search · CP-Algorithms</a></li><li><a href="https://docs.python.org/3/library/collections.html#collections.deque" target="_blank" rel="noopener">collections.deque · Python documentation</a></li><li><a href="/ja/theory/bfs-dfs/">BFS / DFSの実験へ</a></li></ul>

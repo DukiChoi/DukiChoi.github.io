@@ -1,3 +1,4 @@
+@import url('metal-banner.css');
 .learning-hero .learning-home-link { display: inline-flex; align-items: center; gap: 16px; margin-top: 24px; padding: 10px 20px; border-radius: 30px; background: var(--ink); color: var(--page-bg); text-decoration: none; font-size: 14px; font-weight: 600; }
 .learning-hero h1 { font-size: clamp(30px, 4.5vw, 48px); }
 .learning-section { margin-top: 44px; }

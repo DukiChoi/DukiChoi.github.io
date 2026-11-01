@@ -2,7 +2,7 @@
 lang: en
 layout: program
 section: programs
-nav_title: Programs
+nav_title: Developer Life
 css_file: /assets/css/programs.css
 permalink: /en/programs/ble-smart-cube/
 translation_key: ble-smart-cube

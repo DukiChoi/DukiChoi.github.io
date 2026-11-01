@@ -2,7 +2,7 @@
 lang: ja
 layout: program
 section: programs
-nav_title: Programs
+nav_title: 開発者の日々
 css_file: /assets/css/programs.css
 permalink: /ja/programs/ble-smart-cube/
 translation_key: ble-smart-cube

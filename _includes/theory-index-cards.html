@@ -3,6 +3,7 @@
   {% for entry in include.articles %}
   <li>
     <a class="theory-index__link" href="{{ entry.url | relative_url }}">
+      {% if entry.problem_label %}<span class="theory-problem-label">{{ entry.problem_label | escape }}</span>{% endif %}
       <{{ include.heading }}>{{ entry.title | escape }}</{{ include.heading }}>
       {% if entry.description %}<p>{{ entry.description | escape }}</p>{% endif %}
     </a>

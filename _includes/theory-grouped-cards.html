@@ -1,0 +1,14 @@
+{% if include.subject == 'data-structures' or include.subject == 'coding-tests' %}
+  {% for level in site.data.learning_levels %}
+    {% assign level_articles = include.articles | where: 'study_level', level.id %}
+    {% if level_articles.size > 0 %}
+    <section class="theory-level" id="level-{{ include.subject }}-{{ level.id }}">
+      <{{ include.heading }} class="theory-level__title">{{ level.title[page.lang] }} <span class="theory-count">{{ level_articles.size }}</span></{{ include.heading }}>
+      {% if include.subject == 'data-structures' %}<p class="theory-level__description">{{ level.description[page.lang] }}</p>{% endif %}
+      {% include theory-index-cards.html articles=level_articles heading=include.card_heading %}
+    </section>
+    {% endif %}
+  {% endfor %}
+{% else %}
+  {% include theory-index-cards.html articles=include.articles heading=include.heading %}
+{% endif %}

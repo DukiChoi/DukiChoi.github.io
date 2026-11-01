@@ -3,8 +3,8 @@ lang: en
 translation_key: subject-data-structures
 subject: data-structures
 title: Data Structures
-description: Step through sorting, searching, trees, and hashing to understand data processing.
+description: Start with basic search and sorting, apply ranges, trees and hashing, then explore advanced sorting and shortest paths.
 permalink: /en/theory/data-structures/
 folder_overview: true
 ---
-Step through sorting, searching, trees, and hashing to understand data processing.
+Start with basic search and sorting, apply ranges, trees and hashing, then explore advanced sorting and shortest paths.

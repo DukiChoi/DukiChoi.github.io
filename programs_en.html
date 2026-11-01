@@ -2,11 +2,11 @@
 lang: en
 translation_key: programs
 layout: default
-title: Programs
-nav_title: Programs
+title: Developer Life
+nav_title: Developer Life
 section: programs
 permalink: /en/programs/
-permalink_name: /Programs
+permalink_name: /Developer Life
 css_file: /assets/css/programs.css
 js_files:
   - /assets/js/hover-sparkles.js
@@ -17,7 +17,7 @@ description: Programs by DukiChoi, with usage guides and downloads.
 <main class="page-shell page-shell--reading programs-hub">
   <header class="page-heading">
     <p class="page-eyebrow">DukiChoi</p>
-    <h1>Programs</h1>
+    <h1>Developer Life</h1>
     <p class="page-description">Explore my programs, usage guides, and downloads.</p>
   </header>
   {% assign programs = site.data.programs_en | where_exp: "entry", "entry.published != false" | sort: "order" %}

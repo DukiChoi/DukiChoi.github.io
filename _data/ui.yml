@@ -21,6 +21,7 @@ ko:
     operating-systems: 운영체제
     embedded: 임베디드 통신
     data-structures: 자료구조
+    coding-tests: 코딩 테스트
     computer-architecture: 컴퓨터 구조
 en:
   navigation: Site navigation
@@ -45,6 +46,7 @@ en:
     operating-systems: Operating Systems
     embedded: Embedded Systems
     data-structures: Data Structures
+    coding-tests: Coding Tests
     computer-architecture: Computer Architecture
 ja:
   navigation: サイトメニュー
@@ -69,4 +71,5 @@ ja:
     operating-systems: オペレーティングシステム
     embedded: 組み込み通信
     data-structures: データ構造
+    coding-tests: コーディングテスト
     computer-architecture: コンピューターアーキテクチャ

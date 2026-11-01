@@ -4,6 +4,10 @@ layout: default
 {%- assign ui = site.data.ui[page.lang] | default: site.data.ui.ko -%}
 {%- assign theory_home = "/theory/" -%}
 {%- if page.lang != "ko" -%}{%- assign theory_home = "/" | append: page.lang | append: "/theory/" -%}{%- endif -%}
+{%- if page.subject == 'coding-tests' -%}
+  {%- assign theory_home = '/coding-tests/' -%}
+  {%- if page.lang != 'ko' -%}{%- assign theory_home = '/' | append: page.lang | append: '/coding-tests/' -%}{%- endif -%}
+{%- endif -%}
 {%- assign theory_pages = site.pages | where: "lang", page.lang | where: "section", "theory" | where_exp: "entry", "entry.overview != true" | where_exp: "entry", "entry.folder_overview != true" -%}
 {%- assign theory_articles = site.theory | concat: theory_pages | where: "lang", page.lang | where_exp: "entry", "entry.published != false" | sort: "order" -%}
 {%- assign folder_pages = site.pages | where: "lang", page.lang | where: "section", "theory" | where: "folder_overview", true -%}
@@ -11,15 +15,22 @@ layout: default
 {%- assign current_folder = page.path | remove_first: "assets/theories/" | split: "/" | pop | last -%}
 {%- assign previous_article = nil -%}
 {%- assign next_article = nil -%}
-{%- for entry in theory_articles -%}
+{%- assign navigation_articles = theory_articles | where: 'subject', page.subject -%}
+{%- if page.subject == 'data-structures' or page.subject == 'coding-tests' -%}
+  {%- assign basic_articles = navigation_articles | where: 'study_level', 'basic' -%}
+  {%- assign applied_articles = navigation_articles | where: 'study_level', 'applied' -%}
+  {%- assign advanced_articles = navigation_articles | where: 'study_level', 'advanced' -%}
+  {%- assign navigation_articles = basic_articles | concat: applied_articles | concat: advanced_articles -%}
+{%- endif -%}
+{%- for entry in navigation_articles -%}
   {%- if entry.url == page.url -%}
     {%- unless forloop.first -%}
       {%- assign previous_index = forloop.index0 | minus: 1 -%}
-      {%- assign previous_article = theory_articles[previous_index] -%}
+      {%- assign previous_article = navigation_articles[previous_index] -%}
     {%- endunless -%}
     {%- unless forloop.last -%}
       {%- assign next_index = forloop.index0 | plus: 1 -%}
-      {%- assign next_article = theory_articles[next_index] -%}
+      {%- assign next_article = navigation_articles[next_index] -%}
     {%- endunless -%}
   {%- endif -%}
 {%- endfor -%}
@@ -47,12 +58,12 @@ layout: default
             {% assign subject_articles = subject.items | where_exp: "entry", "entry.folder_overview != true" | sort: "order" %}
             <section class="theory-subject">
               <h2 class="theory-subject__title">{{ ui.subjects[subject.name] | default: subject.name | escape }} <span class="theory-count">{{ subject_articles.size }}</span></h2>
-              {% include theory-index-cards.html articles=subject_articles heading="h3" %}
+              {% include theory-grouped-cards.html articles=subject_articles subject=subject.name heading="h3" card_heading="h4" %}
             </section>
           {% endfor %}
           </div>
         {% else %}
-          {% include theory-index-cards.html articles=index_articles heading="h2" %}
+          {% include theory-grouped-cards.html articles=index_articles subject=page.subject heading="h2" card_heading="h3" %}
         {% endif %}
         {% endif %}
       </article>

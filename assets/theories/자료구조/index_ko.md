@@ -4,7 +4,7 @@ lang: ko
 translation_key: subject-data-structures
 subject: data-structures
 title: 자료구조
-description: 정렬, 탐색, 트리와 해시를 단계별로 실행하며 자료 처리 과정을 비교합니다.
+description: 기본 탐색과 정렬 → 구간·트리·해시 응용 → 고급 정렬과 최단 경로 순서로 공부합니다.
 folder_overview: true
 ---
-정렬, 탐색, 트리와 해시를 단계별로 실행하며 자료 처리 과정을 비교합니다.
+기본 탐색과 정렬 → 구간·트리·해시 응용 → 고급 정렬과 최단 경로 순서로 공부합니다.

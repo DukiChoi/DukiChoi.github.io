@@ -2,11 +2,11 @@
 lang: ja
 translation_key: programs
 layout: default
-title: Programs
-nav_title: Programs
+title: 開発者の日々
+nav_title: 開発者の日々
 section: programs
 permalink: /ja/programs/
-permalink_name: /Programs
+permalink_name: /開発者の日々
 css_file: /assets/css/programs.css
 js_files:
   - /assets/js/hover-sparkles.js
@@ -17,7 +17,7 @@ description: DukiChoiが開発したプログラムと使い方、ダウンロ�
 <main class="page-shell page-shell--reading programs-hub">
   <header class="page-heading">
     <p class="page-eyebrow">DukiChoi</p>
-    <h1>Programs</h1>
+    <h1>開発者の日々</h1>
     <p class="page-description">開発したプログラムの紹介、使い方、ダウンロード先をご覧ください。</p>
   </header>
   {% assign programs = site.data.programs_jp | where_exp: "entry", "entry.published != false" | sort: "order" %}

@@ -1,0 +1,5 @@
+<ol class="theory-tree__children">
+  {% for entry in include.articles %}
+  <li><a class="theory-list__entry{% if entry.url == page.url %} is-current{% endif %}" href="{{ entry.url | relative_url }}"{% if entry.url == page.url %} aria-current="page"{% endif %}>{% if entry.problem_label %}<span class="theory-problem-label">{{ entry.problem_label | escape }}</span> {% endif %}{{ entry.title | escape }}</a></li>
+  {% else %}<li class="theory-folder-empty">{{ ui.empty }}</li>{% endfor %}
+</ol>

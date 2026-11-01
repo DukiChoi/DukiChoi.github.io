@@ -1,0 +1,30 @@
+---
+lang: "ko"
+translation_key: "theory-boj-2667"
+subject: "coding-tests"
+study_level: "basic"
+nav_section: "coding-tests"
+nav_title: "코딩 테스트"
+title: "얼음 틀 채우기와 연결 요소"
+description: "0을 채우는 얼음 틀에서 1을 묶는 단지번호붙이기로: BFS와 DFS의 방문 순서를 비교합니다."
+permalink: "/theory/boj-2667/"
+order: 201
+problem_label: "#BOJ 2667"
+problem_url: "https://www.acmicpc.net/problem/2667"
+problem_topics: "Flood fill · BFS / DFS · Connected components"
+lab_css: "/assets/css/coding-tests.css"
+js_files: ["/assets/js/coding-test-models.js", "/assets/js/coding-test-labs.js"]
+---
+{% include coding-problem-source.html %}
+<p>얼음 틀의 빈칸에 물을 부으면 상하좌우로 이어진 곳이 한 덩어리가 됩니다. 이 덩어리가 그래프의 <strong>연결 요소</strong>입니다. BOJ 2667 「단지번호붙이기」에서는 같은 생각으로 연결된 집을 묶고, 단지 수와 각 단지의 크기를 구합니다.</p><p>아래 얼음 틀은 이 해설에서 만든 예제입니다. 먼저 묶음 수를 예상하고 재생해 보세요. 「단지 · 1 묶기」로 바꾸면 채울 대상만 0에서 1로 바뀝니다.</p>
+{% include coding-test-lab.html kind="flood" %}
+<h2>풀이의 핵심</h2>
+<ol><li>전체 칸을 순서대로 훑습니다. 대상 칸이고 아직 발견하지 않았다면 새 묶음을 시작합니다.</li><li>스택(DFS)이나 큐(BFS)에 넣을 때 방문 표시를 합니다. 그래야 여러 이웃이 같은 칸을 중복으로 넣지 않습니다.</li><li>상하좌우의 연결된 칸을 모두 처리하며 크기를 셉니다. 탐색이 끝나면 다음 미방문 칸을 찾습니다.</li><li>모은 크기를 오름차순으로 정렬합니다.</li></ol><p>첫 예제의 결과는 <strong>4개, 크기 [2, 4, 4, 4]</strong>입니다. 탐색 한 번은 시작점에서 닿는 칸을 빠짐없이 찾고, 벽 너머의 칸에는 갈 수 없습니다. 따라서 한 번의 탐색이 정확히 한 연결 요소를 만듭니다. BFS와 DFS는 처리 순서만 다릅니다.</p>
+<h2>복잡도와 주의점</h2>
+<p>N × N 지도와 K개 단지에서 탐색은 O(N²), 결과 정렬은 O(K log K)입니다. 전체 시간은 <strong>O(N² + K log K)</strong>, 추가 공간은 O(N²)입니다. 아래 코드는 반복형 DFS를 사용하므로 긴 연결 구간에서도 재귀 깊이 제한에 의존하지 않습니다.</p><p>대각선만 닿는 칸은 같은 단지가 아닙니다. 실험에서 대각선 예제를 고르면 13개로 나뉩니다. 얼음 틀은 0, BOJ 풀이는 1을 탐색한다는 차이도 확인하세요. 화면의 단계 기록은 설명을 위한 추가 메모리이며 제출 코드에는 없습니다.</p>
+<h2>직접 작성한 풀이 코드</h2>
+<details><summary>Python 3</summary>
+{% highlight python %}{% include solutions/boj-2667.py %}{% endhighlight %}
+</details>
+<h2>참고 자료와 다음 실험</h2>
+<ul><li><a href="https://www.acmicpc.net/problem/2667" target="_blank" rel="noopener">BOJ 2667 · 단지번호붙이기</a></li><li><a href="https://cp-algorithms.com/graph/search-for-connected-components.html" target="_blank" rel="noopener">Connected components · CP-Algorithms</a></li><li><a href="/theory/bfs-dfs/">BFS / DFS 실험으로 돌아가기</a></li></ul>
