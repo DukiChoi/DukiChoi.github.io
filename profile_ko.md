@@ -3,9 +3,9 @@ lang: ko
 translation_key: profile
 layout: home
 permalink: /profile/
-permalink_name: /Profile
-title: Profile
-nav_title: Profile
+permalink_name: /프로필
+title: 프로필
+nav_title: 프로필
 description: 최병근의 임베디드 시스템 개발, 연구 경험과 프로젝트를 소개합니다.
 section: profile
 js_file: /assets/js/card-tilt.js

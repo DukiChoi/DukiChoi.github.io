@@ -49,5 +49,5 @@
   <h2 id="author-title">{{ copy.author_title }}</h2>
   <p>{{ copy.author }}</p>
   {% include metal-banner.html %}
-  <p><a href="{{ prefix | append: '/profile/' | relative_url }}">Profile <span aria-hidden="true">→</span></a></p>
+  <p><a href="{{ prefix | append: '/profile/' | relative_url }}">{{ site.data.ui[page.lang].profile }} <span aria-hidden="true">→</span></a></p>
 </section>

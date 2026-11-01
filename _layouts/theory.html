@@ -4,6 +4,7 @@ layout: default
 {%- assign ui = site.data.ui[page.lang] | default: site.data.ui.ko -%}
 {%- assign theory_home = "/theory/" -%}
 {%- if page.lang != "ko" -%}{%- assign theory_home = "/" | append: page.lang | append: "/theory/" -%}{%- endif -%}
+{%- assign theory_overview = theory_home -%}
 {%- if page.subject == 'coding-tests' -%}
   {%- assign theory_home = '/coding-tests/' -%}
   {%- if page.lang != 'ko' -%}{%- assign theory_home = '/' | append: page.lang | append: '/coding-tests/' -%}{%- endif -%}
@@ -36,7 +37,7 @@ layout: default
 
 <main class="theory-shell{% if page.overview %} theory-shell--overview{% endif %}">
   <header class="theory-masthead">
-    <a class="theory-category" href="{{ theory_home | relative_url }}">{% if page.subject %}{{ ui.subjects[page.subject] | escape }}{% else %}{{ page.topic | default: "Tech Study" | escape }}{% endif %}</a>
+    <a class="theory-category" href="{{ theory_home | relative_url }}">{% if page.subject %}{{ ui.subjects[page.subject] | escape }}{% else %}{{ page.topic | default: ui.study | escape }}{% endif %}</a>
     <h1 id="theory-title">{{ page.title | escape }}</h1>
   </header>
   <div class="theory-grid">
@@ -84,7 +85,7 @@ layout: default
     </div>
 
     <aside class="theory-sidebar" aria-label="{{ ui.browse }}">
-      <a class="theory-list__overview{% if page.overview %} is-current{% endif %}" href="{{ theory_home | relative_url }}"{% if page.overview %} aria-current="page"{% endif %}>Tech Study</a>
+      <a class="theory-list__overview{% if page.overview %} is-current{% endif %}" href="{{ theory_overview | relative_url }}"{% if page.overview %} aria-current="page"{% endif %}>{{ ui.study }}</a>
       <nav class="theory-list theory-tree" aria-label="{{ ui.articles }}">
         <details class="theory-navigation" data-tree-key="all" open>
           <summary>{{ ui.all_materials }} <span class="theory-count">{{ theory_articles.size }}</span></summary>

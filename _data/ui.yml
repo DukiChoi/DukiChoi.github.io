@@ -1,4 +1,6 @@
 ko:
+  study: 지식 저장소
+  profile: 프로필
   navigation: 사이트 메뉴
   language: 웹사이트 언어
   dark: 다크 모드
@@ -8,8 +10,8 @@ ko:
   previous: 이전 글
   next: 다음 글
   previous_next: 이전 글과 다음 글
-  browse: Tech Study 탐색
-  articles: Tech Study 글 목록
+  browse: 지식 저장소 탐색
+  articles: 지식 저장소 글 목록
   all_materials: 전체 자료
   empty: 아직 등록된 자료가 없습니다.
   open_pdf: PDF 열기
@@ -24,6 +26,8 @@ ko:
     coding-tests: 코딩 테스트
     computer-architecture: 컴퓨터 구조
 en:
+  study: Tech Study
+  profile: Profile
   navigation: Site navigation
   language: Website language
   dark: Dark mode
@@ -49,6 +53,8 @@ en:
     coding-tests: Coding Tests
     computer-architecture: Computer Architecture
 ja:
+  study: Tech Study
+  profile: Profile
   navigation: サイトメニュー
   language: サイトの言語
   dark: ダークモード
