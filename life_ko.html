@@ -29,7 +29,16 @@ description: 금융, 연금, 부동산, 세금과 법률을 쉽게 이해하는 
 .life-branches::before{content:"";position:absolute;top:0;left:16.6667%;right:16.6667%;height:2px;background:var(--line-strong)}
 .life-branch{display:flex;flex-direction:column;align-items:center;position:relative;min-width:0;gap:9px}
 .life-branch::before{content:"";position:absolute;top:-32px;left:50%;width:2px;height:32px;background:var(--line-strong)}
-.life-branch .life-subnodes{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:100%;max-width:250px;padding-left:15px;border-left:2px solid var(--line-strong);margin:6px 0 0 18px}
+.life-branch .life-subnodes{display:flex;flex-direction:column;align-items:stretch;gap:10px;width:100%;position:relative;padding:13px 0 0 27px;margin-top:18px}
+/* Continuous orthogonal tree connectors. Parent -> vertical stem -> elbow -> child. */
+.life-branch>.life-node{position:relative}
+.life-branch>.life-node::after{content:"";position:absolute;left:50%;top:100%;height:18px;border-left:2px solid var(--line-strong);pointer-events:none}
+.life-branch .life-subnodes::before{content:"";position:absolute;left:12px;top:0;bottom:calc(23px + 0.5px);border-left:2px solid var(--line-strong)}
+.life-branch .life-subnodes::after{content:"";position:absolute;left:12px;right:50%;top:0;border-top:2px solid var(--line-strong)}
+.life-child{position:relative;width:100%}
+.life-child::before{content:"";position:absolute;left:-15px;top:50%;width:15px;border-top:2px solid var(--line-strong)}
+.life-child:last-child::after{content:"";position:absolute;left:-16px;top:50%;bottom:0;border-left:3px solid var(--page-bg)}
+
 .life-node{--hue:#5086be;display:inline-flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;gap:2px;width:100%;min-height:53px;padding:10px 12px;border:1.5px solid var(--hue);border-radius:11px;background:color-mix(in srgb,var(--hue) 11%,var(--surface-raised));color:var(--ink);font-weight:650;font-size:14px;line-height:1.35;cursor:pointer;transition:background .15s,transform .15s,box-shadow .15s;box-shadow:0 2px 6px rgba(0,0,0,.035)}
 .life-node small{font-size:11px;font-weight:450;color:var(--muted)}
 .life-node:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(0,0,0,.1)}
@@ -58,7 +67,7 @@ description: 금융, 연금, 부동산, 세금과 법률을 쉽게 이해하는 
 .life-sources{max-width:850px;margin:26px auto 0;font-size:13px;color:var(--muted)}
 .life-sources a{overflow-wrap:anywhere}
 .life-soon{margin:40px auto 0;max-width:850px;border-top:1px solid var(--line);padding-top:23px;text-align:center;color:var(--muted);font-size:14px}
-@media(max-width:650px){.life-shell{padding:28px 12px 70px}.life-tree{padding:5px 0 20px}.life-branches{gap:7px}.life-node{padding:8px 5px;min-height:51px;font-size:12px;border-radius:8px}.life-node small{font-size:9px}.life-branch>.life-node{font-size:13px}.life-branch .life-subnodes{margin-left:8px;padding-left:6px;gap:6px}.life-branch .life-subnodes .life-node{font-size:11px;min-height:43px}.life-content{padding:21px 17px}.life-content p,.life-content li{font-size:15px}.life-table{font-size:12px}.life-table th,.life-table td{padding:8px 6px}}
+@media(max-width:650px){.life-shell{padding:28px 12px 70px}.life-tree{padding:5px 0 20px}.life-branches{gap:7px}.life-node{padding:8px 5px;min-height:51px;font-size:12px;border-radius:8px}.life-node small{font-size:9px}.life-branch>.life-node{font-size:13px}.life-branch .life-subnodes{padding-left:16px;gap:7px}.life-branch .life-subnodes::before,.life-branch .life-subnodes::after{left:5px}.life-child::before{left:-11px;width:11px}.life-child:last-child::after{left:-7px}.life-branch .life-subnodes .life-node{font-size:11px;min-height:43px}.life-content{padding:21px 17px}.life-content p,.life-content li{font-size:15px}.life-table{font-size:12px}.life-table th,.life-table td{padding:8px 6px}}
 @media(prefers-reduced-motion:reduce){.life-node{transition:none}}
 </style>
 <main class="life-shell">
@@ -79,25 +88,25 @@ description: 금융, 연금, 부동산, 세금과 법률을 쉽게 이해하는 
         <div class="life-branch public">
           <button class="life-node" data-topic="public" aria-pressed="false">공적연금<small>국가가 운영</small></button>
           <div class="life-subnodes">
-            <button class="life-node" data-topic="national" aria-pressed="false">국민연금</button>
-            <button class="life-node" data-topic="special" aria-pressed="false">직역연금<small>공무원·군인·사학 등</small></button>
+            <div class="life-child"><button class="life-node" data-topic="national" aria-pressed="false">국민연금</button></div>
+            <div class="life-child"><button class="life-node" data-topic="special" aria-pressed="false">직역연금<small>공무원·군인·사학 등</small></button></div>
           </div>
         </div>
         <div class="life-branch work">
           <button class="life-node" data-topic="retirement" aria-pressed="false">퇴직연금<small>회사 퇴직급여</small></button>
           <div class="life-subnodes">
-            <button class="life-node" data-topic="db" aria-pressed="false">DB형<small>확정급여</small></button>
-            <button class="life-node" data-topic="dc" aria-pressed="false">DC형<small>확정기여</small></button>
-            <button class="life-node" data-topic="irp" aria-pressed="false">IRP<small>개인형퇴직연금</small></button>
+            <div class="life-child"><button class="life-node" data-topic="db" aria-pressed="false">DB형<small>확정급여</small></button></div>
+            <div class="life-child"><button class="life-node" data-topic="dc" aria-pressed="false">DC형<small>확정기여</small></button></div>
+            <div class="life-child"><button class="life-node" data-topic="irp" aria-pressed="false">IRP<small>개인형퇴직연금</small></button></div>
           </div>
         </div>
         <div class="life-branch private">
           <button class="life-node" data-topic="personal" aria-pressed="false">개인연금<small>본인이 준비</small></button>
           <div class="life-subnodes">
-            <button class="life-node" data-topic="saving" aria-pressed="false">연금저축</button>
-            <button class="life-node" data-topic="fund" aria-pressed="false">연금저축펀드</button>
-            <button class="life-node" data-topic="saving-insurance" aria-pressed="false">연금저축보험</button>
-            <button class="life-node" data-topic="insurance" aria-pressed="false">일반 연금보험</button>
+            <div class="life-child"><button class="life-node" data-topic="saving" aria-pressed="false">연금저축</button></div>
+            <div class="life-child"><button class="life-node" data-topic="fund" aria-pressed="false">연금저축펀드</button></div>
+            <div class="life-child"><button class="life-node" data-topic="saving-insurance" aria-pressed="false">연금저축보험</button></div>
+            <div class="life-child"><button class="life-node" data-topic="insurance" aria-pressed="false">일반 연금보험</button></div>
           </div>
         </div>
       </div>
