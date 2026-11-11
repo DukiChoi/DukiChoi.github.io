@@ -83,6 +83,7 @@ header_pages:
   - assets/theories/코딩테스트/index_ko.md
   - assets/theories/index_ko.html
   - programs_ko.html
+  - life_ko.html
   - profile_ko.md
 # set the size of the text to 'large' or 'small', default is small
 font-size: small
