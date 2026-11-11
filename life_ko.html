@@ -69,6 +69,15 @@ description: 금융, 연금, 부동산, 세금과 법률을 쉽게 이해하는 
 .life-soon{margin:40px auto 0;max-width:850px;border-top:1px solid var(--line);padding-top:23px;text-align:center;color:var(--muted);font-size:14px}
 @media(max-width:650px){.life-shell{padding:28px 12px 70px}.life-tree{padding:5px 0 20px}.life-branches{gap:7px}.life-node{padding:8px 5px;min-height:51px;font-size:12px;border-radius:8px}.life-node small{font-size:9px}.life-branch>.life-node{font-size:13px}.life-branch .life-subnodes{padding-left:16px;gap:7px}.life-branch .life-subnodes::before,.life-branch .life-subnodes::after{left:5px}.life-child::before{left:-11px;width:11px}.life-child:last-child::after{left:-7px}.life-branch .life-subnodes .life-node{font-size:11px;min-height:43px}.life-content{padding:21px 17px}.life-content p,.life-content li{font-size:15px}.life-table{font-size:12px}.life-table th,.life-table td{padding:8px 6px}}
 @media(prefers-reduced-motion:reduce){.life-node{transition:none}}
+
+/* Single SVG wiring layer: every connector is one uninterrupted orthogonal path. */
+.life-tree{position:relative;isolation:isolate}
+.life-tree>.life-wires{position:absolute;left:0;top:0;z-index:0;pointer-events:none;overflow:visible;color:var(--line-strong)}
+.life-tree .life-node{position:relative;z-index:1}
+.life-connector{background:transparent}
+.life-branches::before,.life-branch::before,.life-branch>.life-node::after,
+.life-branch .life-subnodes::before,.life-branch .life-subnodes::after,
+.life-child::before,.life-child::after{display:none!important}
 </style>
 <main class="life-shell">
   <header class="life-hero">
@@ -149,5 +158,62 @@ description: 금융, 연금, 부동산, 세금과 법률을 쉽게 이해하는 
   buttons.forEach(b=>b.addEventListener('click',()=>select(b.dataset.topic,true)));
   const initial=decodeURIComponent(location.hash.slice(1));
   select(Object.prototype.hasOwnProperty.call(data,initial)?initial:'pension',false);
+
+  // Draw paths from actual button bounds; no CSS border fragments to misalign.
+  const tree=document.querySelector('.life-tree');
+  const ns='http://www.w3.org/2000/svg';
+  const wires=document.createElementNS(ns,'svg');
+  wires.classList.add('life-wires');
+  wires.setAttribute('aria-hidden','true');
+  tree.prepend(wires);
+  const boxOf=(el)=>{
+    const r=el.getBoundingClientRect(),base=tree.getBoundingClientRect();
+    return {l:r.left-base.left+tree.scrollLeft,r:r.right-base.left+tree.scrollLeft,
+      t:r.top-base.top+tree.scrollTop,b:r.bottom-base.top+tree.scrollTop,
+      cx:(r.left+r.right)/2-base.left+tree.scrollLeft,
+      cy:(r.top+r.bottom)/2-base.top+tree.scrollTop};
+  };
+  function path(d,color){
+    const p=document.createElementNS(ns,'path');
+    p.setAttribute('d',d);
+    p.setAttribute('fill','none');
+    p.setAttribute('stroke',color||'currentColor');
+    p.setAttribute('stroke-width','2.5');
+    p.setAttribute('stroke-linecap','round');
+    p.setAttribute('stroke-linejoin','round');
+    wires.appendChild(p);
+  }
+  function drawWires(){
+    wires.replaceChildren();
+    const width=tree.scrollWidth,height=tree.scrollHeight;
+    wires.setAttribute('width',width);wires.setAttribute('height',height);
+    wires.setAttribute('viewBox','0 0 '+width+' '+height);
+    const root=boxOf(tree.querySelector('.life-node.root'));
+    const branches=[...tree.querySelectorAll('.life-branch')];
+    const parents=branches.map(b=>boxOf(b.querySelector(':scope > .life-node')));
+    const rootJunction=Math.round((root.b+Math.min(...parents.map(p=>p.t)))/2);
+    path('M '+root.cx+' '+root.b+' V '+rootJunction+
+      ' H '+parents[0].cx+' M '+root.cx+' '+rootJunction+' H '+parents[parents.length-1].cx);
+    parents.forEach(p=>path('M '+p.cx+' '+rootJunction+' V '+p.t));
+    branches.forEach((branch,index)=>{
+      const parent=parents[index];
+      const children=[...branch.querySelectorAll('.life-child > .life-node')].map(boxOf);
+      if(!children.length)return;
+      const trunkX=Math.min(...children.map(n=>n.l))-11;
+      const upperY=parent.b+12;
+      path('M '+parent.cx+' '+parent.b+' V '+upperY+' H '+trunkX+
+        ' V '+children[children.length-1].cy);
+      const color=getComputedStyle(branch.querySelector(':scope > .life-node')).getPropertyValue('--hue').trim();
+      children.forEach(node=>path('M '+trunkX+' '+node.cy+' H '+node.l,color||undefined));
+    });
+  }
+  drawWires();
+  if('ResizeObserver' in window){
+    const observer=new ResizeObserver(drawWires);
+    observer.observe(tree);
+    tree.querySelectorAll('.life-node').forEach(n=>observer.observe(n));
+  }else window.addEventListener('resize',drawWires);
+  window.addEventListener('load',drawWires,{once:true});
+
 })();
 </script>
