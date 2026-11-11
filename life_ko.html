@@ -199,10 +199,11 @@ description: 금융, 연금, 부동산, 세금과 법률을 쉽게 이해하는 
       const parent=parents[index];
       const children=[...branch.querySelectorAll('.life-child > .life-node')].map(boxOf);
       if(!children.length)return;
-      const trunkX=Math.min(...children.map(n=>n.l))-11;
-      const upperY=parent.b+12;
-      path('M '+parent.cx+' '+parent.b+' V '+upperY+' H '+trunkX+
-        ' V '+children[children.length-1].cy);
+      // One vertical stem leaves the LEFT side of the parent.
+      // Each child is connected with exactly one 90-degree elbow.
+      const childLeft=Math.min(...children.map(n=>n.l));
+      const trunkX=Math.min(parent.l+Math.max(9,Math.min(19,(parent.r-parent.l)*0.14)),childLeft-5);
+      path('M '+trunkX+' '+parent.b+' V '+children[children.length-1].cy);
       const color=getComputedStyle(branch.querySelector(':scope > .life-node')).getPropertyValue('--hue').trim();
       children.forEach(node=>path('M '+trunkX+' '+node.cy+' H '+node.l,color||undefined));
     });
