@@ -1,5 +1,5 @@
 ko:
-  study: 지식 저장소
+  study: 기술 지식
   profile: 프로필
   navigation: 사이트 메뉴
   language: 웹사이트 언어
@@ -10,8 +10,8 @@ ko:
   previous: 이전 글
   next: 다음 글
   previous_next: 이전 글과 다음 글
-  browse: 지식 저장소 탐색
-  articles: 지식 저장소 글 목록
+  browse: 기술 지식 탐색
+  articles: 기술 지식 글 목록
   all_materials: 전체 자료
   empty: 아직 등록된 자료가 없습니다.
   open_pdf: PDF 열기
